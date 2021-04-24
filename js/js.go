@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// +build js,wasm
-
 // Package js gives access to the WebAssembly host environment when using the js/wasm architecture.
 // Its API is based on JavaScript semantics.
 //
