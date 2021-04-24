@@ -8,7 +8,7 @@ Panic can be handle via recovery but with framework compiler like tinygo, the re
 Some other package like net/http , json is not available but javascript can already make lots of things if error can be handle  use JSON object and parse function with invalid json panic...)
 Jswasm provide function replacement for http, event , json ( and more to come ) 
 
-## how to use
+## How to use
 Just import the module with import "github.com/realPy/jswasm/js" to use the standard syscall/js  
 Use the import "github.com/realPy/jswasm" to import http, json and event function
 
