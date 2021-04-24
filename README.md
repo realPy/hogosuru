@@ -24,8 +24,12 @@ Build
 
 ```
 cd /go/src/jswasm
-tinygo build  -o ./wasm.wasm --no-debug -target wasm example/main.go
+tinygo build  -o ./example/wasm_main/wasm.wasm --no-debug -target wasm example/wasm_main/main.go
 ```
 
+Run server to the the result in js developer console
+```
+go run 
+```
 
 Dont forget to get to use the wasm_exec.js provide by tinygo.
