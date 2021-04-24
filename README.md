@@ -1,6 +1,7 @@
 # jswasm
 
 ## Synopsis
+jsawsm is a part of a personel project and export to the community.
 
 jswasm is a lib replacement for syscall/js and help to use syscall with handle error (not panic)  
 The standard syscall/js doesn't provide a way to handle error and panics when error occurs.  
