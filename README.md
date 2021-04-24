@@ -14,3 +14,18 @@ Use the import "github.com/realPy/jswasm" to import http, json and event functio
 
 
 
+## try example
+
+Start project in tinygo docker
+```
+docker run -it -v $PWD:/go/src/jswasm tinygo/tinygo bash
+```
+Build  
+
+```
+cd /go/src/jswasm
+tinygo build  -o ./wasm.wasm --no-debug -target wasm example/main.go
+```
+
+
+Dont forget to get to use the wasm_exec.js provide by tinygo.
