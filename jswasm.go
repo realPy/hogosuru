@@ -31,3 +31,25 @@ func Await(awaitable js.Value) chan []js.Value {
 	awaitable.Call("then", cb)
 	return ch
 }
+
+
+type SuccessFailure struct {
+	Success bool
+	Payload []js.Value
+}
+
+func OnSuccessFailure(awaitable js.Value) chan SuccessFailure {
+	ch := make(chan SuccessFailure)
+	cbok := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		ch <- SuccessFailure{Success: true, Payload: args}
+		return nil
+	})
+	cberror := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		ch <- SuccessFailure{Success: false, Payload: args}
+		return nil
+	})
+	awaitable.Set("onsuccess", cbok)
+	awaitable.Set("onerror", cberror)
+	return ch
+}
+
