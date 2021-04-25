@@ -32,6 +32,7 @@ func Await(awaitable js.Value) chan []js.Value {
 	return ch
 }
 
+
 type SuccessFailure struct {
 	Success bool
 	Payload []js.Value
@@ -51,3 +52,4 @@ func OnSuccessFailure(awaitable js.Value) chan SuccessFailure {
 	awaitable.Set("onerror", cberror)
 	return ch
 }
+
