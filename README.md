@@ -28,8 +28,7 @@ docker run -it -v $PWD:/go/src/jswasm tinygo/tinygo bash
 Build  
 
 ```
-cd /go/src/jswasm
-tinygo build  -o ./example/wasm_main/wasm.wasm --no-debug -target wasm example/wasm_main/main.go
+docker run --rm -it -w /go/src/jswasm -v $PWD:/go/src/jswasm tinygo/tinygo tinygo build  -o ./example/wasm_main/wasm.wasm --no-debug -target wasm example/wasm_main/main.go
 ```
 
 Run server to the the result in js developer console
