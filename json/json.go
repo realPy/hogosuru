@@ -1,4 +1,4 @@
-package jswasm
+package json
 
 import (
 	"fmt"
