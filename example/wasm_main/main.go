@@ -6,6 +6,7 @@ import (
 
 	"github.com/realPy/jswasm/http"
 	"github.com/realPy/jswasm/indexdb"
+	"github.com/realPy/jswasm/js"
 	"github.com/realPy/jswasm/json"
 )
 
@@ -29,9 +30,18 @@ func main() {
 		}
 	})
 
+	c, _ := indexdb.OpenIndexDB("test", func(db js.Value) error {
 
-	indexdb.OpenIndexDB("test")
+		if store, err := indexdb.CreateStore(db, "utilisateur", map[string]interface{}{"keyPath": "id", "autoIncrement": true}); err == nil {
+			store.CreateIndex("email", "emailkey", map[string]interface{}{"unique": true})
+			store.CreateIndex("nom", "nom", nil)
+		}
+		return nil
+	})
 
+	if err := c.Store("utilisateur", map[string]interface{}{"email": "oui", "prenom": "manu"}); err != nil {
+		fmt.Println(err.Error())
+	}
 	ch := make(chan struct{})
 	<-ch
 
