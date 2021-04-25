@@ -1,8 +1,9 @@
-package jswasm
+package http
 
 import (
 	"net/url"
 
+	"github.com/realPy/jswasm"
 	"github.com/realPy/jswasm/js"
 )
 
@@ -13,7 +14,7 @@ func handleHTTPBytesResult(rsp js.Value, httpHandler func(int, []byte)) {
 			status := statusObject.Int()
 
 			if arrayObject, err := rsp.CallWithErr("arrayBuffer"); err == nil {
-				binary := <-await(arrayObject)
+				binary := <-jswasm.Await(arrayObject)
 
 				if arrayConstructor, err := js.Global().GetWithErr("Uint8Array"); err == nil {
 					dataJS := arrayConstructor.New(binary[0])
@@ -59,7 +60,7 @@ func handleHTTPTextResult(rsp js.Value, httpHandler func(int, string)) {
 		if statusObject.Type() == js.TypeNumber {
 			status := statusObject.Int()
 			if txtObject, err := rsp.CallWithErr("text"); err == nil {
-				jsTxt := <-await(txtObject)
+				jsTxt := <-jswasm.Await(txtObject)
 				httpHandler(status, jsTxt[0].String())
 
 			} else {
@@ -78,7 +79,7 @@ func handleHTTPTextResult(rsp js.Value, httpHandler func(int, string)) {
 func http(url *url.URL, arg js.Value, resultHandler func(js.Value, error)) {
 	go func() {
 		if fetchObject, err := js.Global().GetWithErr("fetch"); err == nil {
-			ch := await(fetchObject.Invoke(url.String(), arg))
+			ch := jswasm.Await(fetchObject.Invoke(url.String(), arg))
 			go func() {
 				results := <-ch
 				rsp := results[0]
