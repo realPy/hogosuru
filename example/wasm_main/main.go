@@ -29,6 +29,7 @@ func main() {
 		}
 	})
 
+
 	indexdb.OpenIndexDB("test")
 
 	ch := make(chan struct{})
