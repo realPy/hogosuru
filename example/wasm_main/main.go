@@ -5,6 +5,7 @@ import (
 	"net/url"
 
 	"github.com/realPy/jswasm/http"
+	"github.com/realPy/jswasm/indexdb"
 	"github.com/realPy/jswasm/json"
 )
 
@@ -27,6 +28,8 @@ func main() {
 			}
 		}
 	})
+
+	indexdb.OpenIndexDB("test")
 
 	ch := make(chan struct{})
 	<-ch
