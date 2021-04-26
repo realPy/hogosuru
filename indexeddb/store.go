@@ -1,4 +1,4 @@
-package indexdb
+package indexeddb
 
 import (
 	"github.com/realPy/jswasm/js"

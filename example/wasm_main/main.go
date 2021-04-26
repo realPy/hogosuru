@@ -5,7 +5,9 @@ import (
 	"net/url"
 
 	"github.com/realPy/jswasm/http"
-	"github.com/realPy/jswasm/indexdb"
+	"github.com/realPy/jswasm/localstorage"
+
+	"github.com/realPy/jswasm/indexeddb"
 	"github.com/realPy/jswasm/js"
 	"github.com/realPy/jswasm/json"
 )
@@ -30,18 +32,27 @@ func main() {
 		}
 	})
 
-	c, _ := indexdb.OpenIndexDB("test", func(db js.Value) error {
+	if c, err := indexeddb.OpenIndexedDB("test", 3, func(db js.Value) error {
 
-		if store, err := indexdb.CreateStore(db, "utilisateur", map[string]interface{}{"keyPath": "id", "autoIncrement": true}); err == nil {
+		if store, err := indexeddb.CreateStore(db, "utilisateur", map[string]interface{}{"keyPath": "id", "autoIncrement": true}); err == nil {
 			store.CreateIndex("email", "emailkey", map[string]interface{}{"unique": true})
 			store.CreateIndex("nom", "nom", nil)
 		}
 		return nil
-	})
+	}); err == nil {
+		if err := c.Store("utilisateur", map[string]interface{}{"email": "oui", "prenom": "manu"}); err != nil {
+			fmt.Println(err.Error())
+		}
 
-	if err := c.Store("utilisateur", map[string]interface{}{"email": "oui", "prenom": "manu"}); err != nil {
-		fmt.Println(err.Error())
+		a, _ := c.GetAllKeys("utilisateur")
+		fmt.Printf("%s\n", a)
+	} else {
+		fmt.Printf("erreur: %s\n", err.Error())
 	}
+
+	localstore, _ := localstorage.GetLocalStorage()
+	localstore.SetItem("dog", "dalmatien")
+
 	ch := make(chan struct{})
 	<-ch
 
