@@ -24,6 +24,18 @@ func Array(object js.Value) GOArray {
 	return goArray
 }
 
+func ParseArray(object js.Value, handler func(js.Value)) error {
+
+	if object.Type() == js.TypeObject {
+		for i := 0; i < object.Length(); i++ {
+
+			handler(object.Index(i))
+		}
+	}
+
+	return ErrNotAnObject
+}
+
 func (g GOArray) String() string {
 
 	var str string = "["

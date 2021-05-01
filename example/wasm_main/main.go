@@ -42,35 +42,30 @@ func main() {
 	}); err == nil {
 
 		if store, err := c.GetObjectStore("utilisateur", "readwrite"); err == nil {
-			if err := store.Add(map[string]interface{}{"email": "oui", "prenom": "manu"}); err != nil {
+			if objadd, err := store.Add(map[string]interface{}{"email": "oui", "prenom": "manu"}); err != nil {
 				fmt.Println(err.Error())
+			} else {
+				fmt.Printf("Object add: %s\n", objadd)
 			}
 			a, _ := store.GetAllKeys()
 			fmt.Printf("%s\n", a)
 			if b, err := store.Get(1); err == nil {
-
-				/*
-					inter, _ := object.NewObjectInterface()
-
-					m, _ := inter.Entries(b)
-
-					if typestr, err := inter.Type(m); err != nil {
-						fmt.Printf("Error object: %s\n", err.Error())
-					} else {
-						fmt.Printf("Type object: %s\n", typestr)
-					}
-
-					fmt.Printf("object 1: %s %d %d\n", object.String(m), m.Length(), m.Index(0).Length())
-					arr := object.Map(m)*/
-
 				fmt.Printf("object 1: %s\n", b)
-				/*
-					if s, err := object.Values(b); err == nil {
-						fmt.Printf("object 1: %s\n", s)
-					} else {
-						fmt.Println(err.Error())
-					}*/
+			} else {
+				fmt.Println(err.Error())
+			}
 
+			if all, err := store.GetAll(); err == nil {
+				fmt.Printf("all: %s\n", all)
+			} else {
+				fmt.Println(err.Error())
+			}
+
+			if count, err := store.Count(); err == nil {
+				if (count % 10) == 0 {
+					store.Clear()
+				}
+				fmt.Printf("Store count: %d\n", count)
 			} else {
 				fmt.Println(err.Error())
 			}
