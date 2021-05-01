@@ -144,3 +144,18 @@ func (s Store) GetAll() ([]object.GOMap, error) {
 	}
 	return arrayGoMap, err
 }
+
+//Put a value in store and return the index  of the new inserted element
+func (s Store) Put(value map[string]interface{}) (int, error) {
+	var err error
+	var obj js.Value
+	if obj, err = s.callWaitableMethod("put", js.ValueOf(value)); err == nil {
+		if value := object.NewGOValue(obj); value.IsInt() {
+			return value.Int(), nil
+		} else {
+			return 0, nil
+		}
+
+	}
+	return 0, err
+}
