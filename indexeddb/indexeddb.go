@@ -4,13 +4,13 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/realPy/jswasm/array"
 	"github.com/realPy/jswasm/js"
 	"github.com/realPy/jswasm/object"
 )
 
 type IndexedDB struct {
-	dbObject js.Value
+	dbobject     js.Value
+	objinterface object.ObjectInterface
 }
 
 type SuccessFailure struct {
@@ -48,7 +48,7 @@ func stringFromTargetError(ev js.Value) (string, error) {
 
 	if jserr, err = getEventTargetError(ev); err == nil {
 
-		return object.String(jserr)
+		return object.StringWithErr(jserr)
 
 	}
 
@@ -77,6 +77,10 @@ func OpenIndexedDB(name string, version int, automigrate func(js.Value) error) (
 	var err error
 	var window, indexedDBObject, waitableOpen, db js.Value
 
+	if indexdb.objinterface, err = object.NewObjectInterface(); err != nil {
+		return indexdb, err
+	}
+
 	if window, err = js.Global().GetWithErr("window"); err == nil {
 
 		if indexedDBObject, err = window.GetWithErr("indexedDB"); err == nil {
@@ -99,7 +103,7 @@ func OpenIndexedDB(name string, version int, automigrate func(js.Value) error) (
 				if results.Success {
 					ev := results.Payload[0]
 					if db, err = getEventTargetResult(ev); err == nil {
-						indexdb.dbObject = db
+						indexdb.dbobject = db
 						return indexdb, nil
 					}
 				} else {
@@ -120,46 +124,15 @@ func OpenIndexedDB(name string, version int, automigrate func(js.Value) error) (
 	return indexdb, err
 }
 
-func (i IndexedDB) Store(table string, value map[string]interface{}) error {
-
-	if transaction, err := i.dbObject.CallWithErr("transaction", js.ValueOf(table), js.ValueOf("readwrite")); err == nil {
+func (i IndexedDB) GetObjectStore(table string, permission string) (Store, error) {
+	if transaction, err := i.dbobject.CallWithErr("transaction", js.ValueOf(table), js.ValueOf(permission)); err == nil {
 
 		if objectstore, err := transaction.CallWithErr("objectStore", js.ValueOf(table)); err == nil {
-			objectstore.CallWithErr("add", js.ValueOf(value))
-			return nil
+			return Store{objstore: objectstore, objinterface: i.objinterface}, nil
 		} else {
-			return err
+			return Store{}, err
 		}
 	} else {
-		return err
+		return Store{}, err
 	}
-}
-
-func (i IndexedDB) GetAllKeys(table string) ([]int, error) {
-
-	var arraykeys []int
-	var err error
-	var transaction, waitable, objectstore, arrayObject js.Value
-
-	if transaction, err = i.dbObject.CallWithErr("transaction", js.ValueOf(table), js.ValueOf("readwrite")); err == nil {
-
-		if objectstore, err = transaction.CallWithErr("objectStore", js.ValueOf(table)); err == nil {
-			if waitable, err = objectstore.CallWithErr("getAllKeys"); err == nil {
-				ch := OnSuccessFailure(waitable)
-				results := <-ch
-				if results.Success {
-					ev := results.Payload[0]
-					if arrayObject, err = getEventTargetResult(ev); err == nil {
-						arraykeys, err = array.GoArrayInt(arrayObject), nil
-					}
-				} else {
-					err = fmt.Errorf("erreur getAllkeys")
-					// recuperer error https://developer.mozilla.org/fr/docs/Web/API/IDBRequest/error
-				}
-
-			}
-
-		}
-	}
-	return arraykeys, err
 }

@@ -5,7 +5,7 @@ import (
 	"net/url"
 
 	"github.com/realPy/jswasm/http"
-	"github.com/realPy/jswasm/localstorage"
+	"github.com/realPy/jswasm/storage"
 
 	"github.com/realPy/jswasm/indexeddb"
 	"github.com/realPy/jswasm/js"
@@ -40,17 +40,50 @@ func main() {
 		}
 		return nil
 	}); err == nil {
-		if err := c.Store("utilisateur", map[string]interface{}{"email": "oui", "prenom": "manu"}); err != nil {
+
+		if store, err := c.GetObjectStore("utilisateur", "readwrite"); err == nil {
+			if err := store.Add(map[string]interface{}{"email": "oui", "prenom": "manu"}); err != nil {
+				fmt.Println(err.Error())
+			}
+			a, _ := store.GetAllKeys()
+			fmt.Printf("%s\n", a)
+			if b, err := store.Get(1); err == nil {
+
+				/*
+					inter, _ := object.NewObjectInterface()
+
+					m, _ := inter.Entries(b)
+
+					if typestr, err := inter.Type(m); err != nil {
+						fmt.Printf("Error object: %s\n", err.Error())
+					} else {
+						fmt.Printf("Type object: %s\n", typestr)
+					}
+
+					fmt.Printf("object 1: %s %d %d\n", object.String(m), m.Length(), m.Index(0).Length())
+					arr := object.Map(m)*/
+
+				fmt.Printf("object 1: %s\n", b)
+				/*
+					if s, err := object.Values(b); err == nil {
+						fmt.Printf("object 1: %s\n", s)
+					} else {
+						fmt.Println(err.Error())
+					}*/
+
+			} else {
+				fmt.Println(err.Error())
+			}
+
+		} else {
 			fmt.Println(err.Error())
 		}
 
-		a, _ := c.GetAllKeys("utilisateur")
-		fmt.Printf("%s\n", a)
 	} else {
 		fmt.Printf("erreur: %s\n", err.Error())
 	}
 
-	localstore, _ := localstorage.GetLocalStorage()
+	localstore, _ := storage.GetLocalStorage("session")
 	localstore.SetItem("dog", "dalmatien")
 
 	ch := make(chan struct{})
