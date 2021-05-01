@@ -20,7 +20,7 @@ func JsonParse(jsonstr string) (Json, error) {
 		}
 
 	}
-	return Json{}, fmt.Errorf("Unable to get JSON syscall")
+	return Json{}, fmt.Errorf("Unable to get JSON interface")
 }
 
 func (j Json) Get(key string) js.Value {
