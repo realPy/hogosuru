@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/url"
 
+	"github.com/realPy/jswasm/broadcastchannel"
 	"github.com/realPy/jswasm/http"
 	"github.com/realPy/jswasm/storage"
 
@@ -81,6 +82,21 @@ func main() {
 
 	localstore, _ := storage.GetLocalStorage("session")
 	localstore.SetItem("dog", "dalmatien")
+
+	fmt.Println("-----------Test Channels---------")
+	if bci, err := broadcastchannel.NewBroadcastChannelInterface(); err == nil {
+		channel := bci.New("TestChannel")
+		channel.SetReceiveMessage(func(obj js.Value) {
+			fmt.Printf("--->%s---\n", obj.String())
+		})
+
+		if err := channel.PostMessage("New wasm loaded"); err != nil {
+			fmt.Println(err.Error())
+		}
+
+	} else {
+		fmt.Println(err.Error())
+	}
 
 	ch := make(chan struct{})
 	<-ch
