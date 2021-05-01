@@ -1,4 +1,4 @@
-package jswasm
+package event
 
 import "github.com/realPy/jswasm/js"
 

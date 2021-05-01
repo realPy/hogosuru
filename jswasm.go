@@ -2,7 +2,7 @@ package jswasm
 
 import "github.com/realPy/jswasm/js"
 
-func promise() (p js.Value, set func(js.Value)) {
+func Promise() (p js.Value, set func(js.Value)) {
 
 	ch := make(chan js.Value)
 	resolver := make(chan js.Value, 1)
@@ -22,7 +22,7 @@ func promise() (p js.Value, set func(js.Value)) {
 	return
 }
 
-func await(awaitable js.Value) chan []js.Value {
+func Await(awaitable js.Value) chan []js.Value {
 	ch := make(chan []js.Value)
 	cb := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		ch <- args
