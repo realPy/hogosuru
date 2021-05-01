@@ -1,21 +1,27 @@
-package localstorage
+package storage
 
 import (
 	"github.com/realPy/jswasm/js"
 	"github.com/realPy/jswasm/object"
 )
 
-type LocalStorage struct {
+type Storage struct {
 	object js.Value
 }
 
-func GetLocalStorage() (LocalStorage, error) {
+func GetLocalStorage(typeStorage string) (Storage, error) {
 	var err error
-	var localstorage LocalStorage
+	var localstorage Storage
 	var localstorageobject, window js.Value
 	if window, err = js.Global().GetWithErr("window"); err == nil {
-
-		if localstorageobject, err = window.GetWithErr("localStorage"); err == nil {
+		var strType string = "undefined"
+		switch typeStorage {
+		case "local":
+			strType = "localStorage"
+		case "session":
+			strType = "sessionStorage"
+		}
+		if localstorageobject, err = window.GetWithErr(strType); err == nil {
 			localstorage.object = localstorageobject
 		}
 
@@ -23,42 +29,42 @@ func GetLocalStorage() (LocalStorage, error) {
 	return localstorage, err
 }
 
-func (l LocalStorage) SetItem(key, value string) error {
+func (l Storage) SetItem(key, value string) error {
 	var err error
 	_, err = l.object.CallWithErr("setItem", js.ValueOf(key), js.ValueOf(value))
 	return err
 }
 
-func (l LocalStorage) GetItem(key string) (string, error) {
+func (l Storage) GetItem(key string) (string, error) {
 	var err error
 	var itemObject js.Value
 	if itemObject, err = l.object.CallWithErr("getItem", js.ValueOf(key)); err == nil {
-		return object.String(itemObject)
+		return object.StringWithErr(itemObject)
 	}
 	return "", err
 }
 
-func (l LocalStorage) RemoveItem(key string) error {
+func (l Storage) RemoveItem(key string) error {
 	var err error
 	_, err = l.object.CallWithErr("removeItem", js.ValueOf(key))
 	return err
 }
 
-func (l LocalStorage) Clear() error {
+func (l Storage) Clear() error {
 	var err error
 	_, err = l.object.CallWithErr("clear")
 	return err
 }
 
-func (l LocalStorage) Length() int {
+func (l Storage) Length() int {
 	return l.object.Length()
 }
 
-func (l LocalStorage) Key(index int) (string, error) {
+func (l Storage) Key(index int) (string, error) {
 	var err error
 	var itemObject js.Value
 	if itemObject, err = l.object.CallWithErr("key", js.ValueOf(index)); err == nil {
-		return object.String(itemObject)
+		return object.StringWithErr(itemObject)
 	}
 	return "", err
 }
