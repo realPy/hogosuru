@@ -63,7 +63,6 @@ func OnSuccessFailure(awaitable js.Value) chan SuccessFailure {
 		return nil
 	})
 	cberror := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-
 		ch <- SuccessFailure{Success: false, Payload: args}
 		return nil
 	})

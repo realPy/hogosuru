@@ -44,7 +44,7 @@ func (o ObjectInterface) Values(object js.Value) (js.Value, error) {
 
 	}
 
-	return js.Value{}, fmt.Errorf("The given value must be an object")
+	return js.Value{}, ErrNotAnObject
 }
 
 func (o ObjectInterface) Entries(object js.Value) (js.Value, error) {
@@ -52,7 +52,7 @@ func (o ObjectInterface) Entries(object js.Value) (js.Value, error) {
 		return o.objectInterface.CallWithErr("entries", object)
 	}
 
-	return js.Value{}, fmt.Errorf("The given value must be an object")
+	return js.Value{}, ErrNotAnObject
 }
 
 type GOValue struct {
@@ -74,6 +74,17 @@ func (g GOValue) String() string {
 		return "unknown"
 	}
 
+}
+
+func (g GOValue) IsInt() bool {
+	if _, ok := g.value.(int); ok {
+		return true
+	}
+	return false
+}
+
+func (g GOValue) Int() int {
+	return g.value.(int)
 }
 
 func NewGOValue(object js.Value) GOValue {
@@ -125,5 +136,5 @@ func StringWithErr(object js.Value) (string, error) {
 
 	}
 
-	return "", fmt.Errorf("The given value must be an object")
+	return "", ErrNotAnObject
 }
