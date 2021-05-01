@@ -46,6 +46,7 @@ func main() {
 				fmt.Println(err.Error())
 			} else {
 				fmt.Printf("Object add: %s\n", objadd)
+				store.Put(map[string]interface{}{"id": objadd, "email": "oui", "prenom": "lea"})
 			}
 			a, _ := store.GetAllKeys()
 			fmt.Printf("%s\n", a)
