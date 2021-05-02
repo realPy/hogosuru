@@ -1,11 +1,35 @@
-package http
+package fetch
 
 import (
 	"net/url"
+	"sync"
 
 	"github.com/realPy/jswasm"
 	"github.com/realPy/jswasm/js"
 )
+
+var singleton sync.Once
+
+var fetchinterface *JSInterface
+
+//JSInterface of  fetch
+type JSInterface struct {
+	objectInterface js.Value
+}
+
+//GetJSInterface Get the JS Fetch Interface If nil browser doesn't implement it
+func GetJSInterface() *JSInterface {
+
+	singleton.Do(func() {
+		var fetchinstance JSInterface
+		var err error
+		if fetchinstance.objectInterface, err = js.Global().GetWithErr("fetch"); err == nil {
+			fetchinterface = &fetchinstance
+		}
+	})
+
+	return fetchinterface
+}
 
 func handleHTTPBytesResult(rsp js.Value, httpHandler func(int, []byte)) {
 
@@ -78,17 +102,17 @@ func handleHTTPTextResult(rsp js.Value, httpHandler func(int, string)) {
 
 func http(url *url.URL, arg js.Value, resultHandler func(js.Value, error)) {
 	go func() {
-		if fetchObject, err := js.Global().GetWithErr("fetch"); err == nil {
-			ch := jswasm.Await(fetchObject.Invoke(url.String(), arg))
+		if fetchi := GetJSInterface(); fetchi != nil {
+			ch := jswasm.Await(fetchi.objectInterface.Invoke(url.String(), arg))
 			go func() {
 				results := <-ch
 				rsp := results[0]
 				resultHandler(rsp, nil)
 			}()
 		} else {
-			resultHandler(js.Value{}, err)
-		}
+			resultHandler(js.Value{}, ErrNotImplemented)
 
+		}
 	}()
 }
 func httpGetRequest(url *url.URL, resultHandler func(js.Value, error)) {

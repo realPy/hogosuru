@@ -1,26 +1,53 @@
 package event
 
-import "github.com/realPy/jswasm/js"
+import (
+	"sync"
 
+	"github.com/realPy/jswasm/js"
+)
+
+var singleton sync.Once
+
+var eventinterface *JSInterface
+
+//JSInterface JSInterface struct
+type JSInterface struct {
+	objectInterface js.Value
+}
+
+//JSEvent JSEvent struct
 type JSEvent struct {
-	Name string
+	object js.Value
 }
 
-type JSCustomEvent struct {
-	Name string
+//GetJSInterface get teh JS interface of event
+func GetJSInterface() *JSInterface {
+
+	singleton.Do(func() {
+		var eventinstance JSInterface
+		var err error
+		if eventinstance.objectInterface, err = js.Global().GetWithErr("Event"); err == nil {
+			eventinterface = &eventinstance
+		}
+	})
+
+	return eventinterface
 }
 
-func (j JSEvent) DispatchRootEvent() {
-	var event = js.Global().Get("Event")
-	ev := event.New(j.Name)
-	doc := js.Global().Get("document")
-	doc.Call("dispatchEvent", ev)
+//NewJSEvent Create a newJSEvent
+func NewJSEvent(message string) (JSEvent, error) {
+	var event JSEvent
+
+	if eventi := GetJSInterface(); eventi != nil {
+		event.object = eventi.objectInterface.New(js.ValueOf(message))
+		return event, nil
+	}
+	return event, ErrNotImplemented
 }
 
-func (j JSCustomEvent) DispatchRootEvent(detail string) {
-
-	var event = js.Global().Get("CustomEvent")
-	ev := event.New(j.Name, js.ValueOf(map[string]interface{}{"detail": detail}))
-	doc := js.Global().Get("document")
-	doc.Call("dispatchEvent", ev)
+//DispatchEvent to the object
+func (j JSEvent) DispatchEvent(obj js.Value) error {
+	var err error
+	_, err = obj.CallWithErr("dispatchEvent", j.object)
+	return err
 }

@@ -2,19 +2,49 @@ package object
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/realPy/jswasm/js"
 )
 
-type ObjectInterface struct {
+var singleton sync.Once
+
+var objinterface *JSInterface
+
+type Selector interface {
+	Get(string) interface{}
+}
+
+//JSInterface JSInterface struct
+type JSInterface struct {
 	objectInterface js.Value
 }
 
-func NewObjectInterface() (ObjectInterface, error) {
+type ObjectInterface struct {
+	object js.Value
+}
+
+//GetJSInterface get teh JS interface of broadcast channel
+func GetJSInterface() *JSInterface {
+
+	singleton.Do(func() {
+		var objinstance JSInterface
+		var err error
+		if objinstance.objectInterface, err = js.Global().GetWithErr("Object"); err == nil {
+			objinterface = &objinstance
+		}
+	})
+
+	return objinterface
+}
+
+func NewObject() (ObjectInterface, error) {
 	var objectinstance ObjectInterface
 	var err error
-	objectinstance.objectInterface, err = js.Global().GetWithErr("Object")
-
+	if obji := GetJSInterface(); obji != nil {
+		objectinstance.object = obji.objectInterface
+		return objectinstance, nil
+	}
 	return objectinstance, err
 }
 
@@ -22,7 +52,7 @@ func (o ObjectInterface) Type(object js.Value) (string, error) {
 	var err error
 	var pobject, strobject, typeobject js.Value
 
-	if pobject, err = o.objectInterface.GetWithErr("prototype"); err == nil {
+	if pobject, err = o.object.GetWithErr("prototype"); err == nil {
 		if strobject, err = pobject.GetWithErr("toString"); err == nil {
 			if typeobject, err = strobject.CallWithErr("call", object); err == nil {
 				return typeobject.String(), nil
@@ -36,7 +66,7 @@ func (o ObjectInterface) Values(object js.Value) (js.Value, error) {
 
 	if object.Type() == js.TypeObject {
 
-		if value, err := o.objectInterface.CallWithErr("values", object); err == nil {
+		if value, err := o.object.CallWithErr("values", object); err == nil {
 			return value, nil
 		} else {
 			return js.Value{}, err
@@ -49,7 +79,7 @@ func (o ObjectInterface) Values(object js.Value) (js.Value, error) {
 
 func (o ObjectInterface) Entries(object js.Value) (js.Value, error) {
 	if object.Type() == js.TypeObject {
-		return o.objectInterface.CallWithErr("entries", object)
+		return o.object.CallWithErr("entries", object)
 	}
 
 	return js.Value{}, ErrNotAnObject
@@ -57,6 +87,13 @@ func (o ObjectInterface) Entries(object js.Value) (js.Value, error) {
 
 type GOValue struct {
 	value interface{}
+}
+
+func (g GOValue) Get(key string) GOValue {
+	if g.IsGOMap() {
+		return g.GOMap().value[key]
+	}
+	return g
 }
 
 func (g GOValue) String() string {
@@ -70,10 +107,19 @@ func (g GOValue) String() string {
 		return fmt.Sprintf("%f", value)
 	case bool:
 		return fmt.Sprintf("%t", value)
+	case GOMap:
+		return fmt.Sprintf("%s", value)
 	default:
 		return "unknown"
 	}
 
+}
+
+func (g GOValue) IsGOMap() bool {
+	if _, ok := g.value.(GOMap); ok {
+		return true
+	}
+	return false
 }
 
 func (g GOValue) IsInt() bool {
@@ -83,8 +129,23 @@ func (g GOValue) IsInt() bool {
 	return false
 }
 
+func (g GOValue) IsObject() bool {
+	if _, ok := g.value.(js.Value); ok {
+		return true
+	}
+	return false
+}
+
 func (g GOValue) Int() int {
 	return g.value.(int)
+}
+
+func (g GOValue) Object() js.Value {
+	return g.value.(js.Value)
+}
+
+func (g GOValue) GOMap() GOMap {
+	return g.value.(GOMap)
 }
 
 func NewGOValue(object js.Value) GOValue {
@@ -101,6 +162,8 @@ func NewGOValue(object js.Value) GOValue {
 		return GOValue{value: object.String()}
 	case js.TypeBoolean:
 		return GOValue{value: object.Bool()}
+	case js.TypeObject:
+		return GOValue{value: object}
 	}
 	return GOValue{}
 }
