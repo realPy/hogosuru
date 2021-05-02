@@ -4,6 +4,12 @@
         <script src="wasm_exec.js"></script>
         <script>
 
+function TestEvent(e) {
+
+console.log("event receive: >>>"+e.detail)
+}
+
+document.addEventListener("TestEvent",TestEvent)
 
 const wasmBrowserInstantiate = async (wasmModuleUrl, importObject) => {
   let response = undefined;

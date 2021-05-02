@@ -5,9 +5,11 @@ import (
 	"net/url"
 
 	"github.com/realPy/jswasm/broadcastchannel"
+	"github.com/realPy/jswasm/document"
 	"github.com/realPy/jswasm/http"
 	"github.com/realPy/jswasm/storage"
 
+	"github.com/realPy/jswasm/customevent"
 	"github.com/realPy/jswasm/indexeddb"
 	"github.com/realPy/jswasm/js"
 	"github.com/realPy/jswasm/json"
@@ -33,6 +35,9 @@ func main() {
 		}
 	})
 
+	event, _ := customevent.NewJSCustomEvent("TestEvent", "detail du text")
+	event.DispatchEvent(document.Root())
+
 	if c, err := indexeddb.OpenIndexedDB("test", 3, func(db js.Value) error {
 
 		if store, err := indexeddb.CreateStore(db, "utilisateur", map[string]interface{}{"keyPath": "id", "autoIncrement": true}); err == nil {
@@ -46,7 +51,7 @@ func main() {
 			if objadd, err := store.Add(map[string]interface{}{"email": "oui", "prenom": "manu"}); err != nil {
 				fmt.Println(err.Error())
 			} else {
-				fmt.Printf("Object add: %s\n", objadd)
+				fmt.Printf("Object add: %d\n", objadd)
 				store.Put(map[string]interface{}{"id": objadd, "email": "oui", "prenom": "lea"})
 			}
 			a, _ := store.GetAllKeys()
@@ -84,8 +89,7 @@ func main() {
 	localstore.SetItem("dog", "dalmatien")
 
 	fmt.Println("-----------Test Channels---------")
-	if bci, err := broadcastchannel.NewBroadcastChannelInterface(); err == nil {
-		channel := bci.New("TestChannel")
+	if channel, err := broadcastchannel.NewBroadcastChannel("TestChannel"); err == nil {
 		channel.SetReceiveMessage(func(obj js.Value) {
 			fmt.Printf("--->%s---\n", obj.String())
 		})
