@@ -6,6 +6,10 @@ import (
 	"github.com/realPy/jswasm/js"
 )
 
+type Selector interface {
+	Get(string) interface{}
+}
+
 type ObjectInterface struct {
 	objectInterface js.Value
 }
@@ -59,6 +63,13 @@ type GOValue struct {
 	value interface{}
 }
 
+func (g GOValue) Get(key string) GOValue {
+	if g.IsGOMap() {
+		return g.GOMap().value[key]
+	}
+	return g
+}
+
 func (g GOValue) String() string {
 
 	switch value := g.value.(type) {
@@ -70,10 +81,19 @@ func (g GOValue) String() string {
 		return fmt.Sprintf("%f", value)
 	case bool:
 		return fmt.Sprintf("%t", value)
+	case GOMap:
+		return fmt.Sprintf("%s", value)
 	default:
 		return "unknown"
 	}
 
+}
+
+func (g GOValue) IsGOMap() bool {
+	if _, ok := g.value.(GOMap); ok {
+		return true
+	}
+	return false
 }
 
 func (g GOValue) IsInt() bool {
@@ -83,8 +103,23 @@ func (g GOValue) IsInt() bool {
 	return false
 }
 
+func (g GOValue) IsObject() bool {
+	if _, ok := g.value.(js.Value); ok {
+		return true
+	}
+	return false
+}
+
 func (g GOValue) Int() int {
 	return g.value.(int)
+}
+
+func (g GOValue) Object() js.Value {
+	return g.value.(js.Value)
+}
+
+func (g GOValue) GOMap() GOMap {
+	return g.value.(GOMap)
 }
 
 func NewGOValue(object js.Value) GOValue {
@@ -101,6 +136,8 @@ func NewGOValue(object js.Value) GOValue {
 		return GOValue{value: object.String()}
 	case js.TypeBoolean:
 		return GOValue{value: object.Bool()}
+	case js.TypeObject:
+		return GOValue{value: object}
 	}
 	return GOValue{}
 }

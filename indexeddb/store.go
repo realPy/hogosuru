@@ -136,10 +136,7 @@ func (s Store) GetAll() ([]object.GOMap, error) {
 	if arraysObject, err = s.callWaitableMethod("getAll"); err == nil {
 
 		object.ParseArray(arraysObject, func(v js.Value) {
-			if entries, err := s.objinterface.Entries(v); err == nil {
-				arrayGoMap = append(arrayGoMap, object.Map(entries))
-			}
-
+			arrayGoMap = append(arrayGoMap, object.Map(v))
 		})
 	}
 	return arrayGoMap, err

@@ -10,6 +10,10 @@ type GOMap struct {
 	value map[string]GOValue
 }
 
+func (g GOMap) Get(key string) GOValue {
+	return g.value[key]
+}
+
 func (g GOMap) String() string {
 
 	var str string = "["
@@ -30,12 +34,22 @@ func Map(object js.Value) GOMap {
 
 	var m map[string]GOValue = make(map[string]GOValue)
 	if object.Type() == js.TypeObject {
-		for i := 0; i < object.Length(); i++ {
-			keypair := object.Index(i)
-			if key, value := Pair(keypair); true {
-				m[key.String()] = value
-			}
+		if Object, err := NewObjectInterface(); err == nil {
+			if entries, err := Object.Entries(object); err == nil {
+				for i := 0; i < entries.Length(); i++ {
 
+					keypair := entries.Index(i)
+					if key, value := Pair(keypair); true {
+						if value.IsObject() {
+							m[key.String()] = GOValue{value: Map(value.Object())}
+						} else {
+							m[key.String()] = value
+						}
+
+					}
+
+				}
+			}
 		}
 
 	}

@@ -12,12 +12,12 @@ var xhrinterface *JSInterface
 
 //JSInterface of XML HTTP Request
 type JSInterface struct {
-	xhrinterface js.Value
+	objectInterface js.Value
 }
 
 //XMLHTTPRequest XMLHTTPRequest struct
 type XMLHTTPRequest struct {
-	xhrobject js.Value
+	object js.Value
 }
 
 //GetJSInterface Get the JS XMLHTTPRequest Interface If nil browser doesn't implement it
@@ -26,7 +26,7 @@ func GetJSInterface() *JSInterface {
 	singleton.Do(func() {
 		var xhrinstance JSInterface
 		var err error
-		if xhrinstance.xhrinterface, err = js.Global().GetWithErr("XMLHttpRequest"); err == nil {
+		if xhrinstance.objectInterface, err = js.Global().GetWithErr("XMLHttpRequest"); err == nil {
 			xhrinterface = &xhrinstance
 		}
 	})
@@ -40,7 +40,7 @@ func NewXMLHTTPRequest() (XMLHTTPRequest, error) {
 
 	if xhri := GetJSInterface(); xhri != nil {
 
-		request.xhrobject = xhri.xhrinterface.New()
+		request.object = xhri.objectInterface.New()
 		return request, nil
 
 	}

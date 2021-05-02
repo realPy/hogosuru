@@ -18,7 +18,7 @@ type JSInterface struct {
 
 //Channel struct
 type Channel struct {
-	channelObject js.Value
+	object js.Value
 }
 
 //GetJSInterface get teh JS interface of broadcast channel
@@ -40,7 +40,7 @@ func NewBroadcastChannel(channelname string) (Channel, error) {
 	var channel Channel
 
 	if bci := GetJSInterface(); bci != nil {
-		channel.channelObject = bci.objectInterface.New(js.ValueOf(channelname))
+		channel.object = bci.objectInterface.New(js.ValueOf(channelname))
 		return channel, nil
 	}
 	return channel, ErrNotImplemented
@@ -56,14 +56,14 @@ func (c Channel) SetReceiveMessage(handler func(js.Value)) {
 		return nil
 	})
 
-	c.channelObject.Set("onmessage", onmessage)
+	c.object.Set("onmessage", onmessage)
 
 }
 
 //PostMessage Post a message on channel
 func (c Channel) PostMessage(message string) error {
 	var err error
-	_, err = c.channelObject.CallWithErr("postMessage", js.ValueOf(message))
+	_, err = c.object.CallWithErr("postMessage", js.ValueOf(message))
 
 	return err
 }
