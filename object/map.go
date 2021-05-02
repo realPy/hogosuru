@@ -30,6 +30,9 @@ func (g GOMap) String() string {
 	return str
 }
 
+func NewGoMap(m map[string]GOValue) GOMap {
+	return GOMap{value: m}
+}
 func Map(object js.Value) GOMap {
 
 	var m map[string]GOValue = make(map[string]GOValue)
@@ -53,5 +56,5 @@ func Map(object js.Value) GOMap {
 		}
 
 	}
-	return GOMap{value: m}
+	return NewGoMap(m)
 }

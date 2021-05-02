@@ -7,7 +7,9 @@ import (
 	"github.com/realPy/jswasm/broadcastchannel"
 	"github.com/realPy/jswasm/document"
 	"github.com/realPy/jswasm/fetch"
+	"github.com/realPy/jswasm/object"
 	"github.com/realPy/jswasm/storage"
+	"github.com/realPy/jswasm/xmlhttprequest"
 
 	"github.com/realPy/jswasm/customevent"
 	"github.com/realPy/jswasm/indexeddb"
@@ -92,8 +94,8 @@ func main() {
 
 	fmt.Println("-----------Test Channels---------")
 	if channel, err := broadcastchannel.NewBroadcastChannel("TestChannel"); err == nil {
-		channel.SetReceiveMessage(func(obj js.Value) {
-			fmt.Printf("--->%s---\n", obj.String())
+		channel.SetReceiveMessage(func(c broadcastchannel.Channel, obj object.GOMap) {
+			fmt.Printf("--->%s---\n", obj.Get("data").String())
 		})
 
 		if err := channel.PostMessage("New wasm loaded"); err != nil {
@@ -102,6 +104,21 @@ func main() {
 
 	} else {
 		fmt.Println(err.Error())
+	}
+
+	if xhr, err := xmlhttprequest.NewXMLHTTPRequest(); err == nil {
+		endpoint, _ := url.Parse("http://localhost:9090/wasm.wasm")
+		xhr.Open("GET", endpoint)
+		xhr.SetOnload(func(x xmlhttprequest.XMLHTTPRequest) {
+
+			fmt.Printf("XML HTTPRequest Loaded\n")
+
+		})
+
+		xhr.SetOnProgress(func(x xmlhttprequest.XMLHTTPRequest, g object.GOMap) {
+			fmt.Printf("On progress :%s\n", g)
+		})
+		xhr.Send()
 	}
 
 	ch := make(chan struct{})

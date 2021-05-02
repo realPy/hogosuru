@@ -5,6 +5,7 @@ import (
 
 	"github.com/realPy/jswasm/js"
 	"github.com/realPy/jswasm/object"
+	"github.com/realPy/jswasm/object/event/messageevent"
 )
 
 var singleton sync.Once
@@ -47,10 +48,10 @@ func NewBroadcastChannel(channelname string) (Channel, error) {
 }
 
 //SetReceiveMessage Set the receiver method on channel
-func (c Channel) SetReceiveMessage(handler func(js.Value)) {
+func (c Channel) SetReceiveMessage(handler func(Channel, object.GOMap)) {
 	onmessage := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		if obj, err := object.DataFromMessageEvent(args[0]); err == nil {
-			handler(obj)
+		if obj, err := messageevent.NewMessageEvent(args[0]); err == nil {
+			handler(c, obj)
 		}
 
 		return nil
