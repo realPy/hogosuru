@@ -8,8 +8,7 @@ import (
 )
 
 type Store struct {
-	objinterface object.ObjectInterface
-	objstore     js.Value
+	objstore js.Value
 }
 
 func CreateStore(dbObject js.Value, name string, schema map[string]interface{}) (Store, error) {
@@ -107,9 +106,12 @@ func (s Store) Get(key int) (object.GOMap, error) {
 	var mapobj object.GOMap
 
 	if arrayObject, err = s.callWaitableMethod("get", js.ValueOf(key)); err == nil {
-		if entries, err := s.objinterface.Entries(arrayObject); err == nil {
-			mapobj = object.Map(entries)
+		if obji, err := object.NewObject(); err == nil {
+			if entries, err := obji.Entries(arrayObject); err == nil {
+				mapobj = object.Map(entries)
+			}
 		}
+
 	}
 
 	return mapobj, err

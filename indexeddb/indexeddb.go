@@ -9,8 +9,7 @@ import (
 )
 
 type IndexedDB struct {
-	dbobject     js.Value
-	objinterface object.ObjectInterface
+	dbobject js.Value
 }
 
 type SuccessFailure struct {
@@ -76,10 +75,6 @@ func OpenIndexedDB(name string, version int, automigrate func(js.Value) error) (
 	var err error
 	var window, indexedDBObject, waitableOpen, db js.Value
 
-	if indexdb.objinterface, err = object.NewObjectInterface(); err != nil {
-		return indexdb, err
-	}
-
 	if window, err = js.Global().GetWithErr("window"); err == nil {
 
 		if indexedDBObject, err = window.GetWithErr("indexedDB"); err == nil {
@@ -127,7 +122,7 @@ func (i IndexedDB) GetObjectStore(table string, permission string) (Store, error
 	if transaction, err := i.dbobject.CallWithErr("transaction", js.ValueOf(table), js.ValueOf(permission)); err == nil {
 
 		if objectstore, err := transaction.CallWithErr("objectStore", js.ValueOf(table)); err == nil {
-			return Store{objstore: objectstore, objinterface: i.objinterface}, nil
+			return Store{objstore: objectstore}, nil
 		} else {
 			return Store{}, err
 		}

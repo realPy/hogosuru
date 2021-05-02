@@ -57,13 +57,7 @@ func (j Json) Get(key string) js.Value {
 	return j.object.Get(key)
 }
 
-func recurseUmarshalJson(object js.Value) jsobject.GOMap {
-
-	return jsobject.Map(object)
-
-	return jsobject.GOMap{}
-}
 func (j Json) GoJson() jsobject.GOMap {
+	return jsobject.Map(j.object)
 
-	return recurseUmarshalJson(j.object)
 }

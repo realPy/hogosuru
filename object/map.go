@@ -34,7 +34,7 @@ func Map(object js.Value) GOMap {
 
 	var m map[string]GOValue = make(map[string]GOValue)
 	if object.Type() == js.TypeObject {
-		if Object, err := NewObjectInterface(); err == nil {
+		if Object, err := NewObject(); err == nil {
 			if entries, err := Object.Entries(object); err == nil {
 				for i := 0; i < entries.Length(); i++ {
 

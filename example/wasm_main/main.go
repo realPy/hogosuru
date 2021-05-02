@@ -6,7 +6,7 @@ import (
 
 	"github.com/realPy/jswasm/broadcastchannel"
 	"github.com/realPy/jswasm/document"
-	"github.com/realPy/jswasm/http"
+	"github.com/realPy/jswasm/fetch"
 	"github.com/realPy/jswasm/storage"
 
 	"github.com/realPy/jswasm/customevent"
@@ -25,15 +25,15 @@ func main() {
 		fmt.Printf("erreur %s", err)
 	}
 	endpoint, _ := url.Parse("http://localhost:9090/static.json")
-	http.HTTPGetText(endpoint, func(status int, text string) {
+	fetch.HTTPGetText(endpoint, func(status int, text string) {
 		if status == 200 {
-			/*
-				if j, err := json.JsonParse(text); err == nil {
-					jsonGo := j.GoJson()
-					fmt.Printf("Hello %s\n", jsonGo["hello"])
-				} else {
-					fmt.Printf("erreur %s", err)
-				}*/
+
+			if j, err := json.NewJsonFromString(text); err == nil {
+				jsonGo := j.GoJson()
+				fmt.Printf("Hello %s\n", jsonGo.Get("hello"))
+			} else {
+				fmt.Printf("erreur %s", err)
+			}
 		}
 	})
 
