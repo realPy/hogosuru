@@ -4,16 +4,17 @@ import (
 	"fmt"
 	"net/url"
 
+	"github.com/realPy/jswasm/js"
+
 	"github.com/realPy/jswasm/broadcastchannel"
+	"github.com/realPy/jswasm/customevent"
 	"github.com/realPy/jswasm/document"
 	"github.com/realPy/jswasm/fetch"
+	"github.com/realPy/jswasm/indexeddb"
 	"github.com/realPy/jswasm/object"
 	"github.com/realPy/jswasm/storage"
 	"github.com/realPy/jswasm/xmlhttprequest"
 
-	"github.com/realPy/jswasm/customevent"
-	"github.com/realPy/jswasm/indexeddb"
-	"github.com/realPy/jswasm/js"
 	"github.com/realPy/jswasm/json"
 )
 
@@ -27,17 +28,54 @@ func main() {
 		fmt.Printf("erreur %s", err)
 	}
 	endpoint, _ := url.Parse("http://localhost:9090/static.json")
-	fetch.HTTPGetText(endpoint, func(status int, text string) {
-		if status == 200 {
 
-			if j, err := json.NewJsonFromString(text); err == nil {
-				jsonGo := j.GoJson()
-				fmt.Printf("Hello %s\n", jsonGo.Get("hello"))
+	fetchsync := make(chan bool)
+	fetch.NewFetch(endpoint, "GET", nil, nil, func(fr fetch.FetchResponse) {
+
+		if fr.Status() == 200 {
+			if text, err := fr.Text(); err == nil {
+
+				if j, err := json.NewJsonFromString(text); err == nil {
+					jsonGo := j.GoJson()
+					fmt.Printf("Hello %s\n", jsonGo.Get("hello"))
+				} else {
+					fmt.Printf("erreur %s", err)
+				}
+
 			} else {
-				fmt.Printf("erreur %s", err)
+				fmt.Println(err.Error())
 			}
 		}
+		fetchsync <- true
 	})
+	<-fetchsync
+
+	dataPost := url.Values{}
+
+	dataPost.Set("test", "ok")
+
+	fetch.NewFetch(endpoint,
+		"POST",
+		&map[string]interface{}{"content-type": "application/x-www-form-urlencoded", "User-Agent": "Tester"},
+		&dataPost, func(fr fetch.FetchResponse) {
+
+			if fr.Status() == 200 {
+				if text, err := fr.Text(); err == nil {
+
+					if j, err := json.NewJsonFromString(text); err == nil {
+						jsonGo := j.GoJson()
+						fmt.Printf("Hello %s\n", jsonGo.Get("hello"))
+					} else {
+						fmt.Printf("erreur %s", err)
+					}
+
+				} else {
+					fmt.Println(err.Error())
+				}
+			}
+			fetchsync <- true
+		})
+	<-fetchsync
 
 	event, _ := customevent.NewJSCustomEvent("TestEvent", "detail du text")
 	event.DispatchEvent(document.Root())
@@ -107,11 +145,19 @@ func main() {
 	}
 
 	if xhr, err := xmlhttprequest.NewXMLHTTPRequest(); err == nil {
-		endpoint, _ := url.Parse("http://localhost:9090/wasm.wasm")
+		endpoint, _ := url.Parse("http://localhost:9090/static.json")
 		xhr.Open("GET", endpoint)
 		xhr.SetOnload(func(x xmlhttprequest.XMLHTTPRequest) {
 
 			fmt.Printf("XML HTTPRequest Loaded\n")
+
+			if text, err := x.ResponseText(); err == nil {
+				fmt.Printf("Resultat: %s\n", text)
+			}
+
+			if header, err := x.GetResponseHeader("Content-Type"); err == nil {
+				fmt.Printf("Resultat: %s\n", header)
+			}
 
 		})
 
