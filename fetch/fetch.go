@@ -1,11 +1,14 @@
 package fetch
 
 import (
+	"fmt"
 	"net/url"
 	"sync"
 
 	"github.com/realPy/jswasm"
+	"github.com/realPy/jswasm/arraybuffer"
 	"github.com/realPy/jswasm/js"
+	"github.com/realPy/jswasm/object"
 )
 
 var singleton sync.Once
@@ -31,143 +34,122 @@ func GetJSInterface() *JSInterface {
 	return fetchinterface
 }
 
-func handleHTTPBytesResult(rsp js.Value, httpHandler func(int, []byte)) {
+//Fetch struct
+type Fetch struct {
+	object js.Value
+}
 
-	if statusObject, err := rsp.GetWithErr("status"); err == nil {
-		if statusObject.Type() == js.TypeNumber {
-			status := statusObject.Int()
+//FetchResponse struct
+type FetchResponse struct {
+	object js.Value
+	err    error
+	status int
+}
 
-			if arrayObject, err := rsp.CallWithErr("arrayBuffer"); err == nil {
-				binary := <-jswasm.Await(arrayObject)
+func NewFetchResponse(obj js.Value) (FetchResponse, error) {
+	var response FetchResponse
 
-				if arrayConstructor, err := js.Global().GetWithErr("Uint8Array"); err == nil {
-					dataJS := arrayConstructor.New(binary[0])
+	if object.String(obj) == "[object Response]" {
 
-					binaryObject := binary[0]
-					//	len := binary[0].Get("byteLength").Int()
-					if byteLengthObject, err := binaryObject.GetWithErr("byteLength"); err == nil {
-						if byteLengthObject.Type() == js.TypeNumber {
-							len := byteLengthObject.Int()
-							var data []byte = make([]byte, len)
-							if _, err := js.CopyBytesToGoWithErr(data, dataJS); err == nil {
-								httpHandler(status, data)
-							} else {
-								httpHandler(456, []byte(err.Error()))
-							}
+		response.object = obj
+		return response, nil
+	}
+	return response, ErrNotAnFResp
+}
 
-						} else {
-							httpHandler(456, []byte("byteLength is not an number"))
-						}
+func (fr FetchResponse) Status() int {
+	if fr.status == 0 {
+		fr.status = 456
+		if statusObject, err := fr.object.GetWithErr("status"); err == nil {
+			if statusObject.Type() == js.TypeNumber {
+				fr.status = statusObject.Int()
+			}
+		}
+	}
+	return fr.status
+}
 
-					} else {
-						httpHandler(456, []byte(err.Error()))
-					}
+func (fr FetchResponse) Text() (string, error) {
 
-				} else {
-					httpHandler(456, []byte("unable to allocate Uint8Array constructor"))
+	var txtObject js.Value
+	var err error
+	if txtObject, err = fr.object.CallWithErr("text"); err == nil {
+		jsTxt := <-jswasm.Await(txtObject)
+		if len(jsTxt) > 0 {
+			return jsTxt[0].String(), nil
+		}
+
+	}
+	return "", err
+}
+
+func (fr FetchResponse) ArrayBuffer() ([]byte, error) {
+
+	var buffer []byte
+	var err error
+	var arrayObject js.Value
+	var ab arraybuffer.ArrayBuffer
+	if arrayObject, err = fr.object.CallWithErr("arrayBuffer"); err == nil {
+		binary := <-jswasm.Await(arrayObject)
+
+		if len(binary) > 0 {
+
+			if ab, err = arraybuffer.NewArrayBuffer(binary[0]); err == nil {
+
+				return ab.Bytes()
+			}
+		}
+	}
+	return buffer, err
+}
+
+//NewFetch New fetch
+func NewFetch(urlfetch *url.URL, method string, headers *map[string]interface{}, data *url.Values, handlerResponse func(FetchResponse)) (Fetch, error) {
+	var fetch Fetch
+
+	if fetchi := GetJSInterface(); fetchi != nil {
+		var goarg map[string]interface{} = make(map[string]interface{})
+
+		goarg["method"] = method
+		if headers != nil {
+			goarg["headers"] = *headers
+		}
+		if data != nil {
+			goarg["body"] = data.Encode()
+		}
+
+		if headers == nil {
+			headers = &map[string]interface{}{}
+
+		}
+		if data == nil {
+			data = &url.Values{}
+		}
+
+		arg := js.ValueOf(goarg)
+
+		fetch.object = fetchi.objectInterface.Invoke(urlfetch.String(), arg)
+
+		then := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+
+			var err error
+			var fr FetchResponse
+			if len(args) > 0 {
+				rsp := args[0]
+				if fr, err = NewFetchResponse(rsp); err != nil {
+					fr.err = err
 				}
-			} else {
-				httpHandler(456, []byte(err.Error()))
-			}
-		} else {
-			httpHandler(456, []byte("status is not an number"))
-		}
-
-	} else {
-		httpHandler(456, []byte(err.Error()))
-	}
-
-}
-func handleHTTPTextResult(rsp js.Value, httpHandler func(int, string)) {
-
-	if statusObject, err := rsp.GetWithErr("status"); err == nil {
-		if statusObject.Type() == js.TypeNumber {
-			status := statusObject.Int()
-			if txtObject, err := rsp.CallWithErr("text"); err == nil {
-				jsTxt := <-jswasm.Await(txtObject)
-				httpHandler(status, jsTxt[0].String())
 
 			} else {
-				httpHandler(456, err.Error())
+				fr.err = fmt.Errorf("fetch response must contains args")
 			}
+			handlerResponse(fr)
+			return nil
+		})
 
-		} else {
-			httpHandler(456, "status is not an number")
-		}
-	} else {
-		httpHandler(456, err.Error())
+		fetch.object.Call("then", then)
+
+		return fetch, nil
 	}
-
-}
-
-func http(url *url.URL, arg js.Value, resultHandler func(js.Value, error)) {
-	go func() {
-		if fetchi := GetJSInterface(); fetchi != nil {
-			ch := jswasm.Await(fetchi.objectInterface.Invoke(url.String(), arg))
-			go func() {
-				results := <-ch
-				rsp := results[0]
-				resultHandler(rsp, nil)
-			}()
-		} else {
-			resultHandler(js.Value{}, ErrNotImplemented)
-
-		}
-	}()
-}
-func httpGetRequest(url *url.URL, resultHandler func(js.Value, error)) {
-	http(url, js.ValueOf(nil), resultHandler)
-}
-
-func httpPost(url *url.URL, data *url.Values, resultHandler func(js.Value, error)) {
-	arg := js.ValueOf(map[string]interface{}{"method": "POST", "headers": map[string]interface{}{"content-type": "application/x-www-form-urlencoded"}, "body": data.Encode()})
-	http(url, arg, resultHandler)
-}
-
-//HTTPGetText get a url ressource with string response
-func HTTPGetText(url *url.URL, httpHandler func(int, string)) {
-	httpGetRequest(url, func(rsp js.Value, err error) {
-		if err == nil {
-			handleHTTPTextResult(rsp, httpHandler)
-		} else {
-			httpHandler(456, err.Error())
-		}
-
-	})
-}
-
-//HTTPGetBytes get a url ressource with bytes response
-func HTTPGetBytes(url *url.URL, httpHandler func(int, []byte)) {
-	httpGetRequest(url, func(rsp js.Value, err error) {
-		if err == nil {
-			handleHTTPBytesResult(rsp, httpHandler)
-		} else {
-			httpHandler(456, []byte(err.Error()))
-		}
-
-	})
-}
-
-//HTTPPostText post data to url with text response
-func HTTPPostText(url *url.URL, data *url.Values, httpHandler func(int, string)) {
-
-	httpPost(url, data, func(rsp js.Value, err error) {
-		if err == nil {
-			handleHTTPTextResult(rsp, httpHandler)
-		} else {
-			httpHandler(456, err.Error())
-		}
-	})
-}
-
-//HTTPPostBytes post data with bytes response
-func HTTPPostBytes(url *url.URL, data *url.Values, httpHandler func(int, []byte)) {
-
-	httpPost(url, data, func(rsp js.Value, err error) {
-		if err == nil {
-			handleHTTPBytesResult(rsp, httpHandler)
-		} else {
-			httpHandler(456, []byte(err.Error()))
-		}
-	})
+	return fetch, ErrNotImplemented
 }

@@ -1,5 +1,14 @@
 package xmlhttprequest
 
+/*
+
+TODO: Document Class
+
+
+
+
+*/
+
 import (
 	"net/url"
 	"sync"
@@ -56,6 +65,12 @@ func (x XMLHTTPRequest) Open(method string, url *url.URL) error {
 	return err
 }
 
+func (x XMLHTTPRequest) SetRequestHeader(header string, value string) error {
+	var err error
+	_, err = x.object.CallWithErr("setRequestHeader", js.ValueOf(header), js.ValueOf(value))
+	return err
+}
+
 func (x XMLHTTPRequest) Send() error {
 	var err error
 	_, err = x.object.CallWithErr("send")
@@ -102,6 +117,17 @@ func (x XMLHTTPRequest) SetOnError(handler func(XMLHTTPRequest)) {
 
 }
 
+//SetOnReadyStateChange Set SetOnReadyStateChange
+func (x XMLHTTPRequest) SetOnReadyStateChange(handler func(XMLHTTPRequest)) {
+	onreadystatechange := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		handler(x)
+
+		return nil
+	})
+	x.object.Set("onreadystatechange", onreadystatechange)
+
+}
+
 //SetOnProgress Set  OnProgress
 func (x XMLHTTPRequest) SetOnProgress(handler func(XMLHTTPRequest, object.GOMap)) {
 	onprogress := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
@@ -115,4 +141,121 @@ func (x XMLHTTPRequest) SetOnProgress(handler func(XMLHTTPRequest, object.GOMap)
 
 	x.object.Set("onprogress", onprogress)
 
+}
+
+func (x XMLHTTPRequest) ReadyState() (int, error) {
+	var readystate js.Value
+	var err error
+	if readystate, err = x.object.GetWithErr("readyState"); err == nil {
+		if readystate.Type() == js.TypeNumber {
+			return readystate.Int(), nil
+		} else {
+			return 0, object.ErrObjectNotNumber
+		}
+
+	}
+	return 0, err
+}
+
+func (x XMLHTTPRequest) ResponseText() (string, error) {
+	var responseTexte js.Value
+	var err error
+	if responseTexte, err = x.object.GetWithErr("responseText"); err == nil {
+
+		if responseTexte.Type() == js.TypeString {
+			return responseTexte.String(), nil
+		} else {
+			return "", object.ErrObjectNotString
+		}
+
+	}
+	return "", err
+}
+
+//GetResponseHeader https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/getResponseHeader
+func (x XMLHTTPRequest) GetResponseHeader(header string) (string, error) {
+	var responseHeader js.Value
+	var err error
+	if responseHeader, err = x.object.CallWithErr("getResponseHeader", js.ValueOf(header)); err == nil {
+
+		if responseHeader.Type() == js.TypeString {
+			return responseHeader.String(), nil
+		} else {
+			return "", object.ErrObjectNotString
+		}
+
+	}
+	return "", err
+}
+
+//Response
+func (x XMLHTTPRequest) Response() (js.Value, error) {
+	return x.object.GetWithErr("response")
+}
+
+func (x XMLHTTPRequest) SetResponseType(typeResponse string) {
+
+	x.object.Set("responseType", js.ValueOf(typeResponse))
+
+}
+
+func (x XMLHTTPRequest) SetWithCredentials(withcredentials bool) {
+
+	x.object.Set("withCredentials", js.ValueOf(withcredentials))
+
+}
+
+func (x XMLHTTPRequest) ResponseURL() (string, error) {
+	var responseUrl js.Value
+	var err error
+	if responseUrl, err = x.object.GetWithErr("responseURL"); err == nil {
+
+		if responseUrl.Type() == js.TypeString {
+			return responseUrl.String(), nil
+		} else {
+			return "", object.ErrObjectNotString
+		}
+
+	}
+	return "", err
+}
+
+func (x XMLHTTPRequest) ResponseXML() (js.Value, error) {
+	var responseXML js.Value
+	var err error
+	if responseXML, err = x.object.GetWithErr("responseXML"); err == nil {
+		//return a document object : TO DO IMPLEMENTATION
+		return responseXML, nil
+
+	}
+	return js.Value{}, err
+}
+
+func (x XMLHTTPRequest) Status() (int, error) {
+	var readystate js.Value
+	var err error
+	if readystate, err = x.object.GetWithErr("status"); err == nil {
+		if readystate.Type() == js.TypeNumber {
+			return readystate.Int(), nil
+		} else {
+			return 0, object.ErrObjectNotNumber
+		}
+
+	}
+	return 0, err
+}
+
+func (x XMLHTTPRequest) StatusText() (string, error) {
+	var responseUrl js.Value
+	var err error
+	if responseUrl, err = x.object.GetWithErr("statusText"); err == nil {
+
+		if responseUrl.Type() == js.TypeString {
+			return responseUrl.String(), nil
+		} else {
+			return "", object.ErrObjectNotString
+		}
+
+	}
+	return "", err
 }
