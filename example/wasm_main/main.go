@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"net/url"
 
+	"github.com/realPy/jswasm/formdata"
+	"github.com/realPy/jswasm/htmlinputelement"
 	"github.com/realPy/jswasm/js"
+	"github.com/realPy/jswasm/response"
 
 	"github.com/realPy/jswasm/broadcastchannel"
 	"github.com/realPy/jswasm/customevent"
@@ -18,6 +21,53 @@ import (
 	"github.com/realPy/jswasm/json"
 )
 
+func test() js.Func {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		endpoint, _ := url.Parse("http://localhost:9090/po")
+		files, _ := document.QuerySelector("[name=file]")
+		if h, err := htmlinputelement.NewFromJSObject(files); err == nil {
+			if file, err := h.Files(); err == nil {
+				f, _ := formdata.NewFormData()
+				f.AppendString("po", "po")
+				fi, _ := file.Item(0)
+				f.AppendJSObject("avatar", fi.JSObject())
+				if size, err := fi.Size(); err == nil {
+					fmt.Printf("size of the file :%d --%s\n", size, fi)
+				} else {
+					fmt.Println(err.Error())
+				}
+
+				if xhr, err := xmlhttprequest.NewXMLHTTPRequest(); err == nil {
+
+					xhr.Open("POST", endpoint)
+
+					xhr.SetOnload(func(x xmlhttprequest.XMLHTTPRequest) {
+
+						fmt.Printf("XML HTTPRequest Loaded\n")
+
+						if text, err := x.ResponseText(); err == nil {
+							fmt.Printf("Resultat: %s\n", text)
+						}
+
+						if header, err := x.GetResponseHeader("Content-Type"); err == nil {
+							fmt.Printf("Resultat: %s\n", header)
+						}
+
+					})
+					xhr.SendForm(f)
+				}
+
+			} else {
+				fmt.Println(err.Error())
+			}
+		} else {
+			fmt.Println(err.Error())
+		}
+
+		return nil
+	})
+}
+
 func main() {
 
 	if j, err := json.NewJsonFromString("{\"test\":true,\"o\":\"poi\",\"nani\":1.5,\"complex\":{ \"toto\":\"yes\"}}"); err == nil {
@@ -27,13 +77,15 @@ func main() {
 	} else {
 		fmt.Printf("erreur %s", err)
 	}
+
 	endpoint, _ := url.Parse("http://localhost:9090/static.json")
 
 	fetchsync := make(chan bool)
-	fetch.NewFetch(endpoint, "GET", nil, nil, func(fr fetch.FetchResponse) {
 
-		if fr.Status() == 200 {
-			if text, err := fr.Text(); err == nil {
+	fetch.NewFetch(endpoint, "GET", nil, nil, func(r response.Response) {
+
+		if r.Status() == 200 {
+			if text, err := r.Text(); err == nil {
 
 				if j, err := json.NewJsonFromString(text); err == nil {
 					jsonGo := j.GoJson()
@@ -41,6 +93,22 @@ func main() {
 				} else {
 					fmt.Printf("erreur %s", err)
 				}
+
+			} else {
+				fmt.Println(err.Error())
+			}
+		}
+		fetchsync <- true
+	})
+
+	<-fetchsync
+
+	fetch.NewFetch(endpoint, "GET", nil, nil, func(r response.Response) {
+
+		if r.Status() == 200 {
+			if b, err := r.ArrayBufferBytes(); err == nil {
+
+				fmt.Printf("Bytes: %s", string(b))
 
 			} else {
 				fmt.Println(err.Error())
@@ -57,10 +125,10 @@ func main() {
 	fetch.NewFetch(endpoint,
 		"POST",
 		&map[string]interface{}{"content-type": "application/x-www-form-urlencoded", "User-Agent": "Tester"},
-		&dataPost, func(fr fetch.FetchResponse) {
+		&dataPost, func(r response.Response) {
 
-			if fr.Status() == 200 {
-				if text, err := fr.Text(); err == nil {
+			if r.Status() == 200 {
+				if text, err := r.Text(); err == nil {
 
 					if j, err := json.NewJsonFromString(text); err == nil {
 						jsonGo := j.GoJson()
@@ -75,10 +143,13 @@ func main() {
 			}
 			fetchsync <- true
 		})
+
 	<-fetchsync
 
 	event, _ := customevent.NewJSCustomEvent("TestEvent", "detail du text")
 	event.DispatchEvent(document.Root())
+
+	event.Export("romain")
 
 	if c, err := indexeddb.OpenIndexedDB("test", 3, func(db js.Value) error {
 
@@ -139,7 +210,7 @@ func main() {
 		if err := channel.PostMessage("New wasm loaded"); err != nil {
 			fmt.Println(err.Error())
 		}
-
+		channel.Export("monchannel")
 	} else {
 		fmt.Println(err.Error())
 	}
@@ -165,7 +236,31 @@ func main() {
 			fmt.Printf("On progress :%s\n", g)
 		})
 		xhr.Send()
+
 	}
+
+	if xhr, err := xmlhttprequest.NewXMLHTTPRequest(); err == nil {
+
+		xhr.Open("POST", endpoint)
+		f, _ := formdata.NewFormData()
+		f.AppendString("data", "pouet")
+		xhr.SetOnload(func(x xmlhttprequest.XMLHTTPRequest) {
+
+			fmt.Printf("XML HTTPRequest Loaded\n")
+
+			if text, err := x.ResponseText(); err == nil {
+				fmt.Printf("Resultat: %s\n", text)
+			}
+
+			if header, err := x.GetResponseHeader("Content-Type"); err == nil {
+				fmt.Printf("Resultat: %s\n", header)
+			}
+
+		})
+		xhr.SendForm(f)
+	}
+
+	js.Global().Set("test", test())
 
 	ch := make(chan struct{})
 	<-ch

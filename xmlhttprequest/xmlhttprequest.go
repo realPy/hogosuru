@@ -13,6 +13,7 @@ import (
 	"net/url"
 	"sync"
 
+	"github.com/realPy/jswasm/formdata"
 	"github.com/realPy/jswasm/js"
 	"github.com/realPy/jswasm/object"
 	"github.com/realPy/jswasm/object/event/progressevent"
@@ -77,55 +78,47 @@ func (x XMLHTTPRequest) Send() error {
 	return err
 }
 
+func (x XMLHTTPRequest) SendForm(f formdata.FormData) error {
+	var err error
+	_, err = x.object.CallWithErr("send", f.JSObject())
+	return err
+}
+
 func (x XMLHTTPRequest) Abort() error {
 	var err error
 	_, err = x.object.CallWithErr("abort")
 	return err
 }
 
-//SetOnload Set OnLoad
-func (x XMLHTTPRequest) SetOnload(handler func(XMLHTTPRequest)) {
-	onload := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+func (x XMLHTTPRequest) setHandler(jshandlername string, handler func(XMLHTTPRequest)) {
+
+	jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		handler(x)
 
 		return nil
 	})
 
-	x.object.Set("onload", onload)
+	x.object.Set(jshandlername, jsfunc)
+}
 
+//SetOnload Set OnLoad
+func (x XMLHTTPRequest) SetOnload(handler func(XMLHTTPRequest)) {
+	x.setHandler("onload", handler)
 }
 
 //SetOnAbort Set SetOnAbort
 func (x XMLHTTPRequest) SetOnAbort(handler func(XMLHTTPRequest)) {
-	onabort := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		handler(x)
-
-		return nil
-	})
-	x.object.Set("onabort", onabort)
-
+	x.setHandler("onabort", handler)
 }
 
 //SetOnError Set SetOnError
 func (x XMLHTTPRequest) SetOnError(handler func(XMLHTTPRequest)) {
-	onerror := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		handler(x)
-
-		return nil
-	})
-	x.object.Set("onerror", onerror)
-
+	x.setHandler("onerror", handler)
 }
 
 //SetOnReadyStateChange Set SetOnReadyStateChange
 func (x XMLHTTPRequest) SetOnReadyStateChange(handler func(XMLHTTPRequest)) {
-	onreadystatechange := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		handler(x)
-
-		return nil
-	})
-	x.object.Set("onreadystatechange", onreadystatechange)
-
+	x.setHandler("onreadystatechange", handler)
 }
 
 //SetOnProgress Set  OnProgress
@@ -258,4 +251,86 @@ func (x XMLHTTPRequest) StatusText() (string, error) {
 
 	}
 	return "", err
+}
+
+func (x XMLHTTPRequest) uploadSetHandler(jshandlername string, handler func(XMLHTTPRequest)) {
+	var uploadAbstractObject js.Value
+	var err error
+
+	if uploadAbstractObject, err = x.object.GetWithErr("upload"); err == nil {
+
+		jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+
+			handler(x)
+
+			return nil
+		})
+
+		uploadAbstractObject.Set(jshandlername, jsfunc)
+	}
+
+}
+
+//UploadSetOnloadstart
+func (x XMLHTTPRequest) UploadSetOnloadstart(handler func(XMLHTTPRequest)) {
+
+	x.uploadSetHandler("onloadstart", handler)
+
+}
+
+//UploadSetOnabort
+func (x XMLHTTPRequest) UploadSetOnabort(handler func(XMLHTTPRequest)) {
+
+	x.uploadSetHandler("onabort", handler)
+
+}
+
+//UploadSetOnerror
+func (x XMLHTTPRequest) UploadSetOnerror(handler func(XMLHTTPRequest)) {
+
+	x.uploadSetHandler("onerror", handler)
+
+}
+
+//UploadSetOnload
+func (x XMLHTTPRequest) UploadSetOnload(handler func(XMLHTTPRequest)) {
+
+	x.uploadSetHandler("onload", handler)
+
+}
+
+//UploadSetOntimeout
+func (x XMLHTTPRequest) UploadSetOntimeout(handler func(XMLHTTPRequest)) {
+
+	x.uploadSetHandler("ontimeout", handler)
+
+}
+
+//UploadSetOnloadend
+func (x XMLHTTPRequest) UploadSetOnloadend(handler func(XMLHTTPRequest)) {
+
+	x.uploadSetHandler("onloadend", handler)
+
+}
+
+//UploadSetOnprogress
+func (x XMLHTTPRequest) UploadSetOnprogress(handler func(XMLHTTPRequest, object.GOMap)) {
+
+	var uploadAbstractObject js.Value
+	var err error
+	var gomap object.GOMap
+
+	if uploadAbstractObject, err = x.object.GetWithErr("upload"); err == nil {
+
+		jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+			if gomap, err = progressevent.NewProgressEvent(args[0]); err == nil {
+				handler(x, gomap)
+			}
+
+			return nil
+		})
+
+		uploadAbstractObject.Set("onprogress", jsfunc)
+	}
+
 }

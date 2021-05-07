@@ -6,13 +6,25 @@ import (
 )
 
 type Storage struct {
-	object js.Value
+	object.Object
+}
+
+func NewFromJSObject(obj js.Value) (Storage, error) {
+	var s Storage
+
+	if object.String(obj) == "[object Storage]" {
+		s.Object = s.SetObject(obj)
+		return s, nil
+	}
+
+	return s, ErrNotAnLocalStorage
 }
 
 func GetLocalStorage(typeStorage string) (Storage, error) {
 	var err error
 	var localstorage Storage
 	var localstorageobject, window js.Value
+
 	if window, err = js.Global().GetWithErr("window"); err == nil {
 		var strType string = "undefined"
 		switch typeStorage {
@@ -22,7 +34,8 @@ func GetLocalStorage(typeStorage string) (Storage, error) {
 			strType = "sessionStorage"
 		}
 		if localstorageobject, err = window.GetWithErr(strType); err == nil {
-			localstorage.object = localstorageobject
+
+			localstorage, err = NewFromJSObject(localstorageobject)
 		}
 
 	}
@@ -31,14 +44,14 @@ func GetLocalStorage(typeStorage string) (Storage, error) {
 
 func (l Storage) SetItem(key, value string) error {
 	var err error
-	_, err = l.object.CallWithErr("setItem", js.ValueOf(key), js.ValueOf(value))
+	_, err = l.JSObject().CallWithErr("setItem", js.ValueOf(key), js.ValueOf(value))
 	return err
 }
 
 func (l Storage) GetItem(key string) (string, error) {
 	var err error
 	var itemObject js.Value
-	if itemObject, err = l.object.CallWithErr("getItem", js.ValueOf(key)); err == nil {
+	if itemObject, err = l.JSObject().CallWithErr("getItem", js.ValueOf(key)); err == nil {
 		return object.StringWithErr(itemObject)
 	}
 	return "", err
@@ -46,24 +59,19 @@ func (l Storage) GetItem(key string) (string, error) {
 
 func (l Storage) RemoveItem(key string) error {
 	var err error
-	_, err = l.object.CallWithErr("removeItem", js.ValueOf(key))
+	_, err = l.JSObject().CallWithErr("removeItem", js.ValueOf(key))
 	return err
 }
 
 func (l Storage) Clear() error {
 	var err error
-	_, err = l.object.CallWithErr("clear")
+	_, err = l.JSObject().CallWithErr("clear")
 	return err
 }
-
-func (l Storage) Length() int {
-	return l.object.Length()
-}
-
 func (l Storage) Key(index int) (string, error) {
 	var err error
 	var itemObject js.Value
-	if itemObject, err = l.object.CallWithErr("key", js.ValueOf(index)); err == nil {
+	if itemObject, err = l.JSObject().CallWithErr("key", js.ValueOf(index)); err == nil {
 		return object.StringWithErr(itemObject)
 	}
 	return "", err

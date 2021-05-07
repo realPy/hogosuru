@@ -89,6 +89,10 @@ type GOValue struct {
 	value interface{}
 }
 
+func (h GOValue) JSObject() js.Value {
+	return h.value.(js.Value)
+}
+
 func (g GOValue) Get(key string) GOValue {
 	if g.IsGOMap() {
 		return g.GOMap().value[key]
@@ -200,4 +204,39 @@ func StringWithErr(object js.Value) (string, error) {
 	}
 
 	return "", ErrNotAnObject
+}
+
+/*------------------------------------------------------*/
+
+type Object struct {
+	object js.Value
+}
+
+func NewFromJSObject(obj js.Value) (Object, error) {
+	var o Object
+
+	o.object = obj
+	return o, nil
+
+}
+
+func (o Object) SetObject(object js.Value) Object {
+	o.object = object
+	return o
+}
+
+func (o Object) JSObject() js.Value {
+	return o.object
+}
+
+func (o Object) String() string {
+	return String(o.object)
+}
+
+func (o Object) Length() int {
+	return o.object.Length()
+}
+
+func (o Object) Export(name string) {
+	js.Global().Set(name, o.object)
 }

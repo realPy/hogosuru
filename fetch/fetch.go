@@ -5,10 +5,9 @@ import (
 	"net/url"
 	"sync"
 
-	"github.com/realPy/jswasm"
-	"github.com/realPy/jswasm/arraybuffer"
 	"github.com/realPy/jswasm/js"
 	"github.com/realPy/jswasm/object"
+	jsresponse "github.com/realPy/jswasm/response"
 )
 
 var singleton sync.Once
@@ -36,75 +35,11 @@ func GetJSInterface() *JSInterface {
 
 //Fetch struct
 type Fetch struct {
-	object js.Value
-}
-
-//FetchResponse struct
-type FetchResponse struct {
-	object js.Value
-	err    error
-	status int
-}
-
-func NewFetchResponse(obj js.Value) (FetchResponse, error) {
-	var response FetchResponse
-
-	if object.String(obj) == "[object Response]" {
-
-		response.object = obj
-		return response, nil
-	}
-	return response, ErrNotAnFResp
-}
-
-func (fr FetchResponse) Status() int {
-	if fr.status == 0 {
-		fr.status = 456
-		if statusObject, err := fr.object.GetWithErr("status"); err == nil {
-			if statusObject.Type() == js.TypeNumber {
-				fr.status = statusObject.Int()
-			}
-		}
-	}
-	return fr.status
-}
-
-func (fr FetchResponse) Text() (string, error) {
-
-	var txtObject js.Value
-	var err error
-	if txtObject, err = fr.object.CallWithErr("text"); err == nil {
-		jsTxt := <-jswasm.Await(txtObject)
-		if len(jsTxt) > 0 {
-			return jsTxt[0].String(), nil
-		}
-
-	}
-	return "", err
-}
-
-func (fr FetchResponse) ArrayBuffer() ([]byte, error) {
-
-	var buffer []byte
-	var err error
-	var arrayObject js.Value
-	var ab arraybuffer.ArrayBuffer
-	if arrayObject, err = fr.object.CallWithErr("arrayBuffer"); err == nil {
-		binary := <-jswasm.Await(arrayObject)
-
-		if len(binary) > 0 {
-
-			if ab, err = arraybuffer.NewArrayBuffer(binary[0]); err == nil {
-
-				return ab.Bytes()
-			}
-		}
-	}
-	return buffer, err
+	object.Object
 }
 
 //NewFetch New fetch
-func NewFetch(urlfetch *url.URL, method string, headers *map[string]interface{}, data *url.Values, handlerResponse func(FetchResponse)) (Fetch, error) {
+func NewFetch(urlfetch *url.URL, method string, headers *map[string]interface{}, data *url.Values, handlerResponse func(jsresponse.Response)) (Fetch, error) {
 	var fetch Fetch
 
 	if fetchi := GetJSInterface(); fetchi != nil {
@@ -128,26 +63,26 @@ func NewFetch(urlfetch *url.URL, method string, headers *map[string]interface{},
 
 		arg := js.ValueOf(goarg)
 
-		fetch.object = fetchi.objectInterface.Invoke(urlfetch.String(), arg)
+		fetch.Object = fetch.SetObject(fetchi.objectInterface.Invoke(urlfetch.String(), arg))
 
 		then := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
 			var err error
-			var fr FetchResponse
+			var r jsresponse.Response
 			if len(args) > 0 {
 				rsp := args[0]
-				if fr, err = NewFetchResponse(rsp); err != nil {
-					fr.err = err
+				if r, err = jsresponse.NewFromJSObject(rsp); err != nil {
+					r.Err = err
 				}
 
 			} else {
-				fr.err = fmt.Errorf("fetch response must contains args")
+				r.Err = fmt.Errorf("fetch response must contains args")
 			}
-			handlerResponse(fr)
+			handlerResponse(r)
 			return nil
 		})
 
-		fetch.object.Call("then", then)
+		fetch.JSObject().Call("then", then)
 
 		return fetch, nil
 	}
