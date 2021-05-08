@@ -7,6 +7,7 @@ import (
 	"github.com/realPy/jswasm/formdata"
 	"github.com/realPy/jswasm/htmlinputelement"
 	"github.com/realPy/jswasm/indexeddb"
+	"github.com/realPy/jswasm/indexeddb/idbdatabase"
 	"github.com/realPy/jswasm/js"
 	"github.com/realPy/jswasm/response"
 
@@ -151,14 +152,14 @@ func main() {
 
 	event.Export("romain")
 
-	indexeddb.Open("test", 2, func(i indexeddb.IDBOpenDBRequest) error {
+	indexeddb.Open("test", 3, func(i idbdatabase.IDBDatabase) error {
 
 		if store, err := i.CreateStore("utilisateur", map[string]interface{}{"keyPath": "id", "autoIncrement": true}); err == nil {
 			store.CreateIndex("email", "emailkey", map[string]interface{}{"unique": true})
 			store.CreateIndex("nom", "nom", nil)
 		}
 		return nil
-	}, func(i indexeddb.IDBOpenDBRequest) error {
+	}, func(i idbdatabase.IDBDatabase) error {
 
 		if store, err := i.GetObjectStore("utilisateur", "readwrite"); err == nil {
 			fmt.Printf("get store..\n")
@@ -196,7 +197,7 @@ func main() {
 		}
 
 		return nil
-	}, func(i indexeddb.IDBOpenDBRequest, err error) {
+	}, func(err error) {
 		fmt.Printf("erreur: %s\n", err.Error())
 	},
 	)

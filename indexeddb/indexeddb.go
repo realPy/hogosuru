@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/realPy/jswasm/indexeddb/store"
+	"github.com/realPy/jswasm/indexeddb/idbdatabase"
 	"github.com/realPy/jswasm/js"
 	"github.com/realPy/jswasm/object"
 )
@@ -69,10 +69,9 @@ type IDBOpenDBRequest struct {
 }
 
 func Open(name string, version int,
-	automigratehandler func(IDBOpenDBRequest) error,
-	onsuccesshandler func(IDBOpenDBRequest) error,
-	onerrorhandler func(IDBOpenDBRequest, error)) (IDBOpenDBRequest, error) {
-	var i IDBOpenDBRequest
+	automigratehandler func(idbdatabase.IDBDatabase) error,
+	onsuccesshandler func(idbdatabase.IDBDatabase) error,
+	onerrorhandler func(error)) error {
 	var waitableOpen js.Value
 	var err error
 
@@ -86,9 +85,11 @@ func Open(name string, version int,
 		if err == nil {
 			migrateDBFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
-				if db, err := waitableOpen.GetWithErr("result"); err == nil {
-					i.Object = i.SetObject(db)
-					return automigratehandler(i)
+				if idbObject, err := waitableOpen.GetWithErr("result"); err == nil {
+
+					idb, _ := idbdatabase.NewFromJSObject(idbObject)
+
+					return automigratehandler(idb)
 				} else {
 					fmt.Printf("result not found..\n")
 				}
@@ -100,9 +101,13 @@ func Open(name string, version int,
 
 			onsuccess := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
-				if db, err := waitableOpen.GetWithErr("result"); err == nil {
-					i.Object = i.SetObject(db)
-					onsuccesshandler(i)
+				if idbObject, err := waitableOpen.GetWithErr("result"); err == nil {
+
+					idb, _ := idbdatabase.NewFromJSObject(idbObject)
+
+					onsuccesshandler(idb)
+				} else {
+					fmt.Printf("result not found..\n")
 				}
 
 				return nil
@@ -119,7 +124,7 @@ func Open(name string, version int,
 					}
 				}
 
-				onerrorhandler(i, err)
+				onerrorhandler(err)
 				return nil
 			})
 
@@ -130,29 +135,5 @@ func Open(name string, version int,
 
 	}
 
-	return i, err
-}
-
-func (i IDBOpenDBRequest) CreateStore(name string, schema map[string]interface{}) (store.Store, error) {
-
-	if storeObject, err := i.JSObject().CallWithErr("createObjectStore", js.ValueOf(name), schema); err == nil {
-
-		return store.NewFromJSObject(storeObject)
-	} else {
-		return store.Store{}, err
-	}
-
-}
-
-func (i IDBOpenDBRequest) GetObjectStore(table string, permission string) (store.Store, error) {
-	if transaction, err := i.JSObject().CallWithErr("transaction", js.ValueOf(table), js.ValueOf(permission)); err == nil {
-
-		if objectstore, err := transaction.CallWithErr("objectStore", js.ValueOf(table)); err == nil {
-			return store.NewFromJSObject(objectstore)
-		} else {
-			return store.Store{}, err
-		}
-	} else {
-		return store.Store{}, err
-	}
+	return err
 }
