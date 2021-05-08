@@ -4,6 +4,7 @@ import (
 	"sync"
 
 	"github.com/realPy/jswasm/js"
+	"github.com/realPy/jswasm/object"
 )
 
 var singleton sync.Once
@@ -17,7 +18,7 @@ type JSInterface struct {
 
 //JSEvent JSEvent struct
 type JSEvent struct {
-	object js.Value
+	object.Object
 }
 
 //GetJSInterface get teh JS interface of event
@@ -34,12 +35,12 @@ func GetJSInterface() *JSInterface {
 	return eventinterface
 }
 
-//NewJSEvent Create a newJSEvent
-func NewJSEvent(message string) (JSEvent, error) {
+//New Create a event
+func New(message string) (JSEvent, error) {
 	var event JSEvent
 
 	if eventi := GetJSInterface(); eventi != nil {
-		event.object = eventi.objectInterface.New(js.ValueOf(message))
+		event.Object = event.SetObject(eventi.objectInterface.New(js.ValueOf(message)))
 		return event, nil
 	}
 	return event, ErrNotImplemented
@@ -48,6 +49,6 @@ func NewJSEvent(message string) (JSEvent, error) {
 //DispatchEvent to the object
 func (j JSEvent) DispatchEvent(obj js.Value) error {
 	var err error
-	_, err = obj.CallWithErr("dispatchEvent", j.object)
+	_, err = obj.CallWithErr("dispatchEvent", j.JSObject())
 	return err
 }

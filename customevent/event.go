@@ -3,6 +3,7 @@ package customevent
 import (
 	"sync"
 
+	"github.com/realPy/jswasm/event"
 	"github.com/realPy/jswasm/js"
 )
 
@@ -17,7 +18,7 @@ type JSInterface struct {
 
 //JSCustomEvent JSCustomEvent struct
 type JSCustomEvent struct {
-	object js.Value
+	event.JSEvent
 }
 
 //GetJSInterface get teh JS interface of event
@@ -34,20 +35,13 @@ func GetJSInterface() *JSInterface {
 	return customeventinterface
 }
 
-//NewJSCustomEvent Create a newJSEvent
-func NewJSCustomEvent(message, detail string) (JSCustomEvent, error) {
+//New Create a newJSEvent
+func New(message, detail string) (JSCustomEvent, error) {
 	var event JSCustomEvent
 
 	if eventi := GetJSInterface(); eventi != nil {
-		event.object = eventi.objectInterface.New(js.ValueOf(message), js.ValueOf(map[string]interface{}{"detail": detail}))
+		event.Object = event.SetObject(eventi.objectInterface.New(js.ValueOf(message), js.ValueOf(map[string]interface{}{"detail": detail})))
 		return event, nil
 	}
 	return event, ErrNotImplemented
-}
-
-//DispatchEvent to the object
-func (j JSCustomEvent) DispatchEvent(obj js.Value) error {
-	var err error
-	_, err = obj.CallWithErr("dispatchEvent", j.object)
-	return err
 }

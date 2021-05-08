@@ -35,6 +35,15 @@ func ParseArray(object js.Value, handler func(js.Value)) error {
 
 	return ErrNotAnObject
 }
+func (g GOArray) Length() int {
+
+	return len(g.value)
+}
+
+func (g GOArray) Index(i int) GOValue {
+
+	return g.value[i]
+}
 
 func (g GOArray) String() string {
 

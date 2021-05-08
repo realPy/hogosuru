@@ -1,4 +1,4 @@
-package indexeddb
+package store
 
 import (
 	"fmt"
@@ -8,23 +8,60 @@ import (
 )
 
 type Store struct {
-	objstore js.Value
+	object.Object
 }
 
-func CreateStore(dbObject js.Value, name string, schema map[string]interface{}) (Store, error) {
-	var store Store
-	if storeObject, err := dbObject.CallWithErr("createObjectStore", js.ValueOf(name), schema); err == nil {
-		store.objstore = storeObject
-		return store, nil
+func OnSuccessFailure(awaitable js.Value) chan SuccessFailure {
+	ch := make(chan SuccessFailure)
+	cbok := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		ch <- SuccessFailure{Success: true, Payload: args}
+		return nil
+	})
+	cberror := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		ch <- SuccessFailure{Success: false, Payload: args}
+		return nil
+	})
+	awaitable.Set("onsuccess", cbok)
+	awaitable.Set("onerror", cberror)
+	return ch
+}
+
+type SuccessFailure struct {
+	Success bool
+	Payload []js.Value
+}
+
+func getEventTargetResult(ev js.Value) (js.Value, error) {
+	if target, err := ev.GetWithErr("target"); err == nil {
+		if result, err := target.GetWithErr("result"); err == nil {
+			return result, nil
+		} else {
+			return js.Value{}, fmt.Errorf("result not found")
+		}
 	} else {
-		return Store{}, err
+		return js.Value{}, fmt.Errorf("target not found")
 	}
+}
+
+func NewFromJSObject(obj js.Value) (Store, error) {
+
+	var s Store
+	/*
+		if object.String(obj) == "[object EventTarget]" {
+			e.Object = e.SetObject(obj)
+			return e, nil
+		}
+
+		return e, ErrNotAnEventTarget*/
+	s.Object = s.SetObject(obj)
+	return s, nil
 }
 
 func (s Store) callWaitableMethod(method string, args ...interface{}) (js.Value, error) {
 	var waitable, obj js.Value
 	var err error
-	if waitable, err = s.objstore.CallWithErr(method, args...); err == nil {
+
+	if waitable, err = s.JSObject().CallWithErr(method, args...); err == nil {
 		ch := OnSuccessFailure(waitable)
 		results := <-ch
 		if results.Success {

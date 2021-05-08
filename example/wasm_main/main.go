@@ -4,13 +4,16 @@ import (
 	"fmt"
 	"net/url"
 
+	"github.com/realPy/jswasm/formdata"
+	"github.com/realPy/jswasm/htmlinputelement"
+	"github.com/realPy/jswasm/indexeddb"
 	"github.com/realPy/jswasm/js"
+	"github.com/realPy/jswasm/response"
 
 	"github.com/realPy/jswasm/broadcastchannel"
 	"github.com/realPy/jswasm/customevent"
 	"github.com/realPy/jswasm/document"
 	"github.com/realPy/jswasm/fetch"
-	"github.com/realPy/jswasm/indexeddb"
 	"github.com/realPy/jswasm/object"
 	"github.com/realPy/jswasm/storage"
 	"github.com/realPy/jswasm/xmlhttprequest"
@@ -18,29 +21,94 @@ import (
 	"github.com/realPy/jswasm/json"
 )
 
+func test() js.Func {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		endpoint, _ := url.Parse("http://localhost:9090/po")
+		files, _ := document.QuerySelector("[name=file]")
+		if h, err := htmlinputelement.NewFromJSObject(files); err == nil {
+			if file, err := h.Files(); err == nil {
+				f, _ := formdata.New()
+				f.AppendString("po", "po")
+				fi, _ := file.Item(0)
+				f.AppendJSObject("avatar", fi.JSObject())
+				if size, err := fi.Size(); err == nil {
+					fmt.Printf("size of the file :%d --%s\n", size, fi)
+				} else {
+					fmt.Println(err.Error())
+				}
+
+				if xhr, err := xmlhttprequest.New(); err == nil {
+
+					xhr.Open("POST", endpoint)
+
+					xhr.SetOnload(func(x xmlhttprequest.XMLHTTPRequest) {
+
+						fmt.Printf("XML HTTPRequest Loaded\n")
+
+						if text, err := x.ResponseText(); err == nil {
+							fmt.Printf("Resultat: %s\n", text)
+						}
+
+						if header, err := x.GetResponseHeader("Content-Type"); err == nil {
+							fmt.Printf("Resultat: %s\n", header)
+						}
+
+					})
+					xhr.SendForm(f)
+				}
+
+			} else {
+				fmt.Println(err.Error())
+			}
+		} else {
+			fmt.Println(err.Error())
+		}
+
+		return nil
+	})
+}
+
 func main() {
 
-	if j, err := json.NewJsonFromString("{\"test\":true,\"o\":\"poi\",\"nani\":1.5,\"complex\":{ \"toto\":\"yes\"}}"); err == nil {
+	if j, err := json.Parse("{\"test\":true,\"o\":\"poi\",\"nani\":1.5,\"complex\":{ \"toto\":\"yes\"}}"); err == nil {
 		p := j.GoJson()
 		fmt.Printf("Value of complex[\"toto\"] %s\n", p.Get("complex").Get("toto"))
 		fmt.Printf("---->%s\n", p)
 	} else {
-		fmt.Printf("erreur %s", err)
+		fmt.Printf("erreur %s\n", err)
 	}
+
 	endpoint, _ := url.Parse("http://localhost:9090/static.json")
 
 	fetchsync := make(chan bool)
-	fetch.NewFetch(endpoint, "GET", nil, nil, func(fr fetch.FetchResponse) {
 
-		if fr.Status() == 200 {
-			if text, err := fr.Text(); err == nil {
+	fetch.NewFetch(endpoint, "GET", nil, nil, func(r response.Response) {
 
-				if j, err := json.NewJsonFromString(text); err == nil {
+		if r.Status() == 200 {
+			if text, err := r.Text(); err == nil {
+
+				if j, err := json.Parse(text); err == nil {
 					jsonGo := j.GoJson()
 					fmt.Printf("Hello %s\n", jsonGo.Get("hello"))
 				} else {
 					fmt.Printf("erreur %s", err)
 				}
+
+			} else {
+				fmt.Println(err.Error())
+			}
+		}
+		fetchsync <- true
+	})
+
+	<-fetchsync
+
+	fetch.NewFetch(endpoint, "GET", nil, nil, func(r response.Response) {
+
+		if r.Status() == 200 {
+			if b, err := r.ArrayBufferBytes(); err == nil {
+
+				fmt.Printf("Bytes: %s", string(b))
 
 			} else {
 				fmt.Println(err.Error())
@@ -57,12 +125,12 @@ func main() {
 	fetch.NewFetch(endpoint,
 		"POST",
 		&map[string]interface{}{"content-type": "application/x-www-form-urlencoded", "User-Agent": "Tester"},
-		&dataPost, func(fr fetch.FetchResponse) {
+		&dataPost, func(r response.Response) {
 
-			if fr.Status() == 200 {
-				if text, err := fr.Text(); err == nil {
+			if r.Status() == 200 {
+				if text, err := r.Text(); err == nil {
 
-					if j, err := json.NewJsonFromString(text); err == nil {
+					if j, err := json.Parse(text); err == nil {
 						jsonGo := j.GoJson()
 						fmt.Printf("Hello %s\n", jsonGo.Get("hello"))
 					} else {
@@ -75,21 +143,25 @@ func main() {
 			}
 			fetchsync <- true
 		})
+
 	<-fetchsync
 
-	event, _ := customevent.NewJSCustomEvent("TestEvent", "detail du text")
+	event, _ := customevent.New("TestEvent", "detail du text")
 	event.DispatchEvent(document.Root())
 
-	if c, err := indexeddb.OpenIndexedDB("test", 3, func(db js.Value) error {
+	event.Export("romain")
 
-		if store, err := indexeddb.CreateStore(db, "utilisateur", map[string]interface{}{"keyPath": "id", "autoIncrement": true}); err == nil {
+	indexeddb.Open("test", 2, func(i indexeddb.IDBOpenDBRequest) error {
+
+		if store, err := i.CreateStore("utilisateur", map[string]interface{}{"keyPath": "id", "autoIncrement": true}); err == nil {
 			store.CreateIndex("email", "emailkey", map[string]interface{}{"unique": true})
 			store.CreateIndex("nom", "nom", nil)
 		}
 		return nil
-	}); err == nil {
+	}, func(i indexeddb.IDBOpenDBRequest) error {
 
-		if store, err := c.GetObjectStore("utilisateur", "readwrite"); err == nil {
+		if store, err := i.GetObjectStore("utilisateur", "readwrite"); err == nil {
+			fmt.Printf("get store..\n")
 			if objadd, err := store.Add(map[string]interface{}{"email": "oui", "prenom": "manu"}); err != nil {
 				fmt.Println(err.Error())
 			} else {
@@ -120,18 +192,20 @@ func main() {
 			}
 
 		} else {
-			fmt.Println(err.Error())
+			fmt.Println("--->" + err.Error())
 		}
 
-	} else {
+		return nil
+	}, func(i indexeddb.IDBOpenDBRequest, err error) {
 		fmt.Printf("erreur: %s\n", err.Error())
-	}
+	},
+	)
 
-	localstore, _ := storage.GetLocalStorage("session")
+	localstore, _ := storage.New("session")
 	localstore.SetItem("dog", "dalmatien")
 
 	fmt.Println("-----------Test Channels---------")
-	if channel, err := broadcastchannel.NewBroadcastChannel("TestChannel"); err == nil {
+	if channel, err := broadcastchannel.New("TestChannel"); err == nil {
 		channel.SetReceiveMessage(func(c broadcastchannel.Channel, obj object.GOMap) {
 			fmt.Printf("--->%s---\n", obj.Get("data").String())
 		})
@@ -139,12 +213,12 @@ func main() {
 		if err := channel.PostMessage("New wasm loaded"); err != nil {
 			fmt.Println(err.Error())
 		}
-
+		channel.Export("monchannel")
 	} else {
 		fmt.Println(err.Error())
 	}
 
-	if xhr, err := xmlhttprequest.NewXMLHTTPRequest(); err == nil {
+	if xhr, err := xmlhttprequest.New(); err == nil {
 		endpoint, _ := url.Parse("http://localhost:9090/static.json")
 		xhr.Open("GET", endpoint)
 		xhr.SetOnload(func(x xmlhttprequest.XMLHTTPRequest) {
@@ -165,7 +239,31 @@ func main() {
 			fmt.Printf("On progress :%s\n", g)
 		})
 		xhr.Send()
+
 	}
+
+	if xhr, err := xmlhttprequest.New(); err == nil {
+
+		xhr.Open("POST", endpoint)
+		f, _ := formdata.New()
+		f.AppendString("data", "pouet")
+		xhr.SetOnload(func(x xmlhttprequest.XMLHTTPRequest) {
+
+			fmt.Printf("XML HTTPRequest Loaded\n")
+
+			if text, err := x.ResponseText(); err == nil {
+				fmt.Printf("Resultat: %s\n", text)
+			}
+
+			if header, err := x.GetResponseHeader("Content-Type"); err == nil {
+				fmt.Printf("Resultat: %s\n", header)
+			}
+
+		})
+		xhr.SendForm(f)
+	}
+
+	js.Global().Set("test", test())
 
 	ch := make(chan struct{})
 	<-ch
