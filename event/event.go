@@ -35,8 +35,8 @@ func GetJSInterface() *JSInterface {
 	return eventinterface
 }
 
-//NewJSEvent Create a newJSEvent
-func NewJSEvent(message string) (JSEvent, error) {
+//New Create a event
+func New(message string) (JSEvent, error) {
 	var event JSEvent
 
 	if eventi := GetJSInterface(); eventi != nil {

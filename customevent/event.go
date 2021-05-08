@@ -35,8 +35,8 @@ func GetJSInterface() *JSInterface {
 	return customeventinterface
 }
 
-//NewJSCustomEvent Create a newJSEvent
-func NewJSCustomEvent(message, detail string) (JSCustomEvent, error) {
+//New Create a newJSEvent
+func New(message, detail string) (JSCustomEvent, error) {
 	var event JSCustomEvent
 
 	if eventi := GetJSInterface(); eventi != nil {

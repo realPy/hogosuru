@@ -6,6 +6,7 @@ import (
 
 	"github.com/realPy/jswasm/formdata"
 	"github.com/realPy/jswasm/htmlinputelement"
+	"github.com/realPy/jswasm/indexeddb"
 	"github.com/realPy/jswasm/js"
 	"github.com/realPy/jswasm/response"
 
@@ -13,7 +14,6 @@ import (
 	"github.com/realPy/jswasm/customevent"
 	"github.com/realPy/jswasm/document"
 	"github.com/realPy/jswasm/fetch"
-	"github.com/realPy/jswasm/indexeddb"
 	"github.com/realPy/jswasm/object"
 	"github.com/realPy/jswasm/storage"
 	"github.com/realPy/jswasm/xmlhttprequest"
@@ -27,7 +27,7 @@ func test() js.Func {
 		files, _ := document.QuerySelector("[name=file]")
 		if h, err := htmlinputelement.NewFromJSObject(files); err == nil {
 			if file, err := h.Files(); err == nil {
-				f, _ := formdata.NewFormData()
+				f, _ := formdata.New()
 				f.AppendString("po", "po")
 				fi, _ := file.Item(0)
 				f.AppendJSObject("avatar", fi.JSObject())
@@ -37,7 +37,7 @@ func test() js.Func {
 					fmt.Println(err.Error())
 				}
 
-				if xhr, err := xmlhttprequest.NewXMLHTTPRequest(); err == nil {
+				if xhr, err := xmlhttprequest.New(); err == nil {
 
 					xhr.Open("POST", endpoint)
 
@@ -146,21 +146,22 @@ func main() {
 
 	<-fetchsync
 
-	event, _ := customevent.NewJSCustomEvent("TestEvent", "detail du text")
+	event, _ := customevent.New("TestEvent", "detail du text")
 	event.DispatchEvent(document.Root())
 
 	event.Export("romain")
 
-	if c, err := indexeddb.OpenIndexedDB("test", 3, func(db js.Value) error {
+	indexeddb.Open("test", 2, func(i indexeddb.IDBOpenDBRequest) error {
 
-		if store, err := indexeddb.CreateStore(db, "utilisateur", map[string]interface{}{"keyPath": "id", "autoIncrement": true}); err == nil {
+		if store, err := i.CreateStore("utilisateur", map[string]interface{}{"keyPath": "id", "autoIncrement": true}); err == nil {
 			store.CreateIndex("email", "emailkey", map[string]interface{}{"unique": true})
 			store.CreateIndex("nom", "nom", nil)
 		}
 		return nil
-	}); err == nil {
+	}, func(i indexeddb.IDBOpenDBRequest) error {
 
-		if store, err := c.GetObjectStore("utilisateur", "readwrite"); err == nil {
+		if store, err := i.GetObjectStore("utilisateur", "readwrite"); err == nil {
+			fmt.Printf("get store..\n")
 			if objadd, err := store.Add(map[string]interface{}{"email": "oui", "prenom": "manu"}); err != nil {
 				fmt.Println(err.Error())
 			} else {
@@ -191,18 +192,20 @@ func main() {
 			}
 
 		} else {
-			fmt.Println(err.Error())
+			fmt.Println("--->" + err.Error())
 		}
 
-	} else {
+		return nil
+	}, func(i indexeddb.IDBOpenDBRequest, err error) {
 		fmt.Printf("erreur: %s\n", err.Error())
-	}
+	},
+	)
 
-	localstore, _ := storage.GetLocalStorage("session")
+	localstore, _ := storage.New("session")
 	localstore.SetItem("dog", "dalmatien")
 
 	fmt.Println("-----------Test Channels---------")
-	if channel, err := broadcastchannel.NewBroadcastChannel("TestChannel"); err == nil {
+	if channel, err := broadcastchannel.New("TestChannel"); err == nil {
 		channel.SetReceiveMessage(func(c broadcastchannel.Channel, obj object.GOMap) {
 			fmt.Printf("--->%s---\n", obj.Get("data").String())
 		})
@@ -215,7 +218,7 @@ func main() {
 		fmt.Println(err.Error())
 	}
 
-	if xhr, err := xmlhttprequest.NewXMLHTTPRequest(); err == nil {
+	if xhr, err := xmlhttprequest.New(); err == nil {
 		endpoint, _ := url.Parse("http://localhost:9090/static.json")
 		xhr.Open("GET", endpoint)
 		xhr.SetOnload(func(x xmlhttprequest.XMLHTTPRequest) {
@@ -239,10 +242,10 @@ func main() {
 
 	}
 
-	if xhr, err := xmlhttprequest.NewXMLHTTPRequest(); err == nil {
+	if xhr, err := xmlhttprequest.New(); err == nil {
 
 		xhr.Open("POST", endpoint)
-		f, _ := formdata.NewFormData()
+		f, _ := formdata.New()
 		f.AppendString("data", "pouet")
 		xhr.SetOnload(func(x xmlhttprequest.XMLHTTPRequest) {
 

@@ -34,14 +34,18 @@ type Blob struct {
 	object.Object
 }
 
-/* implement later
-func (j *JSInterface) New() Blob {
+/**** new need more information implemented later
+func New() (Blob, error) {
 
 	var b Blob
-	b, _ = NewFromJSObject(j.objectInterface.New())
-	return b
+	if bi := GetJSInterface(); bi != nil {
+		b.Object = b.SetObject(bi.objectInterface.New())
+		return b, nil
+	}
+	return b, ErrNotImplemented
 }
 */
+
 func NewFromJSObject(obj js.Value) (Blob, error) {
 	var b Blob
 

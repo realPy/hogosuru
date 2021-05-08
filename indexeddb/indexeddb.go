@@ -3,31 +3,12 @@ package indexeddb
 import (
 	"errors"
 	"fmt"
+	"sync"
 
+	"github.com/realPy/jswasm/indexeddb/store"
 	"github.com/realPy/jswasm/js"
 	"github.com/realPy/jswasm/object"
 )
-
-type IndexedDB struct {
-	object.Object
-}
-
-type SuccessFailure struct {
-	Success bool
-	Payload []js.Value
-}
-
-func getEventTargetResult(ev js.Value) (js.Value, error) {
-	if target, err := ev.GetWithErr("target"); err == nil {
-		if result, err := target.GetWithErr("result"); err == nil {
-			return result, nil
-		} else {
-			return js.Value{}, fmt.Errorf("result not found")
-		}
-	} else {
-		return js.Value{}, fmt.Errorf("target not found")
-	}
-}
 
 func getEventTargetError(ev js.Value) (js.Value, error) {
 	if target, err := ev.GetWithErr("target"); err == nil {
@@ -55,78 +36,123 @@ func stringFromTargetError(ev js.Value) (string, error) {
 
 }
 
-func OnSuccessFailure(awaitable js.Value) chan SuccessFailure {
-	ch := make(chan SuccessFailure)
-	cbok := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		ch <- SuccessFailure{Success: true, Payload: args}
-		return nil
-	})
-	cberror := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		ch <- SuccessFailure{Success: false, Payload: args}
-		return nil
-	})
-	awaitable.Set("onsuccess", cbok)
-	awaitable.Set("onerror", cberror)
-	return ch
+var singleton sync.Once
+
+var indexeddbinterface *JSInterface
+
+//JSInterface JSInterface struct
+type JSInterface struct {
+	objectInterface js.Value
 }
 
-func OpenIndexedDB(name string, version int, automigrate func(js.Value) error) (IndexedDB, error) {
-	var indexdb IndexedDB
-	var err error
-	var window, indexedDBObject, waitableOpen, db js.Value
+//GetJSInterface get teh JS interface of broadcast channel
+func GetJSInterface() *JSInterface {
 
-	if window, err = js.Global().GetWithErr("window"); err == nil {
+	singleton.Do(func() {
+		var indexeddbinstance JSInterface
+		var window js.Value
+		var err error
 
-		if indexedDBObject, err = window.GetWithErr("indexedDB"); err == nil {
-			if version == 0 {
-				waitableOpen, err = indexedDBObject.CallWithErr("open", js.ValueOf(name))
-			} else {
-				waitableOpen, err = indexedDBObject.CallWithErr("open", js.ValueOf(name), js.ValueOf(version))
+		if window, err = js.Global().GetWithErr("window"); err == nil {
+			if indexeddbinstance.objectInterface, err = window.GetWithErr("indexedDB"); err == nil {
+				indexeddbinterface = &indexeddbinstance
 			}
 
-			if err == nil {
-				migrateDBFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		}
+	})
 
-					db := args[0].Get("target").Get("result")
-					return automigrate(db)
+	return indexeddbinterface
+}
 
-				})
-				waitableOpen.Set("onupgradeneeded", migrateDBFunc)
-				ch := OnSuccessFailure(waitableOpen)
-				results := <-ch
-				if results.Success {
-					ev := results.Payload[0]
-					if db, err = getEventTargetResult(ev); err == nil {
-						indexdb.Object = indexdb.SetObject(db)
-						return indexdb, nil
-					}
+type IDBOpenDBRequest struct {
+	object.Object
+}
+
+func Open(name string, version int,
+	automigratehandler func(IDBOpenDBRequest) error,
+	onsuccesshandler func(IDBOpenDBRequest) error,
+	onerrorhandler func(IDBOpenDBRequest, error)) (IDBOpenDBRequest, error) {
+	var i IDBOpenDBRequest
+	var waitableOpen js.Value
+	var err error
+
+	if dbi := GetJSInterface(); dbi != nil {
+		if version == 0 {
+			waitableOpen, err = dbi.objectInterface.CallWithErr("open", js.ValueOf(name))
+		} else {
+			waitableOpen, err = dbi.objectInterface.CallWithErr("open", js.ValueOf(name), js.ValueOf(version))
+		}
+
+		if err == nil {
+			migrateDBFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+
+				if db, err := waitableOpen.GetWithErr("result"); err == nil {
+					i.Object = i.SetObject(db)
+					return automigratehandler(i)
 				} else {
-					// recuperer error https://developer.mozilla.org/fr/docs/Web/API/IDBRequest/error
-					err = fmt.Errorf("Unable to open indexeddb")
-					ev := results.Payload[0]
-					var errorString string
-					if errorString, err = stringFromTargetError(ev); err == nil {
-						err = errors.New(errorString)
-					}
-
+					fmt.Printf("result not found..\n")
 				}
 
-			}
+				return nil
+			})
+
+			waitableOpen.Set("onupgradeneeded", migrateDBFunc)
+
+			onsuccess := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+
+				if db, err := waitableOpen.GetWithErr("result"); err == nil {
+					i.Object = i.SetObject(db)
+					onsuccesshandler(i)
+				}
+
+				return nil
+			})
+
+			onerror := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+				err = fmt.Errorf("Unable to open indexeddb")
+				var errorString string
+
+				if len(args) > 0 {
+					event := args[0]
+					if errorString, err = stringFromTargetError(event); err == nil {
+						err = errors.New(errorString)
+					}
+				}
+
+				onerrorhandler(i, err)
+				return nil
+			})
+
+			waitableOpen.Set("onsuccess", onsuccess)
+			waitableOpen.Set("onerror", onerror)
+
 		}
 
 	}
-	return indexdb, err
+
+	return i, err
 }
 
-func (i IndexedDB) GetObjectStore(table string, permission string) (Store, error) {
+func (i IDBOpenDBRequest) CreateStore(name string, schema map[string]interface{}) (store.Store, error) {
+
+	if storeObject, err := i.JSObject().CallWithErr("createObjectStore", js.ValueOf(name), schema); err == nil {
+
+		return store.NewFromJSObject(storeObject)
+	} else {
+		return store.Store{}, err
+	}
+
+}
+
+func (i IDBOpenDBRequest) GetObjectStore(table string, permission string) (store.Store, error) {
 	if transaction, err := i.JSObject().CallWithErr("transaction", js.ValueOf(table), js.ValueOf(permission)); err == nil {
 
 		if objectstore, err := transaction.CallWithErr("objectStore", js.ValueOf(table)); err == nil {
-			return Store{objstore: objectstore}, nil
+			return store.NewFromJSObject(objectstore)
 		} else {
-			return Store{}, err
+			return store.Store{}, err
 		}
 	} else {
-		return Store{}, err
+		return store.Store{}, err
 	}
 }

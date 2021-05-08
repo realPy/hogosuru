@@ -35,7 +35,7 @@ func GetJSInterface() *JSInterface {
 	return formadatainterface
 }
 
-func NewFormData() (FormData, error) {
+func New() (FormData, error) {
 
 	var formdata FormData
 

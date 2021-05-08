@@ -47,8 +47,8 @@ func GetJSInterface() *JSInterface {
 	return xhrinterface
 }
 
-//NewXMLHTTPRequest Get an XML HTTP Request
-func NewXMLHTTPRequest() (XMLHTTPRequest, error) {
+//New Get an XML HTTP Request
+func New() (XMLHTTPRequest, error) {
 	var request XMLHTTPRequest
 
 	if xhri := GetJSInterface(); xhri != nil {

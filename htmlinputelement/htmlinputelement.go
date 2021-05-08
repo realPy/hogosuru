@@ -36,7 +36,7 @@ func GetJSInterface() *JSInterface {
 	return htmlinputelementinterface
 }
 
-func NewHtmlInputeElement() (HtmlInputElement, error) {
+func New() (HtmlInputElement, error) {
 
 	var h HtmlInputElement
 

@@ -36,8 +36,8 @@ func GetJSInterface() *JSInterface {
 	return bcinterface
 }
 
-//NewBroadcastChannel Get a new channel broadcast
-func NewBroadcastChannel(channelname string) (Channel, error) {
+//New Get a new channel broadcast
+func New(channelname string) (Channel, error) {
 	var channel Channel
 
 	if bci := GetJSInterface(); bci != nil {

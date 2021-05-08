@@ -44,11 +44,15 @@ func GetJSInterface() *JSInterface {
 	return responseinterface
 }
 
-func (j *JSInterface) New() Response {
-
+//New Create a newJSEvent
+func New() (Response, error) {
 	var r Response
-	r, _ = NewFromJSObject(j.objectInterface.New())
-	return r
+
+	if ri := GetJSInterface(); ri != nil {
+		r.Object = r.SetObject(ri.objectInterface.New())
+		return r, nil
+	}
+	return r, ErrNotImplemented
 }
 
 func NewFromJSObject(obj js.Value) (Response, error) {

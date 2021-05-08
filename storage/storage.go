@@ -20,7 +20,7 @@ func NewFromJSObject(obj js.Value) (Storage, error) {
 	return s, ErrNotAnLocalStorage
 }
 
-func GetLocalStorage(typeStorage string) (Storage, error) {
+func New(typeStorage string) (Storage, error) {
 	var err error
 	var localstorage Storage
 	var localstorageobject, window js.Value
