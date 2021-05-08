@@ -70,12 +70,12 @@ func test() js.Func {
 
 func main() {
 
-	if j, err := json.NewJsonFromString("{\"test\":true,\"o\":\"poi\",\"nani\":1.5,\"complex\":{ \"toto\":\"yes\"}}"); err == nil {
+	if j, err := json.Parse("{\"test\":true,\"o\":\"poi\",\"nani\":1.5,\"complex\":{ \"toto\":\"yes\"}}"); err == nil {
 		p := j.GoJson()
 		fmt.Printf("Value of complex[\"toto\"] %s\n", p.Get("complex").Get("toto"))
 		fmt.Printf("---->%s\n", p)
 	} else {
-		fmt.Printf("erreur %s", err)
+		fmt.Printf("erreur %s\n", err)
 	}
 
 	endpoint, _ := url.Parse("http://localhost:9090/static.json")
@@ -87,7 +87,7 @@ func main() {
 		if r.Status() == 200 {
 			if text, err := r.Text(); err == nil {
 
-				if j, err := json.NewJsonFromString(text); err == nil {
+				if j, err := json.Parse(text); err == nil {
 					jsonGo := j.GoJson()
 					fmt.Printf("Hello %s\n", jsonGo.Get("hello"))
 				} else {
@@ -130,7 +130,7 @@ func main() {
 			if r.Status() == 200 {
 				if text, err := r.Text(); err == nil {
 
-					if j, err := json.NewJsonFromString(text); err == nil {
+					if j, err := json.Parse(text); err == nil {
 						jsonGo := j.GoJson()
 						fmt.Printf("Hello %s\n", jsonGo.Get("hello"))
 					} else {

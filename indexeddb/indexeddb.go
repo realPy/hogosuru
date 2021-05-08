@@ -9,7 +9,7 @@ import (
 )
 
 type IndexedDB struct {
-	dbobject js.Value
+	object.Object
 }
 
 type SuccessFailure struct {
@@ -97,7 +97,7 @@ func OpenIndexedDB(name string, version int, automigrate func(js.Value) error) (
 				if results.Success {
 					ev := results.Payload[0]
 					if db, err = getEventTargetResult(ev); err == nil {
-						indexdb.dbobject = db
+						indexdb.Object = indexdb.SetObject(db)
 						return indexdb, nil
 					}
 				} else {
@@ -119,7 +119,7 @@ func OpenIndexedDB(name string, version int, automigrate func(js.Value) error) (
 }
 
 func (i IndexedDB) GetObjectStore(table string, permission string) (Store, error) {
-	if transaction, err := i.dbobject.CallWithErr("transaction", js.ValueOf(table), js.ValueOf(permission)); err == nil {
+	if transaction, err := i.JSObject().CallWithErr("transaction", js.ValueOf(table), js.ValueOf(permission)); err == nil {
 
 		if objectstore, err := transaction.CallWithErr("objectStore", js.ValueOf(table)); err == nil {
 			return Store{objstore: objectstore}, nil

@@ -4,6 +4,7 @@ import (
 	"sync"
 
 	"github.com/realPy/jswasm/js"
+	"github.com/realPy/jswasm/object"
 	jsobject "github.com/realPy/jswasm/object"
 )
 
@@ -18,7 +19,7 @@ type JSInterface struct {
 
 //Json  struct
 type Json struct {
-	object js.Value
+	object.Object
 }
 
 //GetJSInterface get teh JS interface of broadcast channel
@@ -35,29 +36,59 @@ func GetJSInterface() *JSInterface {
 	return jsoninterface
 }
 
-//NewJsonFromString Parse a json str
-func NewJsonFromString(jsonstr string) (Json, error) {
-	var json Json
+func Parse(data string) (Json, error) {
 
+	var jsonObject js.Value
+	var err error
 	if jsoni := GetJSInterface(); jsoni != nil {
 
-		if json, err := jsoni.objectInterface.CallWithErr("parse", jsonstr); err != nil {
+		if jsonObject, err = jsoni.objectInterface.CallWithErr("parse", data); err != nil {
 			return Json{}, err
 		} else {
-			return Json{object: json}, nil
+
+			return NewFromJSObject(jsonObject)
 		}
 
+	} else {
+		err = ErrNotImplemented
 	}
 
-	return json, ErrNotImplemented
+	return Json{}, err
+}
+
+func NewFromJSObject(obj js.Value) (Json, error) {
+	var j Json
+	j.Object = j.SetObject(obj)
+	return j, nil
 
 }
 
 func (j Json) Get(key string) js.Value {
-	return j.object.Get(key)
+	return j.JSObject().Get(key)
 }
 
 func (j Json) GoJson() jsobject.GOMap {
-	return jsobject.Map(j.object)
+	return jsobject.Map(j.JSObject())
+
+}
+
+func (j Json) Stringify() (string, error) {
+
+	var stringObject js.Value
+	var err error
+	if jsoni := GetJSInterface(); jsoni != nil {
+
+		if stringObject, err = jsoni.objectInterface.CallWithErr("stringify", j.JSObject()); err != nil {
+			return "", err
+		} else {
+
+			return stringObject.String(), nil
+		}
+
+	} else {
+		err = ErrNotImplemented
+	}
+
+	return "", err
 
 }
