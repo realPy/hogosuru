@@ -1,26 +1,112 @@
 package main
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
+	"io"
 	"net/url"
 
+	"github.com/realPy/jswasm/arraybuffer"
+	"github.com/realPy/jswasm/blob"
+	"github.com/realPy/jswasm/broadcastchannel"
+	"github.com/realPy/jswasm/customevent"
+	"github.com/realPy/jswasm/fetch"
 	"github.com/realPy/jswasm/formdata"
 	"github.com/realPy/jswasm/htmlinputelement"
 	"github.com/realPy/jswasm/indexeddb"
 	"github.com/realPy/jswasm/indexeddb/idbdatabase"
 	"github.com/realPy/jswasm/js"
-	"github.com/realPy/jswasm/response"
-
-	"github.com/realPy/jswasm/broadcastchannel"
-	"github.com/realPy/jswasm/customevent"
-	"github.com/realPy/jswasm/document"
-	"github.com/realPy/jswasm/fetch"
-	"github.com/realPy/jswasm/object"
-	"github.com/realPy/jswasm/storage"
-	"github.com/realPy/jswasm/xmlhttprequest"
-
 	"github.com/realPy/jswasm/json"
+	"github.com/realPy/jswasm/object"
+	"github.com/realPy/jswasm/response"
+	"github.com/realPy/jswasm/storage"
+
+	"github.com/realPy/jswasm/document"
+	"github.com/realPy/jswasm/xmlhttprequest"
 )
+
+func TestBlob() js.Func {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		println("Click Blob")
+
+		/*b, _ := */
+		u, _ := arraybuffer.New(0)
+
+		b, _ := blob.NewWithArrayBuffer(u)
+
+		s, _ := b.Text()
+
+		var buffersize int = 2 * 1024 * 1024
+		stream2 := blob.NewBlobStream(b, buffersize)
+		stream2.Write([]byte("pouet\000popo"))
+		c := stream2.Blob
+		c.Export("debug2")
+		s, _ = c.Text()
+		println("****" + s)
+
+		files, _ := document.QuerySelector("[name=file]")
+		if h, err := htmlinputelement.NewFromJSObject(files); err == nil {
+			if file, err := h.Files(); err == nil {
+
+				if firstfile, err := file.Item(0); err == nil {
+
+					if stream, err := firstfile.Stream(); err == nil {
+						if read, err := stream.GetReader(); err == nil {
+							var data []byte = make([]byte, 2*1024*1024)
+							var n int
+							var err error
+							hashmd5 := md5.New()
+
+							for {
+								n, err = read.Read(data)
+								hashmd5.Write(data[:n])
+								if err != nil {
+									break
+								}
+							}
+							if err == io.EOF {
+								println("MD5: " + hex.EncodeToString(hashmd5.Sum(nil)))
+							}
+
+						} else {
+							println(err.Error())
+						}
+					} else {
+						var buffersize int = 2 * 1024 * 1024
+						stream := blob.NewBlobStream(firstfile.Blob, buffersize)
+
+						var data []byte = make([]byte, buffersize)
+						var n int
+						var err error
+						hashmd5 := md5.New()
+
+						for {
+							n, err = stream.Read(data)
+
+							hashmd5.Write(data[:n])
+							if err != nil {
+								break
+							}
+						}
+						if err == io.EOF {
+							println("MD5: " + hex.EncodeToString(hashmd5.Sum(nil)))
+						}
+
+						str, _ := firstfile.Blob.Text()
+						println("content " + str)
+						//println(err.Error())
+					}
+				} else {
+					println(err.Error())
+				}
+
+			}
+		}
+
+		return nil
+	})
+}
 
 func test() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
@@ -31,6 +117,7 @@ func test() js.Func {
 				f, _ := formdata.New()
 				f.AppendString("po", "po")
 				fi, _ := file.Item(0)
+
 				f.AppendJSObject("avatar", fi.JSObject())
 				if size, err := fi.Size(); err == nil {
 					fmt.Printf("size of the file :%d --%s\n", size, fi)
@@ -109,7 +196,7 @@ func main() {
 		if r.Status() == 200 {
 			if b, err := r.ArrayBufferBytes(); err == nil {
 
-				fmt.Printf("Bytes: %s", string(b))
+				fmt.Printf("-----------------------Bytes: %s", string(b))
 
 			} else {
 				fmt.Println(err.Error())
@@ -264,8 +351,8 @@ func main() {
 		xhr.SendForm(f)
 	}
 
-	js.Global().Set("test", test())
-
+	js.Global().Set("test", TestBlob())
+	println("loaded")
 	ch := make(chan struct{})
 	<-ch
 

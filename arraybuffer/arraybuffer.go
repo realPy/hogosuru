@@ -1,17 +1,12 @@
 package arraybuffer
 
 import (
-	"errors"
 	"sync"
 
 	"github.com/realPy/jswasm/js"
 	"github.com/realPy/jswasm/object"
-	"github.com/realPy/jswasm/uint8array"
 )
 
-var (
-	ErrNotAnArrayBuffer = errors.New("The given value must be an arrayBuffer")
-)
 var singleton sync.Once
 
 var arraybufferinterface *JSInterface
@@ -27,7 +22,7 @@ func GetJSInterface() *JSInterface {
 	singleton.Do(func() {
 		var arraybufferinstance JSInterface
 		var err error
-		if arraybufferinstance.objectInterface, err = js.Global().GetWithErr("arrayBuffer"); err == nil {
+		if arraybufferinstance.objectInterface, err = js.Global().GetWithErr("ArrayBuffer"); err == nil {
 			arraybufferinterface = &arraybufferinstance
 		}
 	})
@@ -40,11 +35,18 @@ type ArrayBuffer struct {
 	object.Object
 }
 
-/*
-func (j *JSInterface) New(obj js.Value) js.Value {
-	return j.objectInterface.New(obj)
+func New(size int) (ArrayBuffer, error) {
+
+	var a ArrayBuffer
+	if ai := GetJSInterface(); ai != nil {
+
+		a.Object = a.SetObject(ai.objectInterface.New(js.ValueOf(size)))
+		return a, nil
+	}
+
+	return a, ErrNotImplemented
 }
-*/
+
 func NewFromJSObject(obj js.Value) (ArrayBuffer, error) {
 	var a ArrayBuffer
 
@@ -72,6 +74,7 @@ func (a ArrayBuffer) ByteLength() (int, error) {
 
 }
 
+/*
 func (a ArrayBuffer) Bytes() ([]byte, error) {
 	var err error
 	var buffer []byte
@@ -88,3 +91,5 @@ func (a ArrayBuffer) Bytes() ([]byte, error) {
 
 	return buffer, err
 }
+
+*/
