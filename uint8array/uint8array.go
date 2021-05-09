@@ -4,6 +4,7 @@ import (
 	"errors"
 	"sync"
 
+	"github.com/realPy/jswasm/arraybuffer"
 	"github.com/realPy/jswasm/js"
 	"github.com/realPy/jswasm/object"
 )
@@ -42,9 +43,9 @@ func (j *JSInterface) New(obj js.Value) js.Value {
 }
 */
 
-func NewFromArrayObjectBuffer(obj js.Value) (Uint8Array, error) {
+func NewFromArrayBuffer(a arraybuffer.ArrayBuffer) (Uint8Array, error) {
 
-	uint8arrayObject := GetJSInterface().objectInterface.New(obj)
+	uint8arrayObject := GetJSInterface().objectInterface.New(a.JSObject())
 	return NewFromJSObject(uint8arrayObject)
 
 }
@@ -75,4 +76,27 @@ func (u Uint8Array) CopyBytes(buffer []byte) (int, error) {
 
 	return js.CopyBytesToGoWithErr(buffer, u.JSObject())
 
+}
+
+func (u Uint8Array) CopyFromBytes(buffer []byte) (int, error) {
+
+	if len(buffer) < u.Length() {
+		return 0, errors.New("Increase your buffer size")
+	}
+
+	return js.CopyBytesToJSWithErr(u.JSObject(), buffer)
+}
+
+func (u Uint8Array) ArrayBuffer() (arraybuffer.ArrayBuffer, error) {
+
+	var err error
+	var obj js.Value
+
+	if obj, err = u.JSObject().GetWithErr("buffer"); err == nil {
+
+		return arraybuffer.NewFromJSObject(obj)
+
+	}
+
+	return arraybuffer.ArrayBuffer{}, err
 }

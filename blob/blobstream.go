@@ -45,7 +45,7 @@ func (b *BlobStream) Read(buffer []byte) (n int, err error) {
 
 		if arr, err = blob.ArrayBuffer(); err == nil {
 
-			if rawdata, err = uint8array.NewFromArrayObjectBuffer(arr.JSObject()); err == nil {
+			if rawdata, err = uint8array.NewFromArrayBuffer(arr); err == nil {
 
 				n, err = rawdata.CopyBytes(buffer)
 
@@ -60,4 +60,27 @@ func (b *BlobStream) Read(buffer []byte) (n int, err error) {
 	}
 
 	return
+}
+
+func (b *BlobStream) Write(p []byte) (n int, err error) {
+
+	var arraybuf arraybuffer.ArrayBuffer
+	var array8buf uint8array.Uint8Array
+
+	if arraybuf, err = arraybuffer.New(len(p)); err == nil {
+
+		if array8buf, err = uint8array.NewFromArrayBuffer(arraybuf); err == nil {
+			currentBlob := b.Blob
+			array8buf.CopyFromBytes(p)
+			b.Blob, err = b.Blob.Append(array8buf.Object)
+			currentBlob.Close()
+			n = len(p)
+		}
+	}
+
+	return
+}
+
+func (b BlobStream) GetBlob() Blob {
+	return b.Blob
 }

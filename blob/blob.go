@@ -37,17 +37,60 @@ type Blob struct {
 	object.Object
 }
 
-/**** new need more information implemented later
 func New() (Blob, error) {
 
 	var b Blob
 	if bi := GetJSInterface(); bi != nil {
+
 		b.Object = b.SetObject(bi.objectInterface.New())
 		return b, nil
 	}
 	return b, ErrNotImplemented
 }
+
+func NewWithObject(o js.Value) (Blob, error) {
+
+	var b Blob
+	if bi := GetJSInterface(); bi != nil {
+		b.Object = b.SetObject(bi.objectInterface.New(o))
+		return b, nil
+	}
+	return b, ErrNotImplemented
+}
+
+func NewWithArrayBuffer(a arraybuffer.ArrayBuffer) (Blob, error) {
+
+	var b Blob
+	if bi := GetJSInterface(); bi != nil {
+
+		b.Object = b.SetObject(bi.objectInterface.New([]interface{}{a.JSObject()}))
+		return b, nil
+	}
+	return b, ErrNotImplemented
+}
+
+/*
+func NewWithUint8Array(u uint8array.Uint8Array) (Blob, error) {
+
+	var b Blob
+	if bi := GetJSInterface(); bi != nil {
+
+		b.Object = b.SetObject(bi.objectInterface.New(u.JSObject()))
+		return b, nil
+	}
+	return b, ErrNotImplemented
+}
 */
+
+func NewWithBlob(bl Blob) (Blob, error) {
+
+	var b Blob
+	if bi := GetJSInterface(); bi != nil {
+		b.Object = b.SetObject(bi.objectInterface.New(bl.JSObject()))
+		return b, nil
+	}
+	return b, ErrNotImplemented
+}
 
 func NewFromJSObject(obj js.Value) (Blob, error) {
 	var b Blob
@@ -144,4 +187,35 @@ func (b Blob) ArrayBuffer() (arraybuffer.ArrayBuffer, error) {
 
 	}
 	return arrayb, err
+}
+
+func (b Blob) Text() (string, error) {
+	var err error
+	var promisetext js.Value
+	var text string = ""
+
+	if promisetext, err = b.JSObject().CallWithErr("text"); err == nil {
+		waitsync := make(chan string)
+		then := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+
+			waitsync <- args[0].String()
+			return nil
+		})
+
+		promisetext.Call("then", then)
+		text = <-waitsync
+	}
+	return text, err
+}
+
+func (b Blob) Append(append object.Object) (Blob, error) {
+
+	var blobObject js.Value
+	var arrayblob []interface{} = []interface{}{b.JSObject(), append.JSObject()}
+	if bi := GetJSInterface(); bi != nil {
+		blobObject = bi.objectInterface.New(arrayblob)
+
+		return NewFromJSObject(blobObject)
+	}
+	return Blob{}, ErrNotImplemented
 }
