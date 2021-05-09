@@ -3,8 +3,11 @@ package blob
 import (
 	"sync"
 
+	"github.com/realPy/jswasm/arraybuffer"
 	"github.com/realPy/jswasm/js"
 	"github.com/realPy/jswasm/object"
+	"github.com/realPy/jswasm/stream"
+	readablestream "github.com/realPy/jswasm/stream"
 )
 
 var singleton sync.Once
@@ -103,4 +106,42 @@ func (b Blob) Slice(begin, end int) (Blob, error) {
 		return newblob, nil
 	}
 	return Blob{}, err
+}
+
+func (b Blob) Stream() (stream.ReadableStream, error) {
+
+	var err error
+	var obj js.Value
+
+	if obj, err = b.JSObject().CallWithErr("stream"); err == nil {
+		return stream.NewReadableStreamFromJSObject(obj)
+
+	}
+	return readablestream.ReadableStream{}, err
+}
+
+func (b Blob) ArrayBuffer() (arraybuffer.ArrayBuffer, error) {
+
+	var err error
+	var promisebuffer js.Value
+	var arrayb arraybuffer.ArrayBuffer
+
+	if promisebuffer, err = b.JSObject().CallWithErr("arrayBuffer"); err == nil {
+		waitsync := make(chan arraybuffer.ArrayBuffer)
+		then := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+
+			if arrayb, err = arraybuffer.NewFromJSObject(args[0]); err == nil {
+				waitsync <- arrayb
+			} else {
+				waitsync <- arraybuffer.ArrayBuffer{}
+			}
+
+			return nil
+		})
+
+		promisebuffer.Call("then", then)
+		arrayb = <-waitsync
+
+	}
+	return arrayb, err
 }

@@ -1,6 +1,7 @@
 package uint8array
 
 import (
+	"errors"
 	"sync"
 
 	"github.com/realPy/jswasm/js"
@@ -53,5 +54,25 @@ func NewFromJSObject(obj js.Value) (Uint8Array, error) {
 
 	u.Object = u.SetObject(obj)
 	return u, nil
+
+}
+
+func (u Uint8Array) Bytes() ([]byte, error) {
+	var err error
+	var buffer []byte
+	buffer = make([]byte, u.Length())
+	if _, err = js.CopyBytesToGoWithErr(buffer, u.JSObject()); err == nil {
+		return buffer, nil
+	}
+	return buffer, err
+}
+
+func (u Uint8Array) CopyBytes(buffer []byte) (int, error) {
+
+	if len(buffer) < u.Length() {
+		return 0, errors.New("Increase your buffer size")
+	}
+
+	return js.CopyBytesToGoWithErr(buffer, u.JSObject())
 
 }
