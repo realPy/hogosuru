@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/md5"
+	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
 	"io"
@@ -18,9 +19,11 @@ import (
 	"github.com/realPy/hogosuru/indexeddb/idbdatabase"
 	"github.com/realPy/hogosuru/js"
 	"github.com/realPy/hogosuru/json"
+	"github.com/realPy/hogosuru/messageevent"
 	"github.com/realPy/hogosuru/object"
 	"github.com/realPy/hogosuru/response"
 	"github.com/realPy/hogosuru/storage"
+	"github.com/realPy/hogosuru/websocket"
 
 	"github.com/realPy/hogosuru/document"
 	"github.com/realPy/hogosuru/xmlhttprequest"
@@ -57,16 +60,18 @@ func TestBlob() js.Func {
 							var n int
 							var err error
 							hashmd5 := md5.New()
-
+							hashsha256 := sha256.New()
 							for {
 								n, err = read.Read(data)
 								hashmd5.Write(data[:n])
+								hashsha256.Write(data[:n])
 								if err != nil {
 									break
 								}
 							}
 							if err == io.EOF {
 								println("MD5: " + hex.EncodeToString(hashmd5.Sum(nil)))
+								println("SHA256: " + hex.EncodeToString(hashsha256.Sum(nil)))
 							}
 
 						} else {
@@ -162,6 +167,7 @@ func main() {
 		p := j.GoJson()
 		fmt.Printf("Value of complex[\"toto\"] %s\n", p.Get("complex").Get("toto"))
 		fmt.Printf("---->%s\n", p)
+		j.Export("bastien")
 	} else {
 		fmt.Printf("erreur %s\n", err)
 	}
@@ -294,8 +300,11 @@ func main() {
 
 	fmt.Println("-----------Test Channels---------")
 	if channel, err := broadcastchannel.New("TestChannel"); err == nil {
-		channel.SetReceiveMessage(func(c broadcastchannel.Channel, obj object.GOMap) {
-			fmt.Printf("--->%s---\n", obj.Get("data").String())
+		channel.SetReceiveMessage(func(c broadcastchannel.Channel, m messageevent.MessageEvent) {
+			if dataObject, err := m.Data(); err == nil {
+				fmt.Printf("--->%s---\n", dataObject.String())
+			}
+
 		})
 
 		if err := channel.PostMessage("New wasm loaded"); err != nil {
@@ -349,6 +358,24 @@ func main() {
 
 		})
 		xhr.SendForm(f)
+	}
+
+	if ws, err := websocket.New("wss://echo.websocket.org"); err == nil {
+		ws.SetOnMessage(func(w websocket.WebSocket, message interface{}) {
+			if a, ok := message.(arraybuffer.ArrayBuffer); ok {
+				println("Ws receive:" + a.String())
+			}
+			if s, ok := message.(string); ok {
+				println("Ws receive:" + s)
+			}
+
+		})
+
+		ws.SetOnOpen(func(ws websocket.WebSocket) {
+
+			ws.Send("hello")
+		})
+
 	}
 
 	js.Global().Set("test", TestBlob())

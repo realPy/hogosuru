@@ -4,8 +4,8 @@ import (
 	"sync"
 
 	"github.com/realPy/hogosuru/js"
+	"github.com/realPy/hogosuru/messageevent"
 	"github.com/realPy/hogosuru/object"
-	"github.com/realPy/hogosuru/object/event/messageevent"
 )
 
 var singleton sync.Once
@@ -48,10 +48,10 @@ func New(channelname string) (Channel, error) {
 }
 
 //SetReceiveMessage Set the receiver method on channel
-func (c Channel) SetReceiveMessage(handler func(Channel, object.GOMap)) {
+func (c Channel) SetReceiveMessage(handler func(Channel, messageevent.MessageEvent)) {
 	onmessage := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		if obj, err := messageevent.NewMessageEvent(args[0]); err == nil {
-			handler(c, obj)
+		if msgEvent, err := messageevent.NewFromJSObject(args[0]); err == nil {
+			handler(c, msgEvent)
 		}
 
 		return nil
