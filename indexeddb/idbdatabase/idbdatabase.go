@@ -1,10 +1,10 @@
 package idbdatabase
 
 import (
-	"github.com/realPy/jswasm/js"
+	"github.com/realPy/hogosuru/js"
 
-	"github.com/realPy/jswasm/indexeddb/store"
-	"github.com/realPy/jswasm/object"
+	"github.com/realPy/hogosuru/indexeddb/store"
+	"github.com/realPy/hogosuru/object"
 )
 
 type IDBDatabase struct {

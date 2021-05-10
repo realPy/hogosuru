@@ -17,12 +17,12 @@ The project is written to work with tinygo but compatible with the go official c
 
 Start project in tinygo docker
 ```
-docker run -it -v $PWD:/go/src/jswasm tinygo/tinygo bash
+docker run -it -v $PWD:/go/src/hogosuru tinygo/tinygo bash
 ```
 Build  
 
 ```
-docker run --rm -it -w /go/src/jswasm -v $PWD:/go/src/jswasm tinygo/tinygo tinygo build  -o ./example/wasm_main/wasm.wasm --no-debug -target wasm example/wasm_main/main.go
+docker run --rm -it -w /go/src/hogosuru -v $PWD:/go/src/hogosuru tinygo/tinygo tinygo build  -o ./example/wasm_main/wasm.wasm --no-debug -target wasm example/wasm_main/main.go
 
 ```
 

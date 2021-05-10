@@ -1,9 +1,9 @@
 package filelist
 
 import (
-	"github.com/realPy/jswasm/file"
-	"github.com/realPy/jswasm/js"
-	"github.com/realPy/jswasm/object"
+	"github.com/realPy/hogosuru/file"
+	"github.com/realPy/hogosuru/js"
+	"github.com/realPy/hogosuru/object"
 )
 
 /*

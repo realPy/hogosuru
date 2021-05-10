@@ -4,11 +4,11 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/realPy/jswasm"
-	"github.com/realPy/jswasm/arraybuffer"
-	"github.com/realPy/jswasm/js"
-	"github.com/realPy/jswasm/object"
-	"github.com/realPy/jswasm/uint8array"
+	"github.com/realPy/hogosuru"
+	"github.com/realPy/hogosuru/arraybuffer"
+	"github.com/realPy/hogosuru/js"
+	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/uint8array"
 )
 
 var (
@@ -84,7 +84,7 @@ func (r Response) Text() (string, error) {
 	var txtObject js.Value
 	var err error
 	if txtObject, err = r.JSObject().CallWithErr("text"); err == nil {
-		jsTxt := <-jswasm.Await(txtObject)
+		jsTxt := <-hogosuru.Await(txtObject)
 		if len(jsTxt) > 0 {
 			return jsTxt[0].String(), nil
 		}
@@ -99,7 +99,7 @@ func (r Response) ArrayBuffer() (arraybuffer.ArrayBuffer, error) {
 	var err error
 	var arrayObject js.Value
 	if arrayObject, err = r.JSObject().CallWithErr("arrayBuffer"); err == nil {
-		binary := <-jswasm.Await(arrayObject)
+		binary := <-hogosuru.Await(arrayObject)
 
 		if len(binary) > 0 {
 

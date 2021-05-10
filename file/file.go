@@ -1,10 +1,10 @@
 package file
 
 import (
-	"github.com/realPy/jswasm/js"
+	"github.com/realPy/hogosuru/js"
 
-	"github.com/realPy/jswasm/blob"
-	"github.com/realPy/jswasm/object"
+	"github.com/realPy/hogosuru/blob"
+	"github.com/realPy/hogosuru/object"
 )
 
 type File struct {

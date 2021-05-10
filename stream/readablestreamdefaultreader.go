@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/realPy/jswasm/js"
-	"github.com/realPy/jswasm/object"
-	"github.com/realPy/jswasm/uint8array"
+	"github.com/realPy/hogosuru/js"
+	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/uint8array"
 )
 
 type ReadableStreamDefaultReader struct {

@@ -3,8 +3,8 @@ package blob
 import (
 	"io"
 
-	"github.com/realPy/jswasm/arraybuffer"
-	"github.com/realPy/jswasm/uint8array"
+	"github.com/realPy/hogosuru/arraybuffer"
+	"github.com/realPy/hogosuru/uint8array"
 )
 
 type BlobStream struct {
