@@ -1,25 +1,18 @@
-# jswasm
+# Hogosuru
 
 ## Synopsis
-jsawsm is a part of a personel project and export to the community and provide a framework to easly provide wabapi and interface access to go
+Hogosuru is a part of a personel project and export to the community and provide a framework to easly provide write front end in go.
+He use a rewrite syscall/js (that catch error) and wrap Object and Interface provide by browser 
 
-jswasm is a lib replacement for syscall/js and help to use syscall with handle error (not panic) 
-
-The standard syscall/js doesn't provide a way to handle error and panics when error occurs.  
-Yes ! , Panic can be handle via recovery but with compiler like tinygo, the recovery can not be handle. https://tinygo.org/lang-support/#a-note-on-the-recover-builtin
-
-Some other package like net/http , json is not available (https://tinygo.org/lang-support/stdlib/) but javascript can already make lots of things with API if error can be handle!   
-For example with standard syscall/js, use of JSON API and parse function with invalid json Panic and stopped your current webassembly function. I think that an invalid json is not a good reason to stopped a job, we just want handle the error.
-
-Jswasm provide functions replacements for http, event , json , but with a goal to provide all JS API access https://developer.mozilla.org/fr/docs/Web/API 
+Hogosuru provide functions replacements for http,event,fetch,json,xmlhttprequest,blob,broadcastchannel,indexeddb, localstorage ... with a goal to provide all JS API access https://developer.mozilla.org/fr/docs/Web/API and write full web app in GO
 
 ## How to use
-Just import the module with import "github.com/realPy/jswasm/js" to use the standard syscall/js  
-Use the import "github.com/realPy/jswasm" to import http, json and event function  
+Just import the module with go module  
+go get github.com/realPy/hogosuru  
 
+The project is written to work with tinygo but compatible with the go official compiler
 
-
-## try example
+## Try example
 
 Start project in tinygo docker
 ```
@@ -38,3 +31,9 @@ go run example/server/main.go
 ```
 
 Dont forget to get to use the wasm_exec.js provide by tinygo.
+
+
+## How to help
+
+This is a young project and there are a lot of work to do  
+All help is welcome. If you are interested by this project, please contact me
