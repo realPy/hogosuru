@@ -107,19 +107,19 @@ func (w WebSocket) SetOnMessage(handler func(WebSocket, interface{})) {
 			if m, err := messageevent.NewFromJSObject(v[0]); err == nil {
 
 				if data, err := m.Data(); err == nil {
-
-					if btype, err := w.BinaryType(); err == nil {
-
-						switch btype {
-						case "blob":
-							handler(w, data.String())
-						case "arraybuffer":
-							if a, err := arraybuffer.NewFromJSObject(data); err == nil {
-								handler(w, a)
-							}
+					switch object.String(data) {
+					case "[object Blob]":
+						if b, err := blob.NewFromJSObject(data); err == nil {
+							handler(w, b)
 						}
-
+					case "[object ArrayBuffer]":
+						if a, err := arraybuffer.NewFromJSObject(data); err == nil {
+							handler(w, a)
+						}
+					default:
+						handler(w, data.String())
 					}
+
 				}
 
 			}
