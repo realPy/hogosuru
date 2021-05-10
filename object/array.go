@@ -3,7 +3,7 @@ package object
 import (
 	"fmt"
 
-	"github.com/realPy/jswasm/js"
+	"github.com/realPy/hogosuru/js"
 )
 
 type GOArray struct {

@@ -3,9 +3,9 @@ package broadcastchannel
 import (
 	"sync"
 
-	"github.com/realPy/jswasm/js"
-	"github.com/realPy/jswasm/object"
-	"github.com/realPy/jswasm/object/event/messageevent"
+	"github.com/realPy/hogosuru/js"
+	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/object/event/messageevent"
 )
 
 var singleton sync.Once

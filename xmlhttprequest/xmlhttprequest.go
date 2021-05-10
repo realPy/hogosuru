@@ -13,10 +13,10 @@ import (
 	"net/url"
 	"sync"
 
-	"github.com/realPy/jswasm/formdata"
-	"github.com/realPy/jswasm/js"
-	"github.com/realPy/jswasm/object"
-	"github.com/realPy/jswasm/object/event/progressevent"
+	"github.com/realPy/hogosuru/formdata"
+	"github.com/realPy/hogosuru/js"
+	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/object/event/progressevent"
 )
 
 var singleton sync.Once

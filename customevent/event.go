@@ -3,8 +3,8 @@ package customevent
 import (
 	"sync"
 
-	"github.com/realPy/jswasm/event"
-	"github.com/realPy/jswasm/js"
+	"github.com/realPy/hogosuru/event"
+	"github.com/realPy/hogosuru/js"
 )
 
 var singleton sync.Once

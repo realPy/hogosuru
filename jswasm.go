@@ -1,6 +1,6 @@
-package jswasm
+package hogosuru
 
-import "github.com/realPy/jswasm/js"
+import "github.com/realPy/hogosuru/js"
 
 func Promise() (p js.Value, set func(js.Value)) {
 

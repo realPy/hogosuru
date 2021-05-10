@@ -1,9 +1,9 @@
 package stream
 
 import (
-	"github.com/realPy/jswasm/js"
+	"github.com/realPy/hogosuru/js"
 
-	"github.com/realPy/jswasm/object"
+	"github.com/realPy/hogosuru/object"
 )
 
 type ReadableStream struct {

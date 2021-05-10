@@ -1,6 +1,6 @@
 package main
 
-import "github.com/realPy/jswasm/json"
+import "github.com/realPy/hogosuru/json"
 
 func main() {
 

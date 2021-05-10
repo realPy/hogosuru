@@ -3,11 +3,11 @@ package blob
 import (
 	"sync"
 
-	"github.com/realPy/jswasm/arraybuffer"
-	"github.com/realPy/jswasm/js"
-	"github.com/realPy/jswasm/object"
-	"github.com/realPy/jswasm/stream"
-	readablestream "github.com/realPy/jswasm/stream"
+	"github.com/realPy/hogosuru/arraybuffer"
+	"github.com/realPy/hogosuru/js"
+	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/stream"
+	readablestream "github.com/realPy/hogosuru/stream"
 )
 
 var singleton sync.Once

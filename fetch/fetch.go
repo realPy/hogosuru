@@ -5,9 +5,9 @@ import (
 	"net/url"
 	"sync"
 
-	"github.com/realPy/jswasm/js"
-	"github.com/realPy/jswasm/object"
-	jsresponse "github.com/realPy/jswasm/response"
+	"github.com/realPy/hogosuru/js"
+	"github.com/realPy/hogosuru/object"
+	jsresponse "github.com/realPy/hogosuru/response"
 )
 
 var singleton sync.Once

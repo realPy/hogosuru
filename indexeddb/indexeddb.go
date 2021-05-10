@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/realPy/jswasm/indexeddb/idbdatabase"
-	"github.com/realPy/jswasm/js"
-	"github.com/realPy/jswasm/object"
+	"github.com/realPy/hogosuru/indexeddb/idbdatabase"
+	"github.com/realPy/hogosuru/js"
+	"github.com/realPy/hogosuru/object"
 )
 
 func getEventTargetError(ev js.Value) (js.Value, error) {
