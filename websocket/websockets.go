@@ -101,15 +101,18 @@ func (w WebSocket) BinaryType() (string, error) {
 func (w WebSocket) SetOnMessage(handler func(WebSocket, interface{})) {
 
 	w.setHandler("onmessage", func(ws WebSocket, v []js.Value) {
+
 		if len(v) > 0 {
+
 			if m, err := messageevent.NewFromJSObject(v[0]); err == nil {
+
 				if data, err := m.Data(); err == nil {
+
 					if btype, err := w.BinaryType(); err == nil {
+
 						switch btype {
 						case "blob":
-							if b, err := blob.NewFromJSObject(data); err == nil {
-								handler(w, b)
-							}
+							handler(w, data.String())
 						case "arraybuffer":
 							if a, err := arraybuffer.NewFromJSObject(data); err == nil {
 								handler(w, a)
