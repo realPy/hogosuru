@@ -1,7 +1,7 @@
 package idbdatabase
 
 import (
-	"github.com/realPy/hogosuru/js"
+	"syscall/js"
 
 	"github.com/realPy/hogosuru/indexeddb/store"
 	"github.com/realPy/hogosuru/object"

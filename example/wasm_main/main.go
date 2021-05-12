@@ -8,6 +8,10 @@ import (
 	"io"
 	"net/url"
 
+	"syscall/js"
+
+	"github.com/realPy/hogosuru/json"
+
 	"github.com/realPy/hogosuru/arraybuffer"
 	"github.com/realPy/hogosuru/blob"
 	"github.com/realPy/hogosuru/broadcastchannel"
@@ -17,8 +21,6 @@ import (
 	"github.com/realPy/hogosuru/htmlinputelement"
 	"github.com/realPy/hogosuru/indexeddb"
 	"github.com/realPy/hogosuru/indexeddb/idbdatabase"
-	"github.com/realPy/hogosuru/js"
-	"github.com/realPy/hogosuru/json"
 	"github.com/realPy/hogosuru/messageevent"
 	"github.com/realPy/hogosuru/object"
 	"github.com/realPy/hogosuru/response"

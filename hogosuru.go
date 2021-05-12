@@ -1,6 +1,6 @@
 package hogosuru
 
-import "github.com/realPy/hogosuru/js"
+import "syscall/js"
 
 func Promise() (p js.Value, set func(js.Value)) {
 

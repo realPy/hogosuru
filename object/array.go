@@ -3,7 +3,7 @@ package object
 import (
 	"fmt"
 
-	"github.com/realPy/hogosuru/js"
+	"syscall/js"
 )
 
 type GOArray struct {

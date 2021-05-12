@@ -4,7 +4,8 @@ package eventtarget
 import (
 	"sync"
 
-	"github.com/realPy/hogosuru/js"
+	"syscall/js"
+
 	"github.com/realPy/hogosuru/object"
 )
 

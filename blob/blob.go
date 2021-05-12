@@ -6,8 +6,9 @@ package blob
 import (
 	"sync"
 
+	"syscall/js"
+
 	"github.com/realPy/hogosuru/arraybuffer"
-	"github.com/realPy/hogosuru/js"
 	"github.com/realPy/hogosuru/object"
 	"github.com/realPy/hogosuru/stream"
 	readablestream "github.com/realPy/hogosuru/stream"

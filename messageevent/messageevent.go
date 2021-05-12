@@ -5,8 +5,9 @@ package messageevent
 import (
 	"errors"
 
+	"syscall/js"
+
 	"github.com/realPy/hogosuru/event"
-	"github.com/realPy/hogosuru/js"
 	"github.com/realPy/hogosuru/object"
 )
 

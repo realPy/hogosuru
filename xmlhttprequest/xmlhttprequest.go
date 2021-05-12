@@ -14,8 +14,9 @@ import (
 	"net/url"
 	"sync"
 
+	"syscall/js"
+
 	"github.com/realPy/hogosuru/formdata"
-	"github.com/realPy/hogosuru/js"
 	"github.com/realPy/hogosuru/object"
 	"github.com/realPy/hogosuru/object/event/progressevent"
 )
