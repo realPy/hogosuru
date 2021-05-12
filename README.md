@@ -40,20 +40,6 @@ This is a young project and there are a lot of work to do
 All help is welcome. If you are interested by this project, please contact me
 
 
-## Some sample 
-
-### Local MD5 sum of file with drag and drop
-
-You can test a local example of local hash  
-Go to https://realpy.github.io/hogosuru/example/wasm_main/draganddrop.html
-
-Open you console developer. Drag some file and see result :)  
-
-
-
-
-
-
 ## Implemented API/Object status
 
     
@@ -83,6 +69,15 @@ Open you console developer. Drag some file and see result :)
 
 
 
+
+
+
+### Local MD5 sum of file with drag and drop
+
+You can test a local example of local hash  
+Go to https://realpy.github.io/hogosuru/example/wasm_main/draganddrop.html
+
+Open you console developer. Drag some file and see result :)  
 
 
 
