@@ -1,5 +1,7 @@
 package json
 
+// https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/JSON
+
 import (
 	"sync"
 

@@ -1,5 +1,6 @@
 package customevent
 
+// https://developer.mozilla.org/fr/docs/Web/API/CustomEvent
 import (
 	"sync"
 
@@ -16,9 +17,9 @@ type JSInterface struct {
 	objectInterface js.Value
 }
 
-//JSCustomEvent JSCustomEvent struct
-type JSCustomEvent struct {
-	event.JSEvent
+//CustomEvent CustomEvent struct
+type CustomEvent struct {
+	event.Event
 }
 
 //GetJSInterface get teh JS interface of event
@@ -35,9 +36,9 @@ func GetJSInterface() *JSInterface {
 	return customeventinterface
 }
 
-//New Create a newJSEvent
-func New(message, detail string) (JSCustomEvent, error) {
-	var event JSCustomEvent
+//New Create a CustomEvent
+func New(message, detail string) (CustomEvent, error) {
+	var event CustomEvent
 
 	if eventi := GetJSInterface(); eventi != nil {
 		event.Object = event.SetObject(eventi.objectInterface.New(js.ValueOf(message), js.ValueOf(map[string]interface{}{"detail": detail})))

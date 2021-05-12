@@ -328,6 +328,18 @@ func (v Value) Set(p string, x interface{}) {
 	runtime.KeepAlive(xv)
 }
 
+func (v Value) SetWithErr(p string, x interface{}) error {
+
+	if vType := v.Type(); !vType.isObject() {
+		return fmt.Errorf("Unable to set value %s", p)
+	}
+	xv := ValueOf(x)
+	valueSet(v.ref, p, xv.ref)
+	runtime.KeepAlive(v)
+	runtime.KeepAlive(xv)
+	return nil
+}
+
 //go:linkname valueSet syscall/js.valueSet
 func valueSet(v ref, p string, x ref)
 

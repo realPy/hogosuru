@@ -1,5 +1,7 @@
 package storage
 
+// https://developer.mozilla.org/fr/docs/Mozilla/Add-ons/WebExtensions/API/storage
+
 import (
 	"github.com/realPy/hogosuru/js"
 	"github.com/realPy/hogosuru/object"

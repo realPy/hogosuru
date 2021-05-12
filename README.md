@@ -38,3 +38,41 @@ Dont forget to get to use the wasm_exec.js provide by tinygo.
 
 This is a young project and there are a lot of work to do  
 All help is welcome. If you are interested by this project, please contact me
+
+
+## Implemented API/Object status
+
+    
+
+|  API/Object |  Implemented Support |  MDN URL |
+|-------------|:--------------------:|----------|
+| Arraybuffer       |  Partial | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/ |Global_Objects/ArrayBuffer | 
+| Blob              |  Full + stream additional support|  https://developer.mozilla.org/fr/docs/Web/API/Blob |
+| Broadcast Channel |  Full |  https://developer.mozilla.org/en-US/docs/Web/API/BroadcastChannel  | 
+| CustomEvent |  Full |  https://developer.mozilla.org/fr/docs/Web/API/CustomEvent |
+| Event | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/Event |
+| EventTarget | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/EventTarget/EventTarget | 
+| Fetch | Partial implemented  | https://developer.mozilla.org/fr/docs/Web/API/Fetch_API  |
+| File | Full | https://developer.mozilla.org/fr/docs/Web/API/File |
+| FileList | Full | https://developer.mozilla.org/fr/docs/Web/API/FileList |
+| FormData | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/FormData |
+| HTMLInputElement| Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/HTMLInputElement |
+| Indexedddb | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/IndexedDB_API|
+| JSON | Full | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/JSON |
+| MessageEvent | Full | https://developer.mozilla.org/fr/docs/Web/API/MessageEvent |
+| Response | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/Response |
+| Storage | Full | https://developer.mozilla.org/fr/docs/Mozilla/Add-ons/WebExtensions/API/storage |
+| Stream | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/Streams_API |
+| uint8array | Partial implemented | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array |
+| WebSocket | Full | https://developer.mozilla.org/fr/docs/Web/API/WebSocket |
+| XMLHttpRequest | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/XMLHttpRequest/XMLHttpRequest
+
+
+
+
+
+
+
+
+
+

@@ -1,6 +1,6 @@
 package websocket
 
-//https://developer.mozilla.org/fr/docs/Web/API/WebSocket
+// https://developer.mozilla.org/fr/docs/Web/API/WebSocket
 
 import (
 	"sync"
@@ -26,6 +26,11 @@ type JSInterface struct {
 type WebSocket struct {
 	object.Object
 }
+
+const (
+	BlobType        = "blob"
+	ArrayBufferType = "arraybuffer"
+)
 
 //GetJSInterface get teh JS interface of broadcast channel
 func GetJSInterface() *JSInterface {
@@ -95,6 +100,21 @@ func (w WebSocket) BinaryType() (string, error) {
 		return obj.String(), nil
 	}
 	return "", err
+
+}
+
+func (w WebSocket) SetBinaryType(binaryType string) error {
+
+	switch binaryType {
+	case BlobType:
+	case ArrayBufferType:
+	default:
+		return ErrSetBadBinaryType
+	}
+
+	w.JSObject().Set("binaryType", js.ValueOf(binaryType))
+
+	return nil
 
 }
 

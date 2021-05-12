@@ -1,5 +1,7 @@
 package formdata
 
+// https://developer.mozilla.org/fr/docs/Web/API/FormData
+
 import (
 	"sync"
 

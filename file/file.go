@@ -1,5 +1,6 @@
 package file
 
+// https://developer.mozilla.org/fr/docs/Web/API/File
 import (
 	"github.com/realPy/hogosuru/js"
 

@@ -1,5 +1,6 @@
 package xmlhttprequest
 
+// https://developer.mozilla.org/fr/docs/Web/API/XMLHttpRequest/XMLHttpRequest
 /*
 
 TODO: Document Class

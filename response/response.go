@@ -1,5 +1,7 @@
 package response
 
+// https://developer.mozilla.org/fr/docs/Web/API/Response
+
 import (
 	"errors"
 	"sync"
@@ -27,8 +29,6 @@ type JSInterface struct {
 //FetchResponse struct
 type Response struct {
 	object.Object
-	Err    error
-	status int
 }
 
 //GetJSInterface get teh JS interface of broadcast channel
@@ -45,7 +45,7 @@ func GetJSInterface() *JSInterface {
 	return responseinterface
 }
 
-//New Create a newJSEvent
+//New Create a response
 func New() (Response, error) {
 	var r Response
 
@@ -67,16 +67,79 @@ func NewFromJSObject(obj js.Value) (Response, error) {
 	return response, ErrNotAnFResp
 }
 
-func (r Response) Status() int {
-	if r.status == 0 {
-		r.status = 456
-		if statusObject, err := r.JSObject().GetWithErr("status"); err == nil {
-			if statusObject.Type() == js.TypeNumber {
-				r.status = statusObject.Int()
-			}
+func (r Response) Ok() (bool, error) {
+
+	var err error
+	var obj js.Value
+
+	if obj, err = r.JSObject().GetWithErr("ok"); err == nil {
+		if obj.Type() == js.TypeBoolean {
+			return obj.Bool(), nil
 		}
 	}
-	return r.status
+
+	return false, err
+}
+
+func (r Response) Redirected() (bool, error) {
+
+	var err error
+	var obj js.Value
+
+	if obj, err = r.JSObject().GetWithErr("redirected"); err == nil {
+		if obj.Type() == js.TypeBoolean {
+			return obj.Bool(), nil
+		}
+	}
+	return false, err
+}
+
+func (r Response) Status() (int, error) {
+	var err error
+	var obj js.Value
+	if obj, err = r.JSObject().GetWithErr("status"); err == nil {
+		if obj.Type() == js.TypeNumber {
+			return obj.Int(), nil
+		}
+	}
+
+	return 456, err
+}
+
+func (r Response) StatusText() (string, error) {
+
+	var err error
+	var obj js.Value
+
+	if obj, err = r.JSObject().GetWithErr("statusText"); err == nil {
+
+		return obj.String(), nil
+	}
+	return "", err
+}
+
+func (r Response) Type() (string, error) {
+
+	var err error
+	var obj js.Value
+
+	if obj, err = r.JSObject().GetWithErr("type"); err == nil {
+
+		return obj.String(), nil
+	}
+	return "", err
+}
+
+func (r Response) Url() (string, error) {
+
+	var err error
+	var obj js.Value
+
+	if obj, err = r.JSObject().GetWithErr("url"); err == nil {
+
+		return obj.String(), nil
+	}
+	return "", err
 }
 
 func (r Response) Text() (string, error) {
@@ -91,6 +154,24 @@ func (r Response) Text() (string, error) {
 
 	}
 	return "", err
+}
+
+func (r Response) UseFinalURL() (bool, error) {
+
+	var err error
+	var obj js.Value
+
+	if obj, err = r.JSObject().GetWithErr("useFinalURL"); err == nil {
+		if obj.Type() == js.TypeBoolean {
+			return obj.Bool(), nil
+		}
+	}
+	return false, err
+}
+
+func (r Response) SetUseFinalURL(b bool) {
+
+	r.JSObject().Set("useFinalURL", js.ValueOf(b))
 }
 
 func (r Response) ArrayBuffer() (arraybuffer.ArrayBuffer, error) {

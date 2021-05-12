@@ -1,5 +1,8 @@
 package blob
 
+// Full implemented
+// https://developer.mozilla.org/fr/docs/Web/API/Blob
+
 import (
 	"sync"
 
