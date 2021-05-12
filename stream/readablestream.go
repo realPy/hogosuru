@@ -1,7 +1,7 @@
 package stream
 
 import (
-	"github.com/realPy/hogosuru/js"
+	"syscall/js"
 
 	"github.com/realPy/hogosuru/object"
 )

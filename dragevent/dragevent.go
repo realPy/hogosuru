@@ -3,8 +3,10 @@ package dragevent
 import (
 	"sync"
 
+	"syscall/js"
+
+	datatransfert "github.com/realPy/hogosuru/datatransfer"
 	"github.com/realPy/hogosuru/event"
-	"github.com/realPy/hogosuru/js"
 	"github.com/realPy/hogosuru/object"
 )
 
@@ -47,4 +49,15 @@ func NewFromJSObject(obj js.Value) (DragEvent, error) {
 	return e, ErrNotAnDragEvent
 }
 
-//dataTransfer
+func (d DragEvent) DataTransfer() (datatransfert.DataTransfer, error) {
+
+	var err error
+	var obj js.Value
+
+	if obj, err = d.JSObject().GetWithErr("dataTransfer"); err == nil {
+
+		return datatransfert.NewFromJSObject(obj)
+	}
+	return datatransfert.DataTransfer{}, err
+
+}

@@ -3,7 +3,7 @@ package document
 import (
 	"sync"
 
-	"github.com/realPy/hogosuru/js"
+	"syscall/js"
 )
 
 var singleton sync.Once

@@ -4,8 +4,9 @@ import (
 	"errors"
 	"sync"
 
+	"syscall/js"
+
 	"github.com/realPy/hogosuru/arraybuffer"
-	"github.com/realPy/hogosuru/js"
 	"github.com/realPy/hogosuru/object"
 )
 

@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"sync"
 
+	"syscall/js"
+
 	"github.com/realPy/hogosuru/indexeddb/idbdatabase"
-	"github.com/realPy/hogosuru/js"
 	"github.com/realPy/hogosuru/object"
 )
 

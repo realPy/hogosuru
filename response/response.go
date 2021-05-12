@@ -6,9 +6,10 @@ import (
 	"errors"
 	"sync"
 
+	"syscall/js"
+
 	"github.com/realPy/hogosuru"
 	"github.com/realPy/hogosuru/arraybuffer"
-	"github.com/realPy/hogosuru/js"
 	"github.com/realPy/hogosuru/object"
 	"github.com/realPy/hogosuru/uint8array"
 )

@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/realPy/hogosuru/js"
+	"syscall/js"
+
 	"github.com/realPy/hogosuru/object"
 	"github.com/realPy/hogosuru/uint8array"
 )

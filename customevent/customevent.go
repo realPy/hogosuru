@@ -4,8 +4,9 @@ package customevent
 import (
 	"sync"
 
+	"syscall/js"
+
 	"github.com/realPy/hogosuru/event"
-	"github.com/realPy/hogosuru/js"
 )
 
 var singleton sync.Once

@@ -5,9 +5,10 @@ package websocket
 import (
 	"sync"
 
+	"syscall/js"
+
 	"github.com/realPy/hogosuru/arraybuffer"
 	"github.com/realPy/hogosuru/blob"
-	"github.com/realPy/hogosuru/js"
 	"github.com/realPy/hogosuru/messageevent"
 
 	"github.com/realPy/hogosuru/object"

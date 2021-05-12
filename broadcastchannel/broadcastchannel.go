@@ -6,7 +6,8 @@ package broadcastchannel
 import (
 	"sync"
 
-	"github.com/realPy/hogosuru/js"
+	"syscall/js"
+
 	"github.com/realPy/hogosuru/messageevent"
 	"github.com/realPy/hogosuru/object"
 )
@@ -23,6 +24,7 @@ type JSInterface struct {
 //Channel struct
 type Channel struct {
 	object.Object
+	onmessage js.Func
 }
 
 //GetJSInterface get teh JS interface of broadcast channel
@@ -33,6 +35,9 @@ func GetJSInterface() *JSInterface {
 		var err error
 		if bcinstance.objectInterface, err = js.Global().GetWithErr("BroadcastChannel"); err == nil {
 			bcinterface = &bcinstance
+			if object.String(bcinstance.objectInterface) == "" {
+				bcinterface = nil
+			}
 		}
 	})
 
@@ -52,7 +57,7 @@ func New(channelname string) (Channel, error) {
 
 //SetReceiveMessage Set the receiver method on channel
 func (c Channel) SetOnMessage(handler func(Channel, messageevent.MessageEvent)) {
-	onmessage := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	c.onmessage = js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		if msgEvent, err := messageevent.NewFromJSObject(args[0]); err == nil {
 			handler(c, msgEvent)
 		}
@@ -60,7 +65,7 @@ func (c Channel) SetOnMessage(handler func(Channel, messageevent.MessageEvent)) 
 		return nil
 	})
 
-	c.JSObject().Set("onmessage", onmessage)
+	c.JSObject().Set("onmessage", c.onmessage)
 
 }
 

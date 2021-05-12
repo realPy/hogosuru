@@ -5,8 +5,9 @@ package htmlinputelement
 import (
 	"sync"
 
+	"syscall/js"
+
 	"github.com/realPy/hogosuru/filelist"
-	"github.com/realPy/hogosuru/js"
 	"github.com/realPy/hogosuru/object"
 )
 

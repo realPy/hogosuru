@@ -3,7 +3,7 @@ package progressevent
 import (
 	"errors"
 
-	"github.com/realPy/hogosuru/js"
+	"syscall/js"
 
 	"github.com/realPy/hogosuru/object"
 )

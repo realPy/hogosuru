@@ -7,7 +7,8 @@ import (
 	"net/url"
 	"sync"
 
-	"github.com/realPy/hogosuru/js"
+	"syscall/js"
+
 	"github.com/realPy/hogosuru/object"
 	jsresponse "github.com/realPy/hogosuru/response"
 )

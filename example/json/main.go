@@ -1,6 +1,6 @@
 package main
 
-import "github.com/realPy/hogosuru/json"
+import "syscall/json"
 
 func main() {
 
