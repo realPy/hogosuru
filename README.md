@@ -52,6 +52,8 @@ All help is welcome. If you are interested by this project, please contact me
 | Blob              |  Full + stream additional support|  https://developer.mozilla.org/fr/docs/Web/API/Blob |
 | Broadcast Channel |  Full |  https://developer.mozilla.org/en-US/docs/Web/API/BroadcastChannel  | 
 | CustomEvent |  Full |  https://developer.mozilla.org/fr/docs/Web/API/CustomEvent |
+| DataTransfer | Partial implemented | https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer |
+| DragEvent |  Full |  https://developer.mozilla.org/en-US/docs/Web/API/DragEvent |
 | Event | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/Event |
 | EventTarget | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/EventTarget/EventTarget | 
 | Fetch | Partial implemented  | https://developer.mozilla.org/fr/docs/Web/API/Fetch_API  |
@@ -71,15 +73,6 @@ All help is welcome. If you are interested by this project, please contact me
 
 
 
-
-
-
-### Local MD5 sum of file with drag and drop
-
-You can test a local example of local hash  
-Go to https://realpy.github.io/hogosuru/example/wasm_main/draganddrop.html
-
-Open you console developer. Drag some file and see result :)  
 
 
 
