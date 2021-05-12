@@ -1,5 +1,8 @@
 package event
 
+// partial implemented
+// https://developer.mozilla.org/fr/docs/Web/API/Event
+
 import (
 	"sync"
 
@@ -16,12 +19,12 @@ type JSInterface struct {
 	objectInterface js.Value
 }
 
-//JSEvent JSEvent struct
-type JSEvent struct {
+//Event Event struct
+type Event struct {
 	object.Object
 }
 
-//GetJSInterface get teh JS interface of event
+//GetJSInterface get the JS interface of event
 func GetJSInterface() *JSInterface {
 
 	singleton.Do(func() {
@@ -36,8 +39,8 @@ func GetJSInterface() *JSInterface {
 }
 
 //New Create a event
-func New(message string) (JSEvent, error) {
-	var event JSEvent
+func New(message string) (Event, error) {
+	var event Event
 
 	if eventi := GetJSInterface(); eventi != nil {
 		event.Object = event.SetObject(eventi.objectInterface.New(js.ValueOf(message)))
@@ -46,9 +49,41 @@ func New(message string) (JSEvent, error) {
 	return event, ErrNotImplemented
 }
 
+func NewFromJSObject(obj js.Value) (Event, error) {
+	var e Event
+
+	if object.String(obj) == "[object Event]" {
+		e.Object = e.SetObject(obj)
+		return e, nil
+	}
+
+	return e, ErrNotAnEvent
+}
+
 //DispatchEvent to the object
-func (j JSEvent) DispatchEvent(obj js.Value) error {
+func (e Event) DispatchEvent(obj js.Value) error {
 	var err error
-	_, err = obj.CallWithErr("dispatchEvent", j.JSObject())
+	_, err = obj.CallWithErr("dispatchEvent", e.JSObject())
+	return err
+}
+
+func (e Event) PreventDefault() error {
+	var err error
+	_, err = e.JSObject().CallWithErr("preventDefault")
+
+	return err
+}
+
+func (e Event) StopImmediatePropagation() error {
+	var err error
+	_, err = e.JSObject().CallWithErr("stopImmediatePropagation")
+
+	return err
+}
+
+func (e Event) StopPropagation() error {
+	var err error
+	_, err = e.JSObject().CallWithErr("stopPropagation")
+
 	return err
 }

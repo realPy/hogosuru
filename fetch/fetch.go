@@ -1,5 +1,7 @@
 package fetch
 
+// https://developer.mozilla.org/fr/docs/Web/API/Fetch_API
+
 import (
 	"fmt"
 	"net/url"
@@ -39,7 +41,7 @@ type Fetch struct {
 }
 
 //NewFetch New fetch
-func NewFetch(urlfetch *url.URL, method string, headers *map[string]interface{}, data *url.Values, handlerResponse func(jsresponse.Response)) (Fetch, error) {
+func NewFetch(urlfetch *url.URL, method string, headers *map[string]interface{}, data *url.Values, handlerResponse func(jsresponse.Response, error)) (Fetch, error) {
 	var fetch Fetch
 
 	if fetchi := GetJSInterface(); fetchi != nil {
@@ -71,14 +73,12 @@ func NewFetch(urlfetch *url.URL, method string, headers *map[string]interface{},
 			var r jsresponse.Response
 			if len(args) > 0 {
 				rsp := args[0]
-				if r, err = jsresponse.NewFromJSObject(rsp); err != nil {
-					r.Err = err
-				}
+				r, err = jsresponse.NewFromJSObject(rsp)
 
 			} else {
-				r.Err = fmt.Errorf("fetch response must contains args")
+				err = fmt.Errorf("fetch response must contains args")
 			}
-			handlerResponse(r)
+			handlerResponse(r, err)
 			return nil
 		})
 

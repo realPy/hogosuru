@@ -176,52 +176,10 @@ func main() {
 
 	fetchsync := make(chan bool)
 
-	fetch.NewFetch(endpoint, "GET", nil, nil, func(r response.Response) {
+	fetch.NewFetch(endpoint, "GET", nil, nil, func(r response.Response, err error) {
 
-		if r.Status() == 200 {
-			if text, err := r.Text(); err == nil {
-
-				if j, err := json.Parse(text); err == nil {
-					jsonGo := j.GoJson()
-					fmt.Printf("Hello %s\n", jsonGo.Get("hello"))
-				} else {
-					fmt.Printf("erreur %s", err)
-				}
-
-			} else {
-				fmt.Println(err.Error())
-			}
-		}
-		fetchsync <- true
-	})
-
-	<-fetchsync
-
-	fetch.NewFetch(endpoint, "GET", nil, nil, func(r response.Response) {
-
-		if r.Status() == 200 {
-			if b, err := r.ArrayBufferBytes(); err == nil {
-
-				fmt.Printf("-----------------------Bytes: %s", string(b))
-
-			} else {
-				fmt.Println(err.Error())
-			}
-		}
-		fetchsync <- true
-	})
-	<-fetchsync
-
-	dataPost := url.Values{}
-
-	dataPost.Set("test", "ok")
-
-	fetch.NewFetch(endpoint,
-		"POST",
-		&map[string]interface{}{"content-type": "application/x-www-form-urlencoded", "User-Agent": "Tester"},
-		&dataPost, func(r response.Response) {
-
-			if r.Status() == 200 {
+		if err == nil {
+			if s, _ := r.Status(); s == 200 {
 				if text, err := r.Text(); err == nil {
 
 					if j, err := json.Parse(text); err == nil {
@@ -235,6 +193,57 @@ func main() {
 					fmt.Println(err.Error())
 				}
 			}
+		}
+
+		fetchsync <- true
+	})
+
+	<-fetchsync
+
+	fetch.NewFetch(endpoint, "GET", nil, nil, func(r response.Response, err error) {
+
+		if err == nil {
+			if s, _ := r.Status(); s == 200 {
+				if b, err := r.ArrayBufferBytes(); err == nil {
+
+					fmt.Printf("-----------------------Bytes: %s", string(b))
+
+				} else {
+					fmt.Println(err.Error())
+				}
+			}
+		}
+
+		fetchsync <- true
+	})
+	<-fetchsync
+
+	dataPost := url.Values{}
+
+	dataPost.Set("test", "ok")
+
+	fetch.NewFetch(endpoint,
+		"POST",
+		&map[string]interface{}{"content-type": "application/x-www-form-urlencoded", "User-Agent": "Tester"},
+		&dataPost, func(r response.Response, err error) {
+
+			if err == nil {
+				if s, _ := r.Status(); s == 200 {
+					if text, err := r.Text(); err == nil {
+
+						if j, err := json.Parse(text); err == nil {
+							jsonGo := j.GoJson()
+							fmt.Printf("Hello %s\n", jsonGo.Get("hello"))
+						} else {
+							fmt.Printf("erreur %s", err)
+						}
+
+					} else {
+						fmt.Println(err.Error())
+					}
+				}
+			}
+
 			fetchsync <- true
 		})
 
@@ -300,7 +309,7 @@ func main() {
 
 	fmt.Println("-----------Test Channels---------")
 	if channel, err := broadcastchannel.New("TestChannel"); err == nil {
-		channel.SetReceiveMessage(func(c broadcastchannel.Channel, m messageevent.MessageEvent) {
+		channel.SetOnMessage(func(c broadcastchannel.Channel, m messageevent.MessageEvent) {
 			if dataObject, err := m.Data(); err == nil {
 				fmt.Printf("--->%s---\n", dataObject.String())
 			}

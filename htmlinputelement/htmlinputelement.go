@@ -1,5 +1,7 @@
 package htmlinputelement
 
+// https://developer.mozilla.org/fr/docs/Web/API/HTMLInputElement
+
 import (
 	"sync"
 

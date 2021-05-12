@@ -1,5 +1,8 @@
 package broadcastchannel
 
+//Full implemented
+// https://developer.mozilla.org/en-US/docs/Web/API/BroadcastChannel
+
 import (
 	"sync"
 
@@ -48,7 +51,7 @@ func New(channelname string) (Channel, error) {
 }
 
 //SetReceiveMessage Set the receiver method on channel
-func (c Channel) SetReceiveMessage(handler func(Channel, messageevent.MessageEvent)) {
+func (c Channel) SetOnMessage(handler func(Channel, messageevent.MessageEvent)) {
 	onmessage := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		if msgEvent, err := messageevent.NewFromJSObject(args[0]); err == nil {
 			handler(c, msgEvent)
@@ -61,10 +64,43 @@ func (c Channel) SetReceiveMessage(handler func(Channel, messageevent.MessageEve
 
 }
 
+//SetOnError Set the receiver method on channel
+func (c Channel) SetOnMessageError(handler func(Channel, messageevent.MessageEvent)) {
+	onmessageerror := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		if msgEvent, err := messageevent.NewFromJSObject(args[0]); err == nil {
+			handler(c, msgEvent)
+		}
+
+		return nil
+	})
+
+	c.JSObject().Set("onmessageerror", onmessageerror)
+
+}
+
 //PostMessage Post a message on channel
 func (c Channel) PostMessage(message string) error {
 	var err error
 	_, err = c.JSObject().CallWithErr("postMessage", js.ValueOf(message))
 
 	return err
+}
+
+//Close Close the channel
+func (c Channel) Close() error {
+	var err error
+	_, err = c.JSObject().CallWithErr("close")
+
+	return err
+}
+
+func (c Channel) Name() (string, error) {
+	var err error
+	var obj js.Value
+
+	if obj, err = c.JSObject().GetWithErr("name"); err == nil {
+
+		return obj.String(), nil
+	}
+	return "", err
 }

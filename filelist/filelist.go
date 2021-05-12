@@ -1,5 +1,7 @@
 package filelist
 
+// https://developer.mozilla.org/fr/docs/Web/API/FileList
+
 import (
 	"github.com/realPy/hogosuru/file"
 	"github.com/realPy/hogosuru/js"

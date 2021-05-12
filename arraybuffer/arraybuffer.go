@@ -1,5 +1,8 @@
 package arraybuffer
 
+//partial implemented (herited from function)
+// https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer
+
 import (
 	"sync"
 
@@ -73,23 +76,3 @@ func (a ArrayBuffer) ByteLength() (int, error) {
 	return 0, err
 
 }
-
-/*
-func (a ArrayBuffer) Bytes() ([]byte, error) {
-	var err error
-	var buffer []byte
-	var uint8arrayBuffer uint8array.Uint8Array
-
-	if uint8arrayBuffer, err = uint8array.NewFromArrayObjectBuffer(a.JSObject()); err == nil {
-
-		len, _ := a.ByteLength()
-		buffer = make([]byte, len)
-		if _, err = js.CopyBytesToGoWithErr(buffer, uint8arrayBuffer.JSObject()); err == nil {
-			return buffer, nil
-		}
-	}
-
-	return buffer, err
-}
-
-*/

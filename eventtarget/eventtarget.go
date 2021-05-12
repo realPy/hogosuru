@@ -1,5 +1,6 @@
 package eventtarget
 
+// https://developer.mozilla.org/fr/docs/Web/API/EventTarget/EventTarget
 import (
 	"sync"
 

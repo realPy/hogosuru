@@ -1,8 +1,11 @@
 package messageevent
 
+// https://developer.mozilla.org/fr/docs/Web/API/MessageEvent
+
 import (
 	"errors"
 
+	"github.com/realPy/hogosuru/event"
 	"github.com/realPy/hogosuru/js"
 	"github.com/realPy/hogosuru/object"
 )
@@ -14,7 +17,7 @@ var (
 )
 
 type MessageEvent struct {
-	object.Object
+	event.Event
 }
 
 func NewFromJSObject(obj js.Value) (MessageEvent, error) {
