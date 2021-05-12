@@ -46,7 +46,7 @@ All help is welcome. If you are interested by this project, please contact me
 
 |  API/Object |  Implemented Support |  MDN URL |
 |-------------|:--------------------:|----------|
-| Arraybuffer       |  Partial | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/ |Global_Objects/ArrayBuffer | 
+| Arraybuffer       |  Partial | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer | 
 | Blob              |  Full + stream additional support|  https://developer.mozilla.org/fr/docs/Web/API/Blob |
 | Broadcast Channel |  Full |  https://developer.mozilla.org/en-US/docs/Web/API/BroadcastChannel  | 
 | CustomEvent |  Full |  https://developer.mozilla.org/fr/docs/Web/API/CustomEvent |
