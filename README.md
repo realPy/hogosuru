@@ -77,6 +77,13 @@ All help is welcome. If you are interested by this project, please contact me
 
 
 
+### Local MD5 sum of file with drag and drop
+
+You can test a local example of local hash  
+Go to https://realpy.github.io/hogosuru/example/static/draganddrop.html
+
+Open you console developer. Drag some file and see result :)  
+
 
 
 
