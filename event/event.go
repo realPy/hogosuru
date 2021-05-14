@@ -53,19 +53,14 @@ func New(message string) (Event, error) {
 func NewFromJSObject(obj js.Value) (Event, error) {
 	var e Event
 
-	if object.String(obj) == "[object Event]" {
-		e.Object = e.SetObject(obj)
-		return e, nil
+	if eventi := GetJSInterface(); eventi != nil {
+		if obj.InstanceOf(eventi.objectInterface) {
+			e.Object = e.SetObject(obj)
+			return e, nil
+		}
 	}
 
 	return e, ErrNotAnEvent
-}
-
-//DispatchEvent to the object
-func (e Event) DispatchEvent(obj js.Value) error {
-	var err error
-	_, err = obj.CallWithErr("dispatchEvent", e.JSObject())
-	return err
 }
 
 func (e Event) PreventDefault() error {

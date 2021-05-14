@@ -60,11 +60,13 @@ func New() (Response, error) {
 func NewFromJSObject(obj js.Value) (Response, error) {
 	var response Response
 
-	if object.String(obj) == "[object Response]" {
-
-		response.Object = response.SetObject(obj)
-		return response, nil
+	if ri := GetJSInterface(); ri != nil {
+		if obj.InstanceOf(ri.objectInterface) {
+			response.Object = response.SetObject(obj)
+			return response, nil
+		}
 	}
+
 	return response, ErrNotAnFResp
 }
 

@@ -50,7 +50,9 @@ func TestBlob() js.Func {
 		s, _ = c.Text()
 		println("****" + s)
 
-		files, _ := document.QuerySelector("[name=file]")
+		doc, _ := document.New()
+
+		files, _ := doc.QuerySelector("[name=file]")
 		if h, err := htmlinputelement.NewFromJSObject(files); err == nil {
 			if file, err := h.Files(); err == nil {
 
@@ -118,7 +120,9 @@ func TestBlob() js.Func {
 func test() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		endpoint, _ := url.Parse("http://localhost:9090/po")
-		files, _ := document.QuerySelector("[name=file]")
+		doc, _ := document.New()
+
+		files, _ := doc.QuerySelector("[name=file]")
 		if h, err := htmlinputelement.NewFromJSObject(files); err == nil {
 			if file, err := h.Files(); err == nil {
 				f, _ := formdata.New()
@@ -252,7 +256,8 @@ func main() {
 	<-fetchsync
 
 	event, _ := customevent.New("TestEvent", "detail du text")
-	event.DispatchEvent(document.Root())
+	doc, _ := document.New()
+	doc.DispatchEvent(event.Event)
 
 	event.Export("romain")
 

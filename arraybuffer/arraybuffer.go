@@ -42,6 +42,7 @@ type ArrayBuffer struct {
 func New(size int) (ArrayBuffer, error) {
 
 	var a ArrayBuffer
+
 	if ai := GetJSInterface(); ai != nil {
 
 		a.Object = a.SetObject(ai.objectInterface.New(js.ValueOf(size)))
@@ -54,9 +55,11 @@ func New(size int) (ArrayBuffer, error) {
 func NewFromJSObject(obj js.Value) (ArrayBuffer, error) {
 	var a ArrayBuffer
 
-	if object.String(obj) == "[object ArrayBuffer]" {
-		a.Object = a.SetObject(obj)
-		return a, nil
+	if ai := GetJSInterface(); ai != nil {
+		if obj.InstanceOf(ai.objectInterface) {
+			a.Object = a.SetObject(obj)
+			return a, nil
+		}
 	}
 
 	return a, ErrNotAnArrayBuffer

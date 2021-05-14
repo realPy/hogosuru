@@ -9,7 +9,6 @@ import (
 
 	datatransfert "github.com/realPy/hogosuru/datatransfer"
 	"github.com/realPy/hogosuru/event"
-	"github.com/realPy/hogosuru/object"
 )
 
 var singleton sync.Once
@@ -43,11 +42,12 @@ func GetJSInterface() *JSInterface {
 func NewFromJSObject(obj js.Value) (DragEvent, error) {
 	var e DragEvent
 
-	if object.String(obj) == "[object DragEvent]" {
-		e.Object = e.SetObject(obj)
-		return e, nil
+	if di := GetJSInterface(); di != nil {
+		if obj.InstanceOf(di.objectInterface) {
+			e.Object = e.SetObject(obj)
+			return e, nil
+		}
 	}
-
 	return e, ErrNotAnDragEvent
 }
 

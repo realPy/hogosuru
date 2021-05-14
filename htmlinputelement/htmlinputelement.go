@@ -53,11 +53,13 @@ func New() (HtmlInputElement, error) {
 func NewFromJSObject(obj js.Value) (HtmlInputElement, error) {
 	var h HtmlInputElement
 
-	if object.String(obj) == "[object HTMLInputElement]" {
-		h.Object = h.SetObject(obj)
-		return h, nil
-	}
+	if hei := GetJSInterface(); hei != nil {
+		if obj.InstanceOf(hei.objectInterface) {
 
+			h.Object = h.SetObject(obj)
+			return h, nil
+		}
+	}
 	return h, ErrNotAnHtmlInputElement
 }
 

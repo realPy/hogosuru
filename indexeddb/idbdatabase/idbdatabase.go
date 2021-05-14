@@ -1,11 +1,35 @@
 package idbdatabase
 
 import (
+	"sync"
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/indexeddb/store"
 	"github.com/realPy/hogosuru/object"
 )
+
+var singleton sync.Once
+
+var idbdatabaseinterface *JSInterface
+
+//JSInterface JSInterface struct
+type JSInterface struct {
+	objectInterface js.Value
+}
+
+//GetJSInterface get the JS interface of formdata
+func GetJSInterface() *JSInterface {
+
+	singleton.Do(func() {
+		var idbdatabaseinstance JSInterface
+		var err error
+		if idbdatabaseinstance.objectInterface, err = js.Global().GetWithErr("IDBDatabase"); err == nil {
+			idbdatabaseinterface = &idbdatabaseinstance
+		}
+	})
+
+	return idbdatabaseinterface
+}
 
 type IDBDatabase struct {
 	object.Object
@@ -15,9 +39,12 @@ func NewFromJSObject(obj js.Value) (IDBDatabase, error) {
 
 	var i IDBDatabase
 
-	if object.String(obj) == "[object IDBDatabase]" {
-		i.Object = i.SetObject(obj)
-		return i, nil
+	if idbi := GetJSInterface(); idbi != nil {
+		if obj.InstanceOf(idbi.objectInterface) {
+			i.Object = i.SetObject(obj)
+			return i, nil
+		}
+
 	}
 
 	return i, ErrNotAnIDBDatabase

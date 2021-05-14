@@ -30,9 +30,6 @@ func GetJSInterface() *JSInterface {
 		var err error
 		if dtinstance.objectInterface, err = js.Global().GetWithErr("DataTransfer"); err == nil {
 			dtinterface = &dtinstance
-			if object.String(dtinstance.objectInterface) == "" {
-				dtinterface = nil
-			}
 		}
 	})
 
@@ -53,9 +50,11 @@ func New() (DataTransfer, error) {
 func NewFromJSObject(obj js.Value) (DataTransfer, error) {
 	var dt DataTransfer
 
-	if object.String(obj) == "[object DataTransfer]" {
-		dt.Object = dt.SetObject(obj)
-		return dt, nil
+	if di := GetJSInterface(); di != nil {
+		if obj.InstanceOf(di.objectInterface) {
+			dt.Object = dt.SetObject(obj)
+			return dt, nil
+		}
 	}
 
 	return dt, ErrNotADataTransfert

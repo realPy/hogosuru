@@ -99,9 +99,11 @@ func NewWithBlob(bl Blob) (Blob, error) {
 func NewFromJSObject(obj js.Value) (Blob, error) {
 	var b Blob
 
-	if object.String(obj) == "[object Blob]" {
-		b.Object = b.SetObject(obj)
-		return b, nil
+	if bi := GetJSInterface(); bi != nil {
+		if obj.InstanceOf(bi.objectInterface) {
+			b.Object = b.SetObject(obj)
+			return b, nil
+		}
 	}
 
 	return b, ErrNotABlob
