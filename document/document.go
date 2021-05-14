@@ -4,6 +4,8 @@ import (
 	"sync"
 
 	"syscall/js"
+
+	"github.com/realPy/hogosuru/node"
 )
 
 var singleton sync.Once
@@ -29,13 +31,21 @@ func GetJSInterface() *JSInterface {
 	return docinterface
 }
 
-//Root Get the root obj document
-func Root() js.Value {
-
-	return GetJSInterface().objectInterface
+type Document struct {
+	node.Node
 }
 
-func QuerySelector(selector string) (js.Value, error) {
+func New() (Document, error) {
 
-	return GetJSInterface().objectInterface.CallWithErr("querySelector", js.ValueOf(selector))
+	var d Document
+	if di := GetJSInterface(); di != nil {
+		d.Object = d.SetObject(di.objectInterface)
+		return d, nil
+	}
+	return d, ErrNotImplemented
+}
+
+func (d Document) QuerySelector(selector string) (js.Value, error) {
+
+	return d.JSObject().CallWithErr("querySelector", js.ValueOf(selector))
 }

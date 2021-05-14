@@ -1,7 +1,10 @@
 GO=tinygo
 
-.PHONY: json draganddrop fetch websocket
-all: json draganddrop fetch websocket
+.PHONY: json draganddrop fetch websocket node
+all: json draganddrop fetch websocket node
+
+node:
+	$(GO) build  -o ./example/static/node.wasm --no-debug -target wasm example/node/main.go
 
 json:
 	$(GO) build  -o ./example/static/json.wasm --no-debug -target wasm example/json/main.go

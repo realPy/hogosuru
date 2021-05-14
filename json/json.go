@@ -61,8 +61,15 @@ func Parse(data string) (Json, error) {
 
 func NewFromJSObject(obj js.Value) (Json, error) {
 	var j Json
-	j.Object = j.SetObject(obj)
-	return j, nil
+
+	if ji := GetJSInterface(); ji != nil {
+		if obj.InstanceOf(ji.objectInterface) {
+			j.Object = j.SetObject(obj)
+			return j, nil
+		}
+	}
+
+	return j, ErrNotAJson
 
 }
 

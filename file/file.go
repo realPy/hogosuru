@@ -2,11 +2,34 @@ package file
 
 // https://developer.mozilla.org/fr/docs/Web/API/File
 import (
+	"sync"
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/blob"
-	"github.com/realPy/hogosuru/object"
 )
+
+var singleton sync.Once
+
+var fileinterface *JSInterface
+
+//JSInterface JSInterface struct
+type JSInterface struct {
+	objectInterface js.Value
+}
+
+//GetJSInterface get teh JS interface of broadcast channel
+func GetJSInterface() *JSInterface {
+
+	singleton.Do(func() {
+		var fileinstance JSInterface
+		var err error
+		if fileinstance.objectInterface, err = js.Global().GetWithErr("File"); err == nil {
+			fileinterface = &fileinstance
+		}
+	})
+
+	return fileinterface
+}
 
 type File struct {
 	blob.Blob
@@ -14,10 +37,12 @@ type File struct {
 
 func NewFromJSObject(obj js.Value) (File, error) {
 	var f File
-	if object.String(obj) == "[object File]" {
-		f.Object = f.SetObject(obj)
 
-		return f, nil
+	if fi := GetJSInterface(); fi != nil {
+		if obj.InstanceOf(fi.objectInterface) {
+			f.Object = f.SetObject(obj)
+			return f, nil
+		}
 	}
 
 	return f, ErrNotAFile

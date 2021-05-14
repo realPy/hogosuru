@@ -54,9 +54,14 @@ func NewFromArrayBuffer(a arraybuffer.ArrayBuffer) (Uint8Array, error) {
 func NewFromJSObject(obj js.Value) (Uint8Array, error) {
 	var u Uint8Array
 
-	u.Object = u.SetObject(obj)
-	return u, nil
+	if ui := GetJSInterface(); ui != nil {
+		if obj.InstanceOf(ui.objectInterface) {
+			u.Object = u.SetObject(obj)
+			return u, nil
+		}
+	}
 
+	return u, ErrNotAUint8Array
 }
 
 func (u Uint8Array) Bytes() ([]byte, error) {

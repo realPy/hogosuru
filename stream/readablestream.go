@@ -1,10 +1,34 @@
 package stream
 
 import (
+	"sync"
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/object"
 )
+
+var singleton sync.Once
+
+var readablestreaminterface *JSInterface
+
+//JSInterface JSInterface struct
+type JSInterface struct {
+	objectInterface js.Value
+}
+
+//GetJSInterface get teh JS interface of broadcast channel
+func GetJSInterface() *JSInterface {
+
+	singleton.Do(func() {
+		var readablestreaminstance JSInterface
+		var err error
+		if readablestreaminstance.objectInterface, err = js.Global().GetWithErr("ReadableStream"); err == nil {
+			readablestreaminterface = &readablestreaminstance
+		}
+	})
+
+	return readablestreaminterface
+}
 
 type ReadableStream struct {
 	object.Object
@@ -12,9 +36,13 @@ type ReadableStream struct {
 
 func NewReadableStreamFromJSObject(obj js.Value) (ReadableStream, error) {
 	var r ReadableStream
-	if object.String(obj) == "[object ReadableStream]" {
-		r.Object = r.SetObject(obj)
-		return r, nil
+
+	if rsi := GetJSInterface(); rsi != nil {
+		if obj.InstanceOf(rsi.objectInterface) {
+			r.Object = r.SetObject(obj)
+			return r, nil
+
+		}
 	}
 
 	return r, ErrNotAReadableStream

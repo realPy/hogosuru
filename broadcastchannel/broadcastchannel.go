@@ -35,9 +35,6 @@ func GetJSInterface() *JSInterface {
 		var err error
 		if bcinstance.objectInterface, err = js.Global().GetWithErr("BroadcastChannel"); err == nil {
 			bcinterface = &bcinstance
-			if object.String(bcinstance.objectInterface) == "" {
-				bcinterface = nil
-			}
 		}
 	})
 

@@ -6,6 +6,7 @@ import (
 
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/event"
 	"github.com/realPy/hogosuru/object"
 )
 
@@ -34,13 +35,16 @@ func GetJSInterface() *JSInterface {
 
 type EventTarget struct {
 	object.Object
+	registerFunc map[string]js.Func
 }
 
 func New() (EventTarget, error) {
 
 	var e EventTarget
+
 	if eti := GetJSInterface(); eti != nil {
 		e.Object = e.SetObject(eti.objectInterface.New())
+		e.registerFunc = make(map[string]js.Func)
 		return e, nil
 	}
 	return e, ErrNotImplemented
@@ -49,10 +53,40 @@ func New() (EventTarget, error) {
 func NewFromJSObject(obj js.Value) (EventTarget, error) {
 	var e EventTarget
 
-	if object.String(obj) == "[object EventTarget]" {
-		e.Object = e.SetObject(obj)
-		return e, nil
+	if eti := GetJSInterface(); eti != nil {
+		if obj.InstanceOf(eti.objectInterface) {
+			e.Object = e.SetObject(obj)
+			e.registerFunc = make(map[string]js.Func)
+			return e, nil
+		}
 	}
 
 	return e, ErrNotAnEventTarget
+}
+
+func (e EventTarget) AddEventListener(name string, typeevent string, handler func(this js.Value, args []js.Value) interface{}) error {
+
+	var err error
+	if handler != nil {
+		cb := js.FuncOf(handler)
+		e.registerFunc[name] = cb
+		_, err = e.JSObject().CallWithErr("addEventListener", js.ValueOf(typeevent), cb)
+	}
+
+	return err
+}
+
+func (e EventTarget) RemoveEventListener(name string, typeevent string) error {
+	var err error
+	_, err = e.JSObject().CallWithErr("removeEventListener", typeevent, e.registerFunc[name])
+	cb := e.registerFunc[name]
+	delete(e.registerFunc, name)
+	cb.Release()
+	return err
+}
+
+func (e EventTarget) DispatchEvent(event event.Event) error {
+	var err error
+	_, err = e.JSObject().CallWithErr("dispatchEvent", event.JSObject())
+	return err
 }

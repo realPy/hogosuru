@@ -3,19 +3,34 @@ package messageevent
 // https://developer.mozilla.org/fr/docs/Web/API/MessageEvent
 
 import (
-	"errors"
-
+	"sync"
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/event"
-	"github.com/realPy/hogosuru/object"
 )
 
-var (
+var singleton sync.Once
 
-	//ErrNotAnMEv ErrNotAnMEv error
-	ErrNotAnMEv = errors.New("The given value must be an Message Event")
-)
+var messageeventinterface *JSInterface
+
+//JSInterface JSInterface struct
+type JSInterface struct {
+	objectInterface js.Value
+}
+
+//GetJSInterface get the JS interface of formdata
+func GetJSInterface() *JSInterface {
+
+	singleton.Do(func() {
+		var messageeventinstance JSInterface
+		var err error
+		if messageeventinstance.objectInterface, err = js.Global().GetWithErr("MessageEvent"); err == nil {
+			messageeventinterface = &messageeventinstance
+		}
+	})
+
+	return messageeventinterface
+}
 
 type MessageEvent struct {
 	event.Event
@@ -24,9 +39,12 @@ type MessageEvent struct {
 func NewFromJSObject(obj js.Value) (MessageEvent, error) {
 	var m MessageEvent
 
-	if object.String(obj) == "[object MessageEvent]" {
-		m.Object = m.SetObject(obj)
-		return m, nil
+	if mi := GetJSInterface(); mi != nil {
+		if obj.InstanceOf(mi.objectInterface) {
+			m.Object = m.SetObject(obj)
+			return m, nil
+
+		}
 	}
 
 	return m, ErrNotAMessageEvent
