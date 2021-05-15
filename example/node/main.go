@@ -6,10 +6,10 @@ func main() {
 
 	d, _ := document.New()
 
-	d1 := d.FirstChild()
+	d1 := d.FirstChild().FirstChild()
 
-	println("--->" + d1.Object.String())
-
+	d1.Export("d1")
+	d1.NextSibling().Export("d2")
 	ch := make(chan struct{})
 	<-ch
 
