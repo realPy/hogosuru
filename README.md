@@ -55,7 +55,7 @@ All help is welcome. If you are interested by this project, please contact me
 | DataTransfer | Partial implemented | https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer |
 | DragEvent |  Full |  https://developer.mozilla.org/en-US/docs/Web/API/DragEvent |
 | Event | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/Event |
-| EventTarget | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/EventTarget/EventTarget | 
+| EventTarget | Full | https://developer.mozilla.org/fr/docs/Web/API/EventTarget/EventTarget | 
 | Fetch | Partial implemented  | https://developer.mozilla.org/fr/docs/Web/API/Fetch_API  |
 | File | Full | https://developer.mozilla.org/fr/docs/Web/API/File |
 | FileList | Full | https://developer.mozilla.org/fr/docs/Web/API/FileList |
@@ -64,6 +64,7 @@ All help is welcome. If you are interested by this project, please contact me
 | Indexedddb | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/IndexedDB_API|
 | JSON | Full | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/JSON |
 | MessageEvent | Full | https://developer.mozilla.org/fr/docs/Web/API/MessageEvent |
+| Node | Full | https://developer.mozilla.org/en-US/docs/Web/API/Node |
 | Response | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/Response |
 | Storage | Full | https://developer.mozilla.org/fr/docs/Mozilla/Add-ons/WebExtensions/API/storage |
 | Stream | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/Streams_API |
