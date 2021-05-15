@@ -3,7 +3,7 @@ Hogosuru
 Hogosuru is a part of a personel project and export to the community and provide a framework to easly provide write front end in go.
 He use a rewrite syscall/js (that catch error) and wrap Object and Interface provide by browser 
 
-Hogosuru provide functions replacements for http,event,fetch,json,xmlhttprequest,blob,broadcastchannel,indexeddb, localstorage ... with a goal to provide all JS API access https://developer.mozilla.org/fr/docs/Web/API and write full web app in GO
+Hogosuru provide implementation for the WEB API  http,event,fetch,json,xmlhttprequest,blob,broadcastchannel,indexeddb, localstorage ... with a goal to provide all JS API access https://developer.mozilla.org/fr/docs/Web/API and write full web app in GO
 
 
 ## How to use
