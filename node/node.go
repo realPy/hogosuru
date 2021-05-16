@@ -5,6 +5,7 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/eventtarget"
+	"github.com/realPy/hogosuru/object"
 )
 
 var singleton sync.Once
@@ -34,7 +35,7 @@ func GetJSInterface() *JSInterface {
 
 type Node struct {
 	eventtarget.EventTarget
-	//Error *error
+	Error *error
 }
 
 func New() Node {
@@ -119,6 +120,8 @@ func (n *Node) IsConnected() bool {
 	if obj, err = n.JSObject().GetWithErr("isConnected"); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			return obj.Bool()
+		} else {
+			n.Error = &object.ErrObjectNotBool
 		}
 	} else {
 		n.Error = &err
@@ -452,6 +455,8 @@ func (n *Node) Contains(node Node) bool {
 		if obj, err = n.JSObject().CallWithErr("contains", node.JSObject()); err == nil {
 			if obj.Type() == js.TypeBoolean {
 				return obj.Bool()
+			} else {
+				n.Error = &object.ErrObjectNotBool
 			}
 		} else {
 
@@ -485,6 +490,8 @@ func (n *Node) HasChildNodes() bool {
 		if obj, err = n.JSObject().CallWithErr("hasChildNodes"); err == nil {
 			if obj.Type() == js.TypeBoolean {
 				return obj.Bool()
+			} else {
+				n.Error = &object.ErrObjectNotBool
 			}
 		} else {
 
@@ -519,6 +526,8 @@ func (n *Node) IsDefaultNamespace() bool {
 		if obj, err = n.JSObject().CallWithErr("isDefaultNamespace"); err == nil {
 			if obj.Type() == js.TypeBoolean {
 				return obj.Bool()
+			} else {
+				n.Error = &object.ErrObjectNotBool
 			}
 		} else {
 
@@ -537,6 +546,8 @@ func (n *Node) IsEqualNode() bool {
 		if obj, err = n.JSObject().CallWithErr("isEqualNode"); err == nil {
 			if obj.Type() == js.TypeBoolean {
 				return obj.Bool()
+			} else {
+				n.Error = &object.ErrObjectNotBool
 			}
 		} else {
 
@@ -555,6 +566,8 @@ func (n *Node) IsSameNode() bool {
 		if obj, err = n.JSObject().CallWithErr("isSameNode"); err == nil {
 			if obj.Type() == js.TypeBoolean {
 				return obj.Bool()
+			} else {
+				n.Error = &object.ErrObjectNotBool
 			}
 		} else {
 

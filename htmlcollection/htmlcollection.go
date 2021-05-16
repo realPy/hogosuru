@@ -38,24 +38,24 @@ func GetJSInterface() *JSInterface {
 	return htmlcollectioninterface
 }
 
-func NewFromJSObject(obj js.Value) HTMLCollection {
+func NewFromJSObject(obj js.Value) (HTMLCollection, error) {
 	var h HTMLCollection
-
+	var err error
 	if fli := GetJSInterface(); fli != nil {
 		if obj.InstanceOf(fli.objectInterface) {
 			h.Object = h.SetObject(obj)
 		}
 	} else {
-		h.Error = &ErrNotAnHTMLCollection
+		err = ErrNotAnHTMLCollection
 	}
 
-	return h
+	return h, err
 }
 
 func (h HTMLCollection) Item(index int) element.Element {
 	var elem element.Element
-	if h.Error == nil {
-		elem = element.NewFromJSObject(h.JSObject().Index(index))
-	}
+
+	elem = element.NewFromJSObject(h.JSObject().Index(index))
+
 	return elem
 }

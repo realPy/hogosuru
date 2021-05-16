@@ -78,6 +78,8 @@ func (r Response) Ok() (bool, error) {
 	if obj, err = r.JSObject().GetWithErr("ok"); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			return obj.Bool(), nil
+		} else {
+			err = object.ErrObjectNotBool
 		}
 	}
 
@@ -92,6 +94,8 @@ func (r Response) Redirected() (bool, error) {
 	if obj, err = r.JSObject().GetWithErr("redirected"); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			return obj.Bool(), nil
+		} else {
+			err = object.ErrObjectNotBool
 		}
 	}
 	return false, err
@@ -167,6 +171,8 @@ func (r Response) UseFinalURL() (bool, error) {
 	if obj, err = r.JSObject().GetWithErr("useFinalURL"); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			return obj.Bool(), nil
+		} else {
+			err = object.ErrObjectNotBool
 		}
 	}
 	return false, err
