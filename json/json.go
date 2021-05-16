@@ -48,7 +48,7 @@ func Parse(data string) (Json, error) {
 		if jsonObject, err = jsoni.objectInterface.CallWithErr("parse", data); err != nil {
 			return Json{}, err
 		} else {
-
+			println(object.String(jsonObject))
 			return NewFromJSObject(jsonObject)
 		}
 
@@ -63,10 +63,10 @@ func NewFromJSObject(obj js.Value) (Json, error) {
 	var j Json
 
 	if ji := GetJSInterface(); ji != nil {
-		if obj.InstanceOf(ji.objectInterface) {
-			j.Object = j.SetObject(obj)
-			return j, nil
-		}
+
+		j.Object = j.SetObject(obj)
+		return j, nil
+
 	}
 
 	return j, ErrNotAJson
