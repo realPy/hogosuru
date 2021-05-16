@@ -6,6 +6,7 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/element"
+	"github.com/realPy/hogosuru/htmlcollection"
 	"github.com/realPy/hogosuru/node"
 )
 
@@ -86,6 +87,132 @@ func (d Document) Body() node.Node {
 	}
 
 	return body
+}
+
+func (d *Document) CharacterSet() string {
+
+	var err error
+	var obj js.Value
+
+	if obj, err = d.JSObject().GetWithErr("characterSet"); err == nil {
+
+		return obj.String()
+	} else {
+		d.Error = &err
+	}
+	return ""
+}
+
+func (d Document) ChildElementCount() int {
+	var err error
+	var obj js.Value
+
+	if obj, err = d.JSObject().GetWithErr("childElementCount"); err == nil {
+		if obj.Type() == js.TypeNumber {
+			return obj.Int()
+		}
+	}
+
+	return 0
+}
+
+func (d *Document) Children() htmlcollection.HTMLCollection {
+	var err error
+	var obj js.Value
+	var collection htmlcollection.HTMLCollection
+
+	if obj, err = d.JSObject().GetWithErr("children"); err == nil {
+		collection = htmlcollection.NewFromJSObject(obj)
+	} else {
+		collection.Error = &err
+	}
+
+	return collection
+}
+
+func (d *Document) CompatMode() string {
+
+	var err error
+	var obj js.Value
+
+	if obj, err = d.JSObject().GetWithErr("compatMode"); err == nil {
+
+		return obj.String()
+	} else {
+		d.Error = &err
+	}
+	return ""
+}
+
+func (d *Document) ContentType() string {
+
+	var err error
+	var obj js.Value
+
+	if obj, err = d.JSObject().GetWithErr("contentType"); err == nil {
+
+		return obj.String()
+	} else {
+		d.Error = &err
+	}
+	return ""
+}
+
+func (d *Document) Doctype() {
+
+}
+
+func (d Document) DocumentElement() element.Element {
+	var err error
+	var obj js.Value
+	var elem element.Element
+
+	if obj, err = d.JSObject().GetWithErr("documentElement"); err == nil {
+		elem = element.NewFromJSObject(obj)
+	} else {
+		elem.Error = &err
+	}
+	return elem
+}
+
+func (d *Document) DocumentURI() string {
+
+	var err error
+	var obj js.Value
+
+	if obj, err = d.JSObject().GetWithErr("documentURI"); err == nil {
+
+		return obj.String()
+	} else {
+		d.Error = &err
+	}
+	return ""
+}
+
+func (d Document) Embeds() htmlcollection.HTMLCollection {
+	var err error
+	var obj js.Value
+	var collection htmlcollection.HTMLCollection
+
+	if obj, err = d.JSObject().GetWithErr("embeds"); err == nil {
+		collection = htmlcollection.NewFromJSObject(obj)
+	} else {
+		collection.Error = &err
+	}
+	return collection
+}
+
+func (d Document) FirstElementChild() element.Element {
+	var err error
+	var obj js.Value
+	var elem element.Element
+
+	if obj, err = d.JSObject().GetWithErr("firstElementChild"); err == nil {
+		elem = element.NewFromJSObject(obj)
+	} else {
+		elem.Error = &err
+	}
+	return elem
 }
 
 func (d Document) QuerySelector(selector string) (js.Value, error) {

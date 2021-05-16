@@ -1,4 +1,4 @@
-package filelist
+package htmlcollection
 
 // https://developer.mozilla.org/fr/docs/Web/API/FileList
 

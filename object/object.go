@@ -210,6 +210,7 @@ func StringWithErr(object js.Value) (string, error) {
 
 type Object struct {
 	object js.Value
+	Error  *error
 }
 
 func NewFromJSObject(obj js.Value) (Object, error) {

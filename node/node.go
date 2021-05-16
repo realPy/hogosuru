@@ -34,7 +34,7 @@ func GetJSInterface() *JSInterface {
 
 type Node struct {
 	eventtarget.EventTarget
-	Error *error
+	//Error *error
 }
 
 func New() Node {
