@@ -48,7 +48,6 @@ func Parse(data string) (Json, error) {
 		if jsonObject, err = jsoni.objectInterface.CallWithErr("parse", data); err != nil {
 			return Json{}, err
 		} else {
-			println(object.String(jsonObject))
 			return NewFromJSObject(jsonObject)
 		}
 
