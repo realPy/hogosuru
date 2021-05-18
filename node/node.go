@@ -38,6 +38,7 @@ type Node struct {
 	Error *error
 }
 
+/*
 func New() Node {
 
 	var n Node
@@ -48,7 +49,7 @@ func New() Node {
 
 	n.Error = &ErrNotImplemented
 	return n
-}
+}*/
 
 func NewFromJSObject(obj js.Value) Node {
 	var n Node
@@ -64,6 +65,37 @@ func NewFromJSObject(obj js.Value) Node {
 
 	n.Error = &ErrNotANode
 	return n
+}
+
+func (n Node) getAttributeNode(attribute string) Node {
+	var nodeObject js.Value
+	var newNode Node
+	var err error
+
+	if n.Error != nil {
+		return n
+	}
+
+	newNode.Error = n.Error
+	if n.Error == nil {
+		if nodeObject, err = n.JSObject().GetWithErr(attribute); err == nil {
+
+			if nodeObject.IsNull() {
+				err = ErrNodeNoChilds
+
+			} else {
+
+				newNode = NewFromJSObject(nodeObject)
+
+			}
+
+		} else {
+			newNode.Error = &err
+		}
+
+	}
+
+	return newNode
 }
 
 func (n *Node) BaseURI() string {
@@ -82,34 +114,8 @@ func (n *Node) BaseURI() string {
 }
 
 func (n Node) FirstChild() Node {
-	var nodeObject js.Value
-	var newNode Node
-	var err error
 
-	if n.Error != nil {
-		return n
-	}
-
-	newNode.Error = n.Error
-	if n.Error == nil {
-		if nodeObject, err = n.JSObject().GetWithErr("firstChild"); err == nil {
-
-			if nodeObject.IsNull() {
-				err = ErrNodeNoChilds
-
-			} else {
-
-				newNode = NewFromJSObject(nodeObject)
-
-			}
-
-		} else {
-			newNode.Error = &err
-		}
-
-	}
-
-	return newNode
+	return n.getAttributeNode("firstChild")
 }
 
 func (n *Node) IsConnected() bool {
@@ -131,65 +137,11 @@ func (n *Node) IsConnected() bool {
 }
 
 func (n Node) LastChild() Node {
-	var nodeObject js.Value
-	var newNode Node
-	var err error
-
-	if n.Error != nil {
-		return n
-	}
-
-	newNode.Error = n.Error
-	if n.Error == nil {
-		if nodeObject, err = n.JSObject().GetWithErr("lastChild"); err == nil {
-
-			if nodeObject.IsNull() {
-				err = ErrNodeNoChilds
-
-			} else {
-
-				newNode = NewFromJSObject(nodeObject)
-
-			}
-
-		} else {
-			newNode.Error = &err
-		}
-
-	}
-
-	return newNode
+	return n.getAttributeNode("lastChild")
 }
 
 func (n Node) NextSibling() Node {
-	var nodeObject js.Value
-	var newNode Node
-	var err error
-
-	if n.Error != nil {
-		return n
-	}
-
-	newNode.Error = n.Error
-	if n.Error == nil {
-		if nodeObject, err = n.JSObject().GetWithErr("nextSibling"); err == nil {
-
-			if nodeObject.IsNull() {
-				err = ErrNodeNoChilds
-
-			} else {
-
-				newNode = NewFromJSObject(nodeObject)
-
-			}
-
-		} else {
-			newNode.Error = &err
-		}
-
-	}
-
-	return newNode
+	return n.getAttributeNode("nextSibling")
 }
 
 func (n *Node) NodeName() string {
@@ -219,23 +171,8 @@ func (n Node) NodeType() int {
 	return 0
 }
 
-func (n *Node) NodeValue() Node {
-	var err error
-	var obj js.Value
-	var newNode Node
-
-	if n.Error != nil {
-		return *n
-	}
-
-	if obj, err = n.JSObject().GetWithErr("nodeValue"); err == nil {
-		newNode = NewFromJSObject(obj)
-
-	} else {
-		newNode.Error = &err
-	}
-
-	return newNode
+func (n Node) NodeValue() Node {
+	return n.getAttributeNode("nodeValue")
 }
 
 func (n *Node) SetNodeValue(nset Node) Node {
@@ -252,125 +189,21 @@ func (n *Node) SetNodeValue(nset Node) Node {
 }
 
 func (n Node) OwnerDocument() Node {
-	var nodeObject js.Value
-	var newNode Node
-	var err error
-
-	newNode.Error = n.Error
-	if n.Error == nil {
-		if nodeObject, err = n.JSObject().GetWithErr("ownerDocument"); err == nil {
-
-			if nodeObject.IsNull() {
-				err = ErrNodeNoParent
-
-			} else {
-
-				newNode = NewFromJSObject(nodeObject)
-
-			}
-
-		} else {
-			newNode.Error = &err
-		}
-
-	}
-
-	return newNode
+	return n.getAttributeNode("ownerDocument")
 }
 
 func (n Node) ParentNode() Node {
-	var nodeObject js.Value
-	var newNode Node
-	var err error
+	return n.getAttributeNode("parentNode")
 
-	if n.Error != nil {
-		return n
-	}
-
-	newNode.Error = n.Error
-	if n.Error == nil {
-		if nodeObject, err = n.JSObject().GetWithErr("parentNode"); err == nil {
-
-			if nodeObject.IsNull() {
-				err = ErrNodeNoParent
-
-			} else {
-
-				newNode = NewFromJSObject(nodeObject)
-
-			}
-
-		} else {
-			newNode.Error = &err
-		}
-
-	}
-
-	return newNode
 }
 
 func (n Node) ParentElement() Node {
-
-	var nodeObject js.Value
-	var newNode Node
-	var err error
-
-	if n.Error != nil {
-		return n
-	}
-
-	newNode.Error = n.Error
-	if n.Error == nil {
-		if nodeObject, err = n.JSObject().GetWithErr("parentElement"); err == nil {
-
-			if nodeObject.IsNull() {
-				err = ErrNodeNoParentElement
-
-			} else {
-
-				newNode = NewFromJSObject(nodeObject)
-
-			}
-
-		} else {
-			newNode.Error = &err
-		}
-
-	}
-
-	return newNode
-
+	return n.getAttributeNode("parentElement")
 }
 
 func (n Node) PreviousSibling() Node {
-	var nodeObject js.Value
-	var newNode Node
-	var err error
 
-	if n.Error != nil {
-		return n
-	}
-
-	newNode.Error = n.Error
-	if n.Error == nil {
-		if nodeObject, err = n.JSObject().GetWithErr("previousSibling"); err == nil {
-
-			if nodeObject.IsNull() {
-				err = ErrNodeNoChilds
-
-			} else {
-
-				newNode = NewFromJSObject(nodeObject)
-
-			}
-
-		} else {
-			newNode.Error = &err
-		}
-
-	}
-
-	return newNode
+	return n.getAttributeNode("previousSibling")
 }
 
 func (n *Node) TextContent() string {

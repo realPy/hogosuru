@@ -60,3 +60,62 @@ func NewFromJSObject(obj js.Value) Element {
 	e.Error = &ErrNotAnElement
 	return e
 }
+
+func (e Element) getStringAttribute(attribute string) (string, error) {
+
+	var err error
+	var obj js.Value
+	var valueStr = ""
+
+	if e.Error == nil {
+		if obj, err = e.JSObject().GetWithErr(attribute); err == nil {
+
+			valueStr = obj.String()
+		}
+	} else {
+		err = *e.Error
+	}
+	return valueStr, err
+
+}
+
+func (e Element) SetStringAttribute(attribute string, value string) error {
+	var err error
+	if e.Error == nil {
+		if err = e.JSObject().SetWithErr(attribute, js.ValueOf(value)); err != nil {
+
+			err = *e.Error
+		}
+	}
+	return err
+}
+
+func (e Element) ClassName() (string, error) {
+
+	return e.getStringAttribute("className")
+}
+
+func (e Element) SetClassName(value string) error {
+
+	return e.SetStringAttribute("className", value)
+}
+
+func (e Element) ID() (string, error) {
+
+	return e.getStringAttribute("id")
+}
+
+func (e Element) SetID(value string) error {
+
+	return e.SetStringAttribute("id", value)
+}
+
+func (e Element) InnerHTML() (string, error) {
+
+	return e.getStringAttribute("innerHTML")
+}
+
+func (e Element) SetInnerHTML(value string) error {
+
+	return e.SetStringAttribute("innerHTML", value)
+}

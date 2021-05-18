@@ -8,10 +8,12 @@ func main() {
 		p := j.GoJson()
 		println("Value of complex[\"toto\"]" + p.Get("complex").Get("toto").String())
 		println("---->" + p.String())
+		j.Export("adrien")
 	} else {
 		println("erreur " + err.Error())
 
 	}
+
 	ch := make(chan struct{})
 	<-ch
 

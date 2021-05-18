@@ -50,14 +50,14 @@ func New() Document {
 	return d
 }
 
-func (d Document) ActiveElement() element.Element {
+func (d Document) getAttributeElement(attribute string) element.Element {
 	var elem element.Element
 	var elemObject js.Value
 	var err error
 
 	elem.Error = d.Error
 	if d.Error == nil {
-		if elemObject, err = d.JSObject().GetWithErr("activeElement"); err == nil {
+		if elemObject, err = d.JSObject().GetWithErr(attribute); err == nil {
 
 			elem = element.NewFromJSObject(elemObject)
 
@@ -68,6 +68,58 @@ func (d Document) ActiveElement() element.Element {
 	}
 
 	return elem
+}
+
+func (d Document) getAttributeString(attribute string) (string, error) {
+
+	var err error
+	var obj js.Value
+	var cs string = ""
+	if obj, err = d.JSObject().GetWithErr(attribute); err == nil {
+
+		cs = obj.String()
+	}
+	return cs, err
+}
+
+func (d Document) setAttributeString(attribute string, value string) error {
+
+	return d.JSObject().SetWithErr(attribute, js.ValueOf(value))
+}
+
+func (d Document) getAttributeHTMLCollection(attribute string) (htmlcollection.HTMLCollection, error) {
+	var err error
+	var obj js.Value
+	var collection htmlcollection.HTMLCollection
+
+	if obj, err = d.JSObject().GetWithErr(attribute); err == nil {
+		collection, err = htmlcollection.NewFromJSObject(obj)
+	}
+
+	return collection, err
+}
+
+func (d Document) getAttributeBool(attribute string) (bool, error) {
+
+	var err error
+	var obj js.Value
+	var ret bool
+
+	if obj, err = d.JSObject().GetWithErr(attribute); err == nil {
+		if obj.Type() == js.TypeBoolean {
+			ret = obj.Bool()
+		} else {
+			err = object.ErrObjectNotBool
+		}
+	}
+
+	return ret, err
+}
+
+func (d Document) ActiveElement() element.Element {
+
+	return d.getAttributeElement("activeElement")
+
 }
 
 func (d Document) Body() node.Node {
@@ -91,15 +143,7 @@ func (d Document) Body() node.Node {
 }
 
 func (d Document) CharacterSet() (string, error) {
-
-	var err error
-	var obj js.Value
-	var cs string = ""
-	if obj, err = d.JSObject().GetWithErr("characterSet"); err == nil {
-
-		cs = obj.String()
-	}
-	return cs, err
+	return d.getAttributeString("characterSet")
 }
 
 func (d Document) ChildElementCount() int {
@@ -116,40 +160,15 @@ func (d Document) ChildElementCount() int {
 }
 
 func (d Document) Children() (htmlcollection.HTMLCollection, error) {
-	var err error
-	var obj js.Value
-	var collection htmlcollection.HTMLCollection
-
-	if obj, err = d.JSObject().GetWithErr("children"); err == nil {
-		collection, err = htmlcollection.NewFromJSObject(obj)
-	}
-
-	return collection, err
+	return d.getAttributeHTMLCollection("children")
 }
 
 func (d Document) CompatMode() (string, error) {
-
-	var err error
-	var obj js.Value
-	var mode string = "s"
-
-	if obj, err = d.JSObject().GetWithErr("compatMode"); err == nil {
-
-		mode = obj.String()
-	}
-	return mode, err
+	return d.getAttributeString("compatMode")
 }
 
-func (d *Document) ContentType() (string, error) {
-
-	var err error
-	var obj js.Value
-	var ct string = ""
-	if obj, err = d.JSObject().GetWithErr("contentType"); err == nil {
-
-		ct = obj.String()
-	}
-	return ct, err
+func (d Document) ContentType() (string, error) {
+	return d.getAttributeString("contentType")
 }
 
 func (d *Document) Doctype() {
@@ -157,54 +176,20 @@ func (d *Document) Doctype() {
 }
 
 func (d Document) DocumentElement() element.Element {
-	var err error
-	var obj js.Value
-	var elem element.Element
-
-	if obj, err = d.JSObject().GetWithErr("documentElement"); err == nil {
-		elem = element.NewFromJSObject(obj)
-	} else {
-		elem.Error = &err
-	}
-	return elem
+	return d.getAttributeElement("documentElement")
 }
 
 func (d *Document) DocumentURI() (string, error) {
-
-	var err error
-	var obj js.Value
-	var uri string = ""
-
-	if obj, err = d.JSObject().GetWithErr("documentURI"); err == nil {
-
-		uri = obj.String()
-	}
-	return uri, err
+	return d.getAttributeString("documentURI")
 }
 
 func (d Document) Embeds() (htmlcollection.HTMLCollection, error) {
-	var err error
-	var obj js.Value
-	var collection htmlcollection.HTMLCollection
 
-	if obj, err = d.JSObject().GetWithErr("embeds"); err == nil {
-		collection, err = htmlcollection.NewFromJSObject(obj)
-	}
-
-	return collection, err
+	return d.getAttributeHTMLCollection("embeds")
 }
 
 func (d Document) FirstElementChild() element.Element {
-	var err error
-	var obj js.Value
-	var elem element.Element
-
-	if obj, err = d.JSObject().GetWithErr("firstElementChild"); err == nil {
-		elem = element.NewFromJSObject(obj)
-	} else {
-		elem.Error = &err
-	}
-	return elem
+	return d.getAttributeElement("firstElementChild")
 }
 
 func (d Document) Fonts() {
@@ -212,209 +197,109 @@ func (d Document) Fonts() {
 }
 
 func (d Document) Forms() (htmlcollection.HTMLCollection, error) {
-	var err error
-	var obj js.Value
-	var collection htmlcollection.HTMLCollection
-
-	if obj, err = d.JSObject().GetWithErr("forms"); err == nil {
-		collection, err = htmlcollection.NewFromJSObject(obj)
-	}
-
-	return collection, err
+	return d.getAttributeHTMLCollection("forms")
 }
 
 func (d Document) FullscreenElement() element.Element {
-	var err error
-	var obj js.Value
-	var elem element.Element
-
-	if obj, err = d.JSObject().GetWithErr("fullscreenElement"); err == nil {
-		elem = element.NewFromJSObject(obj)
-	} else {
-		elem.Error = &err
-	}
-	return elem
+	return d.getAttributeElement("fullscreenElement")
 }
 
 func (d Document) Head() (htmlcollection.HTMLCollection, error) {
-	var err error
-	var obj js.Value
-	var collection htmlcollection.HTMLCollection
-
-	if obj, err = d.JSObject().GetWithErr("head"); err == nil {
-		collection, err = htmlcollection.NewFromJSObject(obj)
-	}
-
-	return collection, err
+	return d.getAttributeHTMLCollection("head")
 }
 
 func (d Document) Hidden() (bool, error) {
 
-	var err error
-	var obj js.Value
-	var ret bool
-
-	if obj, err = d.JSObject().GetWithErr("hidden"); err == nil {
-		if obj.Type() == js.TypeBoolean {
-			ret = obj.Bool()
-		} else {
-			err = object.ErrObjectNotBool
-		}
-	}
-
-	return ret, err
+	return d.getAttributeBool("hidden")
 }
 
 func (d Document) Images() (htmlcollection.HTMLCollection, error) {
-	var err error
-	var obj js.Value
-	var collection htmlcollection.HTMLCollection
 
-	if obj, err = d.JSObject().GetWithErr("images"); err == nil {
-		collection, err = htmlcollection.NewFromJSObject(obj)
-	}
-
-	return collection, err
+	return d.getAttributeHTMLCollection("images")
 }
 func (d Document) Implementation() {
 	//not implemented
 }
 
 func (d Document) LastElementChild() element.Element {
-	var err error
-	var obj js.Value
-	var elem element.Element
-
-	if obj, err = d.JSObject().GetWithErr("lastElementChild"); err == nil {
-		elem = element.NewFromJSObject(obj)
-	} else {
-		elem.Error = &err
-	}
-	return elem
+	return d.getAttributeElement("lastElementChild")
 }
 
 func (d Document) Links() (htmlcollection.HTMLCollection, error) {
-	var err error
-	var obj js.Value
-	var collection htmlcollection.HTMLCollection
-
-	if obj, err = d.JSObject().GetWithErr("links"); err == nil {
-		collection, err = htmlcollection.NewFromJSObject(obj)
-	}
-
-	return collection, err
+	return d.getAttributeHTMLCollection("links")
 }
 
 func (d Document) PictureInPictureElement() element.Element {
-	var err error
-	var obj js.Value
-	var elem element.Element
-
-	if obj, err = d.JSObject().GetWithErr("pictureInPictureElement"); err == nil {
-		elem = element.NewFromJSObject(obj)
-	} else {
-		elem.Error = &err
-	}
-	return elem
+	return d.getAttributeElement("pictureInPictureElement")
 }
 
 func (d Document) PictureInPictureEnabled() (bool, error) {
-
-	var err error
-	var obj js.Value
-	var ret bool
-
-	if obj, err = d.JSObject().GetWithErr("pictureInPictureEnabled"); err == nil {
-		if obj.Type() == js.TypeBoolean {
-			ret = obj.Bool()
-		} else {
-			err = object.ErrObjectNotBool
-		}
-	}
-
-	return ret, err
+	return d.getAttributeBool("pictureInPictureEnabled")
 }
 
 func (d Document) Plugins() (htmlcollection.HTMLCollection, error) {
-	var err error
-	var obj js.Value
-	var collection htmlcollection.HTMLCollection
-
-	if obj, err = d.JSObject().GetWithErr("plugins"); err == nil {
-		collection, err = htmlcollection.NewFromJSObject(obj)
-	}
-
-	return collection, err
+	return d.getAttributeHTMLCollection("plugins")
 }
 
 func (d Document) PointerLockElement() element.Element {
-	var err error
-	var obj js.Value
-	var elem element.Element
-
-	if obj, err = d.JSObject().GetWithErr("pointerLockElement"); err == nil {
-		elem = element.NewFromJSObject(obj)
-	} else {
-		elem.Error = &err
-	}
-	return elem
+	return d.getAttributeElement("pointerLockElement")
 }
 
 func (d Document) Scripts() (htmlcollection.HTMLCollection, error) {
-	var err error
-	var obj js.Value
-	var collection htmlcollection.HTMLCollection
 
-	if obj, err = d.JSObject().GetWithErr("scripts"); err == nil {
-		collection, err = htmlcollection.NewFromJSObject(obj)
-	}
-
-	return collection, err
+	return d.getAttributeHTMLCollection("scripts")
 }
 
 func (d Document) ScrollingElement() element.Element {
-	var err error
-	var obj js.Value
-	var elem element.Element
-
-	if obj, err = d.JSObject().GetWithErr("scrollingElement"); err == nil {
-		elem = element.NewFromJSObject(obj)
-	} else {
-		elem.Error = &err
-	}
-	return elem
+	return d.getAttributeElement("scrollingElement")
 }
 
 func (d Document) VisibilityState() (string, error) {
 
-	var err error
-	var obj js.Value
-	var vis string = ""
-
-	if obj, err = d.JSObject().GetWithErr("visibilityState"); err == nil {
-
-		vis = obj.String()
-	}
-	return vis, err
+	return d.getAttributeString("visibilityState")
 }
 
-func (d Document) QuerySelector(selector string) (js.Value, error) {
+func (d Document) Domain() (string, error) {
 
-	return d.JSObject().CallWithErr("querySelector", js.ValueOf(selector))
+	return d.getAttributeString("domain")
+}
+
+func (d Document) LastModified() (string, error) {
+
+	return d.getAttributeString("lastModified")
+}
+
+func (d Document) SetDomain(domain string) error {
+
+	return d.setAttributeString("domain", domain)
+}
+
+func (d Document) ReadyState() (string, error) {
+
+	return d.getAttributeString("readyState")
+
+}
+
+func (d Document) Referrer() (string, error) {
+
+	return d.getAttributeString("referrer")
+}
+
+func (d Document) Title() (string, error) {
+
+	return d.getAttributeString("title")
+}
+
+func (d Document) URL() (string, error) {
+
+	return d.getAttributeString("URL")
+
 }
 
 func (d Document) Cookie() (string, error) {
-	var err error
-	var obj js.Value
-	var cookie string = ""
-	if obj, err = d.JSObject().GetWithErr("cookie"); err == nil {
-
-		cookie = obj.String()
-	}
-	return cookie, err
+	return d.getAttributeString("cookie")
 }
 
 func (d Document) SetCookie(cookie string) error {
-
-	return d.JSObject().SetWithErr("cookie", js.ValueOf(cookie))
+	return d.setAttributeString("cookie", cookie)
 }
