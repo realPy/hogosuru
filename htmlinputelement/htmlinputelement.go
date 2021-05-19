@@ -8,7 +8,7 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/filelist"
-	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/htmlelement"
 )
 
 var singleton sync.Once
@@ -22,7 +22,7 @@ type JSInterface struct {
 
 //HtmlInputElement struct
 type HtmlInputElement struct {
-	object.Object
+	htmlelement.HtmlElement
 }
 
 //GetJSInterface get the JS interface of formdata
@@ -31,7 +31,7 @@ func GetJSInterface() *JSInterface {
 	singleton.Do(func() {
 		var htmlinputelementinstance JSInterface
 		var err error
-		if htmlinputelementinstance.objectInterface, err = js.Global().GetWithErr("FormData"); err == nil {
+		if htmlinputelementinstance.objectInterface, err = js.Global().GetWithErr("HTMLInputElement"); err == nil {
 			htmlinputelementinterface = &htmlinputelementinstance
 		}
 	})

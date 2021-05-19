@@ -1,6 +1,6 @@
 package htmlcollection
 
-// https://developer.mozilla.org/fr/docs/Web/API/FileList
+// https://developer.mozilla.org/fr/docs/Web/API/HTMLCollection
 
 import (
 	"sync"

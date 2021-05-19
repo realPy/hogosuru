@@ -48,29 +48,34 @@ All help is welcome. If you are interested by this project, please contact me
 
 |  API/Object |  Implemented Support |  MDN URL |
 |-------------|:--------------------:|----------|
-| Arraybuffer       |  Partial | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer | 
-| Blob              |  Full + stream additional support|  https://developer.mozilla.org/fr/docs/Web/API/Blob |
+| Arraybuffer |  Partial | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer | 
+| Attr | Full | https://developer.mozilla.org/fr/docs/Web/API/Attr |
+| Blob | Full + stream additional support|  https://developer.mozilla.org/fr/docs/Web/API/Blob |
 | Broadcast Channel |  Full |  https://developer.mozilla.org/en-US/docs/Web/API/BroadcastChannel  | 
 | CustomEvent |  Full |  https://developer.mozilla.org/fr/docs/Web/API/CustomEvent |
 | DataTransfer | Partial implemented | https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer |
+| Document | Mostly  | https://developer.mozilla.org/fr/docs/Web/API/Document | 
 | DragEvent |  Full |  https://developer.mozilla.org/en-US/docs/Web/API/DragEvent |
+| Element | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/Element | 
 | Event | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/Event |
 | EventTarget | Full | https://developer.mozilla.org/fr/docs/Web/API/EventTarget/EventTarget | 
-| Fetch | Partial implemented  | https://developer.mozilla.org/fr/docs/Web/API/Fetch_API  |
+| Fetch | Partial implemented  | https://developer.mozilla.org/fr/docs/Web/API/Fetch_API |
 | File | Full | https://developer.mozilla.org/fr/docs/Web/API/File |
 | FileList | Full | https://developer.mozilla.org/fr/docs/Web/API/FileList |
 | FormData | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/FormData |
 | HTMLInputElement| Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/HTMLInputElement |
-| Indexedddb | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/IndexedDB_API|
+| HTMLCollection| Full | https://developer.mozilla.org/fr/docs/Web/API/HTMLCollection |
+| Indexedddb | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/IndexedDB_API |
 | JSON | Full | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/JSON |
 | MessageEvent | Full | https://developer.mozilla.org/fr/docs/Web/API/MessageEvent |
 | Node | Full | https://developer.mozilla.org/en-US/docs/Web/API/Node |
+| NodeList | Considerated at Full (Partial implemented but no more need )| https://developer.mozilla.org/fr/docs/Web/API/NodeList |
 | Response | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/Response |
 | Storage | Full | https://developer.mozilla.org/fr/docs/Mozilla/Add-ons/WebExtensions/API/storage |
 | Stream | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/Streams_API |
 | uint8array | Partial implemented | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array |
 | WebSocket | Full | https://developer.mozilla.org/fr/docs/Web/API/WebSocket |
-| XMLHttpRequest | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/XMLHttpRequest/XMLHttpRequest
+| XMLHttpRequest | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/XMLHttpRequest/XMLHttpRequest |
 
 
 

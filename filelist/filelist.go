@@ -19,7 +19,7 @@ type JSInterface struct {
 	objectInterface js.Value
 }
 
-//HtmlInputElement struct
+//FileList struct
 type FileList struct {
 	object.Object
 }

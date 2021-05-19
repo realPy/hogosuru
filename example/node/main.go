@@ -36,6 +36,9 @@ func main() {
 		println(err.Error())
 	}
 
+	nodelist, _ := d.QuerySelectorAll(".pictureContainer")
+	println("Found", nodelist.Length(), "elements")
+	nodelist.Item(0).Export("node1")
 	ch := make(chan struct{})
 	<-ch
 

@@ -1,5 +1,6 @@
 package element
 
+// https://developer.mozilla.org/fr/docs/Web/API/Element
 import (
 	"sync"
 	"syscall/js"
