@@ -50,7 +50,7 @@ func TestBlob() js.Func {
 		s, _ = c.Text()
 		println("****" + s)
 
-		doc, _ := document.New()
+		doc := document.New()
 
 		files, _ := doc.QuerySelector("[name=file]")
 		if h, err := htmlinputelement.NewFromJSObject(files); err == nil {

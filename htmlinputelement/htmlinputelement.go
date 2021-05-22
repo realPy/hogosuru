@@ -63,6 +63,28 @@ func NewFromJSObject(obj js.Value) (HtmlInputElement, error) {
 	return h, ErrNotAnHtmlInputElement
 }
 
+func (h HtmlInputElement) getStringAttribute(attribute string) (string, error) {
+
+	var err error
+	var obj js.Value
+	var valueStr = ""
+
+	if h.Error == nil {
+		if obj, err = h.JSObject().GetWithErr(attribute); err == nil {
+
+			valueStr = obj.String()
+		}
+	} else {
+		err = *h.Error
+	}
+	return valueStr, err
+
+}
+
+func (h HtmlInputElement) Value() (string, error) {
+	return h.getStringAttribute("value")
+}
+
 func (h HtmlInputElement) Files() (filelist.FileList, error) {
 	var files js.Value
 	var err error

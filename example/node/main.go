@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/realPy/hogosuru/document"
+	"github.com/realPy/hogosuru/event"
 )
 
 func main() {
@@ -39,6 +40,11 @@ func main() {
 	nodelist, _ := d.QuerySelectorAll(".pictureContainer")
 	println("Found", nodelist.Length(), "elements")
 	nodelist.Item(0).Export("node1")
+
+	d.AddEventListener("mousemove", func(e event.Event) {
+		println("mouse move", e.JSObject().Get("clientX").String(), e.JSObject().Get("clientY").String())
+	})
+
 	ch := make(chan struct{})
 	<-ch
 
