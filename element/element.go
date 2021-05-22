@@ -5,6 +5,8 @@ import (
 	"sync"
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/attr"
+	"github.com/realPy/hogosuru/namednodemap"
 	"github.com/realPy/hogosuru/node"
 	"github.com/realPy/hogosuru/object"
 )
@@ -155,6 +157,18 @@ func (e Element) getAttributeElement(attribute string) Element {
 	return newElement
 }
 
+func (e Element) Attributes() (namednodemap.NamedNodeMap, error) {
+
+	var err error
+	var obj js.Value
+	var namednmap namednodemap.NamedNodeMap
+
+	if obj, err = e.JSObject().GetWithErr("attributes"); err == nil {
+		namednmap, err = namednodemap.NewFromJSObject(obj)
+	}
+	return namednmap, err
+}
+
 func (e Element) ClassName() (string, error) {
 
 	return e.getStringAttribute("className")
@@ -246,4 +260,56 @@ func (e Element) Prefix() (string, error) {
 
 func (e Element) PreviousElementSibling() Element {
 	return e.getAttributeElement("previousElementSibling")
+}
+
+func (e Element) ScrollHeight() (int, error) {
+
+	return e.getAttributeInt("scrollHeight")
+}
+
+func (e Element) ScrollLeft() (int, error) {
+
+	return e.getAttributeInt("scrollLeft")
+}
+
+func (e Element) ScrollTop() (int, error) {
+
+	return e.getAttributeInt("scrollTop")
+}
+
+func (e Element) ScrollWidth() (int, error) {
+
+	return e.getAttributeInt("scrollWidth")
+}
+
+func (e Element) TagName() (string, error) {
+
+	return e.getStringAttribute("tagName")
+}
+
+func OwnerElementForAttr(a attr.Attr) Element {
+	var elemObject js.Value
+	var newElement Element
+	var err error
+
+	newElement.Error = a.Error
+	if a.Error == nil {
+		if elemObject, err = a.JSObject().GetWithErr("ownerElement"); err == nil {
+
+			if elemObject.IsNull() {
+				err = attr.ErrNoOwnerElement
+
+			} else {
+
+				newElement = NewFromJSObject(elemObject)
+
+			}
+
+		} else {
+			newElement.Error = &err
+		}
+
+	}
+
+	return newElement
 }

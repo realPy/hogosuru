@@ -68,8 +68,9 @@ All help is welcome. If you are interested by this project, please contact me
 | Indexedddb | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/IndexedDB_API |
 | JSON | Full | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/JSON |
 | MessageEvent | Full | https://developer.mozilla.org/fr/docs/Web/API/MessageEvent |
+| NamedNodeMap | Full | https://developer.mozilla.org/fr/docs/Web/API/NamedNodeMap |
 | Node | Full | https://developer.mozilla.org/en-US/docs/Web/API/Node |
-| NodeList | Considerated at Full (Partial implemented but no more need )| https://developer.mozilla.org/fr/docs/Web/API/NodeList |
+| NodeList | Considerated at Full (Partial implemented but no more need )| https://developer.mozilla.org/fr/docs/Web/API/NodeList | 
 | Response | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/Response |
 | Storage | Full | https://developer.mozilla.org/fr/docs/Mozilla/Add-ons/WebExtensions/API/storage |
 | Stream | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/Streams_API |

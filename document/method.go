@@ -28,7 +28,7 @@ func (d Document) CreateAttribute(name string) (attr.Attr, error) {
 
 	if obj, err = d.JSObject().CallWithErr("createAttribute", js.ValueOf(name)); err == nil {
 
-		attribute = attr.NewFromJSObject(obj)
+		attribute, err = attr.NewFromJSObject(obj)
 	}
 
 	return attribute, err

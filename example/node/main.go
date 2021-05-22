@@ -40,10 +40,31 @@ func main() {
 	nodelist, _ := d.QuerySelectorAll(".pictureContainer")
 	println("Found", nodelist.Length(), "elements")
 	nodelist.Item(0).Export("node1")
+	/*
+		d.AddEventListener("mousemove", func(e event.Event) {
+			println("mouse move", e.JSObject().Get("clientX").String(), e.JSObject().Get("clientY").String())
+		})
+	*/
 
-	d.AddEventListener("mousemove", func(e event.Event) {
-		println("mouse move", e.JSObject().Get("clientX").String(), e.JSObject().Get("clientY").String())
-	})
+	if clickbutton, err := d.GetElementById("clickme"); err == nil {
+
+		clickbutton.AddEventListener("click", func(e event.Event) {
+
+			if testinput, err := d.GetElementById("test"); err == nil {
+				attributes, _ := testinput.Attributes()
+
+				if attr, err := attributes.GetNamedItem("type"); err == nil {
+					if str, err := attr.Value(); err == nil {
+						println("type->" + str)
+					}
+
+				} else {
+					println("erreur" + err.Error())
+				}
+			}
+
+		})
+	}
 
 	ch := make(chan struct{})
 	<-ch

@@ -4,13 +4,12 @@ import (
 	"sync"
 	"syscall/js"
 
-	"github.com/realPy/hogosuru/element"
 	"github.com/realPy/hogosuru/node"
 )
 
 var singleton sync.Once
 
-var elementinterface *JSInterface
+var attrinterface *JSInterface
 
 //JSInterface JSInterface struct
 type JSInterface struct {
@@ -21,45 +20,50 @@ type JSInterface struct {
 func GetJSInterface() *JSInterface {
 
 	singleton.Do(func() {
-		var elementinstance JSInterface
+		var attrinstance JSInterface
 		var err error
-		if elementinstance.objectInterface, err = js.Global().GetWithErr("Element"); err == nil {
-			elementinterface = &elementinstance
+		if attrinstance.objectInterface, err = js.Global().GetWithErr("Attr"); err == nil {
+			attrinterface = &attrinstance
 		}
 	})
 
-	return elementinterface
+	return attrinterface
 }
 
 type Attr struct {
 	node.Node
 }
 
-func New() Attr {
+func New() (Attr, error) {
 
 	var a Attr
+	var err error
 	if ai := GetJSInterface(); ai != nil {
 		a.Object = a.SetObject(ai.objectInterface.New())
-		return a
+
+	} else {
+		err = ErrNotImplemented
 	}
 
-	a.Error = &ErrNotImplemented
-	return a
+	return a, err
 }
 
-func NewFromJSObject(obj js.Value) Attr {
+func NewFromJSObject(obj js.Value) (Attr, error) {
 	var a Attr
-
+	var err error
 	if ai := GetJSInterface(); ai != nil {
 		if obj.InstanceOf(ai.objectInterface) {
 			a.Object = a.SetObject(obj)
-			return a
+
+		} else {
+			err = ErrNotAnAttr
 		}
 
+	} else {
+		err = ErrNotImplemented
 	}
 
-	a.Error = &ErrNotAnAttr
-	return a
+	return a, err
 }
 
 func (a Attr) getStringAttribute(attribute string) (string, error) {
@@ -105,29 +109,10 @@ func (a Attr) Prefix() (string, error) {
 	return a.getStringAttribute("prefix")
 }
 
-func (a Attr) OwnerElement() element.Element {
-	var elemObject js.Value
-	var newElement element.Element
-	var err error
+func (a Attr) Value() (string, error) {
 
-	newElement.Error = a.Error
-	if a.Error == nil {
-		if elemObject, err = a.JSObject().GetWithErr("ownerElement"); err == nil {
-
-			if elemObject.IsNull() {
-				err = ErrNoOwnerElement
-
-			} else {
-
-				newElement = element.NewFromJSObject(elemObject)
-
-			}
-
-		} else {
-			newElement.Error = &err
-		}
-
-	}
-
-	return newElement
+	return a.getStringAttribute("value")
 }
+
+//use element.OwnerElementForAttr
+//func (a Attr) OwnerElementObjet()
