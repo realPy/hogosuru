@@ -52,16 +52,20 @@ func New() Element {
 
 func NewFromJSObject(obj js.Value) Element {
 	var e Element
-
+	var err error
 	if ei := GetJSInterface(); ei != nil {
 		if obj.InstanceOf(ei.objectInterface) {
 			e.Object = e.SetObject(obj)
-			return e
+
+		} else {
+			err = ErrNotAnElement
 		}
 
+	} else {
+		err = ErrNotImplemented
 	}
 
-	e.Error = &ErrNotAnElement
+	e.Error = &err
 	return e
 }
 

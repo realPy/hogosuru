@@ -1,7 +1,6 @@
 package object
 
 import (
-	"fmt"
 	"sync"
 
 	"syscall/js"
@@ -38,6 +37,7 @@ func GetJSInterface() *JSInterface {
 	return objinterface
 }
 
+/*
 func NewObject() (ObjectInterface, error) {
 	var objectinstance ObjectInterface
 	var err error
@@ -185,6 +185,7 @@ func Pair(keypair js.Value) (GOValue, GOValue) {
 	}
 	return GOValue{}, GOValue{}
 }
+*/
 
 func String(object js.Value) string {
 	s, _ := StringWithErr(object)
@@ -231,6 +232,25 @@ func (o Object) JSObject() js.Value {
 
 func (o Object) String() string {
 	return String(o.object)
+}
+
+func (o Object) ToString() (string, error) {
+	var value js.Value
+	var err error
+	if o.JSObject().Type() == js.TypeObject {
+		if value, err = o.JSObject().CallWithErr("toString"); err == nil {
+			return value.String(), nil
+		} else {
+			return "", err
+		}
+
+	}
+
+	return "", ErrNotAnObject
+}
+
+func (o Object) Value() string {
+	return o.object.String()
 }
 
 func (o Object) Length() int {

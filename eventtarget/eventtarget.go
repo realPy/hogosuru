@@ -7,7 +7,6 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/event"
-	"github.com/realPy/hogosuru/object"
 )
 
 var singleton sync.Once
@@ -34,7 +33,7 @@ func GetJSInterface() *JSInterface {
 }
 
 type EventTarget struct {
-	object.Object
+	event.Event
 	registerFunc map[string]js.Func
 }
 

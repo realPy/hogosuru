@@ -61,6 +61,15 @@ func main() {
 				} else {
 					println("erreur" + err.Error())
 				}
+
+				//easy method
+
+				if obj, err := testinput.GetAttribute("type"); err == nil {
+					println("Second method type->" + obj.Value())
+				} else {
+					println("erreur" + err.Error())
+				}
+
 			}
 
 		})

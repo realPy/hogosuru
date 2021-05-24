@@ -18,7 +18,7 @@ import (
 
 	"github.com/realPy/hogosuru/formdata"
 	"github.com/realPy/hogosuru/object"
-	"github.com/realPy/hogosuru/object/event/progressevent"
+	"github.com/realPy/hogosuru/progressevent"
 )
 
 var singleton sync.Once
@@ -124,11 +124,13 @@ func (x XMLHTTPRequest) SetOnReadyStateChange(handler func(XMLHTTPRequest)) {
 }
 
 //SetOnProgress Set  OnProgress
-func (x XMLHTTPRequest) SetOnProgress(handler func(XMLHTTPRequest, object.GOMap)) {
+func (x XMLHTTPRequest) SetOnProgress(handler func(XMLHTTPRequest, progressevent.ProgressEvent)) {
 	onprogress := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
-		if gomap, err := progressevent.NewProgressEvent(args[0]); err == nil {
-			handler(x, gomap)
+		if pe, err := progressevent.NewFromJSObject(args[0]); err == nil {
+			handler(x, pe)
+		} else {
+			println("erreur " + err.Error())
 		}
 
 		return nil
@@ -316,17 +318,17 @@ func (x XMLHTTPRequest) UploadSetOnloadend(handler func(XMLHTTPRequest)) {
 }
 
 //UploadSetOnprogress
-func (x XMLHTTPRequest) UploadSetOnprogress(handler func(XMLHTTPRequest, object.GOMap)) {
+func (x XMLHTTPRequest) UploadSetOnprogress(handler func(XMLHTTPRequest, progressevent.ProgressEvent)) {
 
 	var uploadAbstractObject js.Value
 	var err error
-	var gomap object.GOMap
 
 	if uploadAbstractObject, err = x.JSObject().GetWithErr("upload"); err == nil {
 
 		jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-			if gomap, err = progressevent.NewProgressEvent(args[0]); err == nil {
-				handler(x, gomap)
+
+			if pe, err := progressevent.NewFromJSObject(args[0]); err == nil {
+				handler(x, pe)
 			}
 
 			return nil

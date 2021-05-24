@@ -7,4 +7,5 @@ var (
 	ErrNotImplemented  = errors.New("Browser not implemented Node")
 	ErrNotAnElement    = errors.New("Object is not an Element")
 	ErrElementNoChilds = errors.New("Element has no childs")
+	ErrAttributeEmpty  = errors.New("Attribute is empty")
 )
