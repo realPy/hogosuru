@@ -1,19 +1,19 @@
 package baseobject
 
 import (
-	"sync"
-
 	"syscall/js"
 )
 
+/*
 var singleton sync.Once
 
 var objinterface *JSInterface
-
+*/
 type ObjectFrom interface {
 	JSObject() js.Value
 }
 
+/*
 //JSInterface JSInterface struct
 type JSInterface struct {
 	objectInterface js.Value
@@ -36,6 +36,7 @@ func GetJSInterface() *JSInterface {
 
 	return objinterface
 }
+*/
 
 /*
 func NewObject() (ObjectInterface, error) {
@@ -281,8 +282,9 @@ func GoValue(object js.Value) interface{} {
 		return object.String()
 	case js.TypeBoolean:
 		return object.Bool()
-	case js.TypeObject:
-		return object.String()
 	}
-	return object
+	if obj, err := NewFromJSObject(object); err == nil {
+		return obj
+	}
+	return nil
 }

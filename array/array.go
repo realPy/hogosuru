@@ -370,18 +370,24 @@ func (a Array) IndexOf(i interface{}) (int, error) {
 	return index, err
 }
 
-func (a Array) IsArray() (bool, error) {
+func IsArray(bobj baseobject.BaseObject) (bool, error) {
 
 	var err error
 	var result bool
 	var obj js.Value
 
-	if obj, err = a.JSObject().CallWithErr("isArray"); err == nil {
-		if obj.Type() == js.TypeBoolean {
-			result = obj.Bool()
-		} else {
-			err = baseobject.ErrObjectNotBool
+	if ai := GetJSInterface(); ai != nil {
+
+		if obj, err = ai.objectInterface.CallWithErr("isArray", bobj.JSObject()); err == nil {
+			if obj.Type() == js.TypeBoolean {
+				result = obj.Bool()
+			} else {
+				err = baseobject.ErrObjectNotBool
+			}
 		}
+
+	} else {
+		err = ErrNotImplemented
 	}
 	return result, err
 }
