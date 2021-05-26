@@ -8,7 +8,7 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/indexeddb/idbdatabase"
-	"github.com/realPy/hogosuru/object"
+	baseobject "github.com/realPy/hogosuru/object"
 )
 
 func getEventTargetError(ev js.Value) (js.Value, error) {
@@ -29,7 +29,7 @@ func stringFromTargetError(ev js.Value) (string, error) {
 
 	if jserr, err = getEventTargetError(ev); err == nil {
 
-		return object.StringWithErr(jserr)
+		return baseobject.StringWithErr(jserr)
 
 	}
 
@@ -66,7 +66,7 @@ func GetJSInterface() *JSInterface {
 }
 
 type IDBOpenDBRequest struct {
-	object.Object
+	baseobject.BaseObject
 }
 
 func Open(name string, version int,

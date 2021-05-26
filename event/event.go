@@ -8,7 +8,7 @@ import (
 
 	"syscall/js"
 
-	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/baseobject"
 )
 
 var singleton sync.Once
@@ -22,7 +22,7 @@ type JSInterface struct {
 
 //Event Event struct
 type Event struct {
-	object.Object
+	baseobject.BaseObject
 }
 
 //GetJSInterface get the JS interface of event
@@ -44,7 +44,7 @@ func New(message string) (Event, error) {
 	var event Event
 
 	if eventi := GetJSInterface(); eventi != nil {
-		event.Object = event.SetObject(eventi.objectInterface.New(js.ValueOf(message)))
+		event.BaseObject = event.SetObject(eventi.objectInterface.New(js.ValueOf(message)))
 		return event, nil
 	}
 	return event, ErrNotImplemented
@@ -55,7 +55,7 @@ func NewFromJSObject(obj js.Value) (Event, error) {
 
 	if eventi := GetJSInterface(); eventi != nil {
 		if obj.InstanceOf(eventi.objectInterface) {
-			e.Object = e.SetObject(obj)
+			e.BaseObject = e.SetObject(obj)
 			return e, nil
 		}
 	}

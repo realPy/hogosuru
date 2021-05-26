@@ -9,7 +9,7 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/arraybuffer"
-	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/stream"
 	readablestream "github.com/realPy/hogosuru/stream"
 )
@@ -38,7 +38,7 @@ func GetJSInterface() *JSInterface {
 }
 
 type Blob struct {
-	object.Object
+	baseobject.BaseObject
 }
 
 func New() (Blob, error) {
@@ -46,7 +46,7 @@ func New() (Blob, error) {
 	var b Blob
 	if bi := GetJSInterface(); bi != nil {
 
-		b.Object = b.SetObject(bi.objectInterface.New())
+		b.BaseObject = b.SetObject(bi.objectInterface.New())
 		return b, nil
 	}
 	return b, ErrNotImplemented
@@ -56,7 +56,7 @@ func NewWithObject(o js.Value) (Blob, error) {
 
 	var b Blob
 	if bi := GetJSInterface(); bi != nil {
-		b.Object = b.SetObject(bi.objectInterface.New(o))
+		b.BaseObject = b.SetObject(bi.objectInterface.New(o))
 		return b, nil
 	}
 	return b, ErrNotImplemented
@@ -67,7 +67,7 @@ func NewWithArrayBuffer(a arraybuffer.ArrayBuffer) (Blob, error) {
 	var b Blob
 	if bi := GetJSInterface(); bi != nil {
 
-		b.Object = b.SetObject(bi.objectInterface.New([]interface{}{a.JSObject()}))
+		b.BaseObject = b.SetObject(bi.objectInterface.New([]interface{}{a.JSObject()}))
 		return b, nil
 	}
 	return b, ErrNotImplemented
@@ -90,7 +90,7 @@ func NewWithBlob(bl Blob) (Blob, error) {
 
 	var b Blob
 	if bi := GetJSInterface(); bi != nil {
-		b.Object = b.SetObject(bi.objectInterface.New(bl.JSObject()))
+		b.BaseObject = b.SetObject(bi.objectInterface.New(bl.JSObject()))
 		return b, nil
 	}
 	return b, ErrNotImplemented
@@ -101,7 +101,7 @@ func NewFromJSObject(obj js.Value) (Blob, error) {
 
 	if bi := GetJSInterface(); bi != nil {
 		if obj.InstanceOf(bi.objectInterface) {
-			b.Object = b.SetObject(obj)
+			b.BaseObject = b.SetObject(obj)
 			return b, nil
 		}
 	}
@@ -151,7 +151,7 @@ func (b Blob) Slice(begin, end int) (Blob, error) {
 	if blob, err = b.JSObject().CallWithErr("slice", js.ValueOf(begin), js.ValueOf(end)); err == nil {
 		var newblob Blob
 		object := newblob.SetObject(blob)
-		newblob.Object = object
+		newblob.BaseObject = object
 		return newblob, nil
 	}
 	return Blob{}, err
@@ -214,7 +214,7 @@ func (b Blob) Text() (string, error) {
 	return text, err
 }
 
-func (b Blob) Append(append object.Object) (Blob, error) {
+func (b Blob) Append(append baseobject.BaseObject) (Blob, error) {
 
 	var blobObject js.Value
 	var arrayblob []interface{} = []interface{}{b.JSObject(), append.JSObject()}

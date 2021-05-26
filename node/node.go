@@ -4,8 +4,8 @@ import (
 	"sync"
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/eventtarget"
-	"github.com/realPy/hogosuru/object"
 )
 
 var singleton sync.Once
@@ -38,6 +38,13 @@ type Node struct {
 	Error *error
 }
 
+func (n *Node) IsError() error {
+	var err *error
+	err = n.Error
+	n.Error = nil
+	return *err
+}
+
 /*
 func New() Node {
 
@@ -57,7 +64,7 @@ func NewFromJSObject(obj js.Value) Node {
 	if ni := GetJSInterface(); ni != nil {
 
 		if obj.InstanceOf(ni.objectInterface) {
-			n.Object = n.SetObject(obj)
+			n.BaseObject = n.SetObject(obj)
 			return n
 		}
 
@@ -127,7 +134,7 @@ func (n *Node) IsConnected() bool {
 		if obj.Type() == js.TypeBoolean {
 			return obj.Bool()
 		} else {
-			n.Error = &object.ErrObjectNotBool
+			n.Error = &baseobject.ErrObjectNotBool
 		}
 	} else {
 		n.Error = &err
@@ -289,7 +296,7 @@ func (n *Node) Contains(node Node) bool {
 			if obj.Type() == js.TypeBoolean {
 				return obj.Bool()
 			} else {
-				n.Error = &object.ErrObjectNotBool
+				n.Error = &baseobject.ErrObjectNotBool
 			}
 		} else {
 
@@ -324,7 +331,7 @@ func (n *Node) HasChildNodes() bool {
 			if obj.Type() == js.TypeBoolean {
 				return obj.Bool()
 			} else {
-				n.Error = &object.ErrObjectNotBool
+				n.Error = &baseobject.ErrObjectNotBool
 			}
 		} else {
 
@@ -360,7 +367,7 @@ func (n *Node) IsDefaultNamespace() bool {
 			if obj.Type() == js.TypeBoolean {
 				return obj.Bool()
 			} else {
-				n.Error = &object.ErrObjectNotBool
+				n.Error = &baseobject.ErrObjectNotBool
 			}
 		} else {
 
@@ -380,7 +387,7 @@ func (n *Node) IsEqualNode() bool {
 			if obj.Type() == js.TypeBoolean {
 				return obj.Bool()
 			} else {
-				n.Error = &object.ErrObjectNotBool
+				n.Error = &baseobject.ErrObjectNotBool
 			}
 		} else {
 
@@ -400,7 +407,7 @@ func (n *Node) IsSameNode() bool {
 			if obj.Type() == js.TypeBoolean {
 				return obj.Bool()
 			} else {
-				n.Error = &object.ErrObjectNotBool
+				n.Error = &baseobject.ErrObjectNotBool
 			}
 		} else {
 

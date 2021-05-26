@@ -39,7 +39,7 @@ func New() Document {
 
 	var d Document
 	if di := GetJSInterface(); di != nil {
-		d.Object = d.SetObject(di.objectInterface)
+		d.BaseObject = d.SetObject(di.objectInterface)
 		return d
 	}
 	d.Error = &ErrNotImplemented

@@ -4,8 +4,8 @@ import (
 	"sync"
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/filelist"
-	"github.com/realPy/hogosuru/object"
 )
 
 var singleton sync.Once
@@ -19,7 +19,7 @@ type JSInterface struct {
 
 //Channel struct
 type DataTransfer struct {
-	object.Object
+	baseobject.BaseObject
 }
 
 //GetJSInterface get teh JS interface of broadcast channel
@@ -41,7 +41,7 @@ func New() (DataTransfer, error) {
 	var dt DataTransfer
 
 	if dti := GetJSInterface(); dti != nil {
-		dt.Object = dt.SetObject(dti.objectInterface.New())
+		dt.BaseObject = dt.SetObject(dti.objectInterface.New())
 		return dt, nil
 	}
 	return DataTransfer{}, ErrNotImplemented
@@ -52,7 +52,7 @@ func NewFromJSObject(obj js.Value) (DataTransfer, error) {
 
 	if di := GetJSInterface(); di != nil {
 		if obj.InstanceOf(di.objectInterface) {
-			dt.Object = dt.SetObject(obj)
+			dt.BaseObject = dt.SetObject(obj)
 			return dt, nil
 		}
 	}

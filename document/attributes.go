@@ -3,10 +3,10 @@ package document
 import (
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/element"
 	"github.com/realPy/hogosuru/htmlcollection"
 	"github.com/realPy/hogosuru/node"
-	"github.com/realPy/hogosuru/object"
 )
 
 func (d Document) getAttributeElement(attribute string) element.Element {
@@ -68,7 +68,7 @@ func (d Document) getAttributeBool(attribute string) (bool, error) {
 		if obj.Type() == js.TypeBoolean {
 			ret = obj.Bool()
 		} else {
-			err = object.ErrObjectNotBool
+			err = baseobject.ErrObjectNotBool
 		}
 	}
 

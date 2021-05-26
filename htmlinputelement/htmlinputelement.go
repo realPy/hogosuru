@@ -44,7 +44,7 @@ func New() (HtmlInputElement, error) {
 	var h HtmlInputElement
 
 	if hci := GetJSInterface(); hci != nil {
-		h.Object = h.SetObject(hci.objectInterface.New())
+		h.BaseObject = h.SetObject(hci.objectInterface.New())
 		return h, nil
 	}
 	return h, ErrNotImplemented
@@ -56,7 +56,7 @@ func NewFromJSObject(obj js.Value) (HtmlInputElement, error) {
 	if hei := GetJSInterface(); hei != nil {
 		if obj.InstanceOf(hei.objectInterface) {
 
-			h.Object = h.SetObject(obj)
+			h.BaseObject = h.SetObject(obj)
 			return h, nil
 		}
 	}

@@ -7,7 +7,7 @@ import (
 
 	"syscall/js"
 
-	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/baseobject"
 )
 
 var singleton sync.Once
@@ -21,7 +21,7 @@ type JSInterface struct {
 
 //FormData struct
 type FormData struct {
-	object.Object
+	baseobject.BaseObject
 }
 
 //GetJSInterface get the JS interface of formdata
@@ -43,7 +43,7 @@ func New() (FormData, error) {
 	var formdata FormData
 
 	if fci := GetJSInterface(); fci != nil {
-		formdata.Object = formdata.SetObject(fci.objectInterface.New())
+		formdata.BaseObject = formdata.SetObject(fci.objectInterface.New())
 
 		return formdata, nil
 	}

@@ -41,7 +41,7 @@ func NewFromJSObject(obj js.Value) (MessageEvent, error) {
 
 	if mi := GetJSInterface(); mi != nil {
 		if obj.InstanceOf(mi.objectInterface) {
-			m.Object = m.SetObject(obj)
+			m.BaseObject = m.SetObject(obj)
 			return m, nil
 
 		}

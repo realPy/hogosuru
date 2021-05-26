@@ -44,7 +44,7 @@ func NewFromJSObject(obj js.Value) (DragEvent, error) {
 
 	if di := GetJSInterface(); di != nil {
 		if obj.InstanceOf(di.objectInterface) {
-			e.Object = e.SetObject(obj)
+			e.BaseObject = e.SetObject(obj)
 			return e, nil
 		}
 	}

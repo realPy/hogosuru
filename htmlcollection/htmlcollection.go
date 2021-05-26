@@ -6,8 +6,8 @@ import (
 	"sync"
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/element"
-	"github.com/realPy/hogosuru/object"
 )
 
 var singleton sync.Once
@@ -21,7 +21,7 @@ type JSInterface struct {
 
 //HTMLCollection struct
 type HTMLCollection struct {
-	object.Object
+	baseobject.BaseObject
 }
 
 //GetJSInterface get the JS interface of formdata
@@ -43,7 +43,7 @@ func NewFromJSObject(obj js.Value) (HTMLCollection, error) {
 	var err error
 	if fli := GetJSInterface(); fli != nil {
 		if obj.InstanceOf(fli.objectInterface) {
-			h.Object = h.SetObject(obj)
+			h.BaseObject = h.SetObject(obj)
 		}
 	} else {
 		err = ErrNotAnHTMLCollection

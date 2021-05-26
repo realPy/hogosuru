@@ -6,9 +6,9 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/attr"
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/namednodemap"
 	"github.com/realPy/hogosuru/node"
-	"github.com/realPy/hogosuru/object"
 )
 
 var singleton sync.Once
@@ -42,7 +42,7 @@ func New() Element {
 
 	var e Element
 	if ei := GetJSInterface(); ei != nil {
-		e.Object = e.SetObject(ei.objectInterface.New())
+		e.BaseObject = e.SetObject(ei.objectInterface.New())
 		return e
 	}
 
@@ -55,7 +55,7 @@ func NewFromJSObject(obj js.Value) Element {
 	var err error
 	if ei := GetJSInterface(); ei != nil {
 		if obj.InstanceOf(ei.objectInterface) {
-			e.Object = e.SetObject(obj)
+			e.BaseObject = e.SetObject(obj)
 
 		} else {
 			err = ErrNotAnElement
@@ -108,7 +108,7 @@ func (e Element) getAttributeNumber(attribute string) (float64, error) {
 		if obj.Type() == js.TypeNumber {
 			ret = obj.Float()
 		} else {
-			err = object.ErrObjectNotNumber
+			err = baseobject.ErrObjectNotNumber
 		}
 	}
 	return ret, err
@@ -124,7 +124,7 @@ func (e Element) getAttributeInt(attribute string) (int, error) {
 		if obj.Type() == js.TypeNumber {
 			ret = obj.Int()
 		} else {
-			err = object.ErrObjectNotNumber
+			err = baseobject.ErrObjectNotNumber
 		}
 	}
 	return ret, err

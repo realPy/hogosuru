@@ -8,7 +8,7 @@ import (
 
 	"syscall/js"
 
-	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/baseobject"
 )
 
 var singleton sync.Once
@@ -36,7 +36,7 @@ func GetJSInterface() *JSInterface {
 
 //ArrayBuffer struct
 type ArrayBuffer struct {
-	object.Object
+	baseobject.BaseObject
 }
 
 func New(size int) (ArrayBuffer, error) {
@@ -45,7 +45,7 @@ func New(size int) (ArrayBuffer, error) {
 
 	if ai := GetJSInterface(); ai != nil {
 
-		a.Object = a.SetObject(ai.objectInterface.New(js.ValueOf(size)))
+		a.BaseObject = a.SetObject(ai.objectInterface.New(js.ValueOf(size)))
 		return a, nil
 	}
 
@@ -57,7 +57,7 @@ func NewFromJSObject(obj js.Value) (ArrayBuffer, error) {
 
 	if ai := GetJSInterface(); ai != nil {
 		if obj.InstanceOf(ai.objectInterface) {
-			a.Object = a.SetObject(obj)
+			a.BaseObject = a.SetObject(obj)
 			return a, nil
 		}
 	}
@@ -73,7 +73,7 @@ func (a ArrayBuffer) ByteLength() (int, error) {
 		if byteLengthObject.Type() == js.TypeNumber {
 			return byteLengthObject.Int(), nil
 		} else {
-			return 0, object.ErrObjectNotNumber
+			return 0, baseobject.ErrObjectNotNumber
 		}
 
 	}

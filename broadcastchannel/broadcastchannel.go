@@ -8,8 +8,8 @@ import (
 
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/messageevent"
-	"github.com/realPy/hogosuru/object"
 )
 
 var singleton sync.Once
@@ -23,7 +23,7 @@ type JSInterface struct {
 
 //Channel struct
 type Channel struct {
-	object.Object
+	baseobject.BaseObject
 	onmessage js.Func
 }
 
@@ -46,7 +46,7 @@ func New(channelname string) (Channel, error) {
 	var channel Channel
 
 	if bci := GetJSInterface(); bci != nil {
-		channel.Object = channel.SetObject(bci.objectInterface.New(js.ValueOf(channelname)))
+		channel.BaseObject = channel.SetObject(bci.objectInterface.New(js.ValueOf(channelname)))
 		return channel, nil
 	}
 	return channel, ErrNotImplemented

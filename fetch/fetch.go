@@ -9,7 +9,7 @@ import (
 
 	"syscall/js"
 
-	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/baseobject"
 	jsresponse "github.com/realPy/hogosuru/response"
 )
 
@@ -38,7 +38,7 @@ func GetJSInterface() *JSInterface {
 
 //Fetch struct
 type Fetch struct {
-	object.Object
+	baseobject.BaseObject
 }
 
 //NewFetch New fetch
@@ -66,7 +66,7 @@ func NewFetch(urlfetch *url.URL, method string, headers *map[string]interface{},
 
 		arg := js.ValueOf(goarg)
 
-		fetch.Object = fetch.SetObject(fetchi.objectInterface.Invoke(urlfetch.String(), arg))
+		fetch.BaseObject = fetch.SetObject(fetchi.objectInterface.Invoke(urlfetch.String(), arg))
 
 		then := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 

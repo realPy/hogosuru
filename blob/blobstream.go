@@ -72,7 +72,7 @@ func (b *BlobStream) Write(p []byte) (n int, err error) {
 		if array8buf, err = uint8array.NewFromArrayBuffer(arraybuf); err == nil {
 			currentBlob := b.Blob
 			array8buf.CopyFromBytes(p)
-			b.Blob, err = b.Blob.Append(array8buf.Object)
+			b.Blob, err = b.Blob.Append(array8buf.BaseObject)
 			currentBlob.Close()
 			n = len(p)
 		}

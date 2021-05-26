@@ -6,9 +6,6 @@ import (
 	"sync"
 
 	"syscall/js"
-
-	"github.com/realPy/hogosuru/object"
-	jsobject "github.com/realPy/hogosuru/object"
 )
 
 var singleton sync.Once
@@ -22,7 +19,7 @@ type JSInterface struct {
 
 //Json  struct
 type Json struct {
-	object.Object
+	baseobject.BaseObject
 }
 
 //GetJSInterface get teh JS interface of broadcast channel
@@ -63,7 +60,7 @@ func NewFromJSObject(obj js.Value) (Json, error) {
 
 	if ji := GetJSInterface(); ji != nil {
 
-		j.Object = j.SetObject(obj)
+		j.BaseObject = j.SetObject(obj)
 		return j, nil
 
 	}
@@ -72,14 +69,16 @@ func NewFromJSObject(obj js.Value) (Json, error) {
 
 }
 
+/*
 func (j Json) Get(key string) js.Value {
 	return j.JSObject().Get(key)
 }
 
-func (j Json) GoJson() jsobject.GOMap {
-	return jsobject.Map(j.JSObject())
+func (j Json) GoJson() jsbaseobject.GOMap {
+	return jsbaseobject.Map(j.JSObject())
 
 }
+*/
 
 func (j Json) Stringify() (string, error) {
 
@@ -91,7 +90,7 @@ func (j Json) Stringify() (string, error) {
 			return "", err
 		} else {
 
-			return stringObject.String(), nil
+			return stringbaseobject.String(), nil
 		}
 
 	} else {

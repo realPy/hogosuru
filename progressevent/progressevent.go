@@ -6,8 +6,8 @@ import (
 	"sync"
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/event"
-	"github.com/realPy/hogosuru/object"
 )
 
 var singleton sync.Once
@@ -42,7 +42,7 @@ func New() (ProgressEvent, error) {
 	var p ProgressEvent
 
 	if pei := GetJSInterface(); pei != nil {
-		p.Object = p.SetObject(pei.objectInterface.New())
+		p.BaseObject = p.SetObject(pei.objectInterface.New())
 
 		return p, nil
 	}
@@ -54,7 +54,7 @@ func NewFromJSObject(obj js.Value) (ProgressEvent, error) {
 
 	if pei := GetJSInterface(); pei != nil {
 		if obj.InstanceOf(pei.objectInterface) {
-			p.Object = p.SetObject(obj)
+			p.BaseObject = p.SetObject(obj)
 
 			return p, nil
 		}
@@ -72,7 +72,7 @@ func (p ProgressEvent) LengthComputable() (bool, error) {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
-			err = object.ErrObjectNotBool
+			err = baseobject.ErrObjectNotBool
 		}
 	}
 	return result, err
@@ -85,7 +85,7 @@ func (p ProgressEvent) Loaded() (int, error) {
 		if loadedObject.Type() == js.TypeNumber {
 			return loadedObject.Int(), nil
 		} else {
-			return 0, object.ErrObjectNotNumber
+			return 0, baseobject.ErrObjectNotNumber
 		}
 
 	}
@@ -100,7 +100,7 @@ func (p ProgressEvent) Total() (int, error) {
 		if loadedObject.Type() == js.TypeNumber {
 			return loadedObject.Int(), nil
 		} else {
-			return 0, object.ErrObjectNotNumber
+			return 0, baseobject.ErrObjectNotNumber
 		}
 
 	}

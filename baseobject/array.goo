@@ -14,9 +14,9 @@ func Array(object js.Value) GOArray {
 
 	var goArray GOArray
 
-	if object.Type() == js.TypeObject {
-		for i := 0; i < object.Length(); i++ {
-			jsvalue := object.Index(i)
+	if baseobject.Type() == js.TypeObject {
+		for i := 0; i < baseobject.Length(); i++ {
+			jsvalue := baseobject.Index(i)
 			goArray.value = append(goArray.value, NewGOValue(jsvalue))
 		}
 
@@ -26,10 +26,10 @@ func Array(object js.Value) GOArray {
 
 func ParseArray(object js.Value, handler func(js.Value)) error {
 
-	if object.Type() == js.TypeObject {
-		for i := 0; i < object.Length(); i++ {
+	if baseobject.Type() == js.TypeObject {
+		for i := 0; i < baseobject.Length(); i++ {
 
-			handler(object.Index(i))
+			handler(baseobject.Index(i))
 		}
 	}
 

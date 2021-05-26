@@ -42,7 +42,7 @@ func New() (EventTarget, error) {
 	var e EventTarget
 
 	if eti := GetJSInterface(); eti != nil {
-		e.Object = e.SetObject(eti.objectInterface.New())
+		e.BaseObject = e.SetObject(eti.objectInterface.New())
 		e.registerFunc = make(map[string]js.Func)
 		return e, nil
 	}
@@ -54,7 +54,7 @@ func NewFromJSObject(obj js.Value) (EventTarget, error) {
 
 	if eti := GetJSInterface(); eti != nil {
 		if obj.InstanceOf(eti.objectInterface) {
-			e.Object = e.SetObject(obj)
+			e.BaseObject = e.SetObject(obj)
 			e.registerFunc = make(map[string]js.Func)
 			return e, nil
 		}

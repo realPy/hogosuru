@@ -42,7 +42,7 @@ func New(message, detail string) (CustomEvent, error) {
 	var event CustomEvent
 
 	if eventi := GetJSInterface(); eventi != nil {
-		event.Object = event.SetObject(eventi.objectInterface.New(js.ValueOf(message), js.ValueOf(map[string]interface{}{"detail": detail})))
+		event.BaseObject = event.SetObject(eventi.objectInterface.New(js.ValueOf(message), js.ValueOf(map[string]interface{}{"detail": detail})))
 		return event, nil
 	}
 	return event, ErrNotImplemented

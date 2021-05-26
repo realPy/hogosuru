@@ -16,8 +16,8 @@ import (
 
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/formdata"
-	"github.com/realPy/hogosuru/object"
 	"github.com/realPy/hogosuru/progressevent"
 )
 
@@ -32,7 +32,7 @@ type JSInterface struct {
 
 //XMLHTTPRequest XMLHTTPRequest struct
 type XMLHTTPRequest struct {
-	object.Object
+	baseobject.BaseObject
 }
 
 //GetJSInterface Get the JS XMLHTTPRequest Interface If nil browser doesn't implement it
@@ -55,7 +55,7 @@ func New() (XMLHTTPRequest, error) {
 
 	if xhri := GetJSInterface(); xhri != nil {
 
-		request.Object = request.SetObject(xhri.objectInterface.New())
+		request.BaseObject = request.SetObject(xhri.objectInterface.New())
 		return request, nil
 
 	}
@@ -147,7 +147,7 @@ func (x XMLHTTPRequest) ReadyState() (int, error) {
 		if readystate.Type() == js.TypeNumber {
 			return readystate.Int(), nil
 		} else {
-			return 0, object.ErrObjectNotNumber
+			return 0, baseobject.ErrObjectNotNumber
 		}
 
 	}
@@ -162,7 +162,7 @@ func (x XMLHTTPRequest) ResponseText() (string, error) {
 		if responseTexte.Type() == js.TypeString {
 			return responseTexte.String(), nil
 		} else {
-			return "", object.ErrObjectNotString
+			return "", baseobject.ErrObjectNotString
 		}
 
 	}
@@ -178,7 +178,7 @@ func (x XMLHTTPRequest) GetResponseHeader(header string) (string, error) {
 		if responseHeader.Type() == js.TypeString {
 			return responseHeader.String(), nil
 		} else {
-			return "", object.ErrObjectNotString
+			return "", baseobject.ErrObjectNotString
 		}
 
 	}
@@ -210,7 +210,7 @@ func (x XMLHTTPRequest) ResponseURL() (string, error) {
 		if responseUrl.Type() == js.TypeString {
 			return responseUrl.String(), nil
 		} else {
-			return "", object.ErrObjectNotString
+			return "", baseobject.ErrObjectNotString
 		}
 
 	}
@@ -235,7 +235,7 @@ func (x XMLHTTPRequest) Status() (int, error) {
 		if readystate.Type() == js.TypeNumber {
 			return readystate.Int(), nil
 		} else {
-			return 0, object.ErrObjectNotNumber
+			return 0, baseobject.ErrObjectNotNumber
 		}
 
 	}
@@ -250,7 +250,7 @@ func (x XMLHTTPRequest) StatusText() (string, error) {
 		if responseUrl.Type() == js.TypeString {
 			return responseUrl.String(), nil
 		} else {
-			return "", object.ErrObjectNotString
+			return "", baseobject.ErrObjectNotString
 		}
 
 	}

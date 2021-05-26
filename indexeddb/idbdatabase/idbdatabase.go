@@ -5,7 +5,6 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/indexeddb/store"
-	"github.com/realPy/hogosuru/object"
 )
 
 var singleton sync.Once
@@ -32,7 +31,7 @@ func GetJSInterface() *JSInterface {
 }
 
 type IDBDatabase struct {
-	object.Object
+	baseobject.BaseObject
 }
 
 func NewFromJSObject(obj js.Value) (IDBDatabase, error) {
@@ -41,7 +40,7 @@ func NewFromJSObject(obj js.Value) (IDBDatabase, error) {
 
 	if idbi := GetJSInterface(); idbi != nil {
 		if obj.InstanceOf(idbi.objectInterface) {
-			i.Object = i.SetObject(obj)
+			i.BaseObject = i.SetObject(obj)
 			return i, nil
 		}
 

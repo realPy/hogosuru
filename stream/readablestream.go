@@ -4,7 +4,7 @@ import (
 	"sync"
 	"syscall/js"
 
-	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/baseobject"
 )
 
 var singleton sync.Once
@@ -31,7 +31,7 @@ func GetJSInterface() *JSInterface {
 }
 
 type ReadableStream struct {
-	object.Object
+	baseobject.BaseObject
 }
 
 func NewReadableStreamFromJSObject(obj js.Value) (ReadableStream, error) {
@@ -39,7 +39,7 @@ func NewReadableStreamFromJSObject(obj js.Value) (ReadableStream, error) {
 
 	if rsi := GetJSInterface(); rsi != nil {
 		if obj.InstanceOf(rsi.objectInterface) {
-			r.Object = r.SetObject(obj)
+			r.BaseObject = r.SetObject(obj)
 			return r, nil
 
 		}

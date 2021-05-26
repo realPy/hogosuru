@@ -7,7 +7,7 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/arraybuffer"
-	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/baseobject"
 )
 
 var singleton sync.Once
@@ -21,7 +21,7 @@ type JSInterface struct {
 
 //Uint8Array struct
 type Uint8Array struct {
-	object.Object
+	baseobject.BaseObject
 }
 
 //GetJSInterface get teh JS interface of broadcast channel
@@ -38,12 +38,6 @@ func GetJSInterface() *JSInterface {
 	return uint8arrayinterface
 }
 
-/*
-func (j *JSInterface) New(obj js.Value) js.Value {
-	return j.objectInterface.New(obj)
-}
-*/
-
 func NewFromArrayBuffer(a arraybuffer.ArrayBuffer) (Uint8Array, error) {
 
 	uint8arrayObject := GetJSInterface().objectInterface.New(a.JSObject())
@@ -56,7 +50,7 @@ func NewFromJSObject(obj js.Value) (Uint8Array, error) {
 
 	if ui := GetJSInterface(); ui != nil {
 		if obj.InstanceOf(ui.objectInterface) {
-			u.Object = u.SetObject(obj)
+			u.BaseObject = u.SetObject(obj)
 			return u, nil
 		}
 	}

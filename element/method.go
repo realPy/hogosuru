@@ -3,7 +3,7 @@ package element
 import (
 	"syscall/js"
 
-	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/baseobject"
 )
 
 func (e Element) attachShadow() {
@@ -35,17 +35,17 @@ func (e Element) getAnimations() {
 	//TODO IMPLEMENT
 }
 
-func (e Element) GetAttribute(attributename string) (object.Object, error) {
+func (e Element) GetAttribute(attributename string) (baseobject.BaseObject, error) {
 
 	var err error
 	var obj js.Value
-	var newobj object.Object
+	var newobj baseobject.BaseObject
 
 	if obj, err = e.JSObject().CallWithErr("getAttribute", js.ValueOf(attributename)); err == nil {
 		if obj.IsNull() {
 			err = ErrAttributeEmpty
 		} else {
-			newobj, err = object.NewFromJSObject(obj)
+			newobj, err = baseobject.NewFromJSObject(obj)
 		}
 
 	}

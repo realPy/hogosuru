@@ -10,7 +10,7 @@ import (
 
 	"github.com/realPy/hogosuru"
 	"github.com/realPy/hogosuru/arraybuffer"
-	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/uint8array"
 )
 
@@ -29,7 +29,7 @@ type JSInterface struct {
 
 //FetchResponse struct
 type Response struct {
-	object.Object
+	baseobject.BaseObject
 }
 
 //GetJSInterface get teh JS interface of broadcast channel
@@ -51,7 +51,7 @@ func New() (Response, error) {
 	var r Response
 
 	if ri := GetJSInterface(); ri != nil {
-		r.Object = r.SetObject(ri.objectInterface.New())
+		r.BaseObject = r.SetObject(ri.objectInterface.New())
 		return r, nil
 	}
 	return r, ErrNotImplemented
@@ -62,7 +62,7 @@ func NewFromJSObject(obj js.Value) (Response, error) {
 
 	if ri := GetJSInterface(); ri != nil {
 		if obj.InstanceOf(ri.objectInterface) {
-			response.Object = response.SetObject(obj)
+			response.BaseObject = response.SetObject(obj)
 			return response, nil
 		}
 	}
@@ -79,7 +79,7 @@ func (r Response) Ok() (bool, error) {
 		if obj.Type() == js.TypeBoolean {
 			return obj.Bool(), nil
 		} else {
-			err = object.ErrObjectNotBool
+			err = baseobject.ErrObjectNotBool
 		}
 	}
 
@@ -95,7 +95,7 @@ func (r Response) Redirected() (bool, error) {
 		if obj.Type() == js.TypeBoolean {
 			return obj.Bool(), nil
 		} else {
-			err = object.ErrObjectNotBool
+			err = baseobject.ErrObjectNotBool
 		}
 	}
 	return false, err
@@ -172,7 +172,7 @@ func (r Response) UseFinalURL() (bool, error) {
 		if obj.Type() == js.TypeBoolean {
 			return obj.Bool(), nil
 		} else {
-			err = object.ErrObjectNotBool
+			err = baseobject.ErrObjectNotBool
 		}
 	}
 	return false, err

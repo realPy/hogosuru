@@ -7,7 +7,7 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/attr"
-	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/baseobject"
 )
 
 var singleton sync.Once
@@ -21,7 +21,7 @@ type JSInterface struct {
 
 //NamedNodeMap struct
 type NamedNodeMap struct {
-	object.Object
+	baseobject.BaseObject
 }
 
 //GetJSInterface get the JS interface of formdata
@@ -43,7 +43,7 @@ func NewFromJSObject(obj js.Value) (NamedNodeMap, error) {
 
 	if nli := GetJSInterface(); nli != nil {
 		if obj.InstanceOf(nli.objectInterface) {
-			n.Object = n.SetObject(obj)
+			n.BaseObject = n.SetObject(obj)
 			return n, nil
 		}
 	}

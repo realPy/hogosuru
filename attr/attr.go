@@ -39,7 +39,7 @@ func New() (Attr, error) {
 	var a Attr
 	var err error
 	if ai := GetJSInterface(); ai != nil {
-		a.Object = a.SetObject(ai.objectInterface.New())
+		a.BaseObject = a.SetObject(ai.objectInterface.New())
 
 	} else {
 		err = ErrNotImplemented
@@ -53,7 +53,7 @@ func NewFromJSObject(obj js.Value) (Attr, error) {
 	var err error
 	if ai := GetJSInterface(); ai != nil {
 		if obj.InstanceOf(ai.objectInterface) {
-			a.Object = a.SetObject(obj)
+			a.BaseObject = a.SetObject(obj)
 
 		} else {
 			err = ErrNotAnAttr

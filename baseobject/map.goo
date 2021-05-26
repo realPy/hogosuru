@@ -36,9 +36,9 @@ func NewGoMap(m map[string]GOValue) GOMap {
 func Map(object js.Value) GOMap {
 
 	var m map[string]GOValue = make(map[string]GOValue)
-	if object.Type() == js.TypeObject {
+	if baseobject.Type() == js.TypeObject {
 		if Object, err := NewObject(); err == nil {
-			if entries, err := Object.Entries(object); err == nil {
+			if entries, err := baseobject.Entries(object); err == nil {
 				for i := 0; i < entries.Length(); i++ {
 
 					keypair := entries.Index(i)

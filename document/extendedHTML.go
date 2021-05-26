@@ -3,8 +3,8 @@ package document
 import (
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/nodelist"
-	"github.com/realPy/hogosuru/object"
 )
 
 //Close Closer interface
@@ -42,7 +42,7 @@ func (d Document) HasFocus() (bool, error) {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
-			err = object.ErrObjectNotBool
+			err = baseobject.ErrObjectNotBool
 		}
 	}
 	return result, err

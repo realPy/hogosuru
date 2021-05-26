@@ -1,4 +1,4 @@
-package object
+package baseobject
 
 import (
 	"sync"
@@ -10,8 +10,8 @@ var singleton sync.Once
 
 var objinterface *JSInterface
 
-type Selector interface {
-	Get(string) interface{}
+type ObjectFrom interface {
+	JSObject() js.Value
 }
 
 //JSInterface JSInterface struct
@@ -52,10 +52,10 @@ func (o ObjectInterface) Type(object js.Value) (string, error) {
 	var err error
 	var pobject, strobject, typeobject js.Value
 
-	if pobject, err = o.object.GetWithErr("prototype"); err == nil {
-		if strobject, err = pobject.GetWithErr("toString"); err == nil {
-			if typeobject, err = strobject.CallWithErr("call", object); err == nil {
-				return typeobject.String(), nil
+	if pobject, err = o.baseobject.GetWithErr("prototype"); err == nil {
+		if strobject, err = pbaseobject.GetWithErr("toString"); err == nil {
+			if typeobject, err = strbaseobject.CallWithErr("call", object); err == nil {
+				return typebaseobject.String(), nil
 			}
 		}
 	}
@@ -64,9 +64,9 @@ func (o ObjectInterface) Type(object js.Value) (string, error) {
 
 func (o ObjectInterface) Values(object js.Value) (js.Value, error) {
 
-	if object.Type() == js.TypeObject {
+	if baseobject.Type() == js.TypeObject {
 
-		if value, err := o.object.CallWithErr("values", object); err == nil {
+		if value, err := o.baseobject.CallWithErr("values", object); err == nil {
 			return value, nil
 		} else {
 			return js.Value{}, err
@@ -78,8 +78,8 @@ func (o ObjectInterface) Values(object js.Value) (js.Value, error) {
 }
 
 func (o ObjectInterface) Entries(object js.Value) (js.Value, error) {
-	if object.Type() == js.TypeObject {
-		return o.object.CallWithErr("entries", object)
+	if baseobject.Type() == js.TypeObject {
+		return o.baseobject.CallWithErr("entries", object)
 	}
 
 	return js.Value{}, ErrNotAnObject
@@ -154,18 +154,18 @@ func (g GOValue) GOMap() GOMap {
 
 func NewGOValue(object js.Value) GOValue {
 
-	switch object.Type() {
+	switch baseobject.Type() {
 	case js.TypeNumber:
-		val := object.Float()
+		val := baseobject.Float()
 		if val == float64(int(val)) {
-			return GOValue{value: object.Int()}
+			return GOValue{value: baseobject.Int()}
 		} else {
-			return GOValue{value: object.Float()}
+			return GOValue{value: baseobject.Float()}
 		}
 	case js.TypeString:
-		return GOValue{value: object.String()}
+		return GOValue{value: baseobject.String()}
 	case js.TypeBoolean:
-		return GOValue{value: object.Bool()}
+		return GOValue{value: baseobject.Bool()}
 	case js.TypeObject:
 		return GOValue{value: object}
 	}
@@ -209,32 +209,32 @@ func StringWithErr(object js.Value) (string, error) {
 
 /*------------------------------------------------------*/
 
-type Object struct {
+type BaseObject struct {
 	object js.Value
 }
 
-func NewFromJSObject(obj js.Value) (Object, error) {
-	var o Object
+func NewFromJSObject(obj js.Value) (BaseObject, error) {
+	var o BaseObject
 
 	o.object = obj
 	return o, nil
 
 }
 
-func (o Object) SetObject(object js.Value) Object {
+func (o BaseObject) SetObject(object js.Value) BaseObject {
 	o.object = object
 	return o
 }
 
-func (o Object) JSObject() js.Value {
+func (o BaseObject) JSObject() js.Value {
 	return o.object
 }
 
-func (o Object) String() string {
+func (o BaseObject) String() string {
 	return String(o.object)
 }
 
-func (o Object) ToString() (string, error) {
+func (o BaseObject) ToString() (string, error) {
 	var value js.Value
 	var err error
 	if o.JSObject().Type() == js.TypeObject {
@@ -249,14 +249,40 @@ func (o Object) ToString() (string, error) {
 	return "", ErrNotAnObject
 }
 
-func (o Object) Value() string {
+func (o BaseObject) Value() string {
 	return o.object.String()
 }
 
-func (o Object) Length() int {
+func (o BaseObject) Length() int {
 	return o.object.Length()
 }
 
-func (o Object) Export(name string) {
+func (o BaseObject) Export(name string) {
 	js.Global().Set(name, o.object)
+}
+
+func Eval(str string) (js.Value, error) {
+
+	return js.Global().CallWithErr("eval", str)
+
+}
+
+func GoValue(object js.Value) interface{} {
+
+	switch object.Type() {
+	case js.TypeNumber:
+		val := object.Float()
+		if val == float64(int(val)) {
+			return object.Int()
+		} else {
+			return object.Float()
+		}
+	case js.TypeString:
+		return object.String()
+	case js.TypeBoolean:
+		return object.Bool()
+	case js.TypeObject:
+		return object.String()
+	}
+	return object
 }

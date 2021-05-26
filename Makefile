@@ -1,7 +1,12 @@
 GO=tinygo
 
-.PHONY: json draganddrop fetch websocket node xmlhttprequest
-all: json draganddrop fetch websocket node xmlhttprequest
+.PHONY: array json draganddrop fetch websocket node xmlhttprequest
+all: array json draganddrop fetch websocket node xmlhttprequest
+
+
+
+array:
+	$(GO) build  -o ./example/static/array.wasm --no-debug -target wasm example/array/main.go
 
 node:
 	$(GO) build  -o ./example/static/node.wasm --no-debug -target wasm example/node/main.go

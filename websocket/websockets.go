@@ -11,7 +11,7 @@ import (
 	"github.com/realPy/hogosuru/blob"
 	"github.com/realPy/hogosuru/messageevent"
 
-	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/baseobject"
 )
 
 var singleton sync.Once
@@ -25,7 +25,7 @@ type JSInterface struct {
 
 //Websocket struct
 type WebSocket struct {
-	object.Object
+	baseobject.BaseObject
 }
 
 const (
@@ -52,7 +52,7 @@ func New(url string) (WebSocket, error) {
 	var ws WebSocket
 
 	if wsi := GetJSInterface(); wsi != nil {
-		ws.Object = ws.SetObject(wsi.objectInterface.New(js.ValueOf(url)))
+		ws.BaseObject = ws.SetObject(wsi.objectInterface.New(js.ValueOf(url)))
 		return ws, nil
 	}
 	return ws, ErrNotImplemented
@@ -128,7 +128,7 @@ func (w WebSocket) SetOnMessage(handler func(WebSocket, interface{})) {
 			if m, err := messageevent.NewFromJSObject(v[0]); err == nil {
 
 				if data, err := m.Data(); err == nil {
-					switch object.String(data) {
+					switch baseobject.String(data) {
 					case "[object Blob]":
 						if b, err := blob.NewFromJSObject(data); err == nil {
 							handler(w, b)

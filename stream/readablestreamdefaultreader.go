@@ -6,18 +6,18 @@ import (
 
 	"syscall/js"
 
-	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/uint8array"
 )
 
 type ReadableStreamDefaultReader struct {
-	object.Object
+	baseobject.BaseObject
 }
 
 func NewReadableStreamDefaultReaderFromJSObject(obj js.Value) (ReadableStreamDefaultReader, error) {
 	var r ReadableStreamDefaultReader
-	if object.String(obj) == "[object ReadableStreamDefaultReader]" {
-		r.Object = r.SetObject(obj)
+	if baseobject.String(obj) == "[object ReadableStreamDefaultReader]" {
+		r.BaseObject = r.SetObject(obj)
 		return r, nil
 	}
 
@@ -41,7 +41,7 @@ func (r ReadableStreamDefaultReader) read() {
 			} else {
 				fmt.Printf("ici %d\n", args[0].Get("value").Length())
 			}
-			//fmt.Printf("%s %s\n", object.String(args[0]), object.String(args[1]))
+			//fmt.Printf("%s %s\n", baseobject.String(args[0]), baseobject.String(args[1]))
 
 			r.read()
 			return nil

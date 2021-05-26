@@ -6,7 +6,7 @@ import (
 	"sync"
 	"syscall/js"
 
-	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/baseobject"
 )
 
 var singleton sync.Once
@@ -33,7 +33,7 @@ func GetJSInterface() *JSInterface {
 }
 
 type Storage struct {
-	object.Object
+	baseobject.BaseObject
 }
 
 func NewFromJSObject(obj js.Value) (Storage, error) {
@@ -41,7 +41,7 @@ func NewFromJSObject(obj js.Value) (Storage, error) {
 
 	if si := GetJSInterface(); si != nil {
 		if obj.InstanceOf(si.objectInterface) {
-			s.Object = s.SetObject(obj)
+			s.BaseObject = s.SetObject(obj)
 			return s, nil
 		}
 	}
@@ -81,7 +81,7 @@ func (l Storage) GetItem(key string) (string, error) {
 	var err error
 	var itemObject js.Value
 	if itemObject, err = l.JSObject().CallWithErr("getItem", js.ValueOf(key)); err == nil {
-		return object.StringWithErr(itemObject)
+		return baseobject.StringWithErr(itemObject)
 	}
 	return "", err
 }
@@ -101,7 +101,7 @@ func (l Storage) Key(index int) (string, error) {
 	var err error
 	var itemObject js.Value
 	if itemObject, err = l.JSObject().CallWithErr("key", js.ValueOf(index)); err == nil {
-		return object.StringWithErr(itemObject)
+		return baseobject.StringWithErr(itemObject)
 	}
 	return "", err
 }
