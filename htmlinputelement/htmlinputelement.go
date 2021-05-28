@@ -69,7 +69,7 @@ func (h HtmlInputElement) getStringAttribute(attribute string) (string, error) {
 	var obj js.Value
 	var valueStr = ""
 
-	if h.Error == nil {
+	if h.NotError() {
 		if obj, err = h.JSObject().GetWithErr(attribute); err == nil {
 
 			valueStr = obj.String()

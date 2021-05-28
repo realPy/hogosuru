@@ -20,6 +20,7 @@ func main() {
 		if t, err := d.CreateTextNode("Hello"); err == nil {
 
 			elem.AppendChild(t)
+			elem.Export("manu")
 		} else {
 			println(err.Error())
 		}

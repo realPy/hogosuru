@@ -7,7 +7,8 @@ all: array json draganddrop fetch websocket node xmlhttprequest
 
 array:
 	$(GO) build  -o ./example/static/array.wasm --no-debug -target wasm example/array/main.go
-
+map:
+	$(GO) build  -o ./example/static/map.wasm --no-debug -target wasm example/map/main.go
 node:
 	$(GO) build  -o ./example/static/node.wasm --no-debug -target wasm example/node/main.go
 

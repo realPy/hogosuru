@@ -15,7 +15,7 @@ func (d Document) getAttributeElement(attribute string) element.Element {
 	var err error
 
 	elem.Error = d.Error
-	if d.Error == nil {
+	if d.NotError() {
 		if elemObject, err = d.JSObject().GetWithErr(attribute); err == nil {
 
 			elem = element.NewFromJSObject(elemObject)
@@ -87,7 +87,7 @@ func (d Document) Body() node.Node {
 	var err error
 
 	body.Error = d.Error
-	if d.Error == nil {
+	if d.NotError() {
 		if bodyObject, err = d.JSObject().GetWithErr("body"); err == nil {
 
 			body = node.NewFromJSObject(bodyObject)

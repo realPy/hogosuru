@@ -75,7 +75,7 @@ func (e Element) getStringAttribute(attribute string) (string, error) {
 	var obj js.Value
 	var valueStr = ""
 
-	if e.Error == nil {
+	if e.NotError() {
 		if obj, err = e.JSObject().GetWithErr(attribute); err == nil {
 
 			valueStr = obj.String()
@@ -89,7 +89,7 @@ func (e Element) getStringAttribute(attribute string) (string, error) {
 
 func (e Element) SetStringAttribute(attribute string, value string) error {
 	var err error
-	if e.Error == nil {
+	if e.Error == nil || (*e.Error) == nil {
 		if err = e.JSObject().SetWithErr(attribute, js.ValueOf(value)); err != nil {
 
 			err = *e.Error
@@ -140,7 +140,8 @@ func (e Element) getAttributeElement(attribute string) Element {
 	}
 
 	newElement.Error = e.Error
-	if e.Error == nil {
+
+	if e.NotError() {
 		if nodeObject, err = e.JSObject().GetWithErr(attribute); err == nil {
 
 			if nodeObject.IsNull() {
@@ -297,7 +298,7 @@ func OwnerElementForAttr(a attr.Attr) Element {
 	var err error
 
 	newElement.Error = a.Error
-	if a.Error == nil {
+	if a.NotError() {
 		if elemObject, err = a.JSObject().GetWithErr("ownerElement"); err == nil {
 
 			if elemObject.IsNull() {

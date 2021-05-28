@@ -8,15 +8,15 @@ import (
 
 func main() {
 
-	arr, _ := array.Of(1, 2, 3, 4)
-	arr2, _ := array.New(5, 6, 7, 8)
+	arr := array.Of_(1, 2, 3, 4)
+	arr2 := array.New_(5, 6, 7, 8)
 
-	arr, _ = arr.Concat(arr2)
+	arr = arr.Concat_(arr2)
 
 	it, _ := arr.Entries()
-	arr3, _ := array.New(arr, arr2)
+	arr3 := array.New_(arr, arr2)
 	arr3.Export("arr3")
-	arr4, _ := arr3.Flat()
+	arr4 := arr3.Flat_()
 	arr4.Export("arr4")
 
 	for index, value, err := it.Next(); err == nil; index, value, err = it.Next() {
@@ -61,7 +61,7 @@ func main() {
 	arr.Fill("k")
 	arr.Export("arr")
 
-	afrom, _ := array.From("hello")
+	afrom := array.From_("hello")
 	afrom.Export("hello")
 
 	if ok, _ := afrom.Includes("h"); ok {
@@ -74,7 +74,7 @@ func main() {
 
 	afrom.Reverse()
 
-	ato, _ := afrom.Slice(2, 4)
+	ato := afrom.Slice_(2, 4)
 	ato.Export("hello2")
 
 	it, _ = ato.Values()

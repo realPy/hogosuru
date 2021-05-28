@@ -72,7 +72,7 @@ func (a Attr) getStringAttribute(attribute string) (string, error) {
 	var obj js.Value
 	var valueStr = ""
 
-	if a.Error == nil {
+	if a.NotError() {
 		if obj, err = a.JSObject().GetWithErr(attribute); err == nil {
 			if obj.IsNull() {
 				valueStr = ""
