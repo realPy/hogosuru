@@ -38,19 +38,20 @@ type Element struct {
 	node.Node
 }
 
-func New() Element {
-
+func New() (Element, error) {
+	var err error
 	var e Element
 	if ei := GetJSInterface(); ei != nil {
 		e.BaseObject = e.SetObject(ei.objectInterface.New())
-		return e
+
+	} else {
+		err = ErrNotImplemented
 	}
 
-	e.Error = &ErrNotImplemented
-	return e
+	return e, err
 }
 
-func NewFromJSObject(obj js.Value) Element {
+func NewFromJSObject(obj js.Value) (Element, error) {
 	var e Element
 	var err error
 	if ei := GetJSInterface(); ei != nil {
@@ -65,8 +66,7 @@ func NewFromJSObject(obj js.Value) Element {
 		err = ErrNotImplemented
 	}
 
-	e.Error = &err
-	return e
+	return e, err
 }
 
 func (e Element) getStringAttribute(attribute string) (string, error) {
@@ -75,27 +75,18 @@ func (e Element) getStringAttribute(attribute string) (string, error) {
 	var obj js.Value
 	var valueStr = ""
 
-	if e.NotError() {
-		if obj, err = e.JSObject().GetWithErr(attribute); err == nil {
+	if obj, err = e.JSObject().GetWithErr(attribute); err == nil {
 
-			valueStr = obj.String()
-		}
-	} else {
-		err = *e.Error
+		valueStr = obj.String()
 	}
+
 	return valueStr, err
 
 }
 
 func (e Element) SetStringAttribute(attribute string, value string) error {
-	var err error
-	if e.Error == nil || (*e.Error) == nil {
-		if err = e.JSObject().SetWithErr(attribute, js.ValueOf(value)); err != nil {
 
-			err = *e.Error
-		}
-	}
-	return err
+	return e.JSObject().SetWithErr(attribute, js.ValueOf(value))
 }
 
 func (e Element) getAttributeNumber(attribute string) (float64, error) {
@@ -130,36 +121,25 @@ func (e Element) getAttributeInt(attribute string) (int, error) {
 	return ret, err
 }
 
-func (e Element) getAttributeElement(attribute string) Element {
+func (e Element) getAttributeElement(attribute string) (Element, error) {
 	var nodeObject js.Value
 	var newElement Element
 	var err error
 
-	if e.Error != nil {
-		return e
-	}
+	if nodeObject, err = e.JSObject().GetWithErr(attribute); err == nil {
 
-	newElement.Error = e.Error
-
-	if e.NotError() {
-		if nodeObject, err = e.JSObject().GetWithErr(attribute); err == nil {
-
-			if nodeObject.IsNull() {
-				err = ErrElementNoChilds
-
-			} else {
-
-				newElement = NewFromJSObject(nodeObject)
-
-			}
+		if nodeObject.IsNull() {
+			err = ErrElementNoChilds
 
 		} else {
-			newElement.Error = &err
+
+			newElement, err = NewFromJSObject(nodeObject)
+
 		}
 
 	}
 
-	return newElement
+	return newElement, err
 }
 
 func (e Element) Attributes() (namednodemap.NamedNodeMap, error) {
@@ -244,7 +224,7 @@ func (e Element) NamespaceURI() (string, error) {
 	return e.getStringAttribute("namespaceURI")
 }
 
-func (e Element) NextElementSibling() Element {
+func (e Element) NextElementSibling() (Element, error) {
 	return e.getAttributeElement("nextElementSibling")
 }
 
@@ -263,7 +243,7 @@ func (e Element) Prefix() (string, error) {
 	return e.getStringAttribute("prefix")
 }
 
-func (e Element) PreviousElementSibling() Element {
+func (e Element) PreviousElementSibling() (Element, error) {
 	return e.getAttributeElement("previousElementSibling")
 }
 
@@ -292,29 +272,22 @@ func (e Element) TagName() (string, error) {
 	return e.getStringAttribute("tagName")
 }
 
-func OwnerElementForAttr(a attr.Attr) Element {
+func OwnerElementForAttr(a attr.Attr) (Element, error) {
 	var elemObject js.Value
 	var newElement Element
 	var err error
 
-	newElement.Error = a.Error
-	if a.NotError() {
-		if elemObject, err = a.JSObject().GetWithErr("ownerElement"); err == nil {
+	if elemObject, err = a.JSObject().GetWithErr("ownerElement"); err == nil {
 
-			if elemObject.IsNull() {
-				err = attr.ErrNoOwnerElement
-
-			} else {
-
-				newElement = NewFromJSObject(elemObject)
-
-			}
-
+		if elemObject.IsNull() {
+			err = attr.ErrNoOwnerElement
 		} else {
-			newElement.Error = &err
+
+			newElement, err = NewFromJSObject(elemObject)
+
 		}
 
 	}
 
-	return newElement
+	return newElement, err
 }

@@ -7,11 +7,11 @@ import (
 
 func main() {
 
-	d := document.New()
+	d := document.New_()
 
-	nod := d.Body()
+	nod := d.Body_()
 
-	if text := nod.TextContent(); nod.Error == nil {
+	if text, err := nod.TextContent(); err == nil {
 		println("<--" + text + "-->")
 	}
 
@@ -38,9 +38,9 @@ func main() {
 		println(err.Error())
 	}
 
-	nodelist, _ := d.QuerySelectorAll(".pictureContainer")
+	nodelist := d.QuerySelectorAll_(".pictureContainer")
 	println("Found", nodelist.Length(), "elements")
-	nodelist.Item(0).Export("node1")
+	nodelist.Item_(0).Export("node1")
 	/*
 		d.AddEventListener("mousemove", func(e event.Event) {
 			println("mouse move", e.JSObject().Get("clientX").String(), e.JSObject().Get("clientY").String())

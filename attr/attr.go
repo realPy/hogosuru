@@ -4,6 +4,7 @@ import (
 	"sync"
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/node"
 )
 
@@ -72,19 +73,16 @@ func (a Attr) getStringAttribute(attribute string) (string, error) {
 	var obj js.Value
 	var valueStr = ""
 
-	if a.NotError() {
-		if obj, err = a.JSObject().GetWithErr(attribute); err == nil {
-			if obj.IsNull() {
-				valueStr = ""
+	if obj, err = a.JSObject().GetWithErr(attribute); err == nil {
+		if obj.IsNull() {
+			err = baseobject.ErrNotAnObject
 
-			} else {
+		} else {
 
-				valueStr = obj.String()
-			}
+			valueStr = obj.String()
 		}
-	} else {
-		err = *a.Error
 	}
+
 	return valueStr, err
 
 }

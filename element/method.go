@@ -3,7 +3,8 @@ package element
 import (
 	"syscall/js"
 
-	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/array"
+	"github.com/realPy/hogosuru/object"
 )
 
 func (e Element) attachShadow() {
@@ -14,17 +15,17 @@ func (e Element) animate() {
 	//TODO IMPLEMENT
 }
 
-func (e Element) Closest() Element {
+func (e Element) Closest() (Element, error) {
 	var err error
 	var obj js.Value
 	var elem Element
 
 	if obj, err = e.JSObject().CallWithErr("closest"); err == nil {
 
-		elem = NewFromJSObject(obj)
+		elem, err = NewFromJSObject(obj)
 	}
-	elem.Error = &err
-	return elem
+
+	return elem, err
 }
 
 func (e Element) computedStyleMap() {
@@ -35,19 +36,79 @@ func (e Element) getAnimations() {
 	//TODO IMPLEMENT
 }
 
-func (e Element) GetAttribute(attributename string) (baseobject.BaseObject, error) {
+func (e Element) GetAttribute(attributename string) (object.Object, error) {
 
 	var err error
 	var obj js.Value
-	var newobj baseobject.BaseObject
+	var newobj object.Object
 
 	if obj, err = e.JSObject().CallWithErr("getAttribute", js.ValueOf(attributename)); err == nil {
 		if obj.IsNull() {
 			err = ErrAttributeEmpty
 		} else {
-			newobj, err = baseobject.NewFromJSObject(obj)
+			newobj, err = object.NewFromJSObject(obj)
 		}
 
 	}
 	return newobj, err
+}
+
+func (e Element) GetAttributeNames() (array.Array, error) {
+
+	var err error
+	var obj js.Value
+	var arr array.Array
+
+	if obj, err = e.JSObject().CallWithErr("getAttributeNames"); err == nil {
+		if obj.IsNull() {
+			err = ErrAttributeEmpty
+		} else {
+			arr, err = array.NewFromJSObject(obj)
+		}
+
+	}
+	return arr, err
+}
+func (e Element) GetAttributeNS(namespace, name string) (object.Object, error) {
+	var err error
+	var obj js.Value
+	var newobj object.Object
+
+	if obj, err = e.JSObject().CallWithErr("getAttributeNS", js.ValueOf(namespace), js.ValueOf(name)); err == nil {
+		if obj.IsNull() {
+			err = ErrAttributeEmpty
+		} else {
+			newobj, err = object.NewFromJSObject(obj)
+		}
+
+	}
+	return newobj, err
+}
+
+//retourne un DOMRect
+func (e Element) GetBoundingClientRect() (object.Object, error) {
+	var err error
+	var obj js.Value
+	var newobj object.Object
+
+	if obj, err = e.JSObject().CallWithErr("getBoundingClientRect"); err == nil {
+
+		newobj, err = object.NewFromJSObject(obj)
+
+	}
+	return newobj, err
+}
+
+//retourne un DOMRectList
+func (e Element) GetClientRects() (array.Array, error) {
+	var err error
+	var obj js.Value
+	var arr array.Array
+
+	if obj, err = e.JSObject().CallWithErr("getClientRects"); err == nil {
+
+		arr, err = array.NewFromJSObject(obj)
+
+	}
+	return arr, err
 }

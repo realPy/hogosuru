@@ -41,7 +41,7 @@ func (d Document) CreateComment(comment string) (node.Node, error) {
 
 	if obj, err = d.JSObject().CallWithErr("createComment", js.ValueOf(comment)); err == nil {
 
-		nod = node.NewFromJSObject(obj)
+		nod, err = node.NewFromJSObject(obj)
 	}
 
 	return nod, err
@@ -54,7 +54,7 @@ func (d Document) CreateDocumentFragment() (node.Node, error) {
 
 	if obj, err = d.JSObject().CallWithErr("createDocumentFragment"); err == nil {
 
-		nod = node.NewFromJSObject(obj)
+		nod, err = node.NewFromJSObject(obj)
 	}
 
 	return nod, err
@@ -68,7 +68,7 @@ func (d Document) CreateElement(tagname string) (element.Element, error) {
 
 	if obj, err = d.JSObject().CallWithErr("createElement", js.ValueOf(tagname)); err == nil {
 
-		elem = element.NewFromJSObject(obj)
+		elem, err = element.NewFromJSObject(obj)
 	}
 
 	return elem, err
@@ -82,7 +82,7 @@ func (d Document) CreateElementNS(namespaceURI string, qualifiedName string) (el
 
 	if obj, err = d.JSObject().CallWithErr("createElementNS", js.ValueOf(namespaceURI), js.ValueOf(qualifiedName)); err == nil {
 
-		elem = element.NewFromJSObject(obj)
+		elem, err = element.NewFromJSObject(obj)
 	}
 
 	return elem, err
@@ -126,7 +126,7 @@ func (d Document) CreateTextNode(text string) (node.Node, error) {
 
 	if obj, err = d.JSObject().CallWithErr("createTextNode", js.ValueOf(text)); err == nil {
 
-		nod = node.NewFromJSObject(obj)
+		nod, err = node.NewFromJSObject(obj)
 	}
 
 	return nod, err
@@ -140,7 +140,7 @@ func (d Document) ElementFromPoint(x, y int) (element.Element, error) {
 
 	if obj, err = d.JSObject().CallWithErr("elementFromPoint", js.ValueOf(x), js.ValueOf(y)); err == nil {
 
-		elem = element.NewFromJSObject(obj)
+		elem, err = element.NewFromJSObject(obj)
 	}
 
 	return elem, err
@@ -155,7 +155,10 @@ func (d Document) ElementsFromPoint(x, y int) ([]element.Element, error) {
 	if obj, err = d.JSObject().CallWithErr("elementsFromPoint", js.ValueOf(x), js.ValueOf(y)); err == nil {
 
 		for i := 0; i < obj.Length(); {
-			elems = append(elems, element.NewFromJSObject(obj.Index(i)))
+			if el, err := element.NewFromJSObject(obj.Index(i)); err == nil {
+				elems = append(elems, el)
+			}
+
 		}
 
 	}
@@ -223,7 +226,7 @@ func (d Document) ImportNode(externalNode node.Node, deep bool) (node.Node, erro
 
 	if obj, err = d.JSObject().CallWithErr("importNode", externalNode.JSObject()); err == nil {
 
-		nod = node.NewFromJSObject(obj)
+		nod, err = node.NewFromJSObject(obj)
 	}
 	return nod, err
 
@@ -242,7 +245,7 @@ func (d Document) GetElementById(id string) (element.Element, error) {
 
 	if obj, err = d.JSObject().CallWithErr("getElementById", js.ValueOf(id)); err == nil {
 
-		elem = element.NewFromJSObject(obj)
+		elem, err = element.NewFromJSObject(obj)
 	}
 
 	return elem, err
@@ -256,7 +259,7 @@ func (d Document) QuerySelector(selector string) (element.Element, error) {
 
 	if obj, err = d.JSObject().CallWithErr("querySelector", js.ValueOf(selector)); err == nil {
 
-		elem = element.NewFromJSObject(obj)
+		elem, err = element.NewFromJSObject(obj)
 	}
 	return elem, err
 }

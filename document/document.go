@@ -35,14 +35,17 @@ type Document struct {
 	node.Node
 }
 
-func New() Document {
+func New() (Document, error) {
 
 	var d Document
+	var err error
 	if di := GetJSInterface(); di != nil {
 		d.BaseObject = d.SetObject(di.objectInterface)
-		return d
-	}
-	d.Error = &ErrNotImplemented
 
-	return d
+	} else {
+
+		err = ErrNotImplemented
+	}
+
+	return d, err
 }

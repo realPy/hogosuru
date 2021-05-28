@@ -50,7 +50,7 @@ func NewFromJSObject(obj js.Value) (NodeList, error) {
 	return n, ErrNotAnNodeList
 }
 
-func (n NodeList) Item(index int) node.Node {
+func (n NodeList) Item(index int) (node.Node, error) {
 
 	return node.NewFromJSObject(n.JSObject().Index(index))
 }

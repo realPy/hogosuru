@@ -52,10 +52,8 @@ func NewFromJSObject(obj js.Value) (HTMLCollection, error) {
 	return h, err
 }
 
-func (h HTMLCollection) Item(index int) element.Element {
-	var elem element.Element
+func (h HTMLCollection) Item(index int) (element.Element, error) {
 
-	elem = element.NewFromJSObject(h.JSObject().Index(index))
+	return element.NewFromJSObject(h.JSObject().Index(index))
 
-	return elem
 }

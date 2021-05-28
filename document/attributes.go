@@ -9,24 +9,18 @@ import (
 	"github.com/realPy/hogosuru/node"
 )
 
-func (d Document) getAttributeElement(attribute string) element.Element {
+func (d Document) getAttributeElement(attribute string) (element.Element, error) {
 	var elem element.Element
 	var elemObject js.Value
 	var err error
 
-	elem.Error = d.Error
-	if d.NotError() {
-		if elemObject, err = d.JSObject().GetWithErr(attribute); err == nil {
+	if elemObject, err = d.JSObject().GetWithErr(attribute); err == nil {
 
-			elem = element.NewFromJSObject(elemObject)
-
-		} else {
-			elem.Error = &err
-		}
+		elem, err = element.NewFromJSObject(elemObject)
 
 	}
 
-	return elem
+	return elem, err
 }
 
 func (d Document) getAttributeString(attribute string) (string, error) {
@@ -75,47 +69,44 @@ func (d Document) getAttributeBool(attribute string) (bool, error) {
 	return ret, err
 }
 
-func (d Document) ActiveElement() element.Element {
+func (d Document) ActiveElement() (element.Element, error) {
 
 	return d.getAttributeElement("activeElement")
 
 }
 
-func (d Document) Body() node.Node {
+func (d Document) Body() (node.Node, error) {
 	var body node.Node
 	var bodyObject js.Value
 	var err error
 
-	body.Error = d.Error
-	if d.NotError() {
-		if bodyObject, err = d.JSObject().GetWithErr("body"); err == nil {
+	if bodyObject, err = d.JSObject().GetWithErr("body"); err == nil {
 
-			body = node.NewFromJSObject(bodyObject)
-
-		} else {
-			body.Error = &err
-		}
+		body, err = node.NewFromJSObject(bodyObject)
 
 	}
 
-	return body
+	return body, err
 }
 
 func (d Document) CharacterSet() (string, error) {
 	return d.getAttributeString("characterSet")
 }
 
-func (d Document) ChildElementCount() int {
+func (d Document) ChildElementCount() (int, error) {
 	var err error
 	var obj js.Value
+	var result int
 
 	if obj, err = d.JSObject().GetWithErr("childElementCount"); err == nil {
 		if obj.Type() == js.TypeNumber {
-			return obj.Int()
+			result = obj.Int()
+		} else {
+			err = baseobject.ErrObjectNotNumber
 		}
 	}
 
-	return 0
+	return result, err
 }
 
 func (d Document) Children() (htmlcollection.HTMLCollection, error) {
@@ -134,7 +125,7 @@ func (d *Document) Doctype() {
 	//TO IMPLEMENT
 }
 
-func (d Document) DocumentElement() element.Element {
+func (d Document) DocumentElement() (element.Element, error) {
 	return d.getAttributeElement("documentElement")
 }
 
@@ -147,7 +138,7 @@ func (d Document) Embeds() (htmlcollection.HTMLCollection, error) {
 	return d.getAttributeHTMLCollection("embeds")
 }
 
-func (d Document) FirstElementChild() element.Element {
+func (d Document) FirstElementChild() (element.Element, error) {
 	return d.getAttributeElement("firstElementChild")
 }
 
@@ -159,7 +150,7 @@ func (d Document) Forms() (htmlcollection.HTMLCollection, error) {
 	return d.getAttributeHTMLCollection("forms")
 }
 
-func (d Document) FullscreenElement() element.Element {
+func (d Document) FullscreenElement() (element.Element, error) {
 	return d.getAttributeElement("fullscreenElement")
 }
 
@@ -180,7 +171,7 @@ func (d Document) Implementation() {
 	//TO IMPLEMENT
 }
 
-func (d Document) LastElementChild() element.Element {
+func (d Document) LastElementChild() (element.Element, error) {
 	return d.getAttributeElement("lastElementChild")
 }
 
@@ -188,7 +179,7 @@ func (d Document) Links() (htmlcollection.HTMLCollection, error) {
 	return d.getAttributeHTMLCollection("links")
 }
 
-func (d Document) PictureInPictureElement() element.Element {
+func (d Document) PictureInPictureElement() (element.Element, error) {
 	return d.getAttributeElement("pictureInPictureElement")
 }
 
@@ -200,7 +191,7 @@ func (d Document) Plugins() (htmlcollection.HTMLCollection, error) {
 	return d.getAttributeHTMLCollection("plugins")
 }
 
-func (d Document) PointerLockElement() element.Element {
+func (d Document) PointerLockElement() (element.Element, error) {
 	return d.getAttributeElement("pointerLockElement")
 }
 
@@ -209,7 +200,7 @@ func (d Document) Scripts() (htmlcollection.HTMLCollection, error) {
 	return d.getAttributeHTMLCollection("scripts")
 }
 
-func (d Document) ScrollingElement() element.Element {
+func (d Document) ScrollingElement() (element.Element, error) {
 	return d.getAttributeElement("scrollingElement")
 }
 
