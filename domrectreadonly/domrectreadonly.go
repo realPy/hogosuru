@@ -47,6 +47,23 @@ func New() (DOMRectReadOnly, error) {
 	return d, ErrNotImplemented
 }
 
+func NewFromJSObject(obj js.Value) (DOMRectReadOnly, error) {
+	var d DOMRectReadOnly
+	var err error
+	if di := GetJSInterface(); di != nil {
+		if obj.InstanceOf(di.objectInterface) {
+			d.BaseObject = d.SetObject(obj)
+
+		} else {
+			err = ErrNotAnDOMRectReadOnly
+		}
+	} else {
+		err = ErrNotImplemented
+	}
+
+	return d, err
+}
+
 func (d DOMRectReadOnly) getAttributeDouble(attribute string) (float64, error) {
 
 	var err error

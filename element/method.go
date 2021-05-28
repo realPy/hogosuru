@@ -4,6 +4,7 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/array"
+	"github.com/realPy/hogosuru/domrect"
 	"github.com/realPy/hogosuru/object"
 )
 
@@ -85,18 +86,17 @@ func (e Element) GetAttributeNS(namespace, name string) (object.Object, error) {
 	return newobj, err
 }
 
-//retourne un DOMRect
-func (e Element) GetBoundingClientRect() (object.Object, error) {
+func (e Element) GetBoundingClientRect() (domrect.DOMRect, error) {
 	var err error
 	var obj js.Value
-	var newobj object.Object
+	var newdomrect domrect.DOMRect
 
 	if obj, err = e.JSObject().CallWithErr("getBoundingClientRect"); err == nil {
 
-		newobj, err = object.NewFromJSObject(obj)
+		newdomrect, err = domrect.NewFromJSObject(obj)
 
 	}
-	return newobj, err
+	return newdomrect, err
 }
 
 //retourne un DOMRectList

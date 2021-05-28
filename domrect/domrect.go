@@ -47,6 +47,23 @@ func New() (DOMRect, error) {
 	return d, ErrNotImplemented
 }
 
+func NewFromJSObject(obj js.Value) (DOMRect, error) {
+	var d DOMRect
+	var err error
+	if di := GetJSInterface(); di != nil {
+		if obj.InstanceOf(di.objectInterface) {
+			d.BaseObject = d.SetObject(obj)
+
+		} else {
+			err = ErrNotAnDOMRect
+		}
+	} else {
+		err = ErrNotImplemented
+	}
+
+	return d, err
+}
+
 func (d DOMRect) SetBottom(value float64) error {
 
 	return d.JSObject().SetWithErr("bottom", js.ValueOf(value))
