@@ -7,7 +7,6 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/baseobject"
-	"github.com/realPy/hogosuru/element"
 )
 
 var singleton sync.Once
@@ -52,8 +51,8 @@ func NewFromJSObject(obj js.Value) (HTMLCollection, error) {
 	return h, err
 }
 
-func (h HTMLCollection) Item(index int) (element.Element, error) {
+func (h HTMLCollection) Item(index int) js.Value {
 
-	return element.NewFromJSObject(h.JSObject().Index(index))
+	return h.JSObject().Index(index)
 
 }

@@ -7,6 +7,8 @@ import (
 
 	"github.com/realPy/hogosuru/attr"
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/htmlcollection"
+
 	"github.com/realPy/hogosuru/namednodemap"
 	"github.com/realPy/hogosuru/node"
 )
@@ -67,6 +69,12 @@ func NewFromJSObject(obj js.Value) (Element, error) {
 	}
 
 	return e, err
+}
+
+func ItemFromHTMLCollection(collection htmlcollection.HTMLCollection, index int) (Element, error) {
+
+	return NewFromJSObject(collection.Item(index))
+
 }
 
 func (e Element) getStringAttribute(attribute string) (string, error) {
