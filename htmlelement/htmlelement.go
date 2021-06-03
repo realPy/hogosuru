@@ -209,6 +209,22 @@ func (h HtmlElement) SetOffsetLeft(value int) error {
 	return h.setAttributeInt("offsetLeft", value)
 }
 
+func (h HtmlElement) OffsetParent() (baseobject.BaseObject, error) {
+	var err error
+	var obj js.Value
+	var ret baseobject.BaseObject
+
+	if obj, err = h.JSObject().GetWithErr("offsetParent"); err == nil {
+		if !obj.IsNull() {
+			ret, err = baseobject.NewFromJSObject(obj)
+		} else {
+			err = baseobject.ErrNotAnObject
+		}
+
+	}
+	return ret, err
+}
+
 func (h HtmlElement) OffsetTop() (int, error) {
 	return h.getAttributeInt("offsetTop")
 }
