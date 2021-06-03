@@ -42,21 +42,21 @@ func (e Element) getAnimations() {
 	//TODO IMPLEMENT
 }
 
-func (e Element) GetAttribute(attributename string) (object.Object, error) {
+func (e Element) GetAttribute(attributename string) (string, error) {
 
 	var err error
 	var obj js.Value
-	var newobj object.Object
+	var newstr string
 
 	if obj, err = e.JSObject().CallWithErr("getAttribute", js.ValueOf(attributename)); err == nil {
 		if obj.IsNull() {
 			err = ErrAttributeEmpty
 		} else {
-			newobj, err = object.NewFromJSObject(obj)
+			newstr = obj.String()
 		}
 
 	}
-	return newobj, err
+	return newstr, err
 }
 
 func (e Element) GetAttributeNames() (array.Array, error) {

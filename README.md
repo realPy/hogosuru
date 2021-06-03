@@ -24,8 +24,9 @@ Build
 ```
 docker run --rm -it -w /go/src/hogosuru -v $PWD:/go/src/hogosuru tinygo/tinygo bash 
 cp hogosuru/hogosuru.go /usr/local/go/src/syscall/js/
-tinygo build  -o ./example/wasm_main/wasm.wasm --no-debug -target wasm example/wasm_main/main.go
-tinygo build  -o ./example/wasm_main/dragandrop.wasm --no-debug -target wasm example/wasm_main/dragandrop/main.go
+cp /usr/local/tinygo/targets/wasm_exec.js /go/src/hogosuru/example/static/
+apt-get update && apt-get install make
+make 
 ```
 
 Run server to the the result in js developer console

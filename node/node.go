@@ -107,7 +107,7 @@ func (n Node) getAttributeNode(attribute string) (Node, error) {
 	return newNode, err
 }
 
-func (n Node) getAttributeString(attribute string) (string, error) {
+func (n Node) getStringAttribute(attribute string) (string, error) {
 
 	var err error
 	var obj js.Value
@@ -120,7 +120,7 @@ func (n Node) getAttributeString(attribute string) (string, error) {
 	return val, err
 }
 
-func (n Node) getAttributeBool(attribute string) (bool, error) {
+func (n Node) getBoolAttribute(attribute string) (bool, error) {
 
 	var err error
 	var obj js.Value
@@ -156,7 +156,7 @@ func (n Node) getAttributeInt(attribute string) (int, error) {
 
 func (n Node) BaseURI() (string, error) {
 
-	return n.getAttributeString("baseURI")
+	return n.getStringAttribute("baseURI")
 }
 
 func (n Node) FirstChild() (Node, error) {
@@ -166,7 +166,7 @@ func (n Node) FirstChild() (Node, error) {
 
 func (n Node) IsConnected() (bool, error) {
 
-	return n.getAttributeBool("isConnected")
+	return n.getBoolAttribute("isConnected")
 }
 
 func (n Node) LastChild() (Node, error) {
@@ -179,7 +179,7 @@ func (n Node) NextSibling() (Node, error) {
 
 func (n Node) NodeName() (string, error) {
 
-	return n.getAttributeString("nodeName")
+	return n.getStringAttribute("nodeName")
 
 }
 
@@ -216,7 +216,7 @@ func (n Node) PreviousSibling() (Node, error) {
 
 func (n Node) TextContent() (string, error) {
 
-	return n.getAttributeString("textContent")
+	return n.getStringAttribute("textContent")
 }
 
 func (n Node) SetTextContent(content string) error {

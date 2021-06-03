@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/realPy/hogosuru/document"
 	"github.com/realPy/hogosuru/event"
+	"github.com/realPy/hogosuru/htmlelement"
 )
 
 func main() {
@@ -49,7 +50,7 @@ func main() {
 
 	if clickbutton, err := d.GetElementById("clickme"); err == nil {
 
-		clickbutton.AddEventListener("click", func(e event.Event) {
+		clickbutton.OnClick(func(e event.Event) {
 
 			if testinput, err := d.GetElementById("test"); err == nil {
 				attributes, _ := testinput.Attributes()
@@ -65,8 +66,8 @@ func main() {
 
 				//easy method
 
-				if obj, err := testinput.GetAttribute("type"); err == nil {
-					println("Second method type->" + obj.Value())
+				if str, err := testinput.GetAttribute("type"); err == nil {
+					println("Second method type->" + str)
 				} else {
 					println("erreur" + err.Error())
 				}
@@ -76,6 +77,13 @@ func main() {
 		})
 	}
 
+	p, _ := d.CreateElement("input")
+	p.SetAttribute("type", "text")
+	h, _ := htmlelement.NewFromElement(p)
+	nod.AppendChild(h.Node)
+	h.Focus()
+	h.SetHidden(true)
+	h.Export("mat")
 	ch := make(chan struct{})
 	<-ch
 

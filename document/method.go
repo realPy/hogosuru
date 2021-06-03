@@ -7,6 +7,7 @@ import (
 	"github.com/realPy/hogosuru/element"
 	"github.com/realPy/hogosuru/event"
 	"github.com/realPy/hogosuru/htmlcollection"
+	"github.com/realPy/hogosuru/htmlelement"
 	"github.com/realPy/hogosuru/node"
 	"github.com/realPy/hogosuru/nodelist"
 )
@@ -58,6 +59,18 @@ func (d Document) CreateDocumentFragment() (node.Node, error) {
 	}
 
 	return nod, err
+}
+
+func (d Document) CreateHTMLElement(tagname string) (htmlelement.HtmlElement, error) {
+	var err error
+	var htmlelm htmlelement.HtmlElement
+	var elem element.Element
+
+	if elem, err = d.CreateElement(tagname); err == nil {
+		htmlelm, err = htmlelement.NewFromElement(elem)
+
+	}
+	return htmlelm, err
 }
 
 func (d Document) CreateElement(tagname string) (element.Element, error) {
@@ -219,6 +232,7 @@ func (d Document) getElementsByTagNameNS(namespace, tagname string) (nodelist.No
 
 	return nlist, err
 }
+
 func (d Document) ImportNode(externalNode node.Node, deep bool) (node.Node, error) {
 	var err error
 	var obj js.Value

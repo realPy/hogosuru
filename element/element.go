@@ -77,7 +77,7 @@ func ItemFromHTMLCollection(collection htmlcollection.HTMLCollection, index int)
 
 }
 
-func (e Element) getStringAttribute(attribute string) (string, error) {
+func (e Element) getAttributeString(attribute string) (string, error) {
 
 	var err error
 	var obj js.Value
@@ -92,7 +92,7 @@ func (e Element) getStringAttribute(attribute string) (string, error) {
 
 }
 
-func (e Element) SetStringAttribute(attribute string, value string) error {
+func (e Element) setAttributeString(attribute string, value string) error {
 
 	return e.JSObject().SetWithErr(attribute, js.ValueOf(value))
 }
@@ -113,7 +113,7 @@ func (e Element) getAttributeNumber(attribute string) (float64, error) {
 	return ret, err
 }
 
-func (e Element) getAttributeInt(attribute string) (int, error) {
+func (e Element) getIntAttribute(attribute string) (int, error) {
 
 	var err error
 	var obj js.Value
@@ -129,7 +129,7 @@ func (e Element) getAttributeInt(attribute string) (int, error) {
 	return ret, err
 }
 
-func (e Element) getAttributeElement(attribute string) (Element, error) {
+func (e Element) getElementAttribute(attribute string) (Element, error) {
 	var nodeObject js.Value
 	var newElement Element
 	var err error
@@ -164,120 +164,120 @@ func (e Element) Attributes() (namednodemap.NamedNodeMap, error) {
 
 func (e Element) ClassName() (string, error) {
 
-	return e.getStringAttribute("className")
+	return e.getAttributeString("className")
 }
 
 func (e Element) SetClassName(value string) error {
 
-	return e.SetStringAttribute("className", value)
+	return e.setAttributeString("className", value)
 }
 
 func (e Element) ClientHeight() (int, error) {
 
-	return e.getAttributeInt("clientHeight")
+	return e.getIntAttribute("clientHeight")
 }
 
 func (e Element) ClientLeft() (int, error) {
 
-	return e.getAttributeInt("clientLeft")
+	return e.getIntAttribute("clientLeft")
 }
 
 func (e Element) ClientTop() (int, error) {
 
-	return e.getAttributeInt("clienTop")
+	return e.getIntAttribute("clienTop")
 }
 
 func (e Element) ClientWidth() (int, error) {
 
-	return e.getAttributeInt("clienWidth")
+	return e.getIntAttribute("clienWidth")
 }
 
 func (e Element) ComputedName() (string, error) {
 
-	return e.getStringAttribute("computedName")
+	return e.getAttributeString("computedName")
 }
 
 func (e Element) ComputedRole() (string, error) {
 
-	return e.getStringAttribute("computedRole")
+	return e.getAttributeString("computedRole")
 }
 
 func (e Element) ID() (string, error) {
 
-	return e.getStringAttribute("id")
+	return e.getAttributeString("id")
 }
 
 func (e Element) SetID(value string) error {
 
-	return e.SetStringAttribute("id", value)
+	return e.setAttributeString("id", value)
 }
 
 func (e Element) InnerHTML() (string, error) {
 
-	return e.getStringAttribute("innerHTML")
+	return e.getAttributeString("innerHTML")
 }
 
 func (e Element) SetInnerHTML(value string) error {
 
-	return e.SetStringAttribute("innerHTML", value)
+	return e.setAttributeString("innerHTML", value)
 }
 
 func (e Element) LocalName() (string, error) {
 
-	return e.getStringAttribute("localname")
+	return e.getAttributeString("localname")
 }
 
 func (e Element) NamespaceURI() (string, error) {
 
-	return e.getStringAttribute("namespaceURI")
+	return e.getAttributeString("namespaceURI")
 }
 
 func (e Element) NextElementSibling() (Element, error) {
-	return e.getAttributeElement("nextElementSibling")
+	return e.getElementAttribute("nextElementSibling")
 }
 
 func (e Element) OuterHTML() (string, error) {
 
-	return e.getStringAttribute("outerHTML")
+	return e.getAttributeString("outerHTML")
 }
 
 func (e Element) SetOuterHTML(value string) error {
 
-	return e.SetStringAttribute("outerHTML", value)
+	return e.setAttributeString("outerHTML", value)
 }
 
 func (e Element) Prefix() (string, error) {
 
-	return e.getStringAttribute("prefix")
+	return e.getAttributeString("prefix")
 }
 
 func (e Element) PreviousElementSibling() (Element, error) {
-	return e.getAttributeElement("previousElementSibling")
+	return e.getElementAttribute("previousElementSibling")
 }
 
 func (e Element) ScrollHeight() (int, error) {
 
-	return e.getAttributeInt("scrollHeight")
+	return e.getIntAttribute("scrollHeight")
 }
 
 func (e Element) ScrollLeft() (int, error) {
 
-	return e.getAttributeInt("scrollLeft")
+	return e.getIntAttribute("scrollLeft")
 }
 
 func (e Element) ScrollTop() (int, error) {
 
-	return e.getAttributeInt("scrollTop")
+	return e.getIntAttribute("scrollTop")
 }
 
 func (e Element) ScrollWidth() (int, error) {
 
-	return e.getAttributeInt("scrollWidth")
+	return e.getIntAttribute("scrollWidth")
 }
 
 func (e Element) TagName() (string, error) {
 
-	return e.getStringAttribute("tagName")
+	return e.getAttributeString("tagName")
 }
 
 func OwnerElementForAttr(a attr.Attr) (Element, error) {
