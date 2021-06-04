@@ -156,9 +156,32 @@ func (h HtmlElement) IsContentEditable() (bool, error) {
 	return h.getAttributeBool("isContentEditable")
 }
 
-func (h HtmlElement) DataSet() error {
+func (h HtmlElement) Dataset(name string) (interface{}, error) {
+	var err error
+	var obj, objv js.Value
+	var ret interface{}
 
-	return nil
+	if obj, err = h.JSObject().GetWithErr("dataset"); err == nil {
+		if objv, err = obj.GetWithErr(name); err == nil {
+			ret = baseobject.GoValue(objv)
+		}
+
+	}
+
+	return ret, err
+
+}
+
+func (h HtmlElement) SetDataset(name string, value interface{}) error {
+
+	var err error
+	var obj js.Value
+
+	if obj, err = h.JSObject().GetWithErr("dataset"); err == nil {
+		err = obj.SetWithErr(name, js.ValueOf(value))
+
+	}
+	return err
 }
 
 func (h HtmlElement) Dir() (string, error) {

@@ -4,6 +4,7 @@ import (
 	"sync"
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/array"
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/iterator"
 )
@@ -60,6 +61,18 @@ func New(values ...interface{}) (ObjectMap, error) {
 		err = ErrNotImplemented
 	}
 	return o, err
+}
+
+func NewFromGo(values map[string]interface{}) (ObjectMap, error) {
+
+	var arrayJS []interface{}
+
+	for key, value := range values {
+		arrayJS = append(arrayJS, array.New_(key, value))
+	}
+
+	return New(array.New_(arrayJS...))
+
 }
 
 func (o ObjectMap) Clear() error {

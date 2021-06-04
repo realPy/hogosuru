@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/realPy/hogosuru/document"
 	"github.com/realPy/hogosuru/event"
-	"github.com/realPy/hogosuru/htmlelement"
+	"github.com/realPy/hogosuru/htmlinputelement"
 )
 
 func main() {
@@ -78,12 +78,20 @@ func main() {
 	}
 
 	p, _ := d.CreateElement("input")
-	p.SetAttribute("type", "text")
-	h, _ := htmlelement.NewFromElement(p)
+	p.SetAttribute("type", "checkbox")
+	//	h, _ := htmlelement.NewFromElement(p)
+	h, _ := htmlinputelement.NewFromElement(p)
+	h.SetChecked(true)
 	nod.AppendChild(h.Node)
 	h.Focus()
-	h.SetHidden(true)
+
+	//h.SetHidden(true)
 	h.Export("mat")
+
+	h.SetDataset("toto", "value")
+
+	v, _ := h.Dataset("toto")
+	println(v.(string))
 	ch := make(chan struct{})
 	<-ch
 
