@@ -125,6 +125,27 @@ func (h HtmlInputElement) setAttributeBool(attribute string, value bool) error {
 	return h.JSObject().SetWithErr(attribute, js.ValueOf(value))
 }
 
+func (h HtmlInputElement) getAttributeInt(attribute string) (int, error) {
+
+	var err error
+	var obj js.Value
+	var result int
+
+	if obj, err = h.JSObject().GetWithErr(attribute); err == nil {
+		if obj.Type() == js.TypeNumber {
+			result = obj.Int()
+		} else {
+			err = baseobject.ErrObjectNotNumber
+		}
+	}
+
+	return result, err
+}
+
+func (h HtmlInputElement) setAttributeInt(attribute string, value int) error {
+	return h.JSObject().SetWithErr(attribute, js.ValueOf(value))
+}
+
 //Properties related to the parent form
 
 func (h HtmlInputElement) Form() (element.Element, error) {
@@ -275,7 +296,49 @@ func (h HtmlInputElement) SetIndeterminate(value bool) error {
 	return h.setAttributeBool("indeterminate", value)
 }
 
+// Properties that apply only to elements of type "image"
+
+func (h HtmlInputElement) Alt() (string, error) {
+	return h.getAttributeString("alt")
+}
+
+func (h HtmlInputElement) SetAlt(value string) error {
+	return h.setAttributeString("alt", value)
+}
+
+func (h HtmlInputElement) Height() (string, error) {
+	return h.getAttributeString("height")
+}
+
+func (h HtmlInputElement) SetHeight(value string) error {
+	return h.setAttributeString("height", value)
+}
+
+func (h HtmlInputElement) Src() (string, error) {
+	return h.getAttributeString("src")
+}
+
+func (h HtmlInputElement) SetSrc(value string) error {
+	return h.setAttributeString("src", value)
+}
+
+func (h HtmlInputElement) Width() (string, error) {
+	return h.getAttributeString("width")
+}
+
+func (h HtmlInputElement) SetWidth(value string) error {
+	return h.setAttributeString("width", value)
+}
+
 // Properties that apply only to elements of type "file"
+
+func (h HtmlInputElement) Accept() (string, error) {
+	return h.getAttributeString("accept")
+}
+
+func (h HtmlInputElement) SetAccept(value string) error {
+	return h.setAttributeString("accept", value)
+}
 
 func (h HtmlInputElement) Files() (filelist.FileList, error) {
 	var files js.Value
@@ -284,4 +347,102 @@ func (h HtmlInputElement) Files() (filelist.FileList, error) {
 		return filelist.NewFromJSObject(files)
 	}
 	return filelist.FileList{}, err
+}
+
+// Properties that apply only to text/number-containing or elements
+
+func (h HtmlInputElement) Autocomplete() (string, error) {
+	return h.getAttributeString("autocomplete")
+}
+
+func (h HtmlInputElement) SetAutocomplete(value string) error {
+	return h.setAttributeString("autocomplete", value)
+}
+
+func (h HtmlInputElement) Max() (string, error) {
+	return h.getAttributeString("max")
+}
+
+func (h HtmlInputElement) SetMax(value string) error {
+	return h.setAttributeString("max", value)
+}
+
+func (h HtmlInputElement) MaxLength() (int, error) {
+	return h.getAttributeInt("maxLength")
+}
+
+func (h HtmlInputElement) SetMaxLength(value int) error {
+	return h.setAttributeInt("maxLength", value)
+}
+
+func (h HtmlInputElement) Min() (string, error) {
+	return h.getAttributeString("min")
+}
+
+func (h HtmlInputElement) SetMin(value string) error {
+	return h.setAttributeString("min", value)
+}
+
+func (h HtmlInputElement) MinLength() (int, error) {
+	return h.getAttributeInt("minLength")
+}
+
+func (h HtmlInputElement) SetMinLength(value int) error {
+	return h.setAttributeInt("minLength", value)
+}
+
+func (h HtmlInputElement) Pattern() (string, error) {
+	return h.getAttributeString("pattern")
+}
+
+func (h HtmlInputElement) SetPattern(value string) error {
+	return h.setAttributeString("pattern", value)
+}
+
+func (h HtmlInputElement) Placeholder() (string, error) {
+	return h.getAttributeString("placeholder")
+}
+
+func (h HtmlInputElement) SetPlaceholder(value string) error {
+	return h.setAttributeString("placeholder", value)
+}
+
+func (h HtmlInputElement) ReadOnly() (bool, error) {
+	return h.getAttributeBool("readOnly")
+}
+
+func (h HtmlInputElement) SetReadOnly(value bool) error {
+	return h.setAttributeBool("readOnly", value)
+}
+
+func (h HtmlInputElement) SelectionStart() (int, error) {
+	return h.getAttributeInt("selectionStart")
+}
+
+func (h HtmlInputElement) SetSelectionStart(value int) error {
+	return h.setAttributeInt("selectionStart", value)
+}
+
+func (h HtmlInputElement) SelectionEnd() (int, error) {
+	return h.getAttributeInt("selectionEnd")
+}
+
+func (h HtmlInputElement) SetSelectionEnd(value int) error {
+	return h.setAttributeInt("selectionEnd", value)
+}
+
+func (h HtmlInputElement) SelectionDirection() (string, error) {
+	return h.getAttributeString("selectionDirection")
+}
+
+func (h HtmlInputElement) SetSelectionDirection(value string) error {
+	return h.setAttributeString("selectionDirection", value)
+}
+
+func (h HtmlInputElement) Size() (int, error) {
+	return h.getAttributeInt("size")
+}
+
+func (h HtmlInputElement) SetSize(value int) error {
+	return h.setAttributeInt("size", value)
 }
