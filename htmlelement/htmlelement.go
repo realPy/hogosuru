@@ -39,6 +39,24 @@ func GetJSInterface() *JSInterface {
 	return htmlelementinterface
 }
 
+func NewFromJSObject(obj js.Value) (HtmlElement, error) {
+	var h HtmlElement
+	var err error
+	if ai := GetJSInterface(); ai != nil {
+		if obj.InstanceOf(ai.objectInterface) {
+			h.BaseObject = h.SetObject(obj)
+
+		} else {
+			err = ErrNotAnHtmlElement
+		}
+
+	} else {
+		err = ErrNotImplemented
+	}
+
+	return h, err
+}
+
 func NewFromElement(elem element.Element) (HtmlElement, error) {
 	var h HtmlElement
 	var err error

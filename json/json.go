@@ -133,22 +133,6 @@ func (j Json) Map() interface{} {
 
 }
 
-/*
-func (j Json) GetItem(item string) interface{} {
-baseobject.Eval()
-}
-*./
-/*
-func (j Json) Get(key string) js.Value {
-	return j.JSObject().Get(key)
-}
-
-func (j Json) GoJson() jsbaseobject.GOMap {
-	return jsbaseobject.Map(j.JSObject())
-
-}
-*/
-
 func (j Json) Stringify() (string, error) {
 
 	var stringObject js.Value

@@ -4,6 +4,7 @@ import (
 	"sync"
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/indexeddb/store"
 )
 

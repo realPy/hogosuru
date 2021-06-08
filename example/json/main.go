@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/realPy/hogosuru/json"
 )
 
@@ -19,7 +17,7 @@ func main() {
 	if j, err := json.Parse(str2); err == nil {
 
 		p := j.Map()
-		fmt.Printf("%s\n", p.(map[string]interface{})["cars"].([]interface{})[0])
+		println(p.(map[string]interface{})["cars"].([]interface{})[0])
 
 		j.Export("adrien")
 	} else {

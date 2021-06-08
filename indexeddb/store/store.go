@@ -5,7 +5,8 @@ import (
 
 	"syscall/js"
 
-	baseobject "github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/object"
 )
 
 type Store struct {
@@ -47,13 +48,6 @@ func getEventTargetResult(ev js.Value) (js.Value, error) {
 func NewFromJSObject(obj js.Value) (Store, error) {
 
 	var s Store
-	/*
-		if baseobject.String(obj) == "[object EventTarget]" {
-			e.Object = e.SetObject(obj)
-			return e, nil
-		}
-
-		return e, ErrNotAnEventTarget*/
 	s.BaseObject = s.SetObject(obj)
 	return s, nil
 }
@@ -83,15 +77,16 @@ func (s Store) callWaitableMethod(method string, args ...interface{}) (js.Value,
 func (s Store) Add(value map[string]interface{}) (int, error) {
 	var err error
 	var obj js.Value
-	if obj, err = s.callWaitableMethod("add", js.ValueOf(value)); err == nil {
-		if value := baseobject.NewGOValue(obj); value.IsInt() {
-			return value.Int(), nil
-		} else {
-			return 0, nil
-		}
+	var indexret int
 
+	if obj, err = s.callWaitableMethod("add", js.ValueOf(value)); err == nil {
+		if obj.Type() == js.TypeNumber {
+			indexret = obj.Int()
+		} else {
+			err = baseobject.ErrObjectNotNumber
+		}
 	}
-	return 0, err
+	return indexret, err
 }
 
 func (s Store) Clear() error {
@@ -105,8 +100,11 @@ func (s Store) Count() (int, error) {
 	var obj js.Value
 	var count int
 	if obj, err = s.callWaitableMethod("count"); err == nil {
-		if value := baseobject.NewGOValue(obj); value.IsInt() {
-			return value.Int(), nil
+
+		if obj.Type() == js.TypeNumber {
+			count = obj.Int()
+		} else {
+			err = baseobject.ErrObjectNotNumber
 		}
 	}
 	return count, err
@@ -138,21 +136,16 @@ func (s Store) CreateIndex(nameIndex string, nameKey string, option map[string]i
 	return err
 }
 
-func (s Store) Get(key int) (baseobject.GOMap, error) {
-	var arrayObject js.Value
+func (s Store) Get(key int) (object.Object, error) {
+	var jsobj js.Value
 	var err error
-	var mapobj baseobject.GOMap
+	var obj object.Object
 
-	if arrayObject, err = s.callWaitableMethod("get", js.ValueOf(key)); err == nil {
-		if obji, err := baseobject.NewObject(); err == nil {
-			if entries, err := obji.Entries(arrayObject); err == nil {
-				mapobj = baseobject.Map(entries)
-			}
-		}
-
+	if jsobj, err = s.callWaitableMethod("get", js.ValueOf(key)); err == nil {
+		obj, err = object.NewFromJSObject(jsobj)
 	}
 
-	return mapobj, err
+	return obj, err
 }
 
 func (s Store) GetAllKeys() (baseobject.GOArray, error) {

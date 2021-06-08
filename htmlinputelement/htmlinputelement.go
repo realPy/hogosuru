@@ -8,9 +8,11 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/date"
 	"github.com/realPy/hogosuru/element"
 	"github.com/realPy/hogosuru/filelist"
 	"github.com/realPy/hogosuru/htmlelement"
+	"github.com/realPy/hogosuru/nodelist"
 	"github.com/realPy/hogosuru/validitystate"
 )
 
@@ -144,6 +146,23 @@ func (h HtmlInputElement) getAttributeInt(attribute string) (int, error) {
 
 func (h HtmlInputElement) setAttributeInt(attribute string, value int) error {
 	return h.JSObject().SetWithErr(attribute, js.ValueOf(value))
+}
+
+func (h HtmlInputElement) getAttributeDouble(attribute string) (float64, error) {
+
+	var err error
+	var obj js.Value
+	var result float64
+
+	if obj, err = h.JSObject().GetWithErr(attribute); err == nil {
+		if obj.Type() == js.TypeNumber {
+			result = obj.Float()
+		} else {
+			err = baseobject.ErrObjectNotNumber
+		}
+	}
+
+	return result, err
 }
 
 //Properties related to the parent form
@@ -445,4 +464,83 @@ func (h HtmlInputElement) Size() (int, error) {
 
 func (h HtmlInputElement) SetSize(value int) error {
 	return h.setAttributeInt("size", value)
+}
+
+//  Properties not yet categorized
+
+func (h HtmlInputElement) DefaultValue() (string, error) {
+	return h.getAttributeString("defaultValue")
+}
+
+func (h HtmlInputElement) SetDefaultValue(value string) error {
+	return h.setAttributeString("defaultValue", value)
+}
+
+func (h HtmlInputElement) DirName() (string, error) {
+	return h.getAttributeString("dirName")
+}
+
+func (h HtmlInputElement) SetDirName(value string) error {
+	return h.setAttributeString("dirName", value)
+}
+
+func (h HtmlInputElement) AccessKey() (string, error) {
+	return h.getAttributeString("accessKey")
+}
+
+func (h HtmlInputElement) SetAccessKey(value string) error {
+	return h.setAttributeString("accessKey", value)
+}
+
+func (h HtmlInputElement) List() (htmlelement.HtmlElement, error) {
+	var obj js.Value
+	var err error
+	var elem htmlelement.HtmlElement
+	if obj, err = h.JSObject().GetWithErr("list"); err == nil {
+
+		elem, err = htmlelement.NewFromJSObject(obj)
+	}
+	return elem, err
+}
+
+func (h HtmlInputElement) Multiple() (bool, error) {
+	return h.getAttributeBool("multiple")
+}
+
+func (h HtmlInputElement) SetMultiple(value bool) error {
+	return h.setAttributeBool("multiple", value)
+}
+
+func (h HtmlInputElement) Labels() (nodelist.NodeList, error) {
+	var obj js.Value
+	var err error
+	var arr nodelist.NodeList
+	if obj, err = h.JSObject().GetWithErr("labels"); err == nil {
+
+		arr, err = nodelist.NewFromJSObject(obj)
+	}
+	return arr, err
+}
+
+func (h HtmlInputElement) Step() (string, error) {
+	return h.getAttributeString("step")
+}
+
+func (h HtmlInputElement) SetStep(value string) error {
+	return h.setAttributeString("step", value)
+}
+
+func (h HtmlInputElement) ValueAsDate() (date.Date, error) {
+	var obj js.Value
+	var err error
+	var arr date.Date
+	if obj, err = h.JSObject().GetWithErr("valueAsDate"); err == nil {
+
+		arr, err = date.NewFromJSObject(obj)
+	}
+	return arr, err
+}
+
+func (h HtmlInputElement) ValueAsNumber() (float64, error) {
+	return h.getAttributeDouble("valueAsNumber")
 }

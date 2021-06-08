@@ -1,7 +1,7 @@
 GO=tinygo
 
-.PHONY: array json draganddrop fetch websocket node xmlhttprequest
-all: array json draganddrop fetch websocket node xmlhttprequest
+.PHONY: array json draganddrop fetch websocket node xmlhttprequest map date
+all: array json draganddrop fetch websocket node xmlhttprequest map date
 
 
 
@@ -9,6 +9,9 @@ array:
 	$(GO) build  -o ./example/static/array.wasm --no-debug -target wasm example/array/main.go
 map:
 	$(GO) build  -o ./example/static/map.wasm --no-debug -target wasm example/map/main.go
+date:
+	$(GO) build  -o ./example/static/date.wasm --no-debug -target wasm example/date/main.go
+
 node:
 	$(GO) build  -o ./example/static/node.wasm --no-debug -target wasm example/node/main.go
 

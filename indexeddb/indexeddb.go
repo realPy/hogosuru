@@ -7,8 +7,8 @@ import (
 
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/indexeddb/idbdatabase"
-	baseobject "github.com/realPy/hogosuru/object"
 )
 
 func getEventTargetError(ev js.Value) (js.Value, error) {
