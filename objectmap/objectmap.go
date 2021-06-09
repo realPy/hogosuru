@@ -11,22 +11,18 @@ import (
 
 var singleton sync.Once
 
-var mapinterface *JSInterface
+var mapinterface js.Value
 
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
-
-//GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+//GetInterface get teh JS interface of broadcast channel
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var mapinstance JSInterface
+
 		var err error
-		if mapinstance.objectInterface, err = js.Global().GetWithErr("Map"); err == nil {
-			mapinterface = &mapinstance
+		if mapinterface, err = js.Global().GetWithErr("Map"); err != nil {
+			mapinterface = js.Null()
 		}
+
 	})
 
 	return mapinterface
@@ -53,9 +49,9 @@ func New(values ...interface{}) (ObjectMap, error) {
 
 	}
 
-	if omi := GetJSInterface(); omi != nil {
+	if omi := GetInterface(); !omi.IsNull() {
 
-		o.BaseObject = o.SetObject(omi.objectInterface.New(arrayJS...))
+		o.BaseObject = o.SetObject(omi.New(arrayJS...))
 
 	} else {
 		err = ErrNotImplemented

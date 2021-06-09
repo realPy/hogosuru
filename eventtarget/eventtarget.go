@@ -11,7 +11,7 @@ import (
 
 var singleton sync.Once
 
-var eventtargetinterface *JSInterface
+var eventtargetinterface js.Value
 
 //JSInterface JSInterface struct
 type JSInterface struct {
@@ -19,14 +19,14 @@ type JSInterface struct {
 }
 
 //GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var eventtargetinstance JSInterface
 		var err error
-		if eventtargetinstance.objectInterface, err = js.Global().GetWithErr("EventTarget"); err == nil {
-			eventtargetinterface = &eventtargetinstance
+		if eventtargetinterface, err = js.Global().GetWithErr("EventTarget"); err != nil {
+			eventtargetinterface = js.Null()
 		}
+
 	})
 
 	return eventtargetinterface
@@ -41,8 +41,8 @@ func New() (EventTarget, error) {
 
 	var e EventTarget
 
-	if eti := GetJSInterface(); eti != nil {
-		e.BaseObject = e.SetObject(eti.objectInterface.New())
+	if eti := GetInterface(); !eti.IsNull() {
+		e.BaseObject = e.SetObject(eti.New())
 		e.registerFunc = make(map[string]js.Func)
 		return e, nil
 	}
@@ -52,8 +52,8 @@ func New() (EventTarget, error) {
 func NewFromJSObject(obj js.Value) (EventTarget, error) {
 	var e EventTarget
 
-	if eti := GetJSInterface(); eti != nil {
-		if obj.InstanceOf(eti.objectInterface) {
+	if eti := GetInterface(); !eti.IsNull() {
+		if obj.InstanceOf(eti) {
 			e.BaseObject = e.SetObject(obj)
 			e.registerFunc = make(map[string]js.Func)
 			return e, nil

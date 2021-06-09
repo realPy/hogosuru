@@ -12,22 +12,18 @@ import (
 
 var singleton sync.Once
 
-var progresseeventinterface *JSInterface
+var progresseeventinterface js.Value
 
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
-
-//GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+//GetInterface get teh JS interface of broadcast channel
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var progresseeventinstance JSInterface
+
 		var err error
-		if progresseeventinstance.objectInterface, err = js.Global().GetWithErr("ProgressEvent"); err == nil {
-			progresseeventinterface = &progresseeventinstance
+		if progresseeventinterface, err = js.Global().GetWithErr("ProgressEvent"); err != nil {
+			progresseeventinterface = js.Null()
 		}
+
 	})
 
 	return progresseeventinterface
@@ -41,8 +37,8 @@ func New() (ProgressEvent, error) {
 
 	var p ProgressEvent
 
-	if pei := GetJSInterface(); pei != nil {
-		p.BaseObject = p.SetObject(pei.objectInterface.New())
+	if pei := GetInterface(); !pei.IsNull() {
+		p.BaseObject = p.SetObject(pei.New())
 
 		return p, nil
 	}
@@ -52,8 +48,8 @@ func New() (ProgressEvent, error) {
 func NewFromJSObject(obj js.Value) (ProgressEvent, error) {
 	var p ProgressEvent
 
-	if pei := GetJSInterface(); pei != nil {
-		if obj.InstanceOf(pei.objectInterface) {
+	if pei := GetInterface(); !pei.IsNull() {
+		if obj.InstanceOf(pei) {
 			p.BaseObject = p.SetObject(obj)
 
 			return p, nil

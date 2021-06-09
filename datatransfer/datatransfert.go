@@ -10,12 +10,7 @@ import (
 
 var singleton sync.Once
 
-var dtinterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var dtinterface js.Value
 
 //Channel struct
 type DataTransfer struct {
@@ -23,13 +18,12 @@ type DataTransfer struct {
 }
 
 //GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var dtinstance JSInterface
 		var err error
-		if dtinstance.objectInterface, err = js.Global().GetWithErr("DataTransfer"); err == nil {
-			dtinterface = &dtinstance
+		if dtinterface, err = js.Global().GetWithErr("DataTransfer"); err != nil {
+			dtinterface = js.Null()
 		}
 	})
 
@@ -40,8 +34,8 @@ func GetJSInterface() *JSInterface {
 func New() (DataTransfer, error) {
 	var dt DataTransfer
 
-	if dti := GetJSInterface(); dti != nil {
-		dt.BaseObject = dt.SetObject(dti.objectInterface.New())
+	if dti := GetInterface(); !dti.IsNull() {
+		dt.BaseObject = dt.SetObject(dti.New())
 		return dt, nil
 	}
 	return DataTransfer{}, ErrNotImplemented
@@ -50,8 +44,8 @@ func New() (DataTransfer, error) {
 func NewFromJSObject(obj js.Value) (DataTransfer, error) {
 	var dt DataTransfer
 
-	if di := GetJSInterface(); di != nil {
-		if obj.InstanceOf(di.objectInterface) {
+	if dti := GetInterface(); !dti.IsNull() {
+		if obj.InstanceOf(dti) {
 			dt.BaseObject = dt.SetObject(obj)
 			return dt, nil
 		}

@@ -13,27 +13,23 @@ import (
 
 var singleton sync.Once
 
-var drageventinterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var drageventinterface js.Value
 
 //DragEvent DragEvent struct
 type DragEvent struct {
 	event.Event
 }
 
-//GetJSInterface get teh JS interface of event
-func GetJSInterface() *JSInterface {
+//GetInterface get teh JS interface of event
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var drageventinstance JSInterface
+
 		var err error
-		if drageventinstance.objectInterface, err = js.Global().GetWithErr("DragEvent"); err == nil {
-			drageventinterface = &drageventinstance
+		if drageventinterface, err = js.Global().GetWithErr("DragEvent"); err != nil {
+			drageventinterface = js.Null()
 		}
+
 	})
 
 	return drageventinterface
@@ -42,8 +38,8 @@ func GetJSInterface() *JSInterface {
 func NewFromJSObject(obj js.Value) (DragEvent, error) {
 	var e DragEvent
 
-	if di := GetJSInterface(); di != nil {
-		if obj.InstanceOf(di.objectInterface) {
+	if di := GetInterface(); !di.IsNull() {
+		if obj.InstanceOf(di) {
 			e.BaseObject = e.SetObject(obj)
 			return e, nil
 		}

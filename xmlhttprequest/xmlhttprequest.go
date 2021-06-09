@@ -23,27 +23,23 @@ import (
 
 var singleton sync.Once
 
-var xhrinterface *JSInterface
-
-//JSInterface of XML HTTP Request
-type JSInterface struct {
-	objectInterface js.Value
-}
+var xhrinterface js.Value
 
 //XMLHTTPRequest XMLHTTPRequest struct
 type XMLHTTPRequest struct {
 	baseobject.BaseObject
 }
 
-//GetJSInterface Get the JS XMLHTTPRequest Interface If nil browser doesn't implement it
-func GetJSInterface() *JSInterface {
+//GetInterface Get the JS XMLHTTPRequest Interface If nil browser doesn't implement it
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var xhrinstance JSInterface
+
 		var err error
-		if xhrinstance.objectInterface, err = js.Global().GetWithErr("XMLHttpRequest"); err == nil {
-			xhrinterface = &xhrinstance
+		if xhrinterface, err = js.Global().GetWithErr("XMLHttpRequest"); err != nil {
+			xhrinterface = js.Null()
 		}
+
 	})
 
 	return xhrinterface
@@ -53,9 +49,9 @@ func GetJSInterface() *JSInterface {
 func New() (XMLHTTPRequest, error) {
 	var request XMLHTTPRequest
 
-	if xhri := GetJSInterface(); xhri != nil {
+	if xhri := GetInterface(); !xhri.IsNull() {
 
-		request.BaseObject = request.SetObject(xhri.objectInterface.New())
+		request.BaseObject = request.SetObject(xhri.New())
 		return request, nil
 
 	}

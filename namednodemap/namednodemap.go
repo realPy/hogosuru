@@ -12,27 +12,22 @@ import (
 
 var singleton sync.Once
 
-var namednodemapinterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var namednodemapinterface js.Value
 
 //NamedNodeMap struct
 type NamedNodeMap struct {
 	baseobject.BaseObject
 }
 
-//GetJSInterface get the JS interface of formdata
-func GetJSInterface() *JSInterface {
+//GetInterface get the JS interface of formdata
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var nodelistinstance JSInterface
 		var err error
-		if nodelistinstance.objectInterface, err = js.Global().GetWithErr("NamedNodeMap"); err == nil {
-			namednodemapinterface = &nodelistinstance
+		if namednodemapinterface, err = js.Global().GetWithErr("NamedNodeMap"); err != nil {
+			namednodemapinterface = js.Null()
 		}
+
 	})
 
 	return namednodemapinterface
@@ -41,8 +36,8 @@ func GetJSInterface() *JSInterface {
 func NewFromJSObject(obj js.Value) (NamedNodeMap, error) {
 	var n NamedNodeMap
 
-	if nli := GetJSInterface(); nli != nil {
-		if obj.InstanceOf(nli.objectInterface) {
+	if nli := GetInterface(); !nli.IsNull() {
+		if obj.InstanceOf(nli) {
 			n.BaseObject = n.SetObject(obj)
 			return n, nil
 		}

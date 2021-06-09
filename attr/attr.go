@@ -10,21 +10,16 @@ import (
 
 var singleton sync.Once
 
-var attrinterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var attrinterface js.Value
 
 //GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var attrinstance JSInterface
+
 		var err error
-		if attrinstance.objectInterface, err = js.Global().GetWithErr("Attr"); err == nil {
-			attrinterface = &attrinstance
+		if attrinterface, err = js.Global().GetWithErr("Attr"); err != nil {
+			attrinterface = js.Null()
 		}
 	})
 
@@ -39,8 +34,8 @@ func New() (Attr, error) {
 
 	var a Attr
 	var err error
-	if ai := GetJSInterface(); ai != nil {
-		a.BaseObject = a.SetObject(ai.objectInterface.New())
+	if ai := GetInterface(); !ai.IsNull() {
+		a.BaseObject = a.SetObject(ai.New())
 
 	} else {
 		err = ErrNotImplemented
@@ -52,8 +47,8 @@ func New() (Attr, error) {
 func NewFromJSObject(obj js.Value) (Attr, error) {
 	var a Attr
 	var err error
-	if ai := GetJSInterface(); ai != nil {
-		if obj.InstanceOf(ai.objectInterface) {
+	if ai := GetInterface(); !ai.IsNull() {
+		if obj.InstanceOf(ai) {
 			a.BaseObject = a.SetObject(obj)
 
 		} else {

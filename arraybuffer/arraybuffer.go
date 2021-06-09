@@ -13,21 +13,15 @@ import (
 
 var singleton sync.Once
 
-var arraybufferinterface *JSInterface
+var arraybufferinterface js.Value
 
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
-
-//GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+//GetInterface get teh JS interface of broadcast channel
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var arraybufferinstance JSInterface
 		var err error
-		if arraybufferinstance.objectInterface, err = js.Global().GetWithErr("ArrayBuffer"); err == nil {
-			arraybufferinterface = &arraybufferinstance
+		if arraybufferinterface, err = js.Global().GetWithErr("ArrayBuffer"); err != nil {
+			arraybufferinterface = js.Null()
 		}
 	})
 
@@ -43,9 +37,9 @@ func New(size int) (ArrayBuffer, error) {
 
 	var a ArrayBuffer
 
-	if ai := GetJSInterface(); ai != nil {
+	if ai := GetInterface(); !ai.IsNull() {
 
-		a.BaseObject = a.SetObject(ai.objectInterface.New(js.ValueOf(size)))
+		a.BaseObject = a.SetObject(ai.New(js.ValueOf(size)))
 		return a, nil
 	}
 
@@ -55,8 +49,8 @@ func New(size int) (ArrayBuffer, error) {
 func NewFromJSObject(obj js.Value) (ArrayBuffer, error) {
 	var a ArrayBuffer
 
-	if ai := GetJSInterface(); ai != nil {
-		if obj.InstanceOf(ai.objectInterface) {
+	if ai := GetInterface(); !ai.IsNull() {
+		if obj.InstanceOf(ai) {
 			a.BaseObject = a.SetObject(obj)
 			return a, nil
 		}

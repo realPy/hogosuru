@@ -103,6 +103,8 @@ func dragOverHandler() js.Func {
 
 		if e, err := dragevent.NewFromJSObject(args[0]); err == nil {
 			e.PreventDefault()
+		} else {
+			println("erreur", err.Error())
 		}
 		return nil
 	})

@@ -20,26 +20,20 @@ var (
 
 var singleton sync.Once
 
-var responseinterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var responseinterface js.Value
 
 //FetchResponse struct
 type Response struct {
 	baseobject.BaseObject
 }
 
-//GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+//GetInterface get teh JS interface of broadcast channel
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var responseinstance JSInterface
 		var err error
-		if responseinstance.objectInterface, err = js.Global().GetWithErr("Response"); err == nil {
-			responseinterface = &responseinstance
+		if responseinterface, err = js.Global().GetWithErr("Response"); err != nil {
+			responseinterface = js.Null()
 		}
 	})
 
@@ -50,8 +44,8 @@ func GetJSInterface() *JSInterface {
 func New() (Response, error) {
 	var r Response
 
-	if ri := GetJSInterface(); ri != nil {
-		r.BaseObject = r.SetObject(ri.objectInterface.New())
+	if ri := GetInterface(); !ri.IsNull() {
+		r.BaseObject = r.SetObject(ri.New())
 		return r, nil
 	}
 	return r, ErrNotImplemented
@@ -60,8 +54,8 @@ func New() (Response, error) {
 func NewFromJSObject(obj js.Value) (Response, error) {
 	var response Response
 
-	if ri := GetJSInterface(); ri != nil {
-		if obj.InstanceOf(ri.objectInterface) {
+	if ri := GetInterface(); !ri.IsNull() {
+		if obj.InstanceOf(ri) {
 			response.BaseObject = response.SetObject(obj)
 			return response, nil
 		}

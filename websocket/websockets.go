@@ -16,12 +16,7 @@ import (
 
 var singleton sync.Once
 
-var wsinterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var wsinterface js.Value
 
 //Websocket struct
 type WebSocket struct {
@@ -33,15 +28,16 @@ const (
 	ArrayBufferType = "arraybuffer"
 )
 
-//GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+//GetInterface get teh JS interface of broadcast channel
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var wsinstance JSInterface
+
 		var err error
-		if wsinstance.objectInterface, err = js.Global().GetWithErr("WebSocket"); err == nil {
-			wsinterface = &wsinstance
+		if wsinterface, err = js.Global().GetWithErr("WebSocket"); err != nil {
+			wsinterface = js.Null()
 		}
+
 	})
 
 	return wsinterface
@@ -51,8 +47,8 @@ func GetJSInterface() *JSInterface {
 func New(url string) (WebSocket, error) {
 	var ws WebSocket
 
-	if wsi := GetJSInterface(); wsi != nil {
-		ws.BaseObject = ws.SetObject(wsi.objectInterface.New(js.ValueOf(url)))
+	if wsi := GetInterface(); !wsi.IsNull() {
+		ws.BaseObject = ws.SetObject(wsi.New(js.ValueOf(url)))
 		return ws, nil
 	}
 	return ws, ErrNotImplemented

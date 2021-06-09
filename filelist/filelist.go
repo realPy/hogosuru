@@ -12,12 +12,7 @@ import (
 
 var singleton sync.Once
 
-var filelistinterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var filelistinterface js.Value
 
 //FileList struct
 type FileList struct {
@@ -25,14 +20,15 @@ type FileList struct {
 }
 
 //GetJSInterface get the JS interface of formdata
-func GetJSInterface() *JSInterface {
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var filelistinstance JSInterface
+
 		var err error
-		if filelistinstance.objectInterface, err = js.Global().GetWithErr("FileList"); err == nil {
-			filelistinterface = &filelistinstance
+		if filelistinterface, err = js.Global().GetWithErr("FileList"); err != nil {
+			filelistinterface = js.Null()
 		}
+
 	})
 
 	return filelistinterface
@@ -41,8 +37,8 @@ func GetJSInterface() *JSInterface {
 func NewFromJSObject(obj js.Value) (FileList, error) {
 	var f FileList
 
-	if fli := GetJSInterface(); fli != nil {
-		if obj.InstanceOf(fli.objectInterface) {
+	if fli := GetInterface(); !fli.IsNull() {
+		if obj.InstanceOf(fli) {
 			f.BaseObject = f.SetObject(obj)
 			return f, nil
 		}

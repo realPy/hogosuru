@@ -10,21 +10,15 @@ import (
 
 var singleton sync.Once
 
-var dateinterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var dateinterface js.Value
 
 //GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var dateinstance JSInterface
 		var err error
-		if dateinstance.objectInterface, err = js.Global().GetWithErr("Date"); err == nil {
-			dateinterface = &dateinstance
+		if dateinterface, err = js.Global().GetWithErr("Date"); err != nil {
+			dateinterface = js.Null()
 		}
 	})
 
@@ -49,9 +43,9 @@ func New(values ...interface{}) (Date, error) {
 		}
 
 	}
-	if di := GetJSInterface(); di != nil {
+	if di := GetInterface(); !di.IsNull() {
 
-		d.BaseObject = d.SetObject(di.objectInterface.New(arrayJS...))
+		d.BaseObject = d.SetObject(di.New(arrayJS...))
 
 	} else {
 		err = ErrNotImplemented
@@ -64,8 +58,8 @@ func NewFromJSObject(obj js.Value) (Date, error) {
 	var d Date
 	var err error
 
-	if di := GetJSInterface(); di != nil {
-		if obj.InstanceOf(di.objectInterface) {
+	if di := GetInterface(); !di.IsNull() {
+		if obj.InstanceOf(di) {
 			d.BaseObject = d.SetObject(obj)
 		} else {
 			err = ErrNotADate
@@ -278,9 +272,9 @@ func Parse(value string) (int64, error) {
 	var err error
 	var obj js.Value
 	var ret int64
-	if di := GetJSInterface(); di != nil {
+	if di := GetInterface(); !di.IsNull() {
 
-		if obj, err = di.objectInterface.CallWithErr("parse", js.ValueOf(value)); err == nil {
+		if obj, err = di.CallWithErr("parse", js.ValueOf(value)); err == nil {
 			if obj.Type() == js.TypeNumber {
 				ret = int64(obj.Float())
 			} else {
@@ -300,9 +294,9 @@ func Now() (int64, error) {
 	var err error
 	var obj js.Value
 	var ret int64
-	if di := GetJSInterface(); di != nil {
+	if di := GetInterface(); !di.IsNull() {
 
-		if obj, err = di.objectInterface.CallWithErr("now"); err == nil {
+		if obj, err = di.CallWithErr("now"); err == nil {
 			if obj.Type() == js.TypeNumber {
 				ret = int64(obj.Float())
 			} else {
@@ -376,9 +370,9 @@ func UTC(values ...interface{}) (int64, error) {
 
 	}
 
-	if di := GetJSInterface(); di != nil {
+	if di := GetInterface(); !di.IsNull() {
 
-		if obj, err = di.objectInterface.CallWithErr("UTC", arrayJS...); err == nil {
+		if obj, err = di.CallWithErr("UTC", arrayJS...); err == nil {
 			if obj.Type() == js.TypeNumber {
 				ret = int64(obj.Float())
 			} else {

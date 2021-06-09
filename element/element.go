@@ -15,22 +15,18 @@ import (
 
 var singleton sync.Once
 
-var elementinterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var elementinterface js.Value
 
 //GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var elementinstance JSInterface
+
 		var err error
-		if elementinstance.objectInterface, err = js.Global().GetWithErr("Element"); err == nil {
-			elementinterface = &elementinstance
+		if elementinterface, err = js.Global().GetWithErr("Element"); err != nil {
+			elementinterface = js.Null()
 		}
+
 	})
 
 	return elementinterface
@@ -43,8 +39,8 @@ type Element struct {
 func New() (Element, error) {
 	var err error
 	var e Element
-	if ei := GetJSInterface(); ei != nil {
-		e.BaseObject = e.SetObject(ei.objectInterface.New())
+	if ei := GetInterface(); !ei.IsNull() {
+		e.BaseObject = e.SetObject(ei.New())
 
 	} else {
 		err = ErrNotImplemented
@@ -56,8 +52,8 @@ func New() (Element, error) {
 func NewFromJSObject(obj js.Value) (Element, error) {
 	var e Element
 	var err error
-	if ei := GetJSInterface(); ei != nil {
-		if obj.InstanceOf(ei.objectInterface) {
+	if ei := GetInterface(); !ei.IsNull() {
+		if obj.InstanceOf(ei) {
 			e.BaseObject = e.SetObject(obj)
 
 		} else {

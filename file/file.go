@@ -10,21 +10,16 @@ import (
 
 var singleton sync.Once
 
-var fileinterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var fileinterface js.Value
 
 //GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var fileinstance JSInterface
+
 		var err error
-		if fileinstance.objectInterface, err = js.Global().GetWithErr("File"); err == nil {
-			fileinterface = &fileinstance
+		if fileinterface, err = js.Global().GetWithErr("File"); err != nil {
+			fileinterface = js.Null()
 		}
 	})
 
@@ -38,8 +33,8 @@ type File struct {
 func NewFromJSObject(obj js.Value) (File, error) {
 	var f File
 
-	if fi := GetJSInterface(); fi != nil {
-		if obj.InstanceOf(fi.objectInterface) {
+	if fi := GetInterface(); !fi.IsNull() {
+		if obj.InstanceOf(fi) {
 			f.BaseObject = f.SetObject(obj)
 			return f, nil
 		}

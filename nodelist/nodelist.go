@@ -12,27 +12,22 @@ import (
 
 var singleton sync.Once
 
-var nodelistinterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var nodelistinterface js.Value
 
 //NodeList struct
 type NodeList struct {
 	baseobject.BaseObject
 }
 
-//GetJSInterface get the JS interface of formdata
-func GetJSInterface() *JSInterface {
+//GetInterface get the JS interface of formdata
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var nodelistinstance JSInterface
 		var err error
-		if nodelistinstance.objectInterface, err = js.Global().GetWithErr("NodeList"); err == nil {
-			nodelistinterface = &nodelistinstance
+		if nodelistinterface, err = js.Global().GetWithErr("NodeList"); err != nil {
+			nodelistinterface = js.Null()
 		}
+
 	})
 
 	return nodelistinterface
@@ -41,8 +36,8 @@ func GetJSInterface() *JSInterface {
 func NewFromJSObject(obj js.Value) (NodeList, error) {
 	var n NodeList
 
-	if nli := GetJSInterface(); nli != nil {
-		if obj.InstanceOf(nli.objectInterface) {
+	if nli := GetInterface(); !nli.IsNull() {
+		if obj.InstanceOf(nli) {
 			n.BaseObject = n.SetObject(obj)
 			return n, nil
 		}

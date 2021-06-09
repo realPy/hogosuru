@@ -10,21 +10,15 @@ import (
 
 var singleton sync.Once
 
-var nodeinterface *JSInterface
+var nodeinterface js.Value
 
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
-
-//GetJSInterface
-func GetJSInterface() *JSInterface {
+//GetInterface
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var nodeinstance JSInterface
 		var err error
-		if nodeinstance.objectInterface, err = js.Global().GetWithErr("Node"); err == nil {
-			nodeinterface = &nodeinstance
+		if nodeinterface, err = js.Global().GetWithErr("Node"); err != nil {
+			nodeinterface = js.Null()
 		}
 	})
 
@@ -72,9 +66,9 @@ func NewFromJSObject(obj js.Value) (Node, error) {
 	var n Node
 	var err error
 
-	if ni := GetJSInterface(); ni != nil {
+	if ni := GetInterface(); !ni.IsNull() {
 
-		if obj.InstanceOf(ni.objectInterface) {
+		if obj.InstanceOf(ni) {
 			n.BaseObject = n.SetObject(obj)
 
 		} else {

@@ -9,27 +9,23 @@ import (
 
 var singleton sync.Once
 
-var validitystateinterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var validitystateinterface js.Value
 
 //HtmlInputElement struct
 type ValidityState struct {
 	baseobject.BaseObject
 }
 
-//GetJSInterface get the JS interface of formdata
-func GetJSInterface() *JSInterface {
+//GetInterface get the JS interface of formdata
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var validitystateinstance JSInterface
+
 		var err error
-		if validitystateinstance.objectInterface, err = js.Global().GetWithErr("ValidityState"); err == nil {
-			validitystateinterface = &validitystateinstance
+		if validitystateinterface, err = js.Global().GetWithErr("ValidityState"); err != nil {
+			validitystateinterface = js.Null()
 		}
+
 	})
 
 	return validitystateinterface
@@ -38,8 +34,8 @@ func GetJSInterface() *JSInterface {
 func NewFromJSObject(obj js.Value) (ValidityState, error) {
 	var v ValidityState
 
-	if hei := GetJSInterface(); hei != nil {
-		if obj.InstanceOf(hei.objectInterface) {
+	if hei := GetInterface(); !hei.IsNull() {
+		if obj.InstanceOf(hei) {
 
 			v.BaseObject = v.SetObject(obj)
 			return v, nil

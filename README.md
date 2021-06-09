@@ -55,16 +55,17 @@ All help is welcome. If you are interested by this project, please contact me
 | Broadcast Channel |  Full |  https://developer.mozilla.org/en-US/docs/Web/API/BroadcastChannel  | 
 | CustomEvent |  Full |  https://developer.mozilla.org/fr/docs/Web/API/CustomEvent |
 | DataTransfer | Partial implemented | https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer |
+| Date| Full | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Date | 
 | Document | Mostly  | https://developer.mozilla.org/fr/docs/Web/API/Document | 
 | DragEvent |  Full |  https://developer.mozilla.org/en-US/docs/Web/API/DragEvent |
-| Element | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/Element | 
+| Element | Full | https://developer.mozilla.org/fr/docs/Web/API/Element | 
 | Event | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/Event |
 | EventTarget | Full | https://developer.mozilla.org/fr/docs/Web/API/EventTarget/EventTarget | 
 | Fetch | Partial implemented  | https://developer.mozilla.org/fr/docs/Web/API/Fetch_API |
 | File | Full | https://developer.mozilla.org/fr/docs/Web/API/File |
 | FileList | Full | https://developer.mozilla.org/fr/docs/Web/API/FileList |
 | FormData | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/FormData |
-| HTMLInputElement| Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/HTMLInputElement |
+| HTMLInputElement| Full| https://developer.mozilla.org/fr/docs/Web/API/HTMLInputElement |
 | HTMLCollection| Full | https://developer.mozilla.org/fr/docs/Web/API/HTMLCollection |
 | Indexedddb | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/IndexedDB_API |
 | JSON | Full | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/JSON |

@@ -18,12 +18,7 @@ import (
 
 var singleton sync.Once
 
-var htmlinputelementinterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var htmlinputelementinterface js.Value
 
 //HtmlInputElement struct
 type HtmlInputElement struct {
@@ -31,14 +26,14 @@ type HtmlInputElement struct {
 }
 
 //GetJSInterface get the JS interface of formdata
-func GetJSInterface() *JSInterface {
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var htmlinputelementinstance JSInterface
 		var err error
-		if htmlinputelementinstance.objectInterface, err = js.Global().GetWithErr("HTMLInputElement"); err == nil {
-			htmlinputelementinterface = &htmlinputelementinstance
+		if htmlinputelementinterface, err = js.Global().GetWithErr("HTMLInputElement"); err != nil {
+			htmlinputelementinterface = js.Null()
 		}
+
 	})
 
 	return htmlinputelementinterface
@@ -48,8 +43,8 @@ func New() (HtmlInputElement, error) {
 
 	var h HtmlInputElement
 
-	if hci := GetJSInterface(); hci != nil {
-		h.BaseObject = h.SetObject(hci.objectInterface.New())
+	if hci := GetInterface(); !hci.IsNull() {
+		h.BaseObject = h.SetObject(hci.New())
 		return h, nil
 	}
 	return h, ErrNotImplemented
@@ -59,8 +54,8 @@ func NewFromElement(elem element.Element) (HtmlInputElement, error) {
 	var h HtmlInputElement
 	var err error
 
-	if ai := GetJSInterface(); ai != nil {
-		if elem.BaseObject.JSObject().InstanceOf(ai.objectInterface) {
+	if hci := GetInterface(); !hci.IsNull() {
+		if elem.BaseObject.JSObject().InstanceOf(hci) {
 			h.BaseObject = h.SetObject(elem.BaseObject.JSObject())
 
 		} else {
@@ -76,8 +71,8 @@ func NewFromElement(elem element.Element) (HtmlInputElement, error) {
 func NewFromJSObject(obj js.Value) (HtmlInputElement, error) {
 	var h HtmlInputElement
 
-	if hei := GetJSInterface(); hei != nil {
-		if obj.InstanceOf(hei.objectInterface) {
+	if hci := GetInterface(); !hci.IsNull() {
+		if obj.InstanceOf(hci) {
 
 			h.BaseObject = h.SetObject(obj)
 			return h, nil

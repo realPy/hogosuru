@@ -14,27 +14,22 @@ import (
 
 var singleton sync.Once
 
-var jsoninterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var jsoninterface js.Value
 
 //Json  struct
 type Json struct {
 	object.Object
 }
 
-//GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+//GetInterface get teh JS interface of broadcast channel
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var jsoninstance JSInterface
 		var err error
-		if jsoninstance.objectInterface, err = js.Global().GetWithErr("JSON"); err == nil {
-			jsoninterface = &jsoninstance
+		if jsoninterface, err = js.Global().GetWithErr("JSON"); err != nil {
+			jsoninterface = js.Null()
 		}
+
 	})
 
 	return jsoninterface
@@ -44,9 +39,9 @@ func Parse(data string) (Json, error) {
 
 	var jsonObject js.Value
 	var err error
-	if jsoni := GetJSInterface(); jsoni != nil {
+	if jsoni := GetInterface(); !jsoni.IsNull() {
 
-		if jsonObject, err = jsoni.objectInterface.CallWithErr("parse", data); err != nil {
+		if jsonObject, err = jsoni.CallWithErr("parse", data); err != nil {
 			return Json{}, err
 		} else {
 			return NewFromJSObject(jsonObject)
@@ -62,7 +57,7 @@ func Parse(data string) (Json, error) {
 func NewFromJSObject(obj js.Value) (Json, error) {
 	var j Json
 
-	if ji := GetJSInterface(); ji != nil {
+	if jsoni := GetInterface(); !jsoni.IsNull() {
 
 		j.BaseObject = j.SetObject(obj)
 		return j, nil
@@ -137,9 +132,9 @@ func (j Json) Stringify() (string, error) {
 
 	var stringObject js.Value
 	var err error
-	if jsoni := GetJSInterface(); jsoni != nil {
+	if jsoni := GetInterface(); !jsoni.IsNull() {
 
-		if stringObject, err = jsoni.objectInterface.CallWithErr("stringify", j.JSObject()); err != nil {
+		if stringObject, err = jsoni.CallWithErr("stringify", j.JSObject()); err != nil {
 			return "", err
 		} else {
 

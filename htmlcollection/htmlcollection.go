@@ -11,27 +11,23 @@ import (
 
 var singleton sync.Once
 
-var htmlcollectioninterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var htmlcollectioninterface js.Value
 
 //HTMLCollection struct
 type HTMLCollection struct {
 	baseobject.BaseObject
 }
 
-//GetJSInterface get the JS interface of formdata
-func GetJSInterface() *JSInterface {
+//GetInterface get the JS interface of formdata
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var htmlcollectioninstance JSInterface
+
 		var err error
-		if htmlcollectioninstance.objectInterface, err = js.Global().GetWithErr("HTMLCollection"); err == nil {
-			htmlcollectioninterface = &htmlcollectioninstance
+		if htmlcollectioninterface, err = js.Global().GetWithErr("HTMLCollection"); err != nil {
+			htmlcollectioninterface = js.Null()
 		}
+
 	})
 
 	return htmlcollectioninterface
@@ -40,8 +36,8 @@ func GetJSInterface() *JSInterface {
 func NewFromJSObject(obj js.Value) (HTMLCollection, error) {
 	var h HTMLCollection
 	var err error
-	if fli := GetJSInterface(); fli != nil {
-		if obj.InstanceOf(fli.objectInterface) {
+	if fli := GetInterface(); !fli.IsNull() {
+		if obj.InstanceOf(fli) {
 			h.BaseObject = h.SetObject(obj)
 		}
 	} else {

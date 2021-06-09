@@ -9,22 +9,18 @@ import (
 
 var singleton sync.Once
 
-var domrectinterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var domrectinterface js.Value
 
 //GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var domrectinstance JSInterface
+
 		var err error
-		if domrectinstance.objectInterface, err = js.Global().GetWithErr("DOMRect"); err == nil {
-			domrectinterface = &domrectinstance
+		if domrectinterface, err = js.Global().GetWithErr("DOMRect"); err != nil {
+			domrectinterface = js.Null()
 		}
+
 	})
 
 	return domrectinterface
@@ -39,9 +35,9 @@ func New() (DOMRect, error) {
 
 	var d DOMRect
 
-	if di := GetJSInterface(); di != nil {
+	if di := GetInterface(); !di.IsNull() {
 
-		d.BaseObject = d.SetObject(di.objectInterface.New())
+		d.BaseObject = d.SetObject(di.New())
 		return d, nil
 	}
 	return d, ErrNotImplemented
@@ -50,8 +46,8 @@ func New() (DOMRect, error) {
 func NewFromJSObject(obj js.Value) (DOMRect, error) {
 	var d DOMRect
 	var err error
-	if di := GetJSInterface(); di != nil {
-		if obj.InstanceOf(di.objectInterface) {
+	if di := GetInterface(); !di.IsNull() {
+		if obj.InstanceOf(di) {
 			d.BaseObject = d.SetObject(obj)
 
 		} else {

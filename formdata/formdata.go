@@ -12,12 +12,7 @@ import (
 
 var singleton sync.Once
 
-var formadatainterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var formadatainterface js.Value
 
 //FormData struct
 type FormData struct {
@@ -25,14 +20,15 @@ type FormData struct {
 }
 
 //GetJSInterface get the JS interface of formdata
-func GetJSInterface() *JSInterface {
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var formadatainstance JSInterface
+
 		var err error
-		if formadatainstance.objectInterface, err = js.Global().GetWithErr("FormData"); err == nil {
-			formadatainterface = &formadatainstance
+		if formadatainterface, err = js.Global().GetWithErr("FormData"); err != nil {
+			formadatainterface = js.Null()
 		}
+
 	})
 
 	return formadatainterface
@@ -42,8 +38,8 @@ func New() (FormData, error) {
 
 	var formdata FormData
 
-	if fci := GetJSInterface(); fci != nil {
-		formdata.BaseObject = formdata.SetObject(fci.objectInterface.New())
+	if fci := GetInterface(); !fci.IsNull() {
+		formdata.BaseObject = formdata.SetObject(fci.New())
 
 		return formdata, nil
 	}

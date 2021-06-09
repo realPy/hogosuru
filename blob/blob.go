@@ -16,21 +16,15 @@ import (
 
 var singleton sync.Once
 
-var blobinterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var blobinterface js.Value
 
 //GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var blobinstance JSInterface
 		var err error
-		if blobinstance.objectInterface, err = js.Global().GetWithErr("Blob"); err == nil {
-			blobinterface = &blobinstance
+		if blobinterface, err = js.Global().GetWithErr("Blob"); err != nil {
+			blobinterface = js.Null()
 		}
 	})
 
@@ -44,9 +38,9 @@ type Blob struct {
 func New() (Blob, error) {
 
 	var b Blob
-	if bi := GetJSInterface(); bi != nil {
+	if bi := GetInterface(); !bi.IsNull() {
 
-		b.BaseObject = b.SetObject(bi.objectInterface.New())
+		b.BaseObject = b.SetObject(bi.New())
 		return b, nil
 	}
 	return b, ErrNotImplemented
@@ -55,8 +49,8 @@ func New() (Blob, error) {
 func NewWithObject(o js.Value) (Blob, error) {
 
 	var b Blob
-	if bi := GetJSInterface(); bi != nil {
-		b.BaseObject = b.SetObject(bi.objectInterface.New(o))
+	if bi := GetInterface(); !bi.IsNull() {
+		b.BaseObject = b.SetObject(bi.New(o))
 		return b, nil
 	}
 	return b, ErrNotImplemented
@@ -65,9 +59,9 @@ func NewWithObject(o js.Value) (Blob, error) {
 func NewWithArrayBuffer(a arraybuffer.ArrayBuffer) (Blob, error) {
 
 	var b Blob
-	if bi := GetJSInterface(); bi != nil {
+	if bi := GetInterface(); !bi.IsNull() {
 
-		b.BaseObject = b.SetObject(bi.objectInterface.New([]interface{}{a.JSObject()}))
+		b.BaseObject = b.SetObject(bi.New([]interface{}{a.JSObject()}))
 		return b, nil
 	}
 	return b, ErrNotImplemented
@@ -89,8 +83,8 @@ func NewWithUint8Array(u uint8array.Uint8Array) (Blob, error) {
 func NewWithBlob(bl Blob) (Blob, error) {
 
 	var b Blob
-	if bi := GetJSInterface(); bi != nil {
-		b.BaseObject = b.SetObject(bi.objectInterface.New(bl.JSObject()))
+	if bi := GetInterface(); !bi.IsNull() {
+		b.BaseObject = b.SetObject(bi.New(bl.JSObject()))
 		return b, nil
 	}
 	return b, ErrNotImplemented
@@ -99,8 +93,8 @@ func NewWithBlob(bl Blob) (Blob, error) {
 func NewFromJSObject(obj js.Value) (Blob, error) {
 	var b Blob
 
-	if bi := GetJSInterface(); bi != nil {
-		if obj.InstanceOf(bi.objectInterface) {
+	if bi := GetInterface(); !bi.IsNull() {
+		if obj.InstanceOf(bi) {
 			b.BaseObject = b.SetObject(obj)
 			return b, nil
 		}
@@ -218,8 +212,8 @@ func (b Blob) Append(append baseobject.BaseObject) (Blob, error) {
 
 	var blobObject js.Value
 	var arrayblob []interface{} = []interface{}{b.JSObject(), append.JSObject()}
-	if bi := GetJSInterface(); bi != nil {
-		blobObject = bi.objectInterface.New(arrayblob)
+	if bi := GetInterface(); !bi.IsNull() {
+		blobObject = bi.New(arrayblob)
 
 		return NewFromJSObject(blobObject)
 	}

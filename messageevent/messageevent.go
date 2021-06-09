@@ -11,22 +11,17 @@ import (
 
 var singleton sync.Once
 
-var messageeventinterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var messageeventinterface js.Value
 
 //GetJSInterface get the JS interface of formdata
-func GetJSInterface() *JSInterface {
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var messageeventinstance JSInterface
 		var err error
-		if messageeventinstance.objectInterface, err = js.Global().GetWithErr("MessageEvent"); err == nil {
-			messageeventinterface = &messageeventinstance
+		if messageeventinterface, err = js.Global().GetWithErr("MessageEvent"); err != nil {
+			messageeventinterface = js.Null()
 		}
+
 	})
 
 	return messageeventinterface
@@ -39,8 +34,8 @@ type MessageEvent struct {
 func NewFromJSObject(obj js.Value) (MessageEvent, error) {
 	var m MessageEvent
 
-	if mi := GetJSInterface(); mi != nil {
-		if obj.InstanceOf(mi.objectInterface) {
+	if mi := GetInterface(); !mi.IsNull() {
+		if obj.InstanceOf(mi) {
 			m.BaseObject = m.SetObject(obj)
 			return m, nil
 

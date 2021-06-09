@@ -10,21 +10,15 @@ import (
 
 var singleton sync.Once
 
-var docinterface *JSInterface
+var docinterface js.Value
 
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
-
-//GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+//GetInterface get teh JS interface of broadcast channel
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var docinstance JSInterface
 		var err error
-		if docinstance.objectInterface, err = js.Global().GetWithErr("document"); err == nil {
-			docinterface = &docinstance
+		if docinterface, err = js.Global().GetWithErr("document"); err != nil {
+			docinterface = js.Null()
 		}
 	})
 
@@ -39,8 +33,8 @@ func New() (Document, error) {
 
 	var d Document
 	var err error
-	if di := GetJSInterface(); di != nil {
-		d.BaseObject = d.SetObject(di.objectInterface)
+	if di := GetInterface(); !di.IsNull() {
+		d.BaseObject = d.SetObject(di)
 
 	} else {
 

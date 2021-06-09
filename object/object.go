@@ -10,22 +10,18 @@ import (
 
 var singleton sync.Once
 
-var objectinterface *JSInterface
+var objectinterface js.Value
 
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
-
-//GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+//GetInterface get teh JS interface of broadcast channel
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var objectinstance JSInterface
+
 		var err error
-		if objectinstance.objectInterface, err = js.Global().GetWithErr("Object"); err == nil {
-			objectinterface = &objectinstance
+		if objectinterface, err = js.Global().GetWithErr("Object"); err != nil {
+			objectinterface = js.Null()
 		}
+
 	})
 
 	return objectinterface
@@ -39,8 +35,8 @@ type Object struct {
 func NewFromJSObject(obj js.Value) (Object, error) {
 	var o Object
 	var err error
-	if ai := GetJSInterface(); ai != nil {
-		if obj.InstanceOf(ai.objectInterface) {
+	if ai := GetInterface(); !ai.IsNull() {
+		if obj.InstanceOf(ai) {
 			o.BaseObject = o.SetObject(obj)
 
 		} else {
@@ -58,8 +54,8 @@ func Keys(o Object) (array.Array, error) {
 	var obj js.Value
 	var newArr array.Array
 
-	if ai := GetJSInterface(); ai != nil {
-		if obj, err = ai.objectInterface.CallWithErr("keys", o.JSObject()); err == nil {
+	if ai := GetInterface(); !ai.IsNull() {
+		if obj, err = ai.CallWithErr("keys", o.JSObject()); err == nil {
 			newArr, err = array.NewFromJSObject(obj)
 
 		}
@@ -75,8 +71,8 @@ func Values(o Object) (array.Array, error) {
 	var obj js.Value
 	var newArr array.Array
 
-	if ai := GetJSInterface(); ai != nil {
-		if obj, err = ai.objectInterface.CallWithErr("values", o.JSObject()); err == nil {
+	if ai := GetInterface(); !ai.IsNull() {
+		if obj, err = ai.CallWithErr("values", o.JSObject()); err == nil {
 			newArr, err = array.NewFromJSObject(obj)
 
 		}

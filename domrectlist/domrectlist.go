@@ -12,12 +12,7 @@ import (
 
 var singleton sync.Once
 
-var domrectlistinterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var domrectlistinterface js.Value
 
 //DOMRectLists struct
 type DOMRectList struct {
@@ -25,13 +20,13 @@ type DOMRectList struct {
 }
 
 //GetJSInterface get the JS interface of formdata
-func GetJSInterface() *JSInterface {
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var domrectlistinstance JSInterface
+
 		var err error
-		if domrectlistinstance.objectInterface, err = js.Global().GetWithErr("DOMRectList"); err == nil {
-			domrectlistinterface = &domrectlistinstance
+		if domrectlistinterface, err = js.Global().GetWithErr("DOMRectList"); err != nil {
+			domrectlistinterface = js.Null()
 		}
 	})
 
@@ -41,8 +36,8 @@ func GetJSInterface() *JSInterface {
 func NewFromJSObject(obj js.Value) (DOMRectList, error) {
 	var d DOMRectList
 	var err error
-	if dli := GetJSInterface(); dli != nil {
-		if obj.InstanceOf(dli.objectInterface) {
+	if dli := GetInterface(); !dli.IsNull() {
+		if obj.InstanceOf(dli) {
 			d.BaseObject = d.SetObject(obj)
 
 		} else {

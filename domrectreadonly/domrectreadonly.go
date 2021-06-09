@@ -9,21 +9,16 @@ import (
 
 var singleton sync.Once
 
-var domrectreadonlyinterface *JSInterface
+var domrectreadonlyinterface js.Value
 
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
-
-//GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+//GetInterface get teh JS interface of broadcast channel
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var domrectreadonlyinstance JSInterface
+
 		var err error
-		if domrectreadonlyinstance.objectInterface, err = js.Global().GetWithErr("DOMRectReadOnly"); err == nil {
-			domrectreadonlyinterface = &domrectreadonlyinstance
+		if domrectreadonlyinterface, err = js.Global().GetWithErr("DOMRectReadOnly"); err != nil {
+			domrectreadonlyinterface = js.Null()
 		}
 	})
 
@@ -39,9 +34,9 @@ func New() (DOMRectReadOnly, error) {
 
 	var d DOMRectReadOnly
 
-	if di := GetJSInterface(); di != nil {
+	if di := GetInterface(); !di.IsNull() {
 
-		d.BaseObject = d.SetObject(di.objectInterface.New())
+		d.BaseObject = d.SetObject(di.New())
 		return d, nil
 	}
 	return d, ErrNotImplemented
@@ -50,8 +45,8 @@ func New() (DOMRectReadOnly, error) {
 func NewFromJSObject(obj js.Value) (DOMRectReadOnly, error) {
 	var d DOMRectReadOnly
 	var err error
-	if di := GetJSInterface(); di != nil {
-		if obj.InstanceOf(di.objectInterface) {
+	if di := GetInterface(); !di.IsNull() {
+		if obj.InstanceOf(di) {
 			d.BaseObject = d.SetObject(obj)
 
 		} else {

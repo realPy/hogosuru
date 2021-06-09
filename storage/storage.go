@@ -11,22 +11,18 @@ import (
 
 var singleton sync.Once
 
-var storageinterface *JSInterface
+var storageinterface js.Value
 
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
-
-//GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+//GetInterface get teh JS interface of broadcast channel
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var storageinstance JSInterface
+
 		var err error
-		if storageinstance.objectInterface, err = js.Global().GetWithErr("Storage"); err == nil {
-			storageinterface = &storageinstance
+		if storageinterface, err = js.Global().GetWithErr("Storage"); err != nil {
+			storageinterface = js.Null()
 		}
+
 	})
 
 	return storageinterface
@@ -39,8 +35,8 @@ type Storage struct {
 func NewFromJSObject(obj js.Value) (Storage, error) {
 	var s Storage
 
-	if si := GetJSInterface(); si != nil {
-		if obj.InstanceOf(si.objectInterface) {
+	if si := GetInterface(); !si.IsNull() {
+		if obj.InstanceOf(si) {
 			s.BaseObject = s.SetObject(obj)
 			return s, nil
 		}

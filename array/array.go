@@ -10,24 +10,18 @@ import (
 
 var singleton sync.Once
 
-var arrayinterface *JSInterface
+var arrayinterface js.Value
 
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
-
-//GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+//GetInterface get teh JS interface of broadcast channel
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var arrayinstance JSInterface
+
 		var err error
-		if arrayinstance.objectInterface, err = js.Global().GetWithErr("Array"); err == nil {
-			arrayinterface = &arrayinstance
+		if arrayinterface, err = js.Global().GetWithErr("Array"); err != nil {
+			arrayinterface = js.Null()
 		}
 	})
-
 	return arrayinterface
 }
 
@@ -40,9 +34,9 @@ func NewEmpty(size int) (Array, error) {
 
 	var a Array
 
-	if ai := GetJSInterface(); ai != nil {
+	if ai := GetInterface(); !ai.IsNull() {
 
-		a.BaseObject = a.SetObject(ai.objectInterface.New(js.ValueOf(size)))
+		a.BaseObject = a.SetObject(ai.New(js.ValueOf(size)))
 		return a, nil
 	}
 	return a, ErrNotImplemented
@@ -55,7 +49,7 @@ func From(iterable interface{}, f ...func(interface{}) interface{}) (Array, erro
 	var opts []interface{}
 	var jsfunc js.Func
 
-	if ai := GetJSInterface(); ai != nil {
+	if ai := GetInterface(); !ai.IsNull() {
 
 		if objGo, ok := iterable.(baseobject.ObjectFrom); ok {
 			opts = append(opts, objGo.JSObject())
@@ -72,7 +66,7 @@ func From(iterable interface{}, f ...func(interface{}) interface{}) (Array, erro
 			opts = append(opts, jsfunc)
 
 		}
-		if obj, err = ai.objectInterface.CallWithErr("from", opts...); err == nil {
+		if obj, err = ai.CallWithErr("from", opts...); err == nil {
 			a.BaseObject = a.SetObject(obj)
 		}
 
@@ -98,8 +92,8 @@ func New(values ...interface{}) (Array, error) {
 		}
 
 	}
-	if ai := GetJSInterface(); ai != nil {
-		a.BaseObject = a.SetObject(ai.objectInterface.New(arrayJS...))
+	if ai := GetInterface(); !ai.IsNull() {
+		a.BaseObject = a.SetObject(ai.New(arrayJS...))
 		return a, nil
 	}
 	return a, ErrNotImplemented
@@ -109,8 +103,8 @@ func New(values ...interface{}) (Array, error) {
 func NewFromJSObject(obj js.Value) (Array, error) {
 	var a Array
 	var err error
-	if ai := GetJSInterface(); ai != nil {
-		if obj.InstanceOf(ai.objectInterface) {
+	if ai := GetInterface(); !ai.IsNull() {
+		if obj.InstanceOf(ai) {
 			a.BaseObject = a.SetObject(obj)
 			return a, nil
 		} else {
@@ -376,9 +370,9 @@ func IsArray(bobj baseobject.BaseObject) (bool, error) {
 	var result bool
 	var obj js.Value
 
-	if ai := GetJSInterface(); ai != nil {
+	if ai := GetInterface(); !ai.IsNull() {
 
-		if obj, err = ai.objectInterface.CallWithErr("isArray", bobj.JSObject()); err == nil {
+		if obj, err = ai.CallWithErr("isArray", bobj.JSObject()); err == nil {
 			if obj.Type() == js.TypeBoolean {
 				result = obj.Bool()
 			} else {

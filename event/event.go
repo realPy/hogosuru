@@ -13,7 +13,7 @@ import (
 
 var singleton sync.Once
 
-var eventinterface *JSInterface
+var eventinterface js.Value
 
 //JSInterface JSInterface struct
 type JSInterface struct {
@@ -25,15 +25,16 @@ type Event struct {
 	baseobject.BaseObject
 }
 
-//GetJSInterface get the JS interface of event
-func GetJSInterface() *JSInterface {
+//GetInterface get the JS interface of event
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var eventinstance JSInterface
+
 		var err error
-		if eventinstance.objectInterface, err = js.Global().GetWithErr("Event"); err == nil {
-			eventinterface = &eventinstance
+		if eventinterface, err = js.Global().GetWithErr("Event"); err != nil {
+			eventinterface = js.Null()
 		}
+
 	})
 
 	return eventinterface
@@ -43,8 +44,8 @@ func GetJSInterface() *JSInterface {
 func New(message string) (Event, error) {
 	var event Event
 
-	if eventi := GetJSInterface(); eventi != nil {
-		event.BaseObject = event.SetObject(eventi.objectInterface.New(js.ValueOf(message)))
+	if eventi := GetInterface(); !eventi.IsNull() {
+		event.BaseObject = event.SetObject(eventi.New(js.ValueOf(message)))
 		return event, nil
 	}
 	return event, ErrNotImplemented
@@ -53,8 +54,8 @@ func New(message string) (Event, error) {
 func NewFromJSObject(obj js.Value) (Event, error) {
 	var e Event
 
-	if eventi := GetJSInterface(); eventi != nil {
-		if obj.InstanceOf(eventi.objectInterface) {
+	if eventi := GetInterface(); !eventi.IsNull() {
+		if obj.InstanceOf(eventi) {
 			e.BaseObject = e.SetObject(obj)
 			return e, nil
 		}
