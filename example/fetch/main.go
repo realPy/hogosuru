@@ -75,7 +75,7 @@ func main() {
 
 						if j, err := json.Parse(text); err == nil {
 							json := j.Map()
-							fmt.Printf("Hello %s\n", json.(map[string]interface{})["hello"])
+							fmt.Printf("[Hello] %s\n", json.(map[string]interface{})["hello"])
 						} else {
 							fmt.Printf("erreur %s", err)
 						}

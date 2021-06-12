@@ -10,6 +10,7 @@ import (
 
 	"github.com/realPy/hogosuru/arraybuffer"
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/promise"
 	"github.com/realPy/hogosuru/stream"
 	readablestream "github.com/realPy/hogosuru/stream"
 )
@@ -168,43 +169,39 @@ func (b Blob) ArrayBuffer() (arraybuffer.ArrayBuffer, error) {
 	var err error
 	var promisebuffer js.Value
 	var arrayb arraybuffer.ArrayBuffer
+	var p promise.Promise
+	var bobj baseobject.BaseObject
 
 	if promisebuffer, err = b.JSObject().CallWithErr("arrayBuffer"); err == nil {
-		waitsync := make(chan arraybuffer.ArrayBuffer)
-		then := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
-			if arrayb, err = arraybuffer.NewFromJSObject(args[0]); err == nil {
-				waitsync <- arrayb
-			} else {
-				waitsync <- arraybuffer.ArrayBuffer{}
+		if p, err = promise.NewFromJSObject(promisebuffer); err == nil {
+
+			if bobj, err = p.Await(); err == nil {
+				arrayb, err = arraybuffer.NewFromJSObject(bobj.JSObject())
+
 			}
-
-			return nil
-		})
-
-		promisebuffer.Call("then", then)
-		arrayb = <-waitsync
-
+		}
 	}
+
 	return arrayb, err
 }
 
 func (b Blob) Text() (string, error) {
 	var err error
 	var promisetext js.Value
+	var p promise.Promise
+	var bobj baseobject.BaseObject
 	var text string = ""
 
 	if promisetext, err = b.JSObject().CallWithErr("text"); err == nil {
-		waitsync := make(chan string)
-		then := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		if p, err = promise.NewFromJSObject(promisetext); err == nil {
 
-			waitsync <- args[0].String()
-			return nil
-		})
-
-		promisetext.Call("then", then)
-		text = <-waitsync
+			if bobj, err = p.Await(); err == nil {
+				text = bobj.JSObject().String()
+			}
+		}
 	}
+
 	return text, err
 }
 

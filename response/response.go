@@ -8,9 +8,9 @@ import (
 
 	"syscall/js"
 
-	"github.com/realPy/hogosuru"
 	"github.com/realPy/hogosuru/arraybuffer"
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/promise"
 	"github.com/realPy/hogosuru/uint8array"
 )
 
@@ -145,12 +145,18 @@ func (r Response) Url() (string, error) {
 
 func (r Response) Text() (string, error) {
 
-	var txtObject js.Value
+	var promiseObject js.Value
+	var p promise.Promise
+	var jsTxt baseobject.BaseObject
 	var err error
-	if txtObject, err = r.JSObject().CallWithErr("text"); err == nil {
-		jsTxt := <-hogosuru.Await(txtObject)
-		if len(jsTxt) > 0 {
-			return jsTxt[0].String(), nil
+	if promiseObject, err = r.JSObject().CallWithErr("text"); err == nil {
+		if p, err = promise.NewFromJSObject(promiseObject); err == nil {
+
+			if jsTxt, err = p.Await(); err == nil {
+
+				return jsTxt.JSObject().String(), nil
+
+			}
 		}
 
 	}
@@ -181,14 +187,20 @@ func (r Response) ArrayBuffer() (arraybuffer.ArrayBuffer, error) {
 
 	var ab arraybuffer.ArrayBuffer
 	var err error
-	var arrayObject js.Value
-	if arrayObject, err = r.JSObject().CallWithErr("arrayBuffer"); err == nil {
-		binary := <-hogosuru.Await(arrayObject)
+	var promiseObject js.Value
+	var p promise.Promise
+	var binary baseobject.BaseObject
 
-		if len(binary) > 0 {
+	if promiseObject, err = r.JSObject().CallWithErr("arrayBuffer"); err == nil {
+		if p, err = promise.NewFromJSObject(promiseObject); err == nil {
 
-			ab, err = arraybuffer.NewFromJSObject(binary[0])
+			if binary, err = p.Await(); err == nil {
+
+				ab, err = arraybuffer.NewFromJSObject(binary.JSObject())
+			}
+
 		}
+
 	}
 	return ab, err
 

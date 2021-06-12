@@ -39,6 +39,53 @@ func md5File(f file.File) string {
 	return ""
 }
 
+func sha256FileStream(f file.File) string {
+
+	if stream, err := f.Stream(); err == nil {
+
+		if read, err := stream.GetReader(); err == nil {
+			donechan := make(chan bool)
+
+			hashsha256 := sha256.New()
+
+			read.AsyncRead(func(b []byte, err error) {
+				if err == nil {
+					hashsha256.Write(b)
+				} else {
+					donechan <- true
+
+				}
+
+			})
+			/*
+
+				var n int
+				var err error
+
+				hashsha256 := sha256.New()
+
+				for {
+					n, err = read.Read(data)
+
+					hashsha256.Write(data[:n])
+					if err != nil {
+						break
+					}
+				}
+				if err == io.EOF {
+					return hex.EncodeToString(hashsha256.Sum(nil))
+				}
+			*/
+			<-donechan
+
+			return hex.EncodeToString(hashsha256.Sum(nil))
+		} else {
+			println(err.Error())
+		}
+	}
+	return ""
+}
+
 func sha256File(f file.File) string {
 
 	var buffersize int = 2 * 1024 * 1024
@@ -79,11 +126,13 @@ func dropHandler() js.Func {
 				if files, err = dt.Files(); err == nil {
 					for i := 0; i < files.Length(); i++ {
 						if f, err = files.Item(i); err == nil {
-							md5sum := md5File(f)
-							println(f.Name() + "  MD5: " + md5sum)
-							sha256sum := sha256File(f)
-							println(f.Name() + "  SHA256: " + sha256sum)
 
+							//md5sum := md5File(f)
+							//println(f.Name() + "  MD5: " + md5sum)
+							//sha256sum := sha256File(f)
+							//println(f.Name() + "  SHA256: " + sha256sum)
+							sha256sumStream := sha256FileStream(f)
+							println(f.Name() + "  SHA256 Stream: " + sha256sumStream)
 						}
 					}
 
