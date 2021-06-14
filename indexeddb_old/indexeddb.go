@@ -1,4 +1,4 @@
-package indexeddb
+package indexeddb_old
 
 import (
 	"errors"

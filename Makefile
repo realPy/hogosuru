@@ -1,7 +1,7 @@
 GO=tinygo
 
-.PHONY: array json draganddrop fetch websocket node xmlhttprequest map date promise
-all: array json draganddrop fetch websocket node xmlhttprequest map date promise
+.PHONY: array json draganddrop fetch websocket node xmlhttprequest map date promise indexeddb
+all: array json draganddrop fetch websocket node xmlhttprequest map date promise indexeddb
 
 
 
@@ -13,6 +13,9 @@ date:
 	$(GO) build  -o ./example/static/date.wasm --no-debug -target wasm example/date/main.go
 promise:
 	$(GO) build  -o ./example/static/promise.wasm --no-debug -target wasm example/promise/main.go
+indexeddb:
+	$(GO) build  -o ./example/static/indexeddb.wasm --no-debug -target wasm example/indexeddb/main.go
+	
 node:
 	$(GO) build  -o ./example/static/node.wasm --no-debug -target wasm example/node/main.go
 
