@@ -35,15 +35,15 @@ func (r ReadableStreamDefaultReader) Read(b []byte) (n int, err error) {
 
 		if p, err = promise.NewFromJSObject(promiseread); err == nil {
 
-			p.Async(func(v js.Value) *promise.Promise {
+			p.Async(func(obj baseobject.BaseObject) *promise.Promise {
 
-				if v.Get("done").Bool() == true {
+				if obj.JSObject().Get("done").Bool() == true {
 					err = io.EOF
 					donechan <- true
 					return nil
 				} else {
 					var u8array uint8array.Uint8Array
-					uint8arrayObject := v.Get("value")
+					uint8arrayObject := obj.JSObject().Get("value")
 					if u8array, err = uint8array.NewFromJSObject(uint8arrayObject); err == nil {
 						n, err = u8array.CopyBytes(b)
 					}
@@ -75,16 +75,16 @@ func (r ReadableStreamDefaultReader) asyncRead(preallocateBytes []byte, dataHand
 
 		if p, err = promise.NewFromJSObject(promiseread); err == nil {
 
-			p.Async(func(v js.Value) *promise.Promise {
+			p.Async(func(obj baseobject.BaseObject) *promise.Promise {
 
-				if v.Get("done").Bool() == true {
+				if obj.JSObject().Get("done").Bool() == true {
 					err = io.EOF
 					dataHandle(nil, err)
 					return nil
 				} else {
 					var u8array uint8array.Uint8Array
 
-					uint8arrayObject := v.Get("value")
+					uint8arrayObject := obj.JSObject().Get("value")
 
 					if u8array, err = uint8array.NewFromJSObject(uint8arrayObject); err == nil {
 
@@ -117,8 +117,9 @@ func (r ReadableStreamDefaultReader) asyncRead(preallocateBytes []byte, dataHand
 
 }
 
-func (r ReadableStreamDefaultReader) AsyncRead(dataHandle func([]byte, error)) (n int, err error) {
+func (r ReadableStreamDefaultReader) AsyncRead(dataHandle func([]byte, error)) {
 	//preallocate memory (dont loop with make its slow!)
 	var data []byte = make([]byte, 2*1024*1024)
-	return r.asyncRead(data, dataHandle)
+	r.asyncRead(data, dataHandle)
+
 }

@@ -1,6 +1,12 @@
 package main
 
-import "github.com/realPy/hogosuru/date"
+import (
+	"syscall/js"
+	"time"
+
+	"github.com/realPy/hogosuru/date"
+	"github.com/realPy/hogosuru/promise"
+)
 
 func main() {
 	if d, err := date.New(); err == nil {
@@ -25,6 +31,25 @@ func main() {
 	d1, _ := date.New()
 	ret, _ := d1.ToLocaleString("en-GB", map[string]interface{}{"timeZone": "UTC"})
 	println(ret)
+
+	p1, _ := promise.New(func(p promise.Promise) (interface{}, error) {
+		println("Waiting p1")
+		time.Sleep(8 * time.Second)
+		println("End p1")
+		return js.ValueOf("p1"), nil
+	})
+
+	p2, _ := promise.New(func(p promise.Promise) (interface{}, error) {
+		println("Waiting p2")
+		time.Sleep(3 * time.Second)
+		println("End p2")
+		return js.ValueOf("p2"), nil
+	})
+
+	p3, _ := promise.Any(p1, p2)
+
+	data, _ := p3.Await()
+	println("First elem response", data.String())
 
 	ch := make(chan struct{})
 	<-ch

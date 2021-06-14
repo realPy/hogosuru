@@ -8,6 +8,7 @@ import (
 
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/promise"
 	jsresponse "github.com/realPy/hogosuru/response"
 )
@@ -62,10 +63,10 @@ func NewFetch(urlfetch *url.URL, method string, headers *map[string]interface{},
 		promisefetchobj := fetchi.Invoke(urlfetch.String(), arg)
 		if p, err = promise.NewFromJSObject(promisefetchobj); err == nil {
 
-			p.Async(func(v js.Value) *promise.Promise {
+			p.Async(func(obj baseobject.BaseObject) *promise.Promise {
 
 				var r jsresponse.Response
-				r, err = jsresponse.NewFromJSObject(v)
+				r, err = jsresponse.NewFromJSObject(obj.JSObject())
 				handlerResponse(r, err)
 
 				return nil

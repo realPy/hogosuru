@@ -44,7 +44,6 @@ func sha256FileStream(f file.File) string {
 	if stream, err := f.Stream(); err == nil {
 
 		if read, err := stream.GetReader(); err == nil {
-			donechan := make(chan bool)
 
 			hashsha256 := sha256.New()
 
@@ -52,7 +51,8 @@ func sha256FileStream(f file.File) string {
 				if err == nil {
 					hashsha256.Write(b)
 				} else {
-					donechan <- true
+					//donechan <- true
+					println(f.Name() + "  SHA256 Stream: " + hex.EncodeToString(hashsha256.Sum(nil)))
 
 				}
 
@@ -76,9 +76,7 @@ func sha256FileStream(f file.File) string {
 					return hex.EncodeToString(hashsha256.Sum(nil))
 				}
 			*/
-			<-donechan
 
-			return hex.EncodeToString(hashsha256.Sum(nil))
 		} else {
 			println(err.Error())
 		}
@@ -131,8 +129,8 @@ func dropHandler() js.Func {
 							//println(f.Name() + "  MD5: " + md5sum)
 							//sha256sum := sha256File(f)
 							//println(f.Name() + "  SHA256: " + sha256sum)
-							sha256sumStream := sha256FileStream(f)
-							println(f.Name() + "  SHA256 Stream: " + sha256sumStream)
+							sha256FileStream(f)
+
 						}
 					}
 

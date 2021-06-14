@@ -189,12 +189,14 @@ func Pair(keypair js.Value) (GOValue, GOValue) {
 */
 
 func String(object js.Value) string {
-	s, _ := StringWithErr(object)
-	return s
+	return object.String()
+
+	/*	s, _ := StringWithErr(object)
+		return s*/
 }
 
 //String return the string javascript value represent the object
-func StringWithErr(object js.Value) (string, error) {
+func ToStringWithErr(object js.Value) (string, error) {
 
 	if object.Type() == js.TypeObject {
 		if value, err := object.CallWithErr("toString"); err == nil {

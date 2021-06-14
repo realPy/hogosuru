@@ -77,7 +77,7 @@ func (l Storage) GetItem(key string) (string, error) {
 	var err error
 	var itemObject js.Value
 	if itemObject, err = l.JSObject().CallWithErr("getItem", js.ValueOf(key)); err == nil {
-		return baseobject.StringWithErr(itemObject)
+		return baseobject.ToStringWithErr(itemObject)
 	}
 	return "", err
 }
@@ -97,7 +97,7 @@ func (l Storage) Key(index int) (string, error) {
 	var err error
 	var itemObject js.Value
 	if itemObject, err = l.JSObject().CallWithErr("key", js.ValueOf(index)); err == nil {
-		return baseobject.StringWithErr(itemObject)
+		return baseobject.ToStringWithErr(itemObject)
 	}
 	return "", err
 }

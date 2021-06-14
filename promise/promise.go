@@ -73,12 +73,15 @@ func NewFromJSObject(obj js.Value) (Promise, error) {
 	return p, err
 }
 
-func (p Promise) Async(resolve func(js.Value) *Promise, reject func(error)) error {
+func (p Promise) Async(resolve func(baseobject.BaseObject) *Promise, reject func(error)) error {
 	var err error
+	var obj baseobject.BaseObject
 	resolveFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
 		if len(args) > 0 {
-			if p := resolve(args[0]); p != nil {
+			obj, err = baseobject.NewFromJSObject(args[0])
+
+			if p := resolve(obj); p != nil {
 				return p.JSObject()
 			}
 
@@ -98,16 +101,48 @@ func (p Promise) Async(resolve func(js.Value) *Promise, reject func(error)) erro
 	return err
 }
 
-func (p Promise) All(arrpromise array.Array) (Promise, error) {
+func iterablePromises(method string, values ...interface{}) (Promise, error) {
 	var err error
 	var pr Promise
 	var promiseobj js.Value
+	var arr array.Array
 
-	if promiseobj, err = p.JSObject().CallWithErr("all", arrpromise.JSObject()); err == nil {
-		pr, err = NewFromJSObject(promiseobj)
+	var arrayJS []interface{}
+	if pi := GetInterface(); !pi.IsNull() {
+		for _, value := range values {
+			if objGo, ok := value.(baseobject.ObjectFrom); ok {
+				arrayJS = append(arrayJS, objGo.JSObject())
+			} else {
+				arrayJS = append(arrayJS, js.ValueOf(value))
+			}
 
+		}
+		if arr, err = array.New(arrayJS...); err == nil {
+			if promiseobj, err = pi.CallWithErr(method, arr.JSObject()); err == nil {
+				pr, err = NewFromJSObject(promiseobj)
+			}
+		}
+	} else {
+		err = ErrNotImplemented
 	}
+
 	return pr, err
+}
+
+func All(values ...interface{}) (Promise, error) {
+	return iterablePromises("all", values...)
+
+}
+func AllSettled(values ...interface{}) (Promise, error) {
+	return iterablePromises("allSettled", values...)
+}
+
+func Any(values ...interface{}) (Promise, error) {
+	return iterablePromises("any", values...)
+}
+
+func Race(values ...interface{}) (Promise, error) {
+	return iterablePromises("race", values...)
 }
 
 func (p Promise) Catch(reject func(error)) error {
@@ -122,6 +157,16 @@ func (p Promise) Catch(reject func(error)) error {
 	return err
 }
 
+func (p Promise) Finally(f func()) error {
+	var err error
+	finallyFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		f()
+		return nil
+	})
+	_, err = p.JSObject().CallWithErr("finally", finallyFunc)
+	return err
+}
+
 func (p Promise) Await() (baseobject.BaseObject, error) {
 	var obj baseobject.BaseObject
 	var err error
@@ -129,8 +174,8 @@ func (p Promise) Await() (baseobject.BaseObject, error) {
 
 	ch := make(chan interface{})
 
-	err = p.Async(func(v js.Value) *Promise {
-		ch <- v
+	err = p.Async(func(obj baseobject.BaseObject) *Promise {
+		ch <- obj
 		return nil
 	}, func(e error) {
 
@@ -139,14 +184,10 @@ func (p Promise) Await() (baseobject.BaseObject, error) {
 	returnvalue := <-ch
 
 	if err, ok = returnvalue.(error); !ok {
-		if jsobj, ok := returnvalue.(js.Value); ok {
-
-			obj, err = baseobject.NewFromJSObject(jsobj)
-
-		} else {
+		if obj, ok = returnvalue.(baseobject.BaseObject); !ok {
 			err = ErrResultPromiseError
-		}
 
+		}
 	}
 
 	return obj, err
