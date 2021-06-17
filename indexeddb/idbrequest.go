@@ -1,5 +1,7 @@
 package indexeddb
 
+// https://developer.mozilla.org/fr/docs/Web/API/IDBRequest
+
 import (
 	"sync"
 	"syscall/js"
@@ -23,7 +25,7 @@ func IDBRequestGetInterface() js.Value {
 	singletonIDBRequest.Do(func() {
 
 		var err error
-		if idbrequestinterface, err = js.Global().GetWithErr("IDBBRequest"); err != nil {
+		if idbrequestinterface, err = js.Global().GetWithErr("IDBRequest"); err != nil {
 			idbrequestinterface = js.Null()
 		}
 	})
@@ -36,9 +38,8 @@ func IDBRequestNewFromJSObject(obj js.Value) (IDBRequest, error) {
 	if ai := IDBRequestGetInterface(); !ai.IsNull() {
 		if obj.InstanceOf(ai) {
 			i.BaseObject = i.SetObject(obj)
-			return i, nil
 		} else {
-			err = ErrNotAnIDBOpenRequest
+			err = ErrNotAnIDBRequest
 		}
 	} else {
 		err = ErrNotImplemented
@@ -83,4 +84,42 @@ func (i IDBRequest) Error() (string, error) {
 
 func (i IDBRequest) ReadyState() (string, error) {
 	return i.getStringAttribute("readystate")
+}
+
+func (i IDBRequest) getObjectAttribute(attribute string) (baseobject.BaseObject, error) {
+	var err error
+	var obj js.Value
+	var bobj baseobject.BaseObject
+
+	if obj, err = i.JSObject().GetWithErr(attribute); err == nil {
+		if obj.IsNull() {
+			err = baseobject.ErrNotAnObject
+
+		} else {
+
+			bobj, err = baseobject.NewFromJSObject(obj)
+		}
+	}
+
+	return bobj, err
+}
+
+func (i IDBRequest) Result() (baseobject.BaseObject, error) {
+	return i.getObjectAttribute("result")
+}
+
+func (i IDBRequest) Source() (baseobject.BaseObject, error) {
+	return i.getObjectAttribute("source")
+}
+
+func (i IDBRequest) Transaction() (IDBTransaction, error) {
+	var err error
+	var obj baseobject.BaseObject
+	var it IDBTransaction
+
+	if obj, err = i.getObjectAttribute("transaction"); err == nil {
+		it, err = IDBTransactionNewFromJSObject(obj.JSObject())
+
+	}
+	return it, err
 }

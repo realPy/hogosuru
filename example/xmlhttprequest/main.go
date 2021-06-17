@@ -63,6 +63,7 @@ func main() {
 		})
 		xhr.SendForm(f)
 	}
+
 	ch := make(chan struct{})
 	<-ch
 

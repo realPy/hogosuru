@@ -1,5 +1,7 @@
 package indexeddb
 
+// https://developer.mozilla.org/fr/docs/Web/API/IDBFactory
+
 import (
 	"sync"
 	"syscall/js"
@@ -48,7 +50,6 @@ func IDBFactoryNewFromJSObject(obj js.Value) (IDBFactory, error) {
 	if ai := GetIDBFactoryInterface(); !ai.IsNull() {
 		if obj.InstanceOf(ai) {
 			i.BaseObject = i.SetObject(obj)
-			return i, nil
 		} else {
 			err = ErrNotAnIDBFactory
 		}
@@ -59,9 +60,9 @@ func IDBFactoryNewFromJSObject(obj js.Value) (IDBFactory, error) {
 	return i, err
 }
 
-func (f IDBFactory) genericRequest(method string, dbname string, option ...string) (IDBOpenRequest, error) {
+func (f IDBFactory) genericRequest(method string, dbname string, option ...string) (IDBOpenDBRequest, error) {
 	var err error
-	var i IDBOpenRequest
+	var i IDBOpenDBRequest
 	var idbobj js.Value
 
 	var arrayJS []interface{}
@@ -72,19 +73,20 @@ func (f IDBFactory) genericRequest(method string, dbname string, option ...strin
 	}
 
 	if idbobj, err = f.JSObject().CallWithErr(method, arrayJS...); err == nil {
-		i, err = IDBOpenRequestNewFromJSObject(idbobj)
+		i, err = IDBOpenDBRequestNewFromJSObject(idbobj)
+
 	}
 
 	return i, err
 
 }
 
-func (f IDBFactory) Open(dbname string, option ...string) (IDBOpenRequest, error) {
+func (f IDBFactory) Open(dbname string, option ...string) (IDBOpenDBRequest, error) {
 
 	return f.genericRequest("open", dbname, option...)
 }
 
-func (f IDBFactory) DeleteDatabase(dbname string, option ...string) (IDBOpenRequest, error) {
+func (f IDBFactory) DeleteDatabase(dbname string, option ...string) (IDBOpenDBRequest, error) {
 	return f.genericRequest("deleteDatabase", dbname, option...)
 
 }

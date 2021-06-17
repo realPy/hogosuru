@@ -76,10 +76,13 @@ func (h HtmlElement) getAttributeString(attribute string) (string, error) {
 	var valueStr = ""
 
 	if obj, err = h.JSObject().GetWithErr(attribute); err == nil {
+		if obj.Type() == js.TypeString {
+			valueStr = obj.String()
+		} else {
+			err = baseobject.ErrObjectNotString
+		}
 
-		valueStr = obj.String()
 	}
-
 	return valueStr, err
 
 }

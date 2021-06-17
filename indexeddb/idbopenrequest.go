@@ -1,5 +1,7 @@
 package indexeddb
 
+// https://developer.mozilla.org/fr/docs/Web/API/IDBOpenDBRequest
+
 import (
 	"sync"
 	"syscall/js"
@@ -8,35 +10,34 @@ import (
 )
 
 //IDBOpenRequest struct
-type IDBOpenRequest struct {
+type IDBOpenDBRequest struct {
 	IDBRequest
 }
 
 var singletonIDBOpenRequest sync.Once
 
-var idbopenrequestinterface js.Value
+var idbopendbrequestinterface js.Value
 
-func IDBOpenRequestGetInterface() js.Value {
+func IDBOpenDBRequestGetInterface() js.Value {
 
-	singletonIDBRequest.Do(func() {
+	singletonIDBOpenRequest.Do(func() {
 
 		var err error
-		if idbopenrequestinterface, err = js.Global().GetWithErr("IDBOpenDBRequest"); err != nil {
-			idbopenrequestinterface = js.Null()
+		if idbopendbrequestinterface, err = js.Global().GetWithErr("IDBOpenDBRequest"); err != nil {
+			idbopendbrequestinterface = js.Null()
 		}
 	})
-	return idbrequestinterface
+	return idbopendbrequestinterface
 }
 
-func IDBOpenRequestNewFromJSObject(obj js.Value) (IDBOpenRequest, error) {
-	var i IDBOpenRequest
+func IDBOpenDBRequestNewFromJSObject(obj js.Value) (IDBOpenDBRequest, error) {
+	var i IDBOpenDBRequest
 	var err error
-	if ai := IDBOpenRequestGetInterface(); !ai.IsNull() {
+	if ai := IDBOpenDBRequestGetInterface(); !ai.IsNull() {
 		if obj.InstanceOf(ai) {
 			i.BaseObject = i.SetObject(obj)
-			return i, nil
 		} else {
-			err = ErrNotAnIDBOpenRequest
+			err = ErrNotAnIDBOpenDBRequest
 		}
 	} else {
 		err = ErrNotImplemented
@@ -45,12 +46,12 @@ func IDBOpenRequestNewFromJSObject(obj js.Value) (IDBOpenRequest, error) {
 	return i, err
 }
 
-func (i IDBOpenRequest) OnBlocked(handler func(e event.Event)) error {
+func (i IDBOpenDBRequest) OnBlocked(handler func(e event.Event)) error {
 
 	return i.AddEventListener("blocked", handler)
 }
 
-func (i IDBOpenRequest) OnUpgradeNeeded(handler func(e event.Event)) error {
+func (i IDBOpenDBRequest) OnUpgradeNeeded(handler func(e event.Event)) error {
 
-	return i.AddEventListener("onupgradeneeded", handler)
+	return i.AddEventListener("upgradeneeded", handler)
 }
