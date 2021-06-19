@@ -318,7 +318,7 @@ func (a Array) ForEach(f func(interface{})) error {
 	})
 
 	_, err = a.JSObject().CallWithErr("forEach", jsfunc)
-
+	jsfunc.Release()
 	return err
 }
 

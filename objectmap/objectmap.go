@@ -131,7 +131,7 @@ func (o ObjectMap) ForEach(f func(ObjectMap, interface{}, interface{})) error {
 	})
 
 	_, err = o.JSObject().CallWithErr("forEach", jsfunc)
-
+	jsfunc.Release()
 	return err
 }
 
