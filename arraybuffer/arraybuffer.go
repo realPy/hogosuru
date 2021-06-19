@@ -8,27 +8,24 @@ import (
 
 	"syscall/js"
 
-	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/baseobject"
 )
 
 var singleton sync.Once
 
-var arraybufferinterface *JSInterface
+var arraybufferinterface js.Value
 
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
-
-//GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+//GetInterface get teh JS interface of broadcast channel
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var arraybufferinstance JSInterface
 		var err error
-		if arraybufferinstance.objectInterface, err = js.Global().GetWithErr("ArrayBuffer"); err == nil {
-			arraybufferinterface = &arraybufferinstance
+		if arraybufferinterface, err = js.Global().GetWithErr("ArrayBuffer"); err != nil {
+			arraybufferinterface = js.Null()
 		}
+	})
+	baseobject.Register(arraybufferinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
 	})
 
 	return arraybufferinterface
@@ -36,16 +33,16 @@ func GetJSInterface() *JSInterface {
 
 //ArrayBuffer struct
 type ArrayBuffer struct {
-	object.Object
+	baseobject.BaseObject
 }
 
 func New(size int) (ArrayBuffer, error) {
 
 	var a ArrayBuffer
 
-	if ai := GetJSInterface(); ai != nil {
+	if ai := GetInterface(); !ai.IsNull() {
 
-		a.Object = a.SetObject(ai.objectInterface.New(js.ValueOf(size)))
+		a.BaseObject = a.SetObject(ai.New(js.ValueOf(size)))
 		return a, nil
 	}
 
@@ -55,9 +52,9 @@ func New(size int) (ArrayBuffer, error) {
 func NewFromJSObject(obj js.Value) (ArrayBuffer, error) {
 	var a ArrayBuffer
 
-	if ai := GetJSInterface(); ai != nil {
-		if obj.InstanceOf(ai.objectInterface) {
-			a.Object = a.SetObject(obj)
+	if ai := GetInterface(); !ai.IsNull() {
+		if obj.InstanceOf(ai) {
+			a.BaseObject = a.SetObject(obj)
 			return a, nil
 		}
 	}
@@ -73,7 +70,7 @@ func (a ArrayBuffer) ByteLength() (int, error) {
 		if byteLengthObject.Type() == js.TypeNumber {
 			return byteLengthObject.Int(), nil
 		} else {
-			return 0, object.ErrObjectNotNumber
+			return 0, baseobject.ErrObjectNotNumber
 		}
 
 	}

@@ -4,26 +4,21 @@ import (
 	"sync"
 	"syscall/js"
 
-	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/baseobject"
 )
 
 var singleton sync.Once
 
-var readablestreaminterface *JSInterface
+var readablestreaminterface js.Value
 
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
-
-//GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+//GetInterface get teh JS interface of broadcast channel
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var readablestreaminstance JSInterface
+
 		var err error
-		if readablestreaminstance.objectInterface, err = js.Global().GetWithErr("ReadableStream"); err == nil {
-			readablestreaminterface = &readablestreaminstance
+		if readablestreaminterface, err = js.Global().GetWithErr("ReadableStream"); err != nil {
+			readablestreaminterface = js.Null()
 		}
 	})
 
@@ -31,15 +26,15 @@ func GetJSInterface() *JSInterface {
 }
 
 type ReadableStream struct {
-	object.Object
+	baseobject.BaseObject
 }
 
 func NewReadableStreamFromJSObject(obj js.Value) (ReadableStream, error) {
 	var r ReadableStream
 
-	if rsi := GetJSInterface(); rsi != nil {
-		if obj.InstanceOf(rsi.objectInterface) {
-			r.Object = r.SetObject(obj)
+	if rsi := GetInterface(); !rsi.IsNull() {
+		if obj.InstanceOf(rsi) {
+			r.BaseObject = r.SetObject(obj)
 			return r, nil
 
 		}

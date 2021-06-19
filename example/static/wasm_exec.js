@@ -504,6 +504,16 @@
 				return event.result;
 			};
 		}
+
+		_makeAsyncFuncWrapper(id) {
+			const go = this;
+			return async function () {
+				const event = { id: id, this: this, args: arguments };
+				go._pendingEvent = event;
+				go._resume();
+				return event.result;
+			};
+		}
 	}
 
 	if (

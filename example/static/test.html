@@ -1,0 +1,18 @@
+<html>  
+    <head>
+        <meta charset="utf-8"/>
+       
+        <script>
+          function toto() {
+
+            navigator.clipboard.readText().then(
+  clipText => console.log("--->",clipText));
+          }
+        </script>
+    </head>
+    <body>
+
+      <input type="button" onclick="toto()">
+      Open your developer console json is extract with JSON API
+    </body>
+</html>  

@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/md5"
+	"crypto/sha256"
 	"encoding/hex"
 	"io"
 	"syscall/js"
@@ -38,6 +39,76 @@ func md5File(f file.File) string {
 	return ""
 }
 
+func sha256FileStream(f file.File) string {
+
+	if stream, err := f.Stream(); err == nil {
+
+		if read, err := stream.GetReader(); err == nil {
+
+			hashsha256 := sha256.New()
+
+			read.AsyncRead(func(b []byte, err error) {
+				if err == nil {
+					hashsha256.Write(b)
+				} else {
+					//donechan <- true
+					println(f.Name() + "  SHA256 Stream: " + hex.EncodeToString(hashsha256.Sum(nil)))
+
+				}
+
+			})
+			/*
+
+				var n int
+				var err error
+
+				hashsha256 := sha256.New()
+
+				for {
+					n, err = read.Read(data)
+
+					hashsha256.Write(data[:n])
+					if err != nil {
+						break
+					}
+				}
+				if err == io.EOF {
+					return hex.EncodeToString(hashsha256.Sum(nil))
+				}
+			*/
+
+		} else {
+			println(err.Error())
+		}
+	}
+	return ""
+}
+
+func sha256File(f file.File) string {
+
+	var buffersize int = 2 * 1024 * 1024
+	stream := blob.NewBlobStream(f.Blob, buffersize)
+
+	var data []byte = make([]byte, buffersize)
+	var n int
+	var err error
+	hashsha256 := sha256.New()
+
+	for {
+		n, err = stream.Read(data)
+
+		hashsha256.Write(data[:n])
+		if err != nil {
+			break
+		}
+	}
+	if err == io.EOF {
+		return hex.EncodeToString(hashsha256.Sum(nil))
+	}
+
+	return ""
+}
+
 func dropHandler() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
@@ -53,8 +124,12 @@ func dropHandler() js.Func {
 				if files, err = dt.Files(); err == nil {
 					for i := 0; i < files.Length(); i++ {
 						if f, err = files.Item(i); err == nil {
-							md5sum := md5File(f)
-							println(f.Name() + "  MD5: " + md5sum)
+
+							//md5sum := md5File(f)
+							//println(f.Name() + "  MD5: " + md5sum)
+							//sha256sum := sha256File(f)
+							//println(f.Name() + "  SHA256: " + sha256sum)
+							sha256FileStream(f)
 
 						}
 					}
@@ -75,6 +150,8 @@ func dragOverHandler() js.Func {
 
 		if e, err := dragevent.NewFromJSObject(args[0]); err == nil {
 			e.PreventDefault()
+		} else {
+			println("erreur", err.Error())
 		}
 		return nil
 	})

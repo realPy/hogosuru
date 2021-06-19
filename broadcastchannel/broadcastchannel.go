@@ -8,34 +8,29 @@ import (
 
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/messageevent"
-	"github.com/realPy/hogosuru/object"
 )
 
 var singleton sync.Once
 
-var bcinterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var bcinterface js.Value
 
 //Channel struct
 type Channel struct {
-	object.Object
+	baseobject.BaseObject
 	onmessage js.Func
 }
 
 //GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var bcinstance JSInterface
 		var err error
-		if bcinstance.objectInterface, err = js.Global().GetWithErr("BroadcastChannel"); err == nil {
-			bcinterface = &bcinstance
+		if bcinterface, err = js.Global().GetWithErr("BroadcastChannel"); err != nil {
+			bcinterface = js.Null()
 		}
+
 	})
 
 	return bcinterface
@@ -44,12 +39,14 @@ func GetJSInterface() *JSInterface {
 //New Get a new channel broadcast
 func New(channelname string) (Channel, error) {
 	var channel Channel
+	var err error
 
-	if bci := GetJSInterface(); bci != nil {
-		channel.Object = channel.SetObject(bci.objectInterface.New(js.ValueOf(channelname)))
-		return channel, nil
+	if bci := GetInterface(); !bci.IsNull() {
+		channel.BaseObject = channel.SetObject(bci.New(js.ValueOf(channelname)))
+	} else {
+		err = ErrNotImplemented
 	}
-	return channel, ErrNotImplemented
+	return channel, err
 }
 
 //SetReceiveMessage Set the receiver method on channel

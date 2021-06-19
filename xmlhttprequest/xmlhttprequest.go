@@ -16,46 +16,59 @@ import (
 
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/formdata"
-	"github.com/realPy/hogosuru/object"
-	"github.com/realPy/hogosuru/object/event/progressevent"
+	"github.com/realPy/hogosuru/progressevent"
 )
 
 var singleton sync.Once
 
-var xhrinterface *JSInterface
-
-//JSInterface of XML HTTP Request
-type JSInterface struct {
-	objectInterface js.Value
-}
+var xhrinterface js.Value
 
 //XMLHTTPRequest XMLHTTPRequest struct
 type XMLHTTPRequest struct {
-	object.Object
+	baseobject.BaseObject
 }
 
-//GetJSInterface Get the JS XMLHTTPRequest Interface If nil browser doesn't implement it
-func GetJSInterface() *JSInterface {
+//GetInterface Get the JS XMLHTTPRequest Interface If nil browser doesn't implement it
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var xhrinstance JSInterface
-		var err error
-		if xhrinstance.objectInterface, err = js.Global().GetWithErr("XMLHttpRequest"); err == nil {
-			xhrinterface = &xhrinstance
-		}
-	})
 
+		var err error
+		if xhrinterface, err = js.Global().GetWithErr("XMLHttpRequest"); err != nil {
+			xhrinterface = js.Null()
+		}
+
+	})
+	baseobject.Register(xhrinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
+	})
 	return xhrinterface
+}
+
+func NewFromJSObject(obj js.Value) (XMLHTTPRequest, error) {
+	var x XMLHTTPRequest
+	var err error
+	if si := GetInterface(); !si.IsNull() {
+		if obj.InstanceOf(si) {
+			x.BaseObject = x.SetObject(obj)
+
+		}
+	} else {
+		err = ErrNotAXMLHTTPRequest
+	}
+
+	return x, err
 }
 
 //New Get an XML HTTP Request
 func New() (XMLHTTPRequest, error) {
 	var request XMLHTTPRequest
 
-	if xhri := GetJSInterface(); xhri != nil {
+	if xhri := GetInterface(); !xhri.IsNull() {
 
-		request.Object = request.SetObject(xhri.objectInterface.New())
+		request.BaseObject = request.SetObject(xhri.New())
 		return request, nil
 
 	}
@@ -124,11 +137,13 @@ func (x XMLHTTPRequest) SetOnReadyStateChange(handler func(XMLHTTPRequest)) {
 }
 
 //SetOnProgress Set  OnProgress
-func (x XMLHTTPRequest) SetOnProgress(handler func(XMLHTTPRequest, object.GOMap)) {
+func (x XMLHTTPRequest) SetOnProgress(handler func(XMLHTTPRequest, progressevent.ProgressEvent)) {
 	onprogress := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
-		if gomap, err := progressevent.NewProgressEvent(args[0]); err == nil {
-			handler(x, gomap)
+		if pe, err := progressevent.NewFromJSObject(args[0]); err == nil {
+			handler(x, pe)
+		} else {
+			println("erreur " + err.Error())
 		}
 
 		return nil
@@ -145,7 +160,7 @@ func (x XMLHTTPRequest) ReadyState() (int, error) {
 		if readystate.Type() == js.TypeNumber {
 			return readystate.Int(), nil
 		} else {
-			return 0, object.ErrObjectNotNumber
+			return 0, baseobject.ErrObjectNotNumber
 		}
 
 	}
@@ -160,7 +175,7 @@ func (x XMLHTTPRequest) ResponseText() (string, error) {
 		if responseTexte.Type() == js.TypeString {
 			return responseTexte.String(), nil
 		} else {
-			return "", object.ErrObjectNotString
+			return "", baseobject.ErrObjectNotString
 		}
 
 	}
@@ -176,7 +191,7 @@ func (x XMLHTTPRequest) GetResponseHeader(header string) (string, error) {
 		if responseHeader.Type() == js.TypeString {
 			return responseHeader.String(), nil
 		} else {
-			return "", object.ErrObjectNotString
+			return "", baseobject.ErrObjectNotString
 		}
 
 	}
@@ -208,7 +223,7 @@ func (x XMLHTTPRequest) ResponseURL() (string, error) {
 		if responseUrl.Type() == js.TypeString {
 			return responseUrl.String(), nil
 		} else {
-			return "", object.ErrObjectNotString
+			return "", baseobject.ErrObjectNotString
 		}
 
 	}
@@ -233,7 +248,7 @@ func (x XMLHTTPRequest) Status() (int, error) {
 		if readystate.Type() == js.TypeNumber {
 			return readystate.Int(), nil
 		} else {
-			return 0, object.ErrObjectNotNumber
+			return 0, baseobject.ErrObjectNotNumber
 		}
 
 	}
@@ -248,7 +263,7 @@ func (x XMLHTTPRequest) StatusText() (string, error) {
 		if responseUrl.Type() == js.TypeString {
 			return responseUrl.String(), nil
 		} else {
-			return "", object.ErrObjectNotString
+			return "", baseobject.ErrObjectNotString
 		}
 
 	}
@@ -316,17 +331,17 @@ func (x XMLHTTPRequest) UploadSetOnloadend(handler func(XMLHTTPRequest)) {
 }
 
 //UploadSetOnprogress
-func (x XMLHTTPRequest) UploadSetOnprogress(handler func(XMLHTTPRequest, object.GOMap)) {
+func (x XMLHTTPRequest) UploadSetOnprogress(handler func(XMLHTTPRequest, progressevent.ProgressEvent)) {
 
 	var uploadAbstractObject js.Value
 	var err error
-	var gomap object.GOMap
 
 	if uploadAbstractObject, err = x.JSObject().GetWithErr("upload"); err == nil {
 
 		jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-			if gomap, err = progressevent.NewProgressEvent(args[0]); err == nil {
-				handler(x, gomap)
+
+			if pe, err := progressevent.NewFromJSObject(args[0]); err == nil {
+				handler(x, pe)
 			}
 
 			return nil

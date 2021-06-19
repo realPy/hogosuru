@@ -7,4 +7,5 @@ var (
 	ErrNotImplemented   = errors.New("Browser not implemented WebSocket")
 	ErrSendUnknownType  = errors.New("Unknown type send data provide to send method")
 	ErrSetBadBinaryType = errors.New("Bad Binary Type set")
+	ErrNotAWebSocket    = errors.New("Object is not a webasocket")
 )

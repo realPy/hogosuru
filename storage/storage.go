@@ -6,42 +6,40 @@ import (
 	"sync"
 	"syscall/js"
 
-	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/baseobject"
 )
 
 var singleton sync.Once
 
-var storageinterface *JSInterface
+var storageinterface js.Value
 
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
-
-//GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+//GetInterface get teh JS interface of broadcast channel
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var storageinstance JSInterface
-		var err error
-		if storageinstance.objectInterface, err = js.Global().GetWithErr("Storage"); err == nil {
-			storageinterface = &storageinstance
-		}
-	})
 
+		var err error
+		if storageinterface, err = js.Global().GetWithErr("Storage"); err != nil {
+			storageinterface = js.Null()
+		}
+
+	})
+	baseobject.Register(storageinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
+	})
 	return storageinterface
 }
 
 type Storage struct {
-	object.Object
+	baseobject.BaseObject
 }
 
 func NewFromJSObject(obj js.Value) (Storage, error) {
 	var s Storage
 
-	if si := GetJSInterface(); si != nil {
-		if obj.InstanceOf(si.objectInterface) {
-			s.Object = s.SetObject(obj)
+	if si := GetInterface(); !si.IsNull() {
+		if obj.InstanceOf(si) {
+			s.BaseObject = s.SetObject(obj)
 			return s, nil
 		}
 	}
@@ -81,7 +79,7 @@ func (l Storage) GetItem(key string) (string, error) {
 	var err error
 	var itemObject js.Value
 	if itemObject, err = l.JSObject().CallWithErr("getItem", js.ValueOf(key)); err == nil {
-		return object.StringWithErr(itemObject)
+		return baseobject.ToStringWithErr(itemObject)
 	}
 	return "", err
 }
@@ -101,7 +99,7 @@ func (l Storage) Key(index int) (string, error) {
 	var err error
 	var itemObject js.Value
 	if itemObject, err = l.JSObject().CallWithErr("key", js.ValueOf(index)); err == nil {
-		return object.StringWithErr(itemObject)
+		return baseobject.ToStringWithErr(itemObject)
 	}
 	return "", err
 }

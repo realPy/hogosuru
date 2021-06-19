@@ -8,12 +8,12 @@ import (
 
 	"syscall/js"
 
-	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/baseobject"
 )
 
 var singleton sync.Once
 
-var eventinterface *JSInterface
+var eventinterface js.Value
 
 //JSInterface JSInterface struct
 type JSInterface struct {
@@ -22,18 +22,23 @@ type JSInterface struct {
 
 //Event Event struct
 type Event struct {
-	object.Object
+	baseobject.BaseObject
 }
 
-//GetJSInterface get the JS interface of event
-func GetJSInterface() *JSInterface {
+//GetInterface get the JS interface of event
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var eventinstance JSInterface
+
 		var err error
-		if eventinstance.objectInterface, err = js.Global().GetWithErr("Event"); err == nil {
-			eventinterface = &eventinstance
+		if eventinterface, err = js.Global().GetWithErr("Event"); err != nil {
+			eventinterface = js.Null()
 		}
+
+	})
+
+	baseobject.Register(eventinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
 	})
 
 	return eventinterface
@@ -43,8 +48,8 @@ func GetJSInterface() *JSInterface {
 func New(message string) (Event, error) {
 	var event Event
 
-	if eventi := GetJSInterface(); eventi != nil {
-		event.Object = event.SetObject(eventi.objectInterface.New(js.ValueOf(message)))
+	if eventi := GetInterface(); !eventi.IsNull() {
+		event.BaseObject = event.SetObject(eventi.New(js.ValueOf(message)))
 		return event, nil
 	}
 	return event, ErrNotImplemented
@@ -53,14 +58,37 @@ func New(message string) (Event, error) {
 func NewFromJSObject(obj js.Value) (Event, error) {
 	var e Event
 
-	if eventi := GetJSInterface(); eventi != nil {
-		if obj.InstanceOf(eventi.objectInterface) {
-			e.Object = e.SetObject(obj)
+	if eventi := GetInterface(); !eventi.IsNull() {
+		if obj.InstanceOf(eventi) {
+			e.BaseObject = e.SetObject(obj)
 			return e, nil
 		}
 	}
 
 	return e, ErrNotAnEvent
+}
+
+func (e Event) Target() (interface{}, error) {
+	var err error
+	var obj js.Value
+	var bobj interface{}
+
+	if obj, err = e.JSObject().GetWithErr("target"); err == nil {
+
+		bobj, err = baseobject.Discover(obj)
+	}
+	return bobj, err
+}
+func (e Event) CurrentTarget() (interface{}, error) {
+	var err error
+	var obj js.Value
+	var bobj interface{}
+
+	if obj, err = e.JSObject().GetWithErr("currentTarget"); err == nil {
+
+		bobj, err = baseobject.Discover(obj)
+	}
+	return bobj, err
 }
 
 func (e Event) PreventDefault() error {

@@ -8,9 +8,9 @@ import (
 
 	"syscall/js"
 
-	"github.com/realPy/hogosuru"
 	"github.com/realPy/hogosuru/arraybuffer"
-	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/promise"
 	"github.com/realPy/hogosuru/uint8array"
 )
 
@@ -20,29 +20,25 @@ var (
 
 var singleton sync.Once
 
-var responseinterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var responseinterface js.Value
 
 //FetchResponse struct
 type Response struct {
-	object.Object
+	baseobject.BaseObject
 }
 
-//GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+//GetInterface get teh JS interface of broadcast channel
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var responseinstance JSInterface
 		var err error
-		if responseinstance.objectInterface, err = js.Global().GetWithErr("Response"); err == nil {
-			responseinterface = &responseinstance
+		if responseinterface, err = js.Global().GetWithErr("Response"); err != nil {
+			responseinterface = js.Null()
 		}
 	})
-
+	baseobject.Register(responseinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
+	})
 	return responseinterface
 }
 
@@ -50,8 +46,8 @@ func GetJSInterface() *JSInterface {
 func New() (Response, error) {
 	var r Response
 
-	if ri := GetJSInterface(); ri != nil {
-		r.Object = r.SetObject(ri.objectInterface.New())
+	if ri := GetInterface(); !ri.IsNull() {
+		r.BaseObject = r.SetObject(ri.New())
 		return r, nil
 	}
 	return r, ErrNotImplemented
@@ -60,9 +56,9 @@ func New() (Response, error) {
 func NewFromJSObject(obj js.Value) (Response, error) {
 	var response Response
 
-	if ri := GetJSInterface(); ri != nil {
-		if obj.InstanceOf(ri.objectInterface) {
-			response.Object = response.SetObject(obj)
+	if ri := GetInterface(); !ri.IsNull() {
+		if obj.InstanceOf(ri) {
+			response.BaseObject = response.SetObject(obj)
 			return response, nil
 		}
 	}
@@ -78,6 +74,8 @@ func (r Response) Ok() (bool, error) {
 	if obj, err = r.JSObject().GetWithErr("ok"); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			return obj.Bool(), nil
+		} else {
+			err = baseobject.ErrObjectNotBool
 		}
 	}
 
@@ -92,6 +90,8 @@ func (r Response) Redirected() (bool, error) {
 	if obj, err = r.JSObject().GetWithErr("redirected"); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			return obj.Bool(), nil
+		} else {
+			err = baseobject.ErrObjectNotBool
 		}
 	}
 	return false, err
@@ -147,12 +147,18 @@ func (r Response) Url() (string, error) {
 
 func (r Response) Text() (string, error) {
 
-	var txtObject js.Value
+	var promiseObject js.Value
+	var p promise.Promise
+	var jsTxt baseobject.BaseObject
 	var err error
-	if txtObject, err = r.JSObject().CallWithErr("text"); err == nil {
-		jsTxt := <-hogosuru.Await(txtObject)
-		if len(jsTxt) > 0 {
-			return jsTxt[0].String(), nil
+	if promiseObject, err = r.JSObject().CallWithErr("text"); err == nil {
+		if p, err = promise.NewFromJSObject(promiseObject); err == nil {
+
+			if jsTxt, err = p.Await(); err == nil {
+
+				return jsTxt.JSObject().String(), nil
+
+			}
 		}
 
 	}
@@ -167,6 +173,8 @@ func (r Response) UseFinalURL() (bool, error) {
 	if obj, err = r.JSObject().GetWithErr("useFinalURL"); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			return obj.Bool(), nil
+		} else {
+			err = baseobject.ErrObjectNotBool
 		}
 	}
 	return false, err
@@ -181,14 +189,20 @@ func (r Response) ArrayBuffer() (arraybuffer.ArrayBuffer, error) {
 
 	var ab arraybuffer.ArrayBuffer
 	var err error
-	var arrayObject js.Value
-	if arrayObject, err = r.JSObject().CallWithErr("arrayBuffer"); err == nil {
-		binary := <-hogosuru.Await(arrayObject)
+	var promiseObject js.Value
+	var p promise.Promise
+	var binary baseobject.BaseObject
 
-		if len(binary) > 0 {
+	if promiseObject, err = r.JSObject().CallWithErr("arrayBuffer"); err == nil {
+		if p, err = promise.NewFromJSObject(promiseObject); err == nil {
 
-			ab, err = arraybuffer.NewFromJSObject(binary[0])
+			if binary, err = p.Await(); err == nil {
+
+				ab, err = arraybuffer.NewFromJSObject(binary.JSObject())
+			}
+
 		}
+
 	}
 	return ab, err
 

@@ -6,29 +6,27 @@ import (
 	"sync"
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/event"
 )
 
 var singleton sync.Once
 
-var messageeventinterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var messageeventinterface js.Value
 
 //GetJSInterface get the JS interface of formdata
-func GetJSInterface() *JSInterface {
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var messageeventinstance JSInterface
 		var err error
-		if messageeventinstance.objectInterface, err = js.Global().GetWithErr("MessageEvent"); err == nil {
-			messageeventinterface = &messageeventinstance
+		if messageeventinterface, err = js.Global().GetWithErr("MessageEvent"); err != nil {
+			messageeventinterface = js.Null()
 		}
-	})
 
+	})
+	baseobject.Register(messageeventinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
+	})
 	return messageeventinterface
 }
 
@@ -39,9 +37,9 @@ type MessageEvent struct {
 func NewFromJSObject(obj js.Value) (MessageEvent, error) {
 	var m MessageEvent
 
-	if mi := GetJSInterface(); mi != nil {
-		if obj.InstanceOf(mi.objectInterface) {
-			m.Object = m.SetObject(obj)
+	if mi := GetInterface(); !mi.IsNull() {
+		if obj.InstanceOf(mi) {
+			m.BaseObject = m.SetObject(obj)
 			return m, nil
 
 		}

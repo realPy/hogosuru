@@ -22,7 +22,7 @@ import (
 	"github.com/realPy/hogosuru/indexeddb"
 	"github.com/realPy/hogosuru/indexeddb/idbdatabase"
 	"github.com/realPy/hogosuru/messageevent"
-	"github.com/realPy/hogosuru/object"
+	baseobject "github.com/realPy/hogosuru/object"
 	"github.com/realPy/hogosuru/response"
 	"github.com/realPy/hogosuru/storage"
 	"github.com/realPy/hogosuru/websocket"
@@ -50,7 +50,7 @@ func TestBlob() js.Func {
 		s, _ = c.Text()
 		println("****" + s)
 
-		doc, _ := document.New()
+		doc := document.New()
 
 		files, _ := doc.QuerySelector("[name=file]")
 		if h, err := htmlinputelement.NewFromJSObject(files); err == nil {
@@ -318,7 +318,7 @@ func main() {
 	if channel, err := broadcastchannel.New("TestChannel"); err == nil {
 		channel.SetOnMessage(func(c broadcastchannel.Channel, m messageevent.MessageEvent) {
 			if dataObject, err := m.Data(); err == nil {
-				fmt.Printf("--->%s---\n", dataObject.String())
+				fmt.Printf("--->%s---\n", databaseobject.String())
 			}
 
 		})
@@ -348,7 +348,7 @@ func main() {
 
 		})
 
-		xhr.SetOnProgress(func(x xmlhttprequest.XMLHTTPRequest, g object.GOMap) {
+		xhr.SetOnProgress(func(x xmlhttprequest.XMLHTTPRequest, g baseobject.GOMap) {
 			fmt.Printf("On progress :%s\n", g)
 		})
 		xhr.Send()

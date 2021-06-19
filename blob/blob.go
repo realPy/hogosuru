@@ -9,44 +9,42 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/arraybuffer"
-	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/promise"
 	"github.com/realPy/hogosuru/stream"
 	readablestream "github.com/realPy/hogosuru/stream"
 )
 
 var singleton sync.Once
 
-var blobinterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var blobinterface js.Value
 
 //GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var blobinstance JSInterface
 		var err error
-		if blobinstance.objectInterface, err = js.Global().GetWithErr("Blob"); err == nil {
-			blobinterface = &blobinstance
+		if blobinterface, err = js.Global().GetWithErr("Blob"); err != nil {
+			blobinterface = js.Null()
 		}
+	})
+	baseobject.Register(blobinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
 	})
 
 	return blobinterface
 }
 
 type Blob struct {
-	object.Object
+	baseobject.BaseObject
 }
 
 func New() (Blob, error) {
 
 	var b Blob
-	if bi := GetJSInterface(); bi != nil {
+	if bi := GetInterface(); !bi.IsNull() {
 
-		b.Object = b.SetObject(bi.objectInterface.New())
+		b.BaseObject = b.SetObject(bi.New())
 		return b, nil
 	}
 	return b, ErrNotImplemented
@@ -55,8 +53,8 @@ func New() (Blob, error) {
 func NewWithObject(o js.Value) (Blob, error) {
 
 	var b Blob
-	if bi := GetJSInterface(); bi != nil {
-		b.Object = b.SetObject(bi.objectInterface.New(o))
+	if bi := GetInterface(); !bi.IsNull() {
+		b.BaseObject = b.SetObject(bi.New(o))
 		return b, nil
 	}
 	return b, ErrNotImplemented
@@ -65,9 +63,9 @@ func NewWithObject(o js.Value) (Blob, error) {
 func NewWithArrayBuffer(a arraybuffer.ArrayBuffer) (Blob, error) {
 
 	var b Blob
-	if bi := GetJSInterface(); bi != nil {
+	if bi := GetInterface(); !bi.IsNull() {
 
-		b.Object = b.SetObject(bi.objectInterface.New([]interface{}{a.JSObject()}))
+		b.BaseObject = b.SetObject(bi.New([]interface{}{a.JSObject()}))
 		return b, nil
 	}
 	return b, ErrNotImplemented
@@ -89,8 +87,8 @@ func NewWithUint8Array(u uint8array.Uint8Array) (Blob, error) {
 func NewWithBlob(bl Blob) (Blob, error) {
 
 	var b Blob
-	if bi := GetJSInterface(); bi != nil {
-		b.Object = b.SetObject(bi.objectInterface.New(bl.JSObject()))
+	if bi := GetInterface(); !bi.IsNull() {
+		b.BaseObject = b.SetObject(bi.New(bl.JSObject()))
 		return b, nil
 	}
 	return b, ErrNotImplemented
@@ -99,9 +97,9 @@ func NewWithBlob(bl Blob) (Blob, error) {
 func NewFromJSObject(obj js.Value) (Blob, error) {
 	var b Blob
 
-	if bi := GetJSInterface(); bi != nil {
-		if obj.InstanceOf(bi.objectInterface) {
-			b.Object = b.SetObject(obj)
+	if bi := GetInterface(); !bi.IsNull() {
+		if obj.InstanceOf(bi) {
+			b.BaseObject = b.SetObject(obj)
 			return b, nil
 		}
 	}
@@ -151,7 +149,7 @@ func (b Blob) Slice(begin, end int) (Blob, error) {
 	if blob, err = b.JSObject().CallWithErr("slice", js.ValueOf(begin), js.ValueOf(end)); err == nil {
 		var newblob Blob
 		object := newblob.SetObject(blob)
-		newblob.Object = object
+		newblob.BaseObject = object
 		return newblob, nil
 	}
 	return Blob{}, err
@@ -174,52 +172,48 @@ func (b Blob) ArrayBuffer() (arraybuffer.ArrayBuffer, error) {
 	var err error
 	var promisebuffer js.Value
 	var arrayb arraybuffer.ArrayBuffer
+	var p promise.Promise
+	var bobj baseobject.BaseObject
 
 	if promisebuffer, err = b.JSObject().CallWithErr("arrayBuffer"); err == nil {
-		waitsync := make(chan arraybuffer.ArrayBuffer)
-		then := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
-			if arrayb, err = arraybuffer.NewFromJSObject(args[0]); err == nil {
-				waitsync <- arrayb
-			} else {
-				waitsync <- arraybuffer.ArrayBuffer{}
+		if p, err = promise.NewFromJSObject(promisebuffer); err == nil {
+
+			if bobj, err = p.Await(); err == nil {
+				arrayb, err = arraybuffer.NewFromJSObject(bobj.JSObject())
+
 			}
-
-			return nil
-		})
-
-		promisebuffer.Call("then", then)
-		arrayb = <-waitsync
-
+		}
 	}
+
 	return arrayb, err
 }
 
 func (b Blob) Text() (string, error) {
 	var err error
 	var promisetext js.Value
+	var p promise.Promise
+	var bobj baseobject.BaseObject
 	var text string = ""
 
 	if promisetext, err = b.JSObject().CallWithErr("text"); err == nil {
-		waitsync := make(chan string)
-		then := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		if p, err = promise.NewFromJSObject(promisetext); err == nil {
 
-			waitsync <- args[0].String()
-			return nil
-		})
-
-		promisetext.Call("then", then)
-		text = <-waitsync
+			if bobj, err = p.Await(); err == nil {
+				text = bobj.JSObject().String()
+			}
+		}
 	}
+
 	return text, err
 }
 
-func (b Blob) Append(append object.Object) (Blob, error) {
+func (b Blob) Append(append baseobject.BaseObject) (Blob, error) {
 
 	var blobObject js.Value
 	var arrayblob []interface{} = []interface{}{b.JSObject(), append.JSObject()}
-	if bi := GetJSInterface(); bi != nil {
-		blobObject = bi.objectInterface.New(arrayblob)
+	if bi := GetInterface(); !bi.IsNull() {
+		blobObject = bi.New(arrayblob)
 
 		return NewFromJSObject(blobObject)
 	}

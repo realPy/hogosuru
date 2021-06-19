@@ -35,7 +35,7 @@ func (v Value) CallWithErr(m string, args ...interface{}) (Value, error) {
 	runtime.KeepAlive(argVals)
 	if !ok {
 		if vType := v.Type(); !vType.isObject() { // check here to avoid overhead in success case
-			panic(&ValueError{"Value.Call", vType})
+			return Value{}, errors.New("Value.Call on invalid object")
 		}
 		if propType := v.Get(m).Type(); propType != TypeFunction {
 			return Value{}, errors.New("syscall/js: Value.Call: property " + m + " is not a function, got " + propType.String())
@@ -74,4 +74,16 @@ func CopyBytesToJSWithErr(dst Value, src []byte) (int, error) {
 
 	}
 	return n, nil
+}
+
+func AsyncFuncOf(fn func(this Value, args []Value) interface{}) Func {
+	funcsMu.Lock()
+	id := nextFuncID
+	nextFuncID++
+	funcs[id] = fn
+	funcsMu.Unlock()
+	return Func{
+		id:    id,
+		Value: jsGo.Call("_makeAsyncFuncWrapper", id),
+	}
 }

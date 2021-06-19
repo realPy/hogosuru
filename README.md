@@ -24,8 +24,9 @@ Build
 ```
 docker run --rm -it -w /go/src/hogosuru -v $PWD:/go/src/hogosuru tinygo/tinygo bash 
 cp hogosuru/hogosuru.go /usr/local/go/src/syscall/js/
-tinygo build  -o ./example/wasm_main/wasm.wasm --no-debug -target wasm example/wasm_main/main.go
-tinygo build  -o ./example/wasm_main/dragandrop.wasm --no-debug -target wasm example/wasm_main/dragandrop/main.go
+cp /usr/local/tinygo/targets/wasm_exec.js /go/src/hogosuru/example/static/
+apt-get update && apt-get install make
+make 
 ```
 
 Run server to the the result in js developer console
@@ -48,29 +49,36 @@ All help is welcome. If you are interested by this project, please contact me
 
 |  API/Object |  Implemented Support |  MDN URL |
 |-------------|:--------------------:|----------|
-| Arraybuffer       |  Partial | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer | 
-| Blob              |  Full + stream additional support|  https://developer.mozilla.org/fr/docs/Web/API/Blob |
+| Arraybuffer |  Partial | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer | 
+| Attr | Full | https://developer.mozilla.org/fr/docs/Web/API/Attr |
+| Blob | Full + stream additional support|  https://developer.mozilla.org/fr/docs/Web/API/Blob |
 | Broadcast Channel |  Full |  https://developer.mozilla.org/en-US/docs/Web/API/BroadcastChannel  | 
 | CustomEvent |  Full |  https://developer.mozilla.org/fr/docs/Web/API/CustomEvent |
 | DataTransfer | Partial implemented | https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer |
+| Date| Full | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Date | 
+| Document | Mostly  | https://developer.mozilla.org/fr/docs/Web/API/Document | 
 | DragEvent |  Full |  https://developer.mozilla.org/en-US/docs/Web/API/DragEvent |
+| Element | Full | https://developer.mozilla.org/fr/docs/Web/API/Element | 
 | Event | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/Event |
 | EventTarget | Full | https://developer.mozilla.org/fr/docs/Web/API/EventTarget/EventTarget | 
-| Fetch | Partial implemented  | https://developer.mozilla.org/fr/docs/Web/API/Fetch_API  |
+| Fetch | Partial implemented  | https://developer.mozilla.org/fr/docs/Web/API/Fetch_API |
 | File | Full | https://developer.mozilla.org/fr/docs/Web/API/File |
 | FileList | Full | https://developer.mozilla.org/fr/docs/Web/API/FileList |
 | FormData | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/FormData |
-| HTMLInputElement| Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/HTMLInputElement |
-| Indexedddb | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/IndexedDB_API|
+| HTMLInputElement| Full| https://developer.mozilla.org/fr/docs/Web/API/HTMLInputElement |
+| HTMLCollection| Full | https://developer.mozilla.org/fr/docs/Web/API/HTMLCollection |
+| Indexedddb | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/IndexedDB_API |
 | JSON | Full | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/JSON |
 | MessageEvent | Full | https://developer.mozilla.org/fr/docs/Web/API/MessageEvent |
+| NamedNodeMap | Full | https://developer.mozilla.org/fr/docs/Web/API/NamedNodeMap |
 | Node | Full | https://developer.mozilla.org/en-US/docs/Web/API/Node |
+| NodeList | Considerated at Full (Partial implemented but no more need )| https://developer.mozilla.org/fr/docs/Web/API/NodeList | 
 | Response | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/Response |
 | Storage | Full | https://developer.mozilla.org/fr/docs/Mozilla/Add-ons/WebExtensions/API/storage |
 | Stream | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/Streams_API |
 | uint8array | Partial implemented | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array |
 | WebSocket | Full | https://developer.mozilla.org/fr/docs/Web/API/WebSocket |
-| XMLHttpRequest | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/XMLHttpRequest/XMLHttpRequest
+| XMLHttpRequest | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/XMLHttpRequest/XMLHttpRequest |
 
 
 

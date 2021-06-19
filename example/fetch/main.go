@@ -23,8 +23,8 @@ func main() {
 				if text, err := r.Text(); err == nil {
 
 					if j, err := json.Parse(text); err == nil {
-						jsonGo := j.GoJson()
-						fmt.Printf("Hello %s\n", jsonGo.Get("hello"))
+						json := j.Map()
+						fmt.Printf("Hello %s\n", json.(map[string]interface{})["hello"])
 					} else {
 						fmt.Printf("erreur %s", err)
 					}
@@ -74,8 +74,8 @@ func main() {
 					if text, err := r.Text(); err == nil {
 
 						if j, err := json.Parse(text); err == nil {
-							jsonGo := j.GoJson()
-							fmt.Printf("Hello %s\n", jsonGo.Get("hello"))
+							json := j.Map()
+							fmt.Printf("[Hello] %s\n", json.(map[string]interface{})["hello"])
 						} else {
 							fmt.Printf("erreur %s", err)
 						}

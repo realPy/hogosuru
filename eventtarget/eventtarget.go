@@ -6,13 +6,13 @@ import (
 
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/event"
-	"github.com/realPy/hogosuru/object"
 )
 
 var singleton sync.Once
 
-var eventtargetinterface *JSInterface
+var eventtargetinterface js.Value
 
 //JSInterface JSInterface struct
 type JSInterface struct {
@@ -20,21 +20,25 @@ type JSInterface struct {
 }
 
 //GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var eventtargetinstance JSInterface
 		var err error
-		if eventtargetinstance.objectInterface, err = js.Global().GetWithErr("EventTarget"); err == nil {
-			eventtargetinterface = &eventtargetinstance
+		if eventtargetinterface, err = js.Global().GetWithErr("EventTarget"); err != nil {
+			eventtargetinterface = js.Null()
 		}
+
+	})
+
+	baseobject.Register(eventtargetinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
 	})
 
 	return eventtargetinterface
 }
 
 type EventTarget struct {
-	object.Object
+	event.Event
 	registerFunc map[string]js.Func
 }
 
@@ -42,8 +46,8 @@ func New() (EventTarget, error) {
 
 	var e EventTarget
 
-	if eti := GetJSInterface(); eti != nil {
-		e.Object = e.SetObject(eti.objectInterface.New())
+	if eti := GetInterface(); !eti.IsNull() {
+		e.BaseObject = e.SetObject(eti.New())
 		e.registerFunc = make(map[string]js.Func)
 		return e, nil
 	}
@@ -53,9 +57,9 @@ func New() (EventTarget, error) {
 func NewFromJSObject(obj js.Value) (EventTarget, error) {
 	var e EventTarget
 
-	if eti := GetJSInterface(); eti != nil {
-		if obj.InstanceOf(eti.objectInterface) {
-			e.Object = e.SetObject(obj)
+	if eti := GetInterface(); !eti.IsNull() {
+		if obj.InstanceOf(eti) {
+			e.BaseObject = e.SetObject(obj)
 			e.registerFunc = make(map[string]js.Func)
 			return e, nil
 		}
@@ -64,13 +68,22 @@ func NewFromJSObject(obj js.Value) (EventTarget, error) {
 	return e, ErrNotAnEventTarget
 }
 
-func (e EventTarget) AddEventListener(name string, typeevent string, handler func(this js.Value, args []js.Value) interface{}) error {
+func (e EventTarget) AddEventListener(name string, handler func(e event.Event)) error {
 
 	var err error
 	if handler != nil {
-		cb := js.FuncOf(handler)
+		cb := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+
+			if e, err := event.NewFromJSObject(args[0]); err == nil {
+				handler(e)
+			}
+			return nil
+		})
+		if e.registerFunc == nil {
+			e.registerFunc = make(map[string]js.Func)
+		}
 		e.registerFunc[name] = cb
-		_, err = e.JSObject().CallWithErr("addEventListener", js.ValueOf(typeevent), cb)
+		_, err = e.JSObject().CallWithErr("addEventListener", js.ValueOf(name), cb)
 	}
 
 	return err

@@ -1,18 +1,8 @@
 package object
 
-import (
-	"errors"
-)
+import "errors"
 
 var (
-	//ErrNotAnObject ErrNotAnObject error
-	ErrNotAnObject = errors.New("The given value must be an object")
-	//ErrObjectNotNumber ErrObjectNotNumber error
-	ErrObjectNotNumber = errors.New("The given object is not a number")
-	//ErrObjectNotString ErrObjectNotString error
-	ErrObjectNotString = errors.New("The given object is not a string")
-	//ErrNotAnMEv ErrNotAnMEv error
-	ErrNotAnMEv = errors.New("The given value must be an Message Event")
-	//ErrNotImplemented ErrNotImplemented error
+	ErrNotAnObject    = errors.New("The given value must be a Object")
 	ErrNotImplemented = errors.New("Browser not implemented Object")
 )

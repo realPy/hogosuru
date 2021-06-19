@@ -7,56 +7,54 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/arraybuffer"
-	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/baseobject"
 )
 
 var singleton sync.Once
 
-var uint8arrayinterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var uint8arrayinterface js.Value
 
 //Uint8Array struct
 type Uint8Array struct {
-	object.Object
+	baseobject.BaseObject
 }
 
-//GetJSInterface get teh JS interface of broadcast channel
-func GetJSInterface() *JSInterface {
+//GetInterface get teh JS interface of broadcast channel
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var uint8arrayinstance JSInterface
+
 		var err error
-		if uint8arrayinstance.objectInterface, err = js.Global().GetWithErr("Uint8Array"); err == nil {
-			uint8arrayinterface = &uint8arrayinstance
+		if uint8arrayinterface, err = js.Global().GetWithErr("Uint8Array"); err != nil {
+			uint8arrayinterface = js.Null()
 		}
+
 	})
 
 	return uint8arrayinterface
 }
 
-/*
-func (j *JSInterface) New(obj js.Value) js.Value {
-	return j.objectInterface.New(obj)
-}
-*/
-
 func NewFromArrayBuffer(a arraybuffer.ArrayBuffer) (Uint8Array, error) {
+	var arr Uint8Array
+	var err error
+	if ai := GetInterface(); !ai.IsNull() {
+		uint8arrayObject := GetInterface().New(a.JSObject())
+		arr, err = NewFromJSObject(uint8arrayObject)
 
-	uint8arrayObject := GetJSInterface().objectInterface.New(a.JSObject())
-	return NewFromJSObject(uint8arrayObject)
+	} else {
+		err = ErrNotImplemented
+	}
+
+	return arr, err
 
 }
 
 func NewFromJSObject(obj js.Value) (Uint8Array, error) {
 	var u Uint8Array
 
-	if ui := GetJSInterface(); ui != nil {
-		if obj.InstanceOf(ui.objectInterface) {
-			u.Object = u.SetObject(obj)
+	if ui := GetInterface(); !ui.IsNull() {
+		if obj.InstanceOf(ui) {
+			u.BaseObject = u.SetObject(obj)
 			return u, nil
 		}
 	}

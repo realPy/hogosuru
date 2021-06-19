@@ -15,7 +15,7 @@ func TestChasnnel(t *testing.T) {
 
 				c2.SetOnMessage(func(ch Channel, ev messageevent.MessageEvent) {
 					if dataObject, err := ev.Data(); err == nil {
-						io <- dataObject.String()
+						io <- databaseobject.String()
 					} else {
 						t.Errorf(err.Error())
 					}

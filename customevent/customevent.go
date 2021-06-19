@@ -6,17 +6,13 @@ import (
 
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/event"
 )
 
 var singleton sync.Once
 
-var customeventinterface *JSInterface
-
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+var customeventinterface js.Value
 
 //CustomEvent CustomEvent struct
 type CustomEvent struct {
@@ -24,14 +20,18 @@ type CustomEvent struct {
 }
 
 //GetJSInterface get teh JS interface of event
-func GetJSInterface() *JSInterface {
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var customeventinstance JSInterface
 		var err error
-		if customeventinstance.objectInterface, err = js.Global().GetWithErr("CustomEvent"); err == nil {
-			customeventinterface = &customeventinstance
+		if customeventinterface, err = js.Global().GetWithErr("CustomEvent"); err != nil {
+			customeventinterface = js.Null()
 		}
+
+	})
+
+	baseobject.Register(customeventinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
 	})
 
 	return customeventinterface
@@ -41,9 +41,25 @@ func GetJSInterface() *JSInterface {
 func New(message, detail string) (CustomEvent, error) {
 	var event CustomEvent
 
-	if eventi := GetJSInterface(); eventi != nil {
-		event.Object = event.SetObject(eventi.objectInterface.New(js.ValueOf(message), js.ValueOf(map[string]interface{}{"detail": detail})))
+	if eventi := GetInterface(); !eventi.IsNull() {
+		event.BaseObject = event.SetObject(eventi.New(js.ValueOf(message), js.ValueOf(map[string]interface{}{"detail": detail})))
 		return event, nil
 	}
 	return event, ErrNotImplemented
+}
+
+func NewFromJSObject(obj js.Value) (CustomEvent, error) {
+	var c CustomEvent
+	var err error
+
+	if bi := GetInterface(); !bi.IsNull() {
+		if obj.InstanceOf(bi) {
+			c.BaseObject = c.SetObject(obj)
+
+		}
+	} else {
+		err = ErrNotAnCustomEvent
+	}
+
+	return c, err
 }

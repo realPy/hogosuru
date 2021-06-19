@@ -6,33 +6,32 @@ import (
 	"sync"
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/file"
-	"github.com/realPy/hogosuru/object"
 )
 
 var singleton sync.Once
 
-var filelistinterface *JSInterface
+var filelistinterface js.Value
 
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
-
-//HtmlInputElement struct
+//FileList struct
 type FileList struct {
-	object.Object
+	baseobject.BaseObject
 }
 
 //GetJSInterface get the JS interface of formdata
-func GetJSInterface() *JSInterface {
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var filelistinstance JSInterface
+
 		var err error
-		if filelistinstance.objectInterface, err = js.Global().GetWithErr("FileList"); err == nil {
-			filelistinterface = &filelistinstance
+		if filelistinterface, err = js.Global().GetWithErr("FileList"); err != nil {
+			filelistinterface = js.Null()
 		}
+
+	})
+	baseobject.Register(filelistinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
 	})
 
 	return filelistinterface
@@ -41,9 +40,9 @@ func GetJSInterface() *JSInterface {
 func NewFromJSObject(obj js.Value) (FileList, error) {
 	var f FileList
 
-	if fli := GetJSInterface(); fli != nil {
-		if obj.InstanceOf(fli.objectInterface) {
-			f.Object = f.SetObject(obj)
+	if fli := GetInterface(); !fli.IsNull() {
+		if obj.InstanceOf(fli) {
+			f.BaseObject = f.SetObject(obj)
 			return f, nil
 		}
 	}
