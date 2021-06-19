@@ -29,6 +29,10 @@ func GetInterface() js.Value {
 
 	})
 
+	baseobject.Register(elementinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
+	})
+
 	return elementinterface
 }
 

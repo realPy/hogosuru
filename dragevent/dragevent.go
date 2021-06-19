@@ -7,6 +7,7 @@ import (
 
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	datatransfert "github.com/realPy/hogosuru/datatransfer"
 	"github.com/realPy/hogosuru/event"
 )
@@ -30,6 +31,9 @@ func GetInterface() js.Value {
 			drageventinterface = js.Null()
 		}
 
+	})
+	baseobject.Register(drageventinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
 	})
 
 	return drageventinterface

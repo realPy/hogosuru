@@ -21,6 +21,9 @@ func GetIDBIndexInterface() js.Value {
 		if idbindexinterface, err = js.Global().GetWithErr("IDBIndex"); err != nil {
 			idbindexinterface = js.Null()
 		}
+		baseobject.Register(idbindexinterface, func(v js.Value) (interface{}, error) {
+			return IDBDIndexNewFromJSObject(v)
+		})
 	})
 	return idbindexinterface
 }

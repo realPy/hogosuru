@@ -29,7 +29,9 @@ func GetInterface() js.Value {
 		}
 
 	})
-
+	baseobject.Register(namednodemapinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
+	})
 	return namednodemapinterface
 }
 

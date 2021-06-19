@@ -21,13 +21,26 @@ func main() {
 						if transaction, err := db.Transaction("utilisateur", "readwrite"); err == nil {
 							if store, err := transaction.ObjectStore("utilisateur"); err == nil {
 
-								if req, err := store.Add(map[string]interface{}{"email:": "manu"}); err != nil {
+								if req, err := store.Add(map[string]interface{}{"email": "ouis", "prenom": "manu"}); err != nil {
 									println("erreur", err.Error())
 								} else {
 
 									req.OnSuccess(func(e event.Event) {
-
+										//	store.Put(map[string]interface{}{"email": "oui", "prenom": "bernard"})
 										println("Add successfull")
+
+									})
+
+									req.OnError(func(e event.Event) {
+										e.Export("toto")
+
+										d, _ := e.Target()
+
+										if req, ok := d.(indexeddb.IDBRequest); ok {
+											strerr, _ := req.Error()
+											println("----->", strerr)
+										}
+
 									})
 
 								}
@@ -58,7 +71,8 @@ func main() {
 					if db, err := indexeddb.IDBDatabaseNewFromObject(result); err == nil {
 						if store, err := db.CreateObjectStore("utilisateur", map[string]interface{}{"keyPath": "id", "autoIncrement": true}); err == nil {
 
-							store.CreateIndex("email", "email", map[string]interface{}{"unique": true})
+							store.CreateIndex("email", "emailkey", map[string]interface{}{"unique": true})
+							store.CreateIndex("nom", "nom")
 						} else {
 							println("erreur", err.Error())
 
@@ -78,6 +92,13 @@ func main() {
 		}
 
 	}
+	/*
+		jsfunc := js.AsyncFuncOf(func(this js.Value, args []js.Value) interface{} {
+			println("hello")
+			return nil
+		})
+
+		js.Global().Set("pouet", jsfunc)*/
 
 	ch := make(chan struct{})
 	<-ch

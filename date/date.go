@@ -21,6 +21,9 @@ func GetInterface() js.Value {
 			dateinterface = js.Null()
 		}
 	})
+	baseobject.Register(dateinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
+	})
 
 	return dateinterface
 }

@@ -4,6 +4,7 @@ import (
 	"sync"
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/domrectreadonly"
 )
 
@@ -21,6 +22,9 @@ func GetInterface() js.Value {
 			domrectinterface = js.Null()
 		}
 
+	})
+	baseobject.Register(domrectinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
 	})
 
 	return domrectinterface

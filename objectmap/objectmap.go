@@ -24,13 +24,31 @@ func GetInterface() js.Value {
 		}
 
 	})
-
+	baseobject.Register(mapinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
+	})
 	return mapinterface
 }
 
 //ObjectMap
 type ObjectMap struct {
 	baseobject.BaseObject
+}
+
+func NewFromJSObject(obj js.Value) (ObjectMap, error) {
+	var o ObjectMap
+	var err error
+	if ai := GetInterface(); !ai.IsNull() {
+		if obj.InstanceOf(ai) {
+			o.BaseObject = o.SetObject(obj)
+
+		} else {
+			err = ErrNotAMap
+		}
+	} else {
+		err = ErrNotImplemented
+	}
+	return o, err
 }
 
 func New(values ...interface{}) (ObjectMap, error) {

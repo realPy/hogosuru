@@ -28,6 +28,9 @@ func GetInterface() js.Value {
 			domstringlistinterface = js.Null()
 		}
 	})
+	baseobject.Register(domstringlistinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
+	})
 
 	return domstringlistinterface
 }

@@ -30,6 +30,10 @@ func GetInterface() js.Value {
 		}
 	})
 
+	baseobject.Register(domrectlistinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
+	})
+
 	return domrectlistinterface
 }
 

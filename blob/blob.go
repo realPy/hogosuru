@@ -28,6 +28,9 @@ func GetInterface() js.Value {
 			blobinterface = js.Null()
 		}
 	})
+	baseobject.Register(blobinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
+	})
 
 	return blobinterface
 }

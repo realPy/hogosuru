@@ -27,6 +27,9 @@ func IDBObjectStoreGetInterface() js.Value {
 		if idbobjectstoreinterface, err = js.Global().GetWithErr("IDBObjectStore"); err != nil {
 			idbobjectstoreinterface = js.Null()
 		}
+		baseobject.Register(idbobjectstoreinterface, func(v js.Value) (interface{}, error) {
+			return IDBObjectStoreNewFromJSObject(v)
+		})
 	})
 	return idbobjectstoreinterface
 }
@@ -47,7 +50,7 @@ func IDBObjectStoreNewFromJSObject(obj js.Value) (IDBObjectStore, error) {
 	return i, err
 }
 
-func (i IDBObjectStore) Add(value interface{}, key ...string) (IDBRequest, error) {
+func (i IDBObjectStore) addput(method string, value interface{}, key ...string) (IDBRequest, error) {
 
 	var obj, objAdd js.Value
 	var request IDBRequest
@@ -66,13 +69,16 @@ func (i IDBObjectStore) Add(value interface{}, key ...string) (IDBRequest, error
 		arrayJS = append(arrayJS, js.ValueOf(key[0]))
 	}
 
-	if obj, err = i.JSObject().CallWithErr("add", arrayJS...); err == nil {
+	if obj, err = i.JSObject().CallWithErr(method, arrayJS...); err == nil {
 
 		request, err = IDBRequestNewFromJSObject(obj)
 	}
 
 	return request, err
 
+}
+func (i IDBObjectStore) Add(value interface{}, key ...string) (IDBRequest, error) {
+	return i.addput("add", value, key...)
 }
 
 func (i IDBObjectStore) CreateIndex(index string, keyname string, option ...map[string]interface{}) (IDBIndex, error) {
@@ -145,7 +151,7 @@ func (i IDBObjectStore) DeleteIndex(key string) error {
 	return err
 }
 
-func (i IDBObjectStore) Get(key interface{}) (IDBRequest, error) {
+func (i IDBObjectStore) get(method string, key interface{}) (IDBRequest, error) {
 	var obj js.Value
 	var request IDBRequest
 	var err error
@@ -162,4 +168,65 @@ func (i IDBObjectStore) Get(key interface{}) (IDBRequest, error) {
 	}
 
 	return request, err
+}
+
+func (i IDBObjectStore) Get(key interface{}) (IDBRequest, error) {
+	return i.get("get", key)
+}
+
+func (i IDBObjectStore) getAll(method string, option ...interface{}) (IDBRequest, error) {
+	var obj js.Value
+	var request IDBRequest
+	var err error
+	var objquery js.Value
+	var arrayJS []interface{}
+
+	if len(option) > 1 {
+		if rangequery, ok := option[0].(IDBKeyRange); ok {
+			objquery = rangequery.JSObject()
+		} else {
+			objquery = js.ValueOf(option[0])
+		}
+		arrayJS = append(arrayJS, objquery)
+	}
+	if len(option) > 2 {
+		if count, ok := option[0].(int); ok {
+			arrayJS = append(arrayJS, js.ValueOf(count))
+		}
+
+	}
+
+	if obj, err = i.JSObject().CallWithErr(method, arrayJS...); err == nil {
+		request, err = IDBRequestNewFromJSObject(obj)
+	}
+
+	return request, err
+}
+
+func (i IDBObjectStore) GetAll(method string, option ...interface{}) (IDBRequest, error) {
+	return i.getAll("getAll", option...)
+}
+
+func (i IDBObjectStore) GetAllKeys(method string, option ...interface{}) (IDBRequest, error) {
+	return i.getAll("getAllKeys", option...)
+}
+
+func (i IDBObjectStore) GetKey(key interface{}) (IDBRequest, error) {
+	return i.get("getKey", key)
+}
+
+func (i IDBObjectStore) Index(indexname string) (IDBIndex, error) {
+	var obj js.Value
+	var o IDBIndex
+	var err error
+
+	if obj, err = i.JSObject().CallWithErr("createIndex", js.ValueOf(indexname)); err == nil {
+		o, err = IDBDIndexNewFromJSObject(obj)
+	}
+
+	return o, err
+}
+
+func (i IDBObjectStore) Put(value interface{}, key ...string) (IDBRequest, error) {
+	return i.addput("put", value, key...)
 }

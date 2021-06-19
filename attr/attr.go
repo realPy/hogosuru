@@ -23,6 +23,10 @@ func GetInterface() js.Value {
 		}
 	})
 
+	baseobject.Register(attrinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
+	})
+
 	return attrinterface
 }
 
@@ -74,7 +78,7 @@ func (a Attr) getStringAttribute(attribute string) (string, error) {
 
 		} else {
 
-			valueStr = obj.String()
+			valueStr, _ = baseobject.ToStringWithErr(obj)
 		}
 	}
 

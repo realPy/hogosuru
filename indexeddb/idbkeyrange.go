@@ -21,6 +21,9 @@ func GetIDBKeyRangeInterface() js.Value {
 		if idbkeyrangeinterface, err = js.Global().GetWithErr("IDBKeyRange"); err != nil {
 			idbkeyrangeinterface = js.Null()
 		}
+		baseobject.Register(idbkeyrangeinterface, func(v js.Value) (interface{}, error) {
+			return IDBDKeyRangeNewFromJSObject(v)
+		})
 	})
 	return idbkeyrangeinterface
 }

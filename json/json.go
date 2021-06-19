@@ -31,7 +31,9 @@ func GetInterface() js.Value {
 		}
 
 	})
-
+	baseobject.Register(jsoninterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
+	})
 	return jsoninterface
 }
 

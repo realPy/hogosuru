@@ -41,8 +41,25 @@ func GetInterface() js.Value {
 		}
 
 	})
-
+	baseobject.Register(xhrinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
+	})
 	return xhrinterface
+}
+
+func NewFromJSObject(obj js.Value) (XMLHTTPRequest, error) {
+	var x XMLHTTPRequest
+	var err error
+	if si := GetInterface(); !si.IsNull() {
+		if obj.InstanceOf(si) {
+			x.BaseObject = x.SetObject(obj)
+
+		}
+	} else {
+		err = ErrNotAXMLHTTPRequest
+	}
+
+	return x, err
 }
 
 //New Get an XML HTTP Request

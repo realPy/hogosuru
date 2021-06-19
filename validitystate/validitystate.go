@@ -27,7 +27,9 @@ func GetInterface() js.Value {
 		}
 
 	})
-
+	baseobject.Register(validitystateinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
+	})
 	return validitystateinterface
 }
 

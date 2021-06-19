@@ -23,6 +23,10 @@ func GetInterface() js.Value {
 			promiseinterface = js.Null()
 		}
 	})
+
+	baseobject.Register(promiseinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
+	})
 	return promiseinterface
 }
 

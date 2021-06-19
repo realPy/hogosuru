@@ -6,6 +6,7 @@ import (
 	"sync"
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/event"
 )
 
@@ -26,6 +27,10 @@ func IDBOpenDBRequestGetInterface() js.Value {
 		if idbopendbrequestinterface, err = js.Global().GetWithErr("IDBOpenDBRequest"); err != nil {
 			idbopendbrequestinterface = js.Null()
 		}
+
+		baseobject.Register(idbopendbrequestinterface, func(v js.Value) (interface{}, error) {
+			return IDBOpenDBRequestNewFromJSObject(v)
+		})
 	})
 	return idbopendbrequestinterface
 }

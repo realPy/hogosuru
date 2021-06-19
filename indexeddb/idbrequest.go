@@ -11,6 +11,8 @@ import (
 	"github.com/realPy/hogosuru/eventtarget"
 )
 
+var classIDBRequest string = "IDBRequest"
+
 //IDBRequest struct
 type IDBRequest struct {
 	eventtarget.EventTarget
@@ -25,9 +27,13 @@ func IDBRequestGetInterface() js.Value {
 	singletonIDBRequest.Do(func() {
 
 		var err error
-		if idbrequestinterface, err = js.Global().GetWithErr("IDBRequest"); err != nil {
+		if idbrequestinterface, err = js.Global().GetWithErr(classIDBRequest); err != nil {
 			idbrequestinterface = js.Null()
 		}
+
+		baseobject.Register(idbrequestinterface, func(v js.Value) (interface{}, error) {
+			return IDBRequestNewFromJSObject(v)
+		})
 	})
 	return idbrequestinterface
 }
@@ -70,7 +76,7 @@ func (i IDBRequest) getStringAttribute(attribute string) (string, error) {
 
 		} else {
 
-			valueStr = obj.String()
+			valueStr, _ = baseobject.ToStringWithErr(obj)
 		}
 	}
 

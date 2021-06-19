@@ -30,6 +30,9 @@ func GetInterface() js.Value {
 		}
 
 	})
+	baseobject.Register(filelistinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
+	})
 
 	return filelistinterface
 }

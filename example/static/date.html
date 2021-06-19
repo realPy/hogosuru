@@ -3,6 +3,16 @@
         <meta charset="utf-8"/>
         <script src="wasm_exec.js"></script>
         <script>
+// store a reference to our file handle
+let fileHandle;
+
+ async function getFile() {
+  // open file picker
+  [fileHandle] = await window.showDirectoryPicker();
+
+
+}
+
 
 
 const wasmBrowserInstantiate = async (wasmModuleUrl, importObject) => {
@@ -48,5 +58,6 @@ runWasmAdd();
         </script>
     </head>
     <body>
+      <button onclick="getFile()">Click me</button>
     </body>
 </html>  

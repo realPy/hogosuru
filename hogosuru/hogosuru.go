@@ -75,3 +75,15 @@ func CopyBytesToJSWithErr(dst Value, src []byte) (int, error) {
 	}
 	return n, nil
 }
+
+func AsyncFuncOf(fn func(this Value, args []Value) interface{}) Func {
+	funcsMu.Lock()
+	id := nextFuncID
+	nextFuncID++
+	funcs[id] = fn
+	funcsMu.Unlock()
+	return Func{
+		id:    id,
+		Value: jsGo.Call("_makeAsyncFuncWrapper", id),
+	}
+}

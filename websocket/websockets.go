@@ -39,8 +39,25 @@ func GetInterface() js.Value {
 		}
 
 	})
-
+	baseobject.Register(wsinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
+	})
 	return wsinterface
+}
+
+func NewFromJSObject(obj js.Value) (WebSocket, error) {
+	var w WebSocket
+	var err error
+	if si := GetInterface(); !si.IsNull() {
+		if obj.InstanceOf(si) {
+			w.BaseObject = w.SetObject(obj)
+
+		}
+	} else {
+		err = ErrNotAWebSocket
+	}
+
+	return w, err
 }
 
 //New Get a new channel broadcast

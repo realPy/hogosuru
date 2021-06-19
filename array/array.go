@@ -22,6 +22,10 @@ func GetInterface() js.Value {
 			arrayinterface = js.Null()
 		}
 	})
+
+	baseobject.Register(arrayinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
+	})
 	return arrayinterface
 }
 

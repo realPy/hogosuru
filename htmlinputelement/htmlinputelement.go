@@ -36,6 +36,10 @@ func GetInterface() js.Value {
 
 	})
 
+	baseobject.Register(htmlinputelementinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
+	})
+
 	return htmlinputelementinterface
 }
 

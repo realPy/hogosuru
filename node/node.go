@@ -21,7 +21,9 @@ func GetInterface() js.Value {
 			nodeinterface = js.Null()
 		}
 	})
-
+	baseobject.Register(nodeinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
+	})
 	return nodeinterface
 }
 
@@ -109,7 +111,7 @@ func (n Node) getStringAttribute(attribute string) (string, error) {
 
 	if obj, err = n.JSObject().GetWithErr(attribute); err == nil {
 
-		val = obj.String()
+		val, _ = baseobject.ToStringWithErr(obj)
 	}
 	return val, err
 }

@@ -6,6 +6,7 @@ import (
 	"sync"
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/event"
 )
 
@@ -23,7 +24,9 @@ func GetInterface() js.Value {
 		}
 
 	})
-
+	baseobject.Register(messageeventinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
+	})
 	return messageeventinterface
 }
 

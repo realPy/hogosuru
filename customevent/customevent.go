@@ -6,6 +6,7 @@ import (
 
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/event"
 )
 
@@ -29,6 +30,10 @@ func GetInterface() js.Value {
 
 	})
 
+	baseobject.Register(customeventinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
+	})
+
 	return customeventinterface
 }
 
@@ -41,4 +46,20 @@ func New(message, detail string) (CustomEvent, error) {
 		return event, nil
 	}
 	return event, ErrNotImplemented
+}
+
+func NewFromJSObject(obj js.Value) (CustomEvent, error) {
+	var c CustomEvent
+	var err error
+
+	if bi := GetInterface(); !bi.IsNull() {
+		if obj.InstanceOf(bi) {
+			c.BaseObject = c.SetObject(obj)
+
+		}
+	} else {
+		err = ErrNotAnCustomEvent
+	}
+
+	return c, err
 }

@@ -31,6 +31,10 @@ func IDBDatabaseGetInterface() js.Value {
 			idbrequestinterface = js.Null()
 		}
 	})
+
+	baseobject.Register(idbrequestinterface, func(v js.Value) (interface{}, error) {
+		return IDBDatabaseNewFromJSObject(v)
+	})
 	return idbrequestinterface
 }
 

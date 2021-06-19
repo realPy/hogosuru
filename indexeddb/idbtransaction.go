@@ -29,6 +29,10 @@ func IDBTransactionGetInterface() js.Value {
 		if idbtransactioninterface, err = js.Global().GetWithErr("IDBTransaction"); err != nil {
 			idbtransactioninterface = js.Null()
 		}
+		baseobject.Register(idbtransactioninterface, func(v js.Value) (interface{}, error) {
+			return IDBTransactionNewFromJSObject(v)
+		})
+
 	})
 	return idbtransactioninterface
 }
@@ -89,7 +93,7 @@ func (i IDBTransaction) getStringAttribute(attribute string) (string, error) {
 
 		} else {
 
-			valueStr = obj.String()
+			valueStr, _ = baseobject.ToStringWithErr(obj)
 		}
 	}
 
