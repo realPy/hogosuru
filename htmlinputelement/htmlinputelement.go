@@ -85,68 +85,6 @@ func NewFromJSObject(obj js.Value) (HtmlInputElement, error) {
 	return h, ErrNotAnHtmlInputElement
 }
 
-func (h HtmlInputElement) getAttributeString(attribute string) (string, error) {
-
-	var err error
-	var obj js.Value
-	var valueStr = ""
-
-	if obj, err = h.JSObject().GetWithErr(attribute); err == nil {
-
-		valueStr = obj.String()
-	}
-
-	return valueStr, err
-
-}
-func (h HtmlInputElement) setAttributeString(attribute string, value string) error {
-
-	return h.JSObject().SetWithErr(attribute, js.ValueOf(value))
-}
-
-func (h HtmlInputElement) getAttributeBool(attribute string) (bool, error) {
-
-	var err error
-	var obj js.Value
-	var ret bool
-
-	if obj, err = h.JSObject().GetWithErr(attribute); err == nil {
-		if obj.Type() == js.TypeBoolean {
-			ret = obj.Bool()
-		} else {
-			err = baseobject.ErrObjectNotBool
-		}
-	}
-
-	return ret, err
-}
-
-func (h HtmlInputElement) setAttributeBool(attribute string, value bool) error {
-
-	return h.JSObject().SetWithErr(attribute, js.ValueOf(value))
-}
-
-func (h HtmlInputElement) getAttributeInt(attribute string) (int, error) {
-
-	var err error
-	var obj js.Value
-	var result int
-
-	if obj, err = h.JSObject().GetWithErr(attribute); err == nil {
-		if obj.Type() == js.TypeNumber {
-			result = obj.Int()
-		} else {
-			err = baseobject.ErrObjectNotNumber
-		}
-	}
-
-	return result, err
-}
-
-func (h HtmlInputElement) setAttributeInt(attribute string, value int) error {
-	return h.JSObject().SetWithErr(attribute, js.ValueOf(value))
-}
-
 func (h HtmlInputElement) getAttributeDouble(attribute string) (float64, error) {
 
 	var err error
@@ -179,93 +117,93 @@ func (h HtmlInputElement) Form() (element.Element, error) {
 }
 
 func (h HtmlInputElement) FormAction() (string, error) {
-	return h.getAttributeString("formAction")
+	return h.GetAttributeString("formAction")
 }
 
 func (h HtmlInputElement) SetFormAction(value string) error {
-	return h.setAttributeString("formAction", value)
+	return h.SetAttributeString("formAction", value)
 }
 
 func (h HtmlInputElement) FormEncType() (string, error) {
-	return h.getAttributeString("formEncType")
+	return h.GetAttributeString("formEncType")
 }
 
 func (h HtmlInputElement) SetFormEncType(value string) error {
-	return h.setAttributeString("formEncType", value)
+	return h.SetAttributeString("formEncType", value)
 }
 
 func (h HtmlInputElement) FormMethod() (string, error) {
-	return h.getAttributeString("formMethod")
+	return h.GetAttributeString("formMethod")
 }
 
 func (h HtmlInputElement) SetFormMethod(value string) error {
-	return h.setAttributeString("formMethod", value)
+	return h.SetAttributeString("formMethod", value)
 }
 
 func (h HtmlInputElement) FormNoValidate() (bool, error) {
-	return h.getAttributeBool("formNoValidate")
+	return h.GetAttributeBool("formNoValidate")
 }
 
 func (h HtmlInputElement) SetFormNoValidate(value bool) error {
-	return h.setAttributeBool("formNoValidate", value)
+	return h.SetAttributeBool("formNoValidate", value)
 }
 
 func (h HtmlInputElement) FormTarget() (string, error) {
-	return h.getAttributeString("formTarget")
+	return h.GetAttributeString("formTarget")
 }
 
 func (h HtmlInputElement) SetFormTarget(value string) error {
-	return h.setAttributeString("formTarget", value)
+	return h.SetAttributeString("formTarget", value)
 }
 
 //Properties that apply to any type of input element that is not hidden
 
 func (h HtmlInputElement) Name() (string, error) {
-	return h.getAttributeString("name")
+	return h.GetAttributeString("name")
 }
 
 func (h HtmlInputElement) SetName(value string) error {
-	return h.setAttributeString("name", value)
+	return h.SetAttributeString("name", value)
 }
 
 func (h HtmlInputElement) Type() (string, error) {
-	return h.getAttributeString("type")
+	return h.GetAttributeString("type")
 }
 
 func (h HtmlInputElement) SetType(value string) error {
-	return h.setAttributeString("type", value)
+	return h.SetAttributeString("type", value)
 }
 
 func (h HtmlInputElement) Disable() (bool, error) {
-	return h.getAttributeBool("disable")
+	return h.GetAttributeBool("disable")
 }
 
 func (h HtmlInputElement) SetDisable(value bool) error {
-	return h.setAttributeBool("disable", value)
+	return h.SetAttributeBool("disable", value)
 }
 
 func (h HtmlInputElement) Autofocus() (bool, error) {
-	return h.getAttributeBool("autofocus")
+	return h.GetAttributeBool("autofocus")
 }
 
 func (h HtmlInputElement) SetAutofocus(value bool) error {
-	return h.setAttributeBool("autofocus", value)
+	return h.SetAttributeBool("autofocus", value)
 }
 
 func (h HtmlInputElement) Required() (bool, error) {
-	return h.getAttributeBool("required")
+	return h.GetAttributeBool("required")
 }
 
 func (h HtmlInputElement) SetRequired(value bool) error {
-	return h.setAttributeBool("required", value)
+	return h.SetAttributeBool("required", value)
 }
 
 func (h HtmlInputElement) Value() (string, error) {
-	return h.getAttributeString("value")
+	return h.GetAttributeString("value")
 }
 
 func (h HtmlInputElement) SetValue(value string) error {
-	return h.setAttributeString("value", value)
+	return h.SetAttributeString("value", value)
 }
 
 func (h HtmlInputElement) Validity() (validitystate.ValidityState, error) {
@@ -282,80 +220,80 @@ func (h HtmlInputElement) Validity() (validitystate.ValidityState, error) {
 }
 
 func (h HtmlInputElement) ValidationMessage() (string, error) {
-	return h.getAttributeString("validationMessage")
+	return h.GetAttributeString("validationMessage")
 }
 
 func (h HtmlInputElement) WillValidate() (bool, error) {
-	return h.getAttributeBool("willValidate")
+	return h.GetAttributeBool("willValidate")
 }
 
 // Properties that apply only to elements of type "checkbox" or "radio"
 func (h HtmlInputElement) Checked() (bool, error) {
-	return h.getAttributeBool("checked")
+	return h.GetAttributeBool("checked")
 }
 
 func (h HtmlInputElement) SetChecked(value bool) error {
-	return h.setAttributeBool("checked", value)
+	return h.SetAttributeBool("checked", value)
 }
 
 func (h HtmlInputElement) DefaultChecked() (bool, error) {
-	return h.getAttributeBool("defaultChecked")
+	return h.GetAttributeBool("defaultChecked")
 }
 
 func (h HtmlInputElement) SetDefaultChecked(value bool) error {
-	return h.setAttributeBool("defaultChecked", value)
+	return h.SetAttributeBool("defaultChecked", value)
 }
 
 func (h HtmlInputElement) Indeterminate() (bool, error) {
-	return h.getAttributeBool("indeterminate")
+	return h.GetAttributeBool("indeterminate")
 }
 
 func (h HtmlInputElement) SetIndeterminate(value bool) error {
-	return h.setAttributeBool("indeterminate", value)
+	return h.SetAttributeBool("indeterminate", value)
 }
 
 // Properties that apply only to elements of type "image"
 
 func (h HtmlInputElement) Alt() (string, error) {
-	return h.getAttributeString("alt")
+	return h.GetAttributeString("alt")
 }
 
 func (h HtmlInputElement) SetAlt(value string) error {
-	return h.setAttributeString("alt", value)
+	return h.SetAttributeString("alt", value)
 }
 
 func (h HtmlInputElement) Height() (string, error) {
-	return h.getAttributeString("height")
+	return h.GetAttributeString("height")
 }
 
 func (h HtmlInputElement) SetHeight(value string) error {
-	return h.setAttributeString("height", value)
+	return h.SetAttributeString("height", value)
 }
 
 func (h HtmlInputElement) Src() (string, error) {
-	return h.getAttributeString("src")
+	return h.GetAttributeString("src")
 }
 
 func (h HtmlInputElement) SetSrc(value string) error {
-	return h.setAttributeString("src", value)
+	return h.SetAttributeString("src", value)
 }
 
 func (h HtmlInputElement) Width() (string, error) {
-	return h.getAttributeString("width")
+	return h.GetAttributeString("width")
 }
 
 func (h HtmlInputElement) SetWidth(value string) error {
-	return h.setAttributeString("width", value)
+	return h.SetAttributeString("width", value)
 }
 
 // Properties that apply only to elements of type "file"
 
 func (h HtmlInputElement) Accept() (string, error) {
-	return h.getAttributeString("accept")
+	return h.GetAttributeString("accept")
 }
 
 func (h HtmlInputElement) SetAccept(value string) error {
-	return h.setAttributeString("accept", value)
+	return h.SetAttributeString("accept", value)
 }
 
 func (h HtmlInputElement) Files() (filelist.FileList, error) {
@@ -370,125 +308,125 @@ func (h HtmlInputElement) Files() (filelist.FileList, error) {
 // Properties that apply only to text/number-containing or elements
 
 func (h HtmlInputElement) Autocomplete() (string, error) {
-	return h.getAttributeString("autocomplete")
+	return h.GetAttributeString("autocomplete")
 }
 
 func (h HtmlInputElement) SetAutocomplete(value string) error {
-	return h.setAttributeString("autocomplete", value)
+	return h.SetAttributeString("autocomplete", value)
 }
 
 func (h HtmlInputElement) Max() (string, error) {
-	return h.getAttributeString("max")
+	return h.GetAttributeString("max")
 }
 
 func (h HtmlInputElement) SetMax(value string) error {
-	return h.setAttributeString("max", value)
+	return h.SetAttributeString("max", value)
 }
 
 func (h HtmlInputElement) MaxLength() (int, error) {
-	return h.getAttributeInt("maxLength")
+	return h.GetAttributeInt("maxLength")
 }
 
 func (h HtmlInputElement) SetMaxLength(value int) error {
-	return h.setAttributeInt("maxLength", value)
+	return h.SetAttributeInt("maxLength", value)
 }
 
 func (h HtmlInputElement) Min() (string, error) {
-	return h.getAttributeString("min")
+	return h.GetAttributeString("min")
 }
 
 func (h HtmlInputElement) SetMin(value string) error {
-	return h.setAttributeString("min", value)
+	return h.SetAttributeString("min", value)
 }
 
 func (h HtmlInputElement) MinLength() (int, error) {
-	return h.getAttributeInt("minLength")
+	return h.GetAttributeInt("minLength")
 }
 
 func (h HtmlInputElement) SetMinLength(value int) error {
-	return h.setAttributeInt("minLength", value)
+	return h.SetAttributeInt("minLength", value)
 }
 
 func (h HtmlInputElement) Pattern() (string, error) {
-	return h.getAttributeString("pattern")
+	return h.GetAttributeString("pattern")
 }
 
 func (h HtmlInputElement) SetPattern(value string) error {
-	return h.setAttributeString("pattern", value)
+	return h.SetAttributeString("pattern", value)
 }
 
 func (h HtmlInputElement) Placeholder() (string, error) {
-	return h.getAttributeString("placeholder")
+	return h.GetAttributeString("placeholder")
 }
 
 func (h HtmlInputElement) SetPlaceholder(value string) error {
-	return h.setAttributeString("placeholder", value)
+	return h.SetAttributeString("placeholder", value)
 }
 
 func (h HtmlInputElement) ReadOnly() (bool, error) {
-	return h.getAttributeBool("readOnly")
+	return h.GetAttributeBool("readOnly")
 }
 
 func (h HtmlInputElement) SetReadOnly(value bool) error {
-	return h.setAttributeBool("readOnly", value)
+	return h.SetAttributeBool("readOnly", value)
 }
 
 func (h HtmlInputElement) SelectionStart() (int, error) {
-	return h.getAttributeInt("selectionStart")
+	return h.GetAttributeInt("selectionStart")
 }
 
 func (h HtmlInputElement) SetSelectionStart(value int) error {
-	return h.setAttributeInt("selectionStart", value)
+	return h.SetAttributeInt("selectionStart", value)
 }
 
 func (h HtmlInputElement) SelectionEnd() (int, error) {
-	return h.getAttributeInt("selectionEnd")
+	return h.GetAttributeInt("selectionEnd")
 }
 
 func (h HtmlInputElement) SetSelectionEnd(value int) error {
-	return h.setAttributeInt("selectionEnd", value)
+	return h.SetAttributeInt("selectionEnd", value)
 }
 
 func (h HtmlInputElement) SelectionDirection() (string, error) {
-	return h.getAttributeString("selectionDirection")
+	return h.GetAttributeString("selectionDirection")
 }
 
 func (h HtmlInputElement) SetSelectionDirection(value string) error {
-	return h.setAttributeString("selectionDirection", value)
+	return h.SetAttributeString("selectionDirection", value)
 }
 
 func (h HtmlInputElement) Size() (int, error) {
-	return h.getAttributeInt("size")
+	return h.GetAttributeInt("size")
 }
 
 func (h HtmlInputElement) SetSize(value int) error {
-	return h.setAttributeInt("size", value)
+	return h.SetAttributeInt("size", value)
 }
 
 //  Properties not yet categorized
 
 func (h HtmlInputElement) DefaultValue() (string, error) {
-	return h.getAttributeString("defaultValue")
+	return h.GetAttributeString("defaultValue")
 }
 
 func (h HtmlInputElement) SetDefaultValue(value string) error {
-	return h.setAttributeString("defaultValue", value)
+	return h.SetAttributeString("defaultValue", value)
 }
 
 func (h HtmlInputElement) DirName() (string, error) {
-	return h.getAttributeString("dirName")
+	return h.GetAttributeString("dirName")
 }
 
 func (h HtmlInputElement) SetDirName(value string) error {
-	return h.setAttributeString("dirName", value)
+	return h.SetAttributeString("dirName", value)
 }
 
 func (h HtmlInputElement) AccessKey() (string, error) {
-	return h.getAttributeString("accessKey")
+	return h.GetAttributeString("accessKey")
 }
 
 func (h HtmlInputElement) SetAccessKey(value string) error {
-	return h.setAttributeString("accessKey", value)
+	return h.SetAttributeString("accessKey", value)
 }
 
 func (h HtmlInputElement) List() (htmlelement.HtmlElement, error) {
@@ -503,11 +441,11 @@ func (h HtmlInputElement) List() (htmlelement.HtmlElement, error) {
 }
 
 func (h HtmlInputElement) Multiple() (bool, error) {
-	return h.getAttributeBool("multiple")
+	return h.GetAttributeBool("multiple")
 }
 
 func (h HtmlInputElement) SetMultiple(value bool) error {
-	return h.setAttributeBool("multiple", value)
+	return h.SetAttributeBool("multiple", value)
 }
 
 func (h HtmlInputElement) Labels() (nodelist.NodeList, error) {
@@ -522,11 +460,11 @@ func (h HtmlInputElement) Labels() (nodelist.NodeList, error) {
 }
 
 func (h HtmlInputElement) Step() (string, error) {
-	return h.getAttributeString("step")
+	return h.GetAttributeString("step")
 }
 
 func (h HtmlInputElement) SetStep(value string) error {
-	return h.setAttributeString("step", value)
+	return h.SetAttributeString("step", value)
 }
 
 func (h HtmlInputElement) ValueAsDate() (date.Date, error) {

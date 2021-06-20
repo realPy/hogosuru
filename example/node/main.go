@@ -13,6 +13,7 @@ func main() {
 	nod := d.Body_()
 
 	if text, err := nod.TextContent(); err == nil {
+		nod.Export("pou")
 		println("<--" + text + "-->")
 	}
 

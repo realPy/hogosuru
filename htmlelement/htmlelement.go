@@ -72,107 +72,41 @@ func NewFromElement(elem element.Element) (HtmlElement, error) {
 
 	return h, err
 }
-func (h HtmlElement) getAttributeString(attribute string) (string, error) {
-
-	var err error
-	var obj js.Value
-	var valueStr = ""
-
-	if obj, err = h.JSObject().GetWithErr(attribute); err == nil {
-		if obj.Type() == js.TypeString {
-			valueStr = obj.String()
-		} else {
-			err = baseobject.ErrObjectNotString
-		}
-
-	}
-	return valueStr, err
-
-}
-
-func (h HtmlElement) getAttributeBool(attribute string) (bool, error) {
-
-	var err error
-	var obj js.Value
-	var ret bool
-
-	if obj, err = h.JSObject().GetWithErr(attribute); err == nil {
-		if obj.Type() == js.TypeBoolean {
-			ret = obj.Bool()
-		} else {
-			err = baseobject.ErrObjectNotBool
-		}
-	}
-
-	return ret, err
-}
-
-func (h HtmlElement) getAttributeInt(attribute string) (int, error) {
-
-	var err error
-	var obj js.Value
-	var result int
-
-	if obj, err = h.JSObject().GetWithErr(attribute); err == nil {
-		if obj.Type() == js.TypeNumber {
-			result = obj.Int()
-		} else {
-			err = baseobject.ErrObjectNotNumber
-		}
-	}
-
-	return result, err
-}
-
-func (h HtmlElement) setAttributeBool(attribute string, value bool) error {
-
-	return h.JSObject().SetWithErr(attribute, js.ValueOf(value))
-}
-
-func (h HtmlElement) setAttributeString(attribute string, value string) error {
-
-	return h.JSObject().SetWithErr(attribute, js.ValueOf(value))
-}
-
-func (h HtmlElement) setAttributeInt(attribute string, value int) error {
-
-	return h.JSObject().SetWithErr(attribute, js.ValueOf(value))
-}
 
 func (h HtmlElement) AccessKey() (string, error) {
-	return h.getAttributeString("accessKey")
+	return h.GetAttributeString("accessKey")
 }
 
 func (h HtmlElement) SetAccessKey(value string) error {
-	return h.setAttributeString("accessKey", value)
+	return h.SetAttributeString("accessKey", value)
 }
 
 func (h HtmlElement) AccessKeyLabel() (string, error) {
-	return h.getAttributeString("accessKeyLabel")
+	return h.GetAttributeString("accessKeyLabel")
 }
 
 func (h HtmlElement) SetAccessKeyLabel(value string) error {
-	return h.setAttributeString("accessKeyLabel", value)
+	return h.SetAttributeString("accessKeyLabel", value)
 }
 
 func (h HtmlElement) ClassName() (string, error) {
-	return h.getAttributeString("accessKeyLabel")
+	return h.GetAttributeString("accessKeyLabel")
 }
 
 func (h HtmlElement) SetClassName(classname string) error {
-	return h.setAttributeString("accessKeyLabel", classname)
+	return h.SetAttributeString("accessKeyLabel", classname)
 }
 
 func (h HtmlElement) ContentEditable() (string, error) {
-	return h.getAttributeString("contentEditable")
+	return h.GetAttributeString("contentEditable")
 }
 
 func (h HtmlElement) SetContentEditable(value string) error {
-	return h.setAttributeString("contentEditable", value)
+	return h.SetAttributeString("contentEditable", value)
 }
 
 func (h HtmlElement) IsContentEditable() (bool, error) {
-	return h.getAttributeBool("isContentEditable")
+	return h.GetAttributeBool("isContentEditable")
 }
 
 func (h HtmlElement) Dataset(name string) (interface{}, error) {
@@ -204,51 +138,51 @@ func (h HtmlElement) SetDataset(name string, value interface{}) error {
 }
 
 func (h HtmlElement) Dir() (string, error) {
-	return h.getAttributeString("dir")
+	return h.GetAttributeString("dir")
 }
 
 func (h HtmlElement) Hidden() (bool, error) {
-	return h.getAttributeBool("hidden")
+	return h.GetAttributeBool("hidden")
 }
 
 func (h HtmlElement) SetHidden(value bool) error {
-	return h.setAttributeBool("hidden", value)
+	return h.SetAttributeBool("hidden", value)
 }
 
 func (h HtmlElement) SetDir(value string) error {
-	return h.setAttributeString("dir", value)
+	return h.SetAttributeString("dir", value)
 }
 
 func (h HtmlElement) Id() (string, error) {
-	return h.getAttributeString("id")
+	return h.GetAttributeString("id")
 }
 
 func (h HtmlElement) SetId(value string) error {
-	return h.setAttributeString("id", value)
+	return h.SetAttributeString("id", value)
 }
 
 func (h HtmlElement) Lang() (string, error) {
-	return h.getAttributeString("lang")
+	return h.GetAttributeString("lang")
 }
 
 func (h HtmlElement) SetLang(value string) error {
-	return h.setAttributeString("lang", value)
+	return h.SetAttributeString("lang", value)
 }
 
 func (h HtmlElement) OffsetHeight() (int, error) {
-	return h.getAttributeInt("offsetHeight")
+	return h.GetAttributeInt("offsetHeight")
 }
 
 func (h HtmlElement) SetOffsetHeight(value int) error {
-	return h.setAttributeInt("offsetHeight", value)
+	return h.SetAttributeInt("offsetHeight", value)
 }
 
 func (h HtmlElement) OffsetLeft() (int, error) {
-	return h.getAttributeInt("offsetLeft")
+	return h.GetAttributeInt("offsetLeft")
 }
 
 func (h HtmlElement) SetOffsetLeft(value int) error {
-	return h.setAttributeInt("offsetLeft", value)
+	return h.SetAttributeInt("offsetLeft", value)
 }
 
 func (h HtmlElement) OffsetParent() (baseobject.BaseObject, error) {
@@ -268,27 +202,27 @@ func (h HtmlElement) OffsetParent() (baseobject.BaseObject, error) {
 }
 
 func (h HtmlElement) OffsetTop() (int, error) {
-	return h.getAttributeInt("offsetTop")
+	return h.GetAttributeInt("offsetTop")
 }
 
 func (h HtmlElement) SetOffsetTop(value int) error {
-	return h.setAttributeInt("offsetTop", value)
+	return h.SetAttributeInt("offsetTop", value)
 }
 
 func (h HtmlElement) OffsetWidth() (int, error) {
-	return h.getAttributeInt("offsetWidth")
+	return h.GetAttributeInt("offsetWidth")
 }
 
 func (h HtmlElement) SetOffsetWidth(value int) error {
-	return h.setAttributeInt("offsetWidth", value)
+	return h.SetAttributeInt("offsetWidth", value)
 }
 
 func (h HtmlElement) Title() (string, error) {
-	return h.getAttributeString("title")
+	return h.GetAttributeString("title")
 }
 
 func (h HtmlElement) SetTitle(value string) error {
-	return h.setAttributeString("title", value)
+	return h.SetAttributeString("title", value)
 }
 
 func (h HtmlElement) Blur() error {

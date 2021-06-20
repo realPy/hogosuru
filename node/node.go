@@ -103,56 +103,9 @@ func (n Node) getAttributeNode(attribute string) (Node, error) {
 	return newNode, err
 }
 
-func (n Node) getStringAttribute(attribute string) (string, error) {
-
-	var err error
-	var obj js.Value
-	var val string
-
-	if obj, err = n.JSObject().GetWithErr(attribute); err == nil {
-
-		val, _ = baseobject.ToStringWithErr(obj)
-	}
-	return val, err
-}
-
-func (n Node) getBoolAttribute(attribute string) (bool, error) {
-
-	var err error
-	var obj js.Value
-	var result bool
-
-	if obj, err = n.JSObject().GetWithErr(attribute); err == nil {
-		if obj.Type() == js.TypeBoolean {
-			result = obj.Bool()
-		} else {
-			err = baseobject.ErrObjectNotBool
-		}
-	}
-
-	return result, err
-}
-
-func (n Node) getAttributeInt(attribute string) (int, error) {
-
-	var err error
-	var obj js.Value
-	var result int
-
-	if obj, err = n.JSObject().GetWithErr(attribute); err == nil {
-		if obj.Type() == js.TypeBoolean {
-			result = obj.Int()
-		} else {
-			err = baseobject.ErrObjectNotBool
-		}
-	}
-
-	return result, err
-}
-
 func (n Node) BaseURI() (string, error) {
 
-	return n.getStringAttribute("baseURI")
+	return n.GetAttributeString("baseURI")
 }
 
 func (n Node) FirstChild() (Node, error) {
@@ -162,7 +115,7 @@ func (n Node) FirstChild() (Node, error) {
 
 func (n Node) IsConnected() (bool, error) {
 
-	return n.getBoolAttribute("isConnected")
+	return n.GetAttributeBool("isConnected")
 }
 
 func (n Node) LastChild() (Node, error) {
@@ -175,12 +128,12 @@ func (n Node) NextSibling() (Node, error) {
 
 func (n Node) NodeName() (string, error) {
 
-	return n.getStringAttribute("nodeName")
+	return n.GetAttributeString("nodeName")
 
 }
 
 func (n Node) NodeType() (int, error) {
-	return n.getAttributeInt("nodeType")
+	return n.GetAttributeInt("nodeType")
 }
 
 func (n Node) NodeValue() (Node, error) {
@@ -212,7 +165,7 @@ func (n Node) PreviousSibling() (Node, error) {
 
 func (n Node) TextContent() (string, error) {
 
-	return n.getStringAttribute("textContent")
+	return n.GetAttributeString("textContent")
 }
 
 func (n Node) SetTextContent(content string) error {

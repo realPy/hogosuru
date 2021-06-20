@@ -81,27 +81,8 @@ func (i IDBTransaction) DB() (IDBDatabase, error) {
 	return t, err
 }
 
-func (i IDBTransaction) getStringAttribute(attribute string) (string, error) {
-
-	var err error
-	var obj js.Value
-	var valueStr = ""
-
-	if obj, err = i.JSObject().GetWithErr(attribute); err == nil {
-		if obj.IsNull() {
-			err = baseobject.ErrNotAnObject
-
-		} else {
-
-			valueStr, _ = baseobject.ToStringWithErr(obj)
-		}
-	}
-
-	return valueStr, err
-}
-
 func (i IDBTransaction) Mode() (string, error) {
-	return i.getStringAttribute("mode")
+	return i.GetAttributeString("mode")
 }
 
 func (i IDBTransaction) ObjectStoreNames() (domstringlist.DOMStringList, error) {
@@ -117,7 +98,7 @@ func (i IDBTransaction) ObjectStoreNames() (domstringlist.DOMStringList, error) 
 }
 
 func (i IDBTransaction) Error() (string, error) {
-	return i.getStringAttribute("error")
+	return i.GetAttributeString("error")
 }
 
 func (i IDBTransaction) OnAbort(handler func(e event.Event)) error {

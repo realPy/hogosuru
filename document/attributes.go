@@ -23,23 +23,6 @@ func (d Document) getAttributeElement(attribute string) (element.Element, error)
 	return elem, err
 }
 
-func (d Document) getAttributeString(attribute string) (string, error) {
-
-	var err error
-	var obj js.Value
-	var cs string = ""
-	if obj, err = d.JSObject().GetWithErr(attribute); err == nil {
-
-		cs = obj.String()
-	}
-	return cs, err
-}
-
-func (d Document) setAttributeString(attribute string, value string) error {
-
-	return d.JSObject().SetWithErr(attribute, js.ValueOf(value))
-}
-
 func (d Document) getAttributeHTMLCollection(attribute string) (htmlcollection.HTMLCollection, error) {
 	var err error
 	var obj js.Value
@@ -50,23 +33,6 @@ func (d Document) getAttributeHTMLCollection(attribute string) (htmlcollection.H
 	}
 
 	return collection, err
-}
-
-func (d Document) getAttributeBool(attribute string) (bool, error) {
-
-	var err error
-	var obj js.Value
-	var ret bool
-
-	if obj, err = d.JSObject().GetWithErr(attribute); err == nil {
-		if obj.Type() == js.TypeBoolean {
-			ret = obj.Bool()
-		} else {
-			err = baseobject.ErrObjectNotBool
-		}
-	}
-
-	return ret, err
 }
 
 func (d Document) ActiveElement() (element.Element, error) {
@@ -90,7 +56,7 @@ func (d Document) Body() (node.Node, error) {
 }
 
 func (d Document) CharacterSet() (string, error) {
-	return d.getAttributeString("characterSet")
+	return d.GetAttributeString("characterSet")
 }
 
 func (d Document) ChildElementCount() (int, error) {
@@ -114,11 +80,11 @@ func (d Document) Children() (htmlcollection.HTMLCollection, error) {
 }
 
 func (d Document) CompatMode() (string, error) {
-	return d.getAttributeString("compatMode")
+	return d.GetAttributeString("compatMode")
 }
 
 func (d Document) ContentType() (string, error) {
-	return d.getAttributeString("contentType")
+	return d.GetAttributeString("contentType")
 }
 
 func (d *Document) Doctype() {
@@ -130,7 +96,7 @@ func (d Document) DocumentElement() (element.Element, error) {
 }
 
 func (d *Document) DocumentURI() (string, error) {
-	return d.getAttributeString("documentURI")
+	return d.GetAttributeString("documentURI")
 }
 
 func (d Document) Embeds() (htmlcollection.HTMLCollection, error) {
@@ -160,7 +126,7 @@ func (d Document) Head() (htmlcollection.HTMLCollection, error) {
 
 func (d Document) Hidden() (bool, error) {
 
-	return d.getAttributeBool("hidden")
+	return d.GetAttributeBool("hidden")
 }
 
 func (d Document) Images() (htmlcollection.HTMLCollection, error) {
@@ -184,7 +150,7 @@ func (d Document) PictureInPictureElement() (element.Element, error) {
 }
 
 func (d Document) PictureInPictureEnabled() (bool, error) {
-	return d.getAttributeBool("pictureInPictureEnabled")
+	return d.GetAttributeBool("pictureInPictureEnabled")
 }
 
 func (d Document) Plugins() (htmlcollection.HTMLCollection, error) {
@@ -206,50 +172,50 @@ func (d Document) ScrollingElement() (element.Element, error) {
 
 func (d Document) VisibilityState() (string, error) {
 
-	return d.getAttributeString("visibilityState")
+	return d.GetAttributeString("visibilityState")
 }
 
 func (d Document) Domain() (string, error) {
 
-	return d.getAttributeString("domain")
+	return d.GetAttributeString("domain")
 }
 
 func (d Document) LastModified() (string, error) {
 
-	return d.getAttributeString("lastModified")
+	return d.GetAttributeString("lastModified")
 }
 
 func (d Document) SetDomain(domain string) error {
 
-	return d.setAttributeString("domain", domain)
+	return d.SetAttributeString("domain", domain)
 }
 
 func (d Document) ReadyState() (string, error) {
 
-	return d.getAttributeString("readyState")
+	return d.GetAttributeString("readyState")
 
 }
 
 func (d Document) Referrer() (string, error) {
 
-	return d.getAttributeString("referrer")
+	return d.GetAttributeString("referrer")
 }
 
 func (d Document) Title() (string, error) {
 
-	return d.getAttributeString("title")
+	return d.GetAttributeString("title")
 }
 
 func (d Document) URL() (string, error) {
 
-	return d.getAttributeString("URL")
+	return d.GetAttributeString("URL")
 
 }
 
 func (d Document) Cookie() (string, error) {
-	return d.getAttributeString("cookie")
+	return d.GetAttributeString("cookie")
 }
 
 func (d Document) SetCookie(cookie string) error {
-	return d.setAttributeString("cookie", cookie)
+	return d.SetAttributeString("cookie", cookie)
 }
