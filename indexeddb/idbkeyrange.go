@@ -62,23 +62,6 @@ func newKeyRange(method string, values ...interface{}) (IDBKeyRange, error) {
 	return i, err
 }
 
-func (i IDBKeyRange) getAttributeBool(attribute string) (bool, error) {
-
-	var err error
-	var obj js.Value
-	var ret bool
-
-	if obj, err = i.JSObject().GetWithErr(attribute); err == nil {
-		if obj.Type() == js.TypeBoolean {
-			ret = obj.Bool()
-		} else {
-			err = baseobject.ErrObjectNotBool
-		}
-	}
-
-	return ret, err
-}
-
 func Bound(values ...interface{}) (IDBKeyRange, error) {
 	return newKeyRange("bound", values...)
 }
@@ -112,11 +95,11 @@ func (i IDBKeyRange) Includes(value interface{}) (bool, error) {
 }
 
 func (i IDBKeyRange) lowerOpen() (bool, error) {
-	return i.getAttributeBool("lowerOpen")
+	return i.GetAttributeBool("lowerOpen")
 }
 
 func (i IDBKeyRange) upperOpen() (bool, error) {
-	return i.getAttributeBool("upperOpen")
+	return i.GetAttributeBool("upperOpen")
 }
 
 func (i IDBKeyRange) Lower() (interface{}, error) {

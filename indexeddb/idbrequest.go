@@ -64,32 +64,13 @@ func (i IDBRequest) OnSuccess(handler func(e event.Event)) error {
 	return i.AddEventListener("success", handler)
 }
 
-func (i IDBRequest) getStringAttribute(attribute string) (string, error) {
+func (i IDBRequest) Error() (baseobject.BaseObject, error) {
 
-	var err error
-	var obj js.Value
-	var valueStr = ""
-
-	if obj, err = i.JSObject().GetWithErr(attribute); err == nil {
-		if obj.IsNull() {
-			err = baseobject.ErrNotAnObject
-
-		} else {
-
-			valueStr, _ = baseobject.ToStringWithErr(obj)
-		}
-	}
-
-	return valueStr, err
-
-}
-
-func (i IDBRequest) Error() (string, error) {
-	return i.getStringAttribute("error")
+	return i.getObjectAttribute("error")
 }
 
 func (i IDBRequest) ReadyState() (string, error) {
-	return i.getStringAttribute("readystate")
+	return i.GetAttributeString("readystate")
 }
 
 func (i IDBRequest) getObjectAttribute(attribute string) (baseobject.BaseObject, error) {

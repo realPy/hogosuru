@@ -32,12 +32,14 @@ func main() {
 									})
 
 									req.OnError(func(e event.Event) {
-										e.Export("toto")
+										//	e.Export("toto")
 
 										d, _ := e.Target()
 
 										if req, ok := d.(indexeddb.IDBRequest); ok {
-											strerr, _ := req.Error()
+
+											objerr, _ := req.Error()
+											strerr, _ := objerr.ToString()
 											println("----->", strerr)
 										}
 

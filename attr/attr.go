@@ -66,49 +66,29 @@ func NewFromJSObject(obj js.Value) (Attr, error) {
 	return a, err
 }
 
-func (a Attr) getStringAttribute(attribute string) (string, error) {
-
-	var err error
-	var obj js.Value
-	var valueStr = ""
-
-	if obj, err = a.JSObject().GetWithErr(attribute); err == nil {
-		if obj.IsNull() {
-			err = baseobject.ErrNotAnObject
-
-		} else {
-
-			valueStr, _ = baseobject.ToStringWithErr(obj)
-		}
-	}
-
-	return valueStr, err
-
-}
-
 func (a Attr) Name() (string, error) {
 
-	return a.getStringAttribute("name")
+	return a.GetAttributeString("name")
 }
 
 func (a Attr) NamespaceURI() (string, error) {
 
-	return a.getStringAttribute("localName")
+	return a.GetAttributeString("localName")
 }
 
 func (a Attr) LocalName() (string, error) {
 
-	return a.getStringAttribute("localName")
+	return a.GetAttributeString("localName")
 }
 
 func (a Attr) Prefix() (string, error) {
 
-	return a.getStringAttribute("prefix")
+	return a.GetAttributeString("prefix")
 }
 
 func (a Attr) Value() (string, error) {
 
-	return a.getStringAttribute("value")
+	return a.GetAttributeString("value")
 }
 
 //use element.OwnerElementForAttr

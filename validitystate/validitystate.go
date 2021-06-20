@@ -46,63 +46,46 @@ func NewFromJSObject(obj js.Value) (ValidityState, error) {
 	return v, ErrNotAnValidityState
 }
 
-func (h ValidityState) getAttributeBool(attribute string) (bool, error) {
-
-	var err error
-	var obj js.Value
-	var ret bool
-
-	if obj, err = h.JSObject().GetWithErr(attribute); err == nil {
-		if obj.Type() == js.TypeBoolean {
-			ret = obj.Bool()
-		} else {
-			err = baseobject.ErrObjectNotBool
-		}
-	}
-
-	return ret, err
-}
-
 func (v ValidityState) BadInput() (bool, error) {
-	return v.getAttributeBool("badInput")
+	return v.GetAttributeBool("badInput")
 }
 
 func (v ValidityState) CustomError() (bool, error) {
-	return v.getAttributeBool("customError")
+	return v.GetAttributeBool("customError")
 }
 
 func (v ValidityState) PatternMismatch() (bool, error) {
-	return v.getAttributeBool("patternMismatch")
+	return v.GetAttributeBool("patternMismatch")
 }
 
 func (v ValidityState) RangeOverflow() (bool, error) {
-	return v.getAttributeBool("rangeOverflow")
+	return v.GetAttributeBool("rangeOverflow")
 }
 
 func (v ValidityState) RangeUnderflow() (bool, error) {
-	return v.getAttributeBool("rangeUnderflow")
+	return v.GetAttributeBool("rangeUnderflow")
 }
 
 func (v ValidityState) StepMismatch() (bool, error) {
-	return v.getAttributeBool("stepMismatch")
+	return v.GetAttributeBool("stepMismatch")
 }
 
 func (v ValidityState) TooLong() (bool, error) {
-	return v.getAttributeBool("tooLong")
+	return v.GetAttributeBool("tooLong")
 }
 
 func (v ValidityState) TooShort() (bool, error) {
-	return v.getAttributeBool("tooShort")
+	return v.GetAttributeBool("tooShort")
 }
 
 func (v ValidityState) TypeMismatch() (bool, error) {
-	return v.getAttributeBool("typeMismatch")
+	return v.GetAttributeBool("typeMismatch")
 }
 
 func (v ValidityState) Valid() (bool, error) {
-	return v.getAttributeBool("valid")
+	return v.GetAttributeBool("valid")
 }
 
 func (v ValidityState) ValueMissing() (bool, error) {
-	return v.getAttributeBool("valueMissing")
+	return v.GetAttributeBool("valueMissing")
 }

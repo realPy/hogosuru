@@ -110,6 +110,76 @@ func (o BaseObject) Export(name string) {
 	js.Global().Set(name, o.object)
 }
 
+func (o BaseObject) GetAttributeString(attribute string) (string, error) {
+
+	var err error
+	var obj js.Value
+	var valueStr = ""
+
+	if obj, err = o.JSObject().GetWithErr(attribute); err == nil {
+
+		if obj.IsNull() {
+			err = ErrNotAnObject
+
+		} else {
+
+			//valueStr, err = ToStringWithErr(obj)
+			valueStr = obj.String()
+		}
+	}
+
+	return valueStr, err
+
+}
+
+func (o BaseObject) SetAttributeString(attribute string, value string) error {
+
+	return o.JSObject().SetWithErr(attribute, js.ValueOf(value))
+}
+
+func (o BaseObject) GetAttributeBool(attribute string) (bool, error) {
+
+	var err error
+	var obj js.Value
+	var ret bool
+
+	if obj, err = o.JSObject().GetWithErr(attribute); err == nil {
+		if obj.Type() == js.TypeBoolean {
+			ret = obj.Bool()
+		} else {
+			err = ErrObjectNotBool
+		}
+	}
+
+	return ret, err
+}
+
+func (o BaseObject) SetAttributeBool(attribute string, value bool) error {
+
+	return o.JSObject().SetWithErr(attribute, js.ValueOf(value))
+}
+
+func (o BaseObject) GetAttributeInt(attribute string) (int, error) {
+
+	var err error
+	var obj js.Value
+	var result int
+
+	if obj, err = o.JSObject().GetWithErr(attribute); err == nil {
+		if obj.Type() == js.TypeBoolean {
+			result = obj.Int()
+		} else {
+			err = ErrObjectNotBool
+		}
+	}
+
+	return result, err
+}
+func (o BaseObject) SetAttributeInt(attribute string, value int) error {
+
+	return o.JSObject().SetWithErr(attribute, js.ValueOf(value))
+}
+
 func Eval(str string) (js.Value, error) {
 
 	return js.Global().CallWithErr("eval", str)
