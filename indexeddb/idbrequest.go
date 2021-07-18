@@ -7,6 +7,7 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/domexception"
 	"github.com/realPy/hogosuru/event"
 	"github.com/realPy/hogosuru/eventtarget"
 )
@@ -64,9 +65,14 @@ func (i IDBRequest) OnSuccess(handler func(e event.Event)) error {
 	return i.AddEventListener("success", handler)
 }
 
-func (i IDBRequest) Error() (baseobject.BaseObject, error) {
-
-	return i.getObjectAttribute("error")
+func (i IDBRequest) Error() (domexception.DomException, error) {
+	var err error
+	var obj js.Value
+	var e domexception.DomException
+	if obj, err = i.JSObject().GetWithErr("error"); err == nil {
+		e, err = domexception.NewFromJSObject(obj)
+	}
+	return e, err
 }
 
 func (i IDBRequest) ReadyState() (string, error) {

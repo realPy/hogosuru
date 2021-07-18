@@ -74,22 +74,6 @@ func NewFromJSObject(obj js.Value) (Date, error) {
 	return d, err
 }
 
-func (d Date) callInt(method string) (int64, error) {
-
-	var err error
-	var obj js.Value
-	var ret int64
-
-	if obj, err = d.JSObject().CallWithErr(method); err == nil {
-		if obj.Type() == js.TypeNumber {
-			ret = int64(obj.Float())
-		} else {
-			err = baseobject.ErrObjectNotNumber
-		}
-	}
-	return ret, err
-}
-
 func (d Date) callString(method string, opts ...interface{}) (string, error) {
 
 	var err error
@@ -113,71 +97,71 @@ func (d Date) callString(method string, opts ...interface{}) (string, error) {
 }
 
 func (d Date) GetDate() (int64, error) {
-	return d.callInt("getDate")
+	return d.CallInt64("getDate")
 }
 
 func (d Date) GetDay() (int64, error) {
-	return d.callInt("getDay")
+	return d.CallInt64("getDay")
 }
 
 func (d Date) GetFullYear() (int64, error) {
-	return d.callInt("getFullYear")
+	return d.CallInt64("getFullYear")
 }
 
 func (d Date) GetHours() (int64, error) {
-	return d.callInt("getHours")
+	return d.CallInt64("getHours")
 }
 
 func (d Date) GetMilliseconds() (int64, error) {
-	return d.callInt("getMilliseconds")
+	return d.CallInt64("getMilliseconds")
 }
 
 func (d Date) GetMinutes() (int64, error) {
-	return d.callInt("getMinutes")
+	return d.CallInt64("getMinutes")
 }
 
 func (d Date) GetSeconds() (int64, error) {
-	return d.callInt("getSeconds")
+	return d.CallInt64("getSeconds")
 }
 
 func (d Date) GetTime() (int64, error) {
-	return d.callInt("getTime")
+	return d.CallInt64("getTime")
 }
 
 func (d Date) GetTimezoneOffset() (int64, error) {
-	return d.callInt("getTimezoneOffset")
+	return d.CallInt64("getTimezoneOffset")
 }
 
 func (d Date) GetUTCDate() (int64, error) {
-	return d.callInt("getUTCDate")
+	return d.CallInt64("getUTCDate")
 }
 
 func (d Date) GetUTCDay() (int64, error) {
-	return d.callInt("getUTCDay")
+	return d.CallInt64("getUTCDay")
 }
 
 func (d Date) GetUTCFullYear() (int64, error) {
-	return d.callInt("getUTCFullYear")
+	return d.CallInt64("getUTCFullYear")
 }
 
 func (d Date) GetUTCHours() (int64, error) {
-	return d.callInt("getUTCHours")
+	return d.CallInt64("getUTCHours")
 }
 
 func (d Date) GetUTCMilliseconds() (int64, error) {
-	return d.callInt("getUTCMilliseconds")
+	return d.CallInt64("getUTCMilliseconds")
 }
 
 func (d Date) GetUTCMinutes() (int64, error) {
-	return d.callInt("getUTCMinutes")
+	return d.CallInt64("getUTCMinutes")
 }
 
 func (d Date) GetUTCMonth() (int64, error) {
-	return d.callInt("getUTCMonth")
+	return d.CallInt64("getUTCMonth")
 }
 
 func (d Date) GetUTCSeconds() (int64, error) {
-	return d.callInt("getUTCSeconds")
+	return d.CallInt64("getUTCSeconds")
 }
 
 func (d Date) SetDate(value int64) error {
@@ -355,7 +339,7 @@ func (d Date) ToUTCString() (string, error) {
 }
 
 func (d Date) ValueOf() (int64, error) {
-	return d.callInt("valueOf")
+	return d.CallInt64("valueOf")
 }
 
 func UTC(values ...interface{}) (int64, error) {

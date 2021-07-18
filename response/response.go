@@ -98,15 +98,12 @@ func (r Response) Redirected() (bool, error) {
 }
 
 func (r Response) Status() (int, error) {
+	var code int
 	var err error
-	var obj js.Value
-	if obj, err = r.JSObject().GetWithErr("status"); err == nil {
-		if obj.Type() == js.TypeNumber {
-			return obj.Int(), nil
-		}
+	if code, err = r.GetAttributeInt("status"); err != nil {
+		code = 456
 	}
-
-	return 456, err
+	return code, err
 }
 
 func (r Response) StatusText() (string, error) {

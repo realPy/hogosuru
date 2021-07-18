@@ -3,7 +3,6 @@ package document
 import (
 	"syscall/js"
 
-	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/element"
 	"github.com/realPy/hogosuru/htmlcollection"
 	"github.com/realPy/hogosuru/node"
@@ -60,19 +59,7 @@ func (d Document) CharacterSet() (string, error) {
 }
 
 func (d Document) ChildElementCount() (int, error) {
-	var err error
-	var obj js.Value
-	var result int
-
-	if obj, err = d.JSObject().GetWithErr("childElementCount"); err == nil {
-		if obj.Type() == js.TypeNumber {
-			result = obj.Int()
-		} else {
-			err = baseobject.ErrObjectNotNumber
-		}
-	}
-
-	return result, err
+	return d.GetAttributeInt("childElementCount")
 }
 
 func (d Document) Children() (htmlcollection.HTMLCollection, error) {

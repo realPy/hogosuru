@@ -64,16 +64,5 @@ func NewFromJSObject(obj js.Value) (ArrayBuffer, error) {
 
 func (a ArrayBuffer) ByteLength() (int, error) {
 
-	var byteLengthObject js.Value
-	var err error
-	if byteLengthObject, err = a.JSObject().GetWithErr("byteLength"); err == nil {
-		if byteLengthObject.Type() == js.TypeNumber {
-			return byteLengthObject.Int(), nil
-		} else {
-			return 0, baseobject.ErrObjectNotNumber
-		}
-
-	}
-	return 0, err
-
+	return a.GetAttributeInt("byteLength")
 }

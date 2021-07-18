@@ -14,11 +14,6 @@ var singleton sync.Once
 
 var eventtargetinterface js.Value
 
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
-
 //GetJSInterface get teh JS interface of broadcast channel
 func GetInterface() js.Value {
 

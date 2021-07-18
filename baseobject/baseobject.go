@@ -14,13 +14,18 @@ func Register(inter js.Value, contruct func(js.Value) (interface{}, error)) {
 	registry[inter.Get("prototype").Call("toString").String()] = contruct
 }
 
-func Discover(obj js.Value) (interface{}, error) {
+func Discover(obj js.Value) (BaseObject, error) {
 	var err error
-	var bobj interface{}
+	var bobj BaseObject
 
 	if f, ok := registry[obj.Get("constructor").Get("prototype").Call("toString").String()]; ok {
+		var obji interface{}
+		var ok bool
+		obji, err = f(obj)
+		if bobj, ok = obji.(BaseObject); !ok {
+			err = ErrNotABaseObject
+		}
 
-		bobj, err = f(obj)
 	} else {
 		bobj, err = NewFromJSObject(obj)
 	}
@@ -132,6 +137,27 @@ func (o BaseObject) GetAttributeString(attribute string) (string, error) {
 
 }
 
+func (o BaseObject) GetAttributeGlobal(attribute string) (BaseObject, error) {
+
+	var err error
+	var obj js.Value
+	var objGlobal BaseObject
+
+	if obj, err = o.JSObject().GetWithErr(attribute); err == nil {
+
+		if obj.IsNull() {
+			err = ErrNotAnObject
+
+		} else {
+
+			objGlobal, err = Discover(obj)
+		}
+	}
+
+	return objGlobal, err
+
+}
+
 func (o BaseObject) SetAttributeString(attribute string, value string) error {
 
 	return o.JSObject().SetWithErr(attribute, js.ValueOf(value))
@@ -178,6 +204,39 @@ func (o BaseObject) GetAttributeInt(attribute string) (int, error) {
 func (o BaseObject) SetAttributeInt(attribute string, value int) error {
 
 	return o.JSObject().SetWithErr(attribute, js.ValueOf(value))
+}
+
+func (o BaseObject) GetAttributeDouble(attribute string) (float64, error) {
+
+	var err error
+	var obj js.Value
+	var result float64
+
+	if obj, err = o.JSObject().GetWithErr(attribute); err == nil {
+		if obj.Type() == js.TypeNumber {
+			result = obj.Float()
+		} else {
+			err = ErrObjectNotNumber
+		}
+	}
+
+	return result, err
+}
+
+func (o BaseObject) CallInt64(method string) (int64, error) {
+
+	var err error
+	var obj js.Value
+	var ret int64
+
+	if obj, err = o.JSObject().CallWithErr(method); err == nil {
+		if obj.Type() == js.TypeNumber {
+			ret = int64(obj.Float())
+		} else {
+			err = ErrObjectNotNumber
+		}
+	}
+	return ret, err
 }
 
 func Eval(str string) (js.Value, error) {

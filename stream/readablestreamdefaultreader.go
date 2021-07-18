@@ -2,6 +2,7 @@ package stream
 
 import (
 	"io"
+	"sync"
 
 	"syscall/js"
 
@@ -10,15 +11,37 @@ import (
 	"github.com/realPy/hogosuru/uint8array"
 )
 
+var singletonReadableStreamDefault sync.Once
+
+var readablestreamdefaultinterface js.Value
+
+//GetReadStreamInterface
+func GetReadStreamInterface() js.Value {
+
+	singletonReadableStreamDefault.Do(func() {
+
+		var err error
+		if readablestreamdefaultinterface, err = js.Global().GetWithErr("ReadableStreamDefaultReader"); err != nil {
+			readablestreamdefaultinterface = js.Null()
+		}
+	})
+
+	return readablestreamdefaultinterface
+}
+
 type ReadableStreamDefaultReader struct {
 	baseobject.BaseObject
 }
 
 func NewReadableStreamDefaultReaderFromJSObject(obj js.Value) (ReadableStreamDefaultReader, error) {
 	var r ReadableStreamDefaultReader
-	if baseobject.String(obj) == "[object ReadableStreamDefaultReader]" {
-		r.BaseObject = r.SetObject(obj)
-		return r, nil
+
+	if rsi := GetReadStreamInterface(); !rsi.IsNull() {
+		if obj.InstanceOf(rsi) {
+			r.BaseObject = r.SetObject(obj)
+			return r, nil
+
+		}
 	}
 
 	return r, ErrNotAReadableStream
