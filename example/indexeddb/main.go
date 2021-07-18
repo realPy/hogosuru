@@ -20,7 +20,7 @@ func main() {
 					if db, err := indexeddb.IDBDatabaseNewFromObject(result); err == nil {
 						if transaction, err := db.Transaction("utilisateur", "readwrite"); err == nil {
 							if store, err := transaction.ObjectStore("utilisateur"); err == nil {
-								if req2, err := store.Put(map[string]interface{}{"email": "oui", "prenom": "bernard"}); err == nil {
+								if req2, err := store.Put(map[string]interface{}{"id": 1, "email": "oui", "prenom": "berndard"}); err == nil {
 									req2.OnSuccess(func(e event.Event) {
 										//	store.Put(map[string]interface{}{"email": "oui", "prenom": "bernard"})
 										println("Put successfull")
@@ -44,32 +44,31 @@ func main() {
 									println("erreur", err.Error())
 								}
 
-								/*
-									if req, err := store.Add(map[string]interface{}{"email": "ouis", "prenom": "manu"}); err != nil {
-										println("erreur", err.Error())
-									} else {
+								if req, err := store.Add(map[string]interface{}{"email": "oui", "prenom": "manu"}); err != nil {
+									println("erreur", err.Error())
+								} else {
 
-										req.OnSuccess(func(e event.Event) {
-											//	store.Put(map[string]interface{}{"email": "oui", "prenom": "bernard"})
-											println("Add successfull")
+									req.OnSuccess(func(e event.Event) {
+										//	store.Put(map[string]interface{}{"email": "oui", "prenom": "bernard"})
+										println("Add successfull")
 
-										})
+									})
 
-										req.OnError(func(e event.Event) {
-											//	e.Export("toto")
+									req.OnError(func(e event.Event) {
+										//	e.Export("toto")
 
-											d, _ := e.Target()
+										d, _ := e.Target()
 
-											if req, ok := d.(indexeddb.IDBRequest); ok {
+										if req, ok := d.(indexeddb.IDBRequest); ok {
 
-												objerr, _ := req.Error()
-												strerr, _ := objerr.ToString()
-												println("----->", strerr)
-											}
+											objerr, _ := req.Error()
+											strerr, _ := objerr.ToString()
+											println("----->", strerr)
+										}
 
-										})
+									})
 
-									}*/
+								}
 							} else {
 								println("erreur", err.Error())
 

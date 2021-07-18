@@ -9,6 +9,7 @@ import (
 
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/date"
+	"github.com/realPy/hogosuru/document"
 	"github.com/realPy/hogosuru/element"
 	"github.com/realPy/hogosuru/filelist"
 	"github.com/realPy/hogosuru/htmlelement"
@@ -43,15 +44,16 @@ func GetInterface() js.Value {
 	return htmlinputelementinterface
 }
 
-func New() (HtmlInputElement, error) {
+func New(d document.Document) (HtmlInputElement, error) {
+	var err error
 
 	var h HtmlInputElement
+	var e element.Element
 
-	if hci := GetInterface(); !hci.IsNull() {
-		h.BaseObject = h.SetObject(hci.New())
-		return h, nil
+	if e, err = d.CreateElement("input"); err == nil {
+		h, err = NewFromElement(e)
 	}
-	return h, ErrNotImplemented
+	return h, err
 }
 
 func NewFromElement(elem element.Element) (HtmlInputElement, error) {
