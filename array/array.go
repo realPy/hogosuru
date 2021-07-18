@@ -123,16 +123,8 @@ func NewFromJSObject(obj js.Value) (Array, error) {
 
 func (a Array) Length() (int, error) {
 
-	var LengthObject js.Value
-	var err error
-	if LengthObject, err = a.JSObject().GetWithErr("length"); err == nil {
-		if LengthObject.Type() == js.TypeNumber {
-			return LengthObject.Int(), nil
-		} else {
-			return 0, baseobject.ErrObjectNotNumber
-		}
-	}
-	return 0, err
+	return a.GetAttributeInt("length")
+
 }
 
 func (a Array) Concat(a2 Array) (Array, error) {
@@ -628,18 +620,8 @@ func (a Array) Splice(begin, suppress int, values ...interface{}) error {
 }
 
 func (a Array) ToLocaleString() (string, error) {
-	var err error
-	var result string
-	var obj js.Value
 
-	if obj, err = a.JSObject().CallWithErr("toLocaleString"); err == nil {
-		if obj.Type() == js.TypeString {
-			result = obj.String()
-		} else {
-			err = baseobject.ErrObjectNotString
-		}
-	}
-	return result, err
+	return a.GetAttributeString("toLocaleString")
 }
 
 func (a Array) Unshift(values ...interface{}) (int, error) {

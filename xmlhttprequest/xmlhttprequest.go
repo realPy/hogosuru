@@ -154,32 +154,13 @@ func (x XMLHTTPRequest) SetOnProgress(handler func(XMLHTTPRequest, progressevent
 }
 
 func (x XMLHTTPRequest) ReadyState() (int, error) {
-	var readystate js.Value
-	var err error
-	if readystate, err = x.JSObject().GetWithErr("readyState"); err == nil {
-		if readystate.Type() == js.TypeNumber {
-			return readystate.Int(), nil
-		} else {
-			return 0, baseobject.ErrObjectNotNumber
-		}
 
-	}
-	return 0, err
+	return x.GetAttributeInt("readyState")
 }
 
 func (x XMLHTTPRequest) ResponseText() (string, error) {
-	var responseTexte js.Value
-	var err error
-	if responseTexte, err = x.JSObject().GetWithErr("responseText"); err == nil {
 
-		if responseTexte.Type() == js.TypeString {
-			return responseTexte.String(), nil
-		} else {
-			return "", baseobject.ErrObjectNotString
-		}
-
-	}
-	return "", err
+	return x.GetAttributeString("responseText")
 }
 
 //GetResponseHeader https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/getResponseHeader
@@ -216,18 +197,8 @@ func (x XMLHTTPRequest) SetWithCredentials(withcredentials bool) {
 }
 
 func (x XMLHTTPRequest) ResponseURL() (string, error) {
-	var responseUrl js.Value
-	var err error
-	if responseUrl, err = x.JSObject().GetWithErr("responseURL"); err == nil {
 
-		if responseUrl.Type() == js.TypeString {
-			return responseUrl.String(), nil
-		} else {
-			return "", baseobject.ErrObjectNotString
-		}
-
-	}
-	return "", err
+	return x.GetAttributeString("responseURL")
 }
 
 func (x XMLHTTPRequest) ResponseXML() (js.Value, error) {

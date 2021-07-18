@@ -85,23 +85,6 @@ func NewFromJSObject(obj js.Value) (HtmlInputElement, error) {
 	return h, ErrNotAnHtmlInputElement
 }
 
-func (h HtmlInputElement) getAttributeDouble(attribute string) (float64, error) {
-
-	var err error
-	var obj js.Value
-	var result float64
-
-	if obj, err = h.JSObject().GetWithErr(attribute); err == nil {
-		if obj.Type() == js.TypeNumber {
-			result = obj.Float()
-		} else {
-			err = baseobject.ErrObjectNotNumber
-		}
-	}
-
-	return result, err
-}
-
 //Properties related to the parent form
 
 func (h HtmlInputElement) Form() (element.Element, error) {
@@ -479,5 +462,5 @@ func (h HtmlInputElement) ValueAsDate() (date.Date, error) {
 }
 
 func (h HtmlInputElement) ValueAsNumber() (float64, error) {
-	return h.getAttributeDouble("valueAsNumber")
+	return h.GetAttributeDouble("valueAsNumber")
 }

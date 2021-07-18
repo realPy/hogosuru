@@ -29,7 +29,7 @@ type ReadableStream struct {
 	baseobject.BaseObject
 }
 
-func NewReadableStreamFromJSObject(obj js.Value) (ReadableStream, error) {
+func NewFromJSObject(obj js.Value) (ReadableStream, error) {
 	var r ReadableStream
 
 	if rsi := GetInterface(); !rsi.IsNull() {

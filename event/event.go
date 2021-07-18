@@ -15,11 +15,6 @@ var singleton sync.Once
 
 var eventinterface js.Value
 
-//JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
-
 //Event Event struct
 type Event struct {
 	baseobject.BaseObject

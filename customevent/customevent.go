@@ -19,7 +19,7 @@ type CustomEvent struct {
 	event.Event
 }
 
-//GetJSInterface get teh JS interface of event
+//GetInterface get teh JS interface of event
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

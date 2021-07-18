@@ -34,36 +34,6 @@ type Node struct {
 	//Error *error
 }
 
-/*
-func (n Node) NotError() bool {
-
-	if n.Error == nil || (*n.Error) == nil {
-		return true
-	}
-	return false
-}
-
-func (n *Node) IsError() error {
-	var err *error
-	err = n.Error
-	n.Error = nil
-	return *err
-}
-*/
-
-/*
-func New() Node {
-
-	var n Node
-	if ni := GetJSInterface(); ni != nil {
-		n.Object = n.SetObject(ni.objectInterface.New())
-		return n
-	}
-
-	n.Error = &ErrNotImplemented
-	return n
-}*/
-
 func NewFromJSObject(obj js.Value) (Node, error) {
 	var n Node
 	var err error

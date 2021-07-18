@@ -79,31 +79,9 @@ func (p ProgressEvent) LengthComputable() (bool, error) {
 }
 
 func (p ProgressEvent) Loaded() (int, error) {
-	var loadedObject js.Value
-	var err error
-	if loadedObject, err = p.JSObject().GetWithErr("loaded"); err == nil {
-		if loadedObject.Type() == js.TypeNumber {
-			return loadedObject.Int(), nil
-		} else {
-			return 0, baseobject.ErrObjectNotNumber
-		}
-
-	}
-	return 0, err
-
+	return p.GetAttributeInt("loaded")
 }
 
 func (p ProgressEvent) Total() (int, error) {
-	var loadedObject js.Value
-	var err error
-	if loadedObject, err = p.JSObject().GetWithErr("total"); err == nil {
-		if loadedObject.Type() == js.TypeNumber {
-			return loadedObject.Int(), nil
-		} else {
-			return 0, baseobject.ErrObjectNotNumber
-		}
-
-	}
-	return 0, err
-
+	return p.GetAttributeInt("total")
 }

@@ -17,4 +17,6 @@ var (
 	ErrNotAnMEv = errors.New("The given value must be an Message Event")
 	//ErrNotImplemented ErrNotImplemented error
 	ErrNotImplemented = errors.New("Browser not implemented Object")
+	//ErrNotImplemented ErrNotImplemented error
+	ErrNotABaseObject = errors.New("Not a base object")
 )

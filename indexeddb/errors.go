@@ -23,4 +23,6 @@ var (
 	ErrNotAnIDBIndex = errors.New("Object is not IDBIndex")
 	//ErrNotAnIDBIndex ErrNotAnIDBIndex error
 	ErrNotAnIDBKeyRange = errors.New("Object is not IDBKeyRange")
+	//ErrNotAnIDBCursor ErrNotAnIDBCursor error
+	ErrNotAnIDBCursor = errors.New("Object is not IDBCursor")
 )

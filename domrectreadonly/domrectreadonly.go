@@ -63,50 +63,33 @@ func NewFromJSObject(obj js.Value) (DOMRectReadOnly, error) {
 	return d, err
 }
 
-func (d DOMRectReadOnly) getAttributeDouble(attribute string) (float64, error) {
-
-	var err error
-	var obj js.Value
-	var result float64
-
-	if obj, err = d.JSObject().GetWithErr(attribute); err == nil {
-		if obj.Type() == js.TypeNumber {
-			result = obj.Float()
-		} else {
-			err = baseobject.ErrObjectNotNumber
-		}
-	}
-
-	return result, err
-}
-
 func (d DOMRectReadOnly) Bottom() (float64, error) {
-	return d.getAttributeDouble("bottom")
+	return d.GetAttributeDouble("bottom")
 }
 
 func (d DOMRectReadOnly) Height() (float64, error) {
-	return d.getAttributeDouble("height")
+	return d.GetAttributeDouble("height")
 }
 
 func (d DOMRectReadOnly) Left() (float64, error) {
-	return d.getAttributeDouble("left")
+	return d.GetAttributeDouble("left")
 }
 func (d DOMRectReadOnly) Right() (float64, error) {
-	return d.getAttributeDouble("right")
+	return d.GetAttributeDouble("right")
 }
 func (d DOMRectReadOnly) Top() (float64, error) {
-	return d.getAttributeDouble("top")
+	return d.GetAttributeDouble("top")
 }
 func (d DOMRectReadOnly) Width() (float64, error) {
-	return d.getAttributeDouble("width")
+	return d.GetAttributeDouble("width")
 }
 
 func (d DOMRectReadOnly) X() (float64, error) {
-	return d.getAttributeDouble("x")
+	return d.GetAttributeDouble("x")
 }
 
 func (d DOMRectReadOnly) Y() (float64, error) {
-	return d.getAttributeDouble("y")
+	return d.GetAttributeDouble("y")
 }
 
 func (d DOMRectReadOnly) FromRect() {
@@ -114,16 +97,6 @@ func (d DOMRectReadOnly) FromRect() {
 }
 
 func (d DOMRectReadOnly) ToJSON() (string, error) {
-	var err error
-	var result string
-	var obj js.Value
 
-	if obj, err = d.JSObject().CallWithErr("toJSON"); err == nil {
-		if obj.Type() == js.TypeString {
-			result = obj.String()
-		} else {
-			err = baseobject.ErrObjectNotString
-		}
-	}
-	return result, err
+	return d.GetAttributeString("toJSON")
 }

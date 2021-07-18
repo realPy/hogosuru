@@ -77,22 +77,6 @@ func ItemFromHTMLCollection(collection htmlcollection.HTMLCollection, index int)
 
 }
 
-func (e Element) getAttributeNumber(attribute string) (float64, error) {
-
-	var err error
-	var obj js.Value
-	var ret float64
-
-	if obj, err = e.JSObject().GetWithErr(attribute); err == nil {
-		if obj.Type() == js.TypeNumber {
-			ret = obj.Float()
-		} else {
-			err = baseobject.ErrObjectNotNumber
-		}
-	}
-	return ret, err
-}
-
 func (e Element) getAttributeElement(attribute string) (Element, error) {
 	var nodeObject js.Value
 	var newElement Element
