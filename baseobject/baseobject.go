@@ -223,6 +223,11 @@ func (o BaseObject) GetAttributeDouble(attribute string) (float64, error) {
 	return result, err
 }
 
+func (o BaseObject) SetAttributeDouble(attribute string, value float64) error {
+
+	return o.JSObject().SetWithErr(attribute, js.ValueOf(value))
+}
+
 func (o BaseObject) CallInt64(method string) (int64, error) {
 
 	var err error

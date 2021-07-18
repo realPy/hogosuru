@@ -4,6 +4,7 @@ import (
 	"github.com/realPy/hogosuru/document"
 	"github.com/realPy/hogosuru/event"
 	"github.com/realPy/hogosuru/htmlinputelement"
+	"github.com/realPy/hogosuru/htmlprogresselement"
 )
 
 func main() {
@@ -86,7 +87,17 @@ func main() {
 	nod.AppendChild(h.Node)
 	h.Focus()
 
+	input, _ := htmlinputelement.New(d)
+	input.SetAttribute("type", "checkbox")
+	nod.AppendChild(input.Node)
 	//h.SetHidden(true)
+	h.Export("mat")
+
+	progress, _ := htmlprogresselement.New(d)
+	progress.SetMax(100)
+	progress.SetValue(33)
+
+	nod.AppendChild(progress.Node)
 	h.Export("mat")
 
 	h.SetDataset("toto", "value")
