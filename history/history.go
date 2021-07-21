@@ -11,68 +11,82 @@ import (
 
 var singleton sync.Once
 
-var historyinterface *JSInterface
+// var historyinterface *JSInterface
+
+var historyinterface js.Value
 
 //JSInterface JSInterface struct
-type JSInterface struct {
-	objectInterface js.Value
-}
+// type JSInterface struct {
+// 	objectInterface js.Value
+// }
 
 //HTMLCollection struct
-type Hystory struct {
+type History struct {
 	baseobject.BaseObject
 }
 
 //GetJSInterface get the JS interface of formdata
-func GetJSInterface() *JSInterface {
+func GetInterface() js.Value {
 
 	singleton.Do(func() {
-		var historyinstance JSInterface
-		var windowinstance js.Value
+
+		var window js.Value
 		var err error
 
-		if windowinstance, err = js.Global().GetWithErr("window"); err == nil {
-			if historyinstance.objectInterface, err = windowinstance.GetWithErr("history"); err == nil {
-				historyinterface = &historyinstance
-			} else {
-				println("%s", err)
+		if window, err = js.Global().GetWithErr("window"); err == nil {
+			if historyinterface, err = window.GetWithErr("history"); err != nil {
+				historyinterface = js.Null()
 			}
 		} else {
-			println("%s", err)
+			historyinterface = js.Null()
 		}
+	})
+
+	baseobject.Register(historyinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
 	})
 
 	return historyinterface
 }
 
-func Forward() error {
-	var err error
-	if hist := GetJSInterface(); hist != nil {
-		_, err = hist.objectInterface.CallWithErr("forward")
+func NewFromJSObject(obj js.Value) (History, error) {
+	var h History
+
+	if hci := GetInterface(); !hci.IsNull() {
+		if obj.InstanceOf(hci) {
+
+			h.BaseObject = h.SetObject(obj)
+			return h, nil
+		}
 	}
+	return h, ErrCantImplementedHistory
+}
+
+func GetHistory() (History, error) {
+	return NewFromJSObject(GetInterface())
+}
+
+func (h History) Forward() error {
+	var err error
+	_, err = h.JSObject().CallWithErr("forward")
+	return err
+}
+
+func (h History) Back() error {
+	var err error
+	_, err = h.JSObject().CallWithErr("back")
+	return err
+}
+
+func (h History) Go(position int) error {
+	var err error
+	_, err = h.JSObject().CallWithErr("go", js.ValueOf(position))
 
 	return err
 }
 
-func Back() error {
-	var err error
-	if hist := GetJSInterface(); hist != nil {
-		_, err = hist.objectInterface.CallWithErr("back")
-	}
-
-	return err
-}
-
-func Go(position int) error {
-	var err error
-	if hist := GetJSInterface(); hist != nil {
-		_, err = hist.objectInterface.CallWithErr("go", js.ValueOf(position))
-	}
-
-	return err
-}
-
-func Length(position int) error {
+/*
+func (h History) Length(position int) error {
 	var err error
 	if hist := GetJSInterface(); hist != nil {
 		_, err = hist.objectInterface.CallWithErr("length", js.ValueOf(position))
@@ -109,3 +123,4 @@ func State() (js.Value, error) {
 
 	return obj, err
 }
+*/
