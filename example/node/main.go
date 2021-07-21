@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/realPy/hogosuru/document"
 	"github.com/realPy/hogosuru/event"
+	"github.com/realPy/hogosuru/htmlanchorelement"
 	"github.com/realPy/hogosuru/htmlinputelement"
 	"github.com/realPy/hogosuru/htmlprogresselement"
 )
@@ -95,9 +96,20 @@ func main() {
 
 	progress, _ := htmlprogresselement.New(d)
 	progress.SetMax(100)
-	progress.SetValue(33)
+	progress.SetValue(50)
 
 	nod.AppendChild(progress.Node)
+
+	if anchor, err := htmlanchorelement.New(d); err == nil {
+		anchor.SetHref("https://google.fr")
+
+		anchor.SetText("Cliquez ici")
+
+		nod.AppendChild(anchor.Node)
+	} else {
+		println("erreur", err.Error())
+	}
+
 	h.Export("mat")
 
 	h.SetDataset("toto", "value")

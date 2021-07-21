@@ -7,6 +7,7 @@ import (
 
 	"github.com/realPy/hogosuru/attr"
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/domtokenlist"
 	"github.com/realPy/hogosuru/htmlcollection"
 
 	"github.com/realPy/hogosuru/namednodemap"
@@ -108,6 +109,36 @@ func (e Element) Attributes() (namednodemap.NamedNodeMap, error) {
 		namednmap, err = namednodemap.NewFromJSObject(obj)
 	}
 	return namednmap, err
+}
+
+func (e Element) ChildElementCount() (int, error) {
+	return e.GetAttributeInt("childElementCount")
+}
+
+func (e Element) Children() (htmlcollection.HTMLCollection, error) {
+	var err error
+	var obj js.Value
+	var collection htmlcollection.HTMLCollection
+
+	if obj, err = e.JSObject().GetWithErr("children"); err == nil {
+
+		collection, err = htmlcollection.NewFromJSObject(obj)
+	}
+
+	return collection, err
+}
+
+func (e Element) ClassList() (domtokenlist.DOMTokenList, error) {
+	var err error
+	var obj js.Value
+	var dlist domtokenlist.DOMTokenList
+
+	if obj, err = e.JSObject().GetWithErr("classList"); err == nil {
+
+		dlist, err = domtokenlist.NewFromJSObject(obj)
+	}
+
+	return dlist, err
 }
 
 func (e Element) ClassName() (string, error) {

@@ -11,14 +11,16 @@ func Register(inter js.Value, contruct func(js.Value) (interface{}, error)) {
 		registry = make(map[string]func(js.Value) (interface{}, error))
 	}
 
-	registry[inter.Get("prototype").Call("toString").String()] = contruct
+	//registry[inter.Get("prototype").Call("toString").String()] = contruct
+	registry[inter.Get("name").String()] = contruct
 }
 
 func Discover(obj js.Value) (BaseObject, error) {
 	var err error
 	var bobj BaseObject
 
-	if f, ok := registry[obj.Get("constructor").Get("prototype").Call("toString").String()]; ok {
+	//if f, ok := registry[obj.Get("constructor").Get("prototype").Call("toString").String()]; ok {
+	if f, ok := registry[obj.Get("constructor").Get("name").String()]; ok {
 		var obji interface{}
 		var ok bool
 		obji, err = f(obj)

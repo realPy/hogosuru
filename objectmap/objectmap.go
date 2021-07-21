@@ -126,7 +126,7 @@ func (o ObjectMap) ForEach(f func(ObjectMap, interface{}, interface{})) error {
 	var err error
 
 	jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		f(o, baseobject.GoValue(args[0]), baseobject.GoValue(args[0]))
+		f(o, baseobject.GoValue(args[0]), baseobject.GoValue(args[1]))
 		return nil
 	})
 
