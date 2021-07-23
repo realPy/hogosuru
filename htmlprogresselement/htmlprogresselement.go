@@ -104,7 +104,7 @@ func (h HtmlProgressElement) Labels() (nodelist.NodeList, error) {
 	var obj js.Value
 	var nlist nodelist.NodeList
 
-	if obj, err = h.JSObject().CallWithErr("labels"); err == nil {
+	if obj, err = h.JSObject().GetWithErr("labels"); err == nil {
 
 		nlist, err = nodelist.NewFromJSObject(obj)
 	}

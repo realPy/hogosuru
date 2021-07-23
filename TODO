@@ -1,16 +1,6 @@
+revoir les events xmlhttprequest
 
-WindowOrWorkerGlobalScope
+func (e Element) OnTouchWheel(handler func(e event.Event)) error {
 
-https://developer.mozilla.org/fr/docs/Web/API/Window
-
-
-
-upload file:
-https://attacomsian.com/blog/xhr-monitor-progress
-
-
-
-
-
-tinygo build  -o ./example/wasm_main/draganddrop.wasm --no-debug -target wasm example/wasm_main/draganddrop/main.go
-
+	return e.AddEventListener("wheel", handler)
+}

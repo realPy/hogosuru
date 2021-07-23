@@ -406,14 +406,6 @@ func (h HtmlInputElement) SetDirName(value string) error {
 	return h.SetAttributeString("dirName", value)
 }
 
-func (h HtmlInputElement) AccessKey() (string, error) {
-	return h.GetAttributeString("accessKey")
-}
-
-func (h HtmlInputElement) SetAccessKey(value string) error {
-	return h.SetAttributeString("accessKey", value)
-}
-
 func (h HtmlInputElement) List() (htmlelement.HtmlElement, error) {
 	var obj js.Value
 	var err error
