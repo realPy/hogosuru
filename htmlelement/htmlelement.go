@@ -8,6 +8,7 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/cssstyledeclaration"
 	"github.com/realPy/hogosuru/element"
 )
 
@@ -153,14 +154,6 @@ func (h HtmlElement) SetDir(value string) error {
 	return h.SetAttributeString("dir", value)
 }
 
-func (h HtmlElement) Id() (string, error) {
-	return h.GetAttributeString("id")
-}
-
-func (h HtmlElement) SetId(value string) error {
-	return h.SetAttributeString("id", value)
-}
-
 func (h HtmlElement) Lang() (string, error) {
 	return h.GetAttributeString("lang")
 }
@@ -226,16 +219,33 @@ func (h HtmlElement) SetTitle(value string) error {
 }
 
 func (h HtmlElement) Blur() error {
-	_, err := h.BaseObject.JSObject().CallWithErr("blur")
+	_, err := h.JSObject().CallWithErr("blur")
 	return err
 }
 
 func (h HtmlElement) Click() error {
-	_, err := h.BaseObject.JSObject().CallWithErr("click")
+	_, err := h.JSObject().CallWithErr("click")
 	return err
 }
 
 func (h HtmlElement) Focus() error {
-	_, err := h.BaseObject.JSObject().CallWithErr("focus")
+	_, err := h.JSObject().CallWithErr("focus")
 	return err
+}
+
+func (h HtmlElement) Style() (cssstyledeclaration.CSSStyleDeclaration, error) {
+	var err error
+	var obj js.Value
+	var ret cssstyledeclaration.CSSStyleDeclaration
+
+	if obj, err = h.JSObject().GetWithErr("style"); err == nil {
+
+		if !obj.IsNull() {
+			ret, err = cssstyledeclaration.NewFromJSObject(obj)
+		} else {
+			err = baseobject.ErrNotAnObject
+		}
+
+	}
+	return ret, err
 }

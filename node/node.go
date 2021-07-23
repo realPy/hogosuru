@@ -31,7 +31,6 @@ func GetInterface() js.Value {
 
 type Node struct {
 	eventtarget.EventTarget
-	//Error *error
 }
 
 func NewFromJSObject(obj js.Value) (Node, error) {

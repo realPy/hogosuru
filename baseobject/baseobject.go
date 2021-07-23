@@ -6,28 +6,38 @@ import (
 
 var registry map[string]func(js.Value) (interface{}, error)
 
-func Register(inter js.Value, contruct func(js.Value) (interface{}, error)) {
+func Register(inter js.Value, contruct func(js.Value) (interface{}, error)) error {
+	var obj js.Value
+	var err error
 	if registry == nil {
 		registry = make(map[string]func(js.Value) (interface{}, error))
 	}
 
 	//registry[inter.Get("prototype").Call("toString").String()] = contruct
-	registry[inter.Get("name").String()] = contruct
+	if obj, err = inter.GetWithErr("name"); err == nil {
+		registry[obj.String()] = contruct
+	}
+	return err
 }
 
-func Discover(obj js.Value) (BaseObject, error) {
+func Discover(obj js.Value) (interface{}, error) {
 	var err error
-	var bobj BaseObject
+	var bobj interface{}
 
 	//if f, ok := registry[obj.Get("constructor").Get("prototype").Call("toString").String()]; ok {
-	if f, ok := registry[obj.Get("constructor").Get("name").String()]; ok {
-		var obji interface{}
-		var ok bool
-		obji, err = f(obj)
-		if bobj, ok = obji.(BaseObject); !ok {
-			err = ErrNotABaseObject
-		}
 
+	if objcontructor, err := obj.GetWithErr("constructor"); err == nil {
+		if f, ok := registry[objcontructor.Get("name").String()]; ok {
+			var obji interface{}
+			var ok bool
+			obji, err = f(obj)
+			if bobj, ok = obji.(BaseObject); !ok {
+				err = ErrNotABaseObject
+			}
+
+		} else {
+			bobj, err = NewFromJSObject(obj)
+		}
 	} else {
 		bobj, err = NewFromJSObject(obj)
 	}
@@ -139,11 +149,11 @@ func (o BaseObject) GetAttributeString(attribute string) (string, error) {
 
 }
 
-func (o BaseObject) GetAttributeGlobal(attribute string) (BaseObject, error) {
+func (o BaseObject) GetAttributeGlobal(attribute string) (interface{}, error) {
 
 	var err error
 	var obj js.Value
-	var objGlobal BaseObject
+	var objGlobal interface{}
 
 	if obj, err = o.JSObject().GetWithErr(attribute); err == nil {
 

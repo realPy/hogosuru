@@ -4,6 +4,7 @@ import (
 	"github.com/realPy/hogosuru/document"
 	"github.com/realPy/hogosuru/event"
 	"github.com/realPy/hogosuru/htmlanchorelement"
+	"github.com/realPy/hogosuru/htmlbrelement"
 	"github.com/realPy/hogosuru/htmlinputelement"
 	"github.com/realPy/hogosuru/htmlprogresselement"
 )
@@ -104,13 +105,23 @@ func main() {
 		anchor.SetHref("https://google.fr")
 
 		anchor.SetText("Cliquez ici")
+		anchor.SetAttribute("info", "color:green")
+		anchor.Export("poo")
+		anchor.Style_().SetProperty("color", "green")
+		anchor.Style_().SetProperty("font-weight", "bold")
 
 		nod.AppendChild(anchor.Node)
 	} else {
 		println("erreur", err.Error())
 	}
 
-	h.Export("mat")
+	if br, err := htmlbrelement.New(d); err == nil {
+
+		br.SetDataset("test", "test")
+		nod.AppendChild(br.Node)
+	} else {
+		println("erreur", err.Error())
+	}
 
 	h.SetDataset("toto", "value")
 

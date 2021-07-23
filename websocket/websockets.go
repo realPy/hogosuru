@@ -9,6 +9,8 @@ import (
 
 	"github.com/realPy/hogosuru/arraybuffer"
 	"github.com/realPy/hogosuru/blob"
+	"github.com/realPy/hogosuru/event"
+	"github.com/realPy/hogosuru/eventtarget"
 	"github.com/realPy/hogosuru/messageevent"
 
 	"github.com/realPy/hogosuru/baseobject"
@@ -20,7 +22,7 @@ var wsinterface js.Value
 
 //Websocket struct
 type WebSocket struct {
-	baseobject.BaseObject
+	eventtarget.EventTarget
 }
 
 const (
@@ -71,10 +73,14 @@ func New(url string) (WebSocket, error) {
 	return ws, ErrNotImplemented
 }
 
-func (w WebSocket) setHandler(jshandlername string, handler func(WebSocket, []js.Value)) {
+func (w WebSocket) setHandler(jshandlername string, handler func(e event.Event)) {
 
 	jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		handler(w, args)
+
+		if e, err := event.NewFromJSObject(args[0]); err == nil {
+			handler(e)
+		}
+
 		return nil
 	})
 
@@ -82,27 +88,54 @@ func (w WebSocket) setHandler(jshandlername string, handler func(WebSocket, []js
 }
 
 //SetOnOpen Set onOpen Handler
-func (w WebSocket) SetOnOpen(handler func(WebSocket)) {
+func (w WebSocket) SetOnOpen(handler func(e event.Event)) {
 
-	w.setHandler("onopen", func(ws WebSocket, v []js.Value) {
-		handler(ws)
+	w.setHandler("onopen", func(e event.Event) {
+		handler(e)
 	})
 }
 
 //SetOnClose Set onClose Handler
-func (w WebSocket) SetOnClose(handler func(WebSocket)) {
-
-	w.setHandler("onclose", func(ws WebSocket, v []js.Value) {
-		handler(ws)
+func (w WebSocket) SetOnClose(handler func(e event.Event)) {
+	w.setHandler("onclose", func(e event.Event) {
+		handler(e)
 	})
 }
 
-//SetOnError Set onError Handler
-func (w WebSocket) SetOnError(handler func(WebSocket)) {
-
-	w.setHandler("onerror", func(ws WebSocket, v []js.Value) {
-		handler(ws)
+//SetOnClose Set onClose Handler
+func (w WebSocket) SetOnError(handler func(e event.Event)) {
+	w.setHandler("onerror", func(e event.Event) {
+		handler(e)
 	})
+}
+
+//SetOnClose Set onClose Handler
+func (w WebSocket) SetOnMessage(handler func(e messageevent.MessageEvent)) {
+	w.setHandler("onmessage", func(e event.Event) {
+		var m messageevent.MessageEvent
+		var err error
+		if m, err = messageevent.NewFromJSObject(e.JSObject()); err == nil {
+			handler(m)
+		}
+	})
+}
+
+//OnOpen Set onOpen Handler
+func (w WebSocket) OnOpen(handler func(e event.Event)) error {
+
+	return w.AddEventListener("open", handler)
+}
+
+//OnClose Set onClose Handler
+func (w WebSocket) OnClose(handler func(e event.Event)) error {
+
+	return w.AddEventListener("close", handler)
+}
+
+//OnError Set onError Handler
+func (w WebSocket) OnError(handler func(e event.Event)) error {
+
+	return w.AddEventListener("error", handler)
 }
 
 func (w WebSocket) BinaryType() (string, error) {
@@ -132,6 +165,19 @@ func (w WebSocket) SetBinaryType(binaryType string) error {
 
 }
 
+//OnError Set onError Handler
+func (w WebSocket) OnMessage(handler func(m messageevent.MessageEvent)) error {
+
+	return w.AddEventListener("message", func(e event.Event) {
+		var m messageevent.MessageEvent
+		var err error
+		if m, err = messageevent.NewFromJSObject(e.JSObject()); err == nil {
+			handler(m)
+		}
+	})
+}
+
+/*
 func (w WebSocket) SetOnMessage(handler func(WebSocket, interface{})) {
 
 	w.setHandler("onmessage", func(ws WebSocket, v []js.Value) {
@@ -161,7 +207,7 @@ func (w WebSocket) SetOnMessage(handler func(WebSocket, interface{})) {
 		}
 
 	})
-}
+}*/
 
 func (w WebSocket) Send(data interface{}) error {
 	var object js.Value

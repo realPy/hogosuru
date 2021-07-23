@@ -53,11 +53,11 @@ func (i IDBCursor) Direction() (string, error) {
 	return i.GetAttributeString("direction")
 }
 
-func (i IDBCursor) Key() (baseobject.BaseObject, error) {
+func (i IDBCursor) Key() (interface{}, error) {
 	return i.GetAttributeGlobal("key")
 }
 
-func (i IDBCursor) PrimaryKey() (baseobject.BaseObject, error) {
+func (i IDBCursor) PrimaryKey() (interface{}, error) {
 	return i.GetAttributeGlobal("primaryKey")
 }
 
@@ -78,10 +78,10 @@ func (i IDBCursor) Request() (IDBRequest, error) {
 	return request, err
 }
 
-func (i IDBCursor) Source() (baseobject.BaseObject, error) {
+func (i IDBCursor) Source() (interface{}, error) {
 	var err error
 	var obj js.Value
-	var bobj baseobject.BaseObject
+	var bobj interface{}
 
 	if obj, err = i.JSObject().CallWithErr("source"); err == nil {
 

@@ -80,14 +80,6 @@ func NewFromJSObject(obj js.Value) (HtmlAnchorElement, error) {
 	return h, ErrNotAnHtmlAnchorElement
 }
 
-func (h HtmlAnchorElement) AccessKey() (string, error) {
-	return h.GetAttributeString("accesskey")
-}
-
-func (h HtmlAnchorElement) SetAccessKey(value string) error {
-	return h.SetAttributeString("accesskey", value)
-}
-
 func (h HtmlAnchorElement) Download() (string, error) {
 	return h.GetAttributeString("download")
 }
