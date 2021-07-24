@@ -8,6 +8,8 @@ import (
 	"github.com/realPy/hogosuru/htmlbuttonelement"
 	"github.com/realPy/hogosuru/htmldatalistelement"
 	"github.com/realPy/hogosuru/htmldetailselement"
+	"github.com/realPy/hogosuru/htmldlistelement"
+	"github.com/realPy/hogosuru/htmlembedelement"
 	"github.com/realPy/hogosuru/htmlformelement"
 	"github.com/realPy/hogosuru/htmlinputelement"
 	"github.com/realPy/hogosuru/htmlprogresselement"
@@ -87,11 +89,15 @@ func main() {
 
 	p, _ := d.CreateElement("input")
 	p.SetAttribute("type", "checkbox")
-	//	h, _ := htmlelement.NewFromElement(p)
+
 	h, _ := htmlinputelement.NewFromElement(p)
 	h.SetChecked(true)
 	nod.AppendChild(h.Node)
 	h.Focus()
+	h.SetDataset("toto", "value")
+
+	v, _ := h.Dataset("toto")
+	println(v.(string))
 
 	input, _ := htmlinputelement.New(d)
 	input.SetAttribute("type", "checkbox")
@@ -175,10 +181,24 @@ func main() {
 		println("erreur", err.Error())
 	}
 
-	h.SetDataset("toto", "value")
+	if dlist, err := htmldlistelement.New(d); err == nil {
+		nod.AppendChild(dlist.Node)
 
-	v, _ := h.Dataset("toto")
-	println(v.(string))
+	} else {
+		println("erreur", err.Error())
+	}
+
+	if embed, err := htmlembedelement.New(d); err == nil {
+
+		embed.SetType("video/webm")
+		embed.SetWidth("250")
+		embed.SetHeight("200")
+		embed.SetSrc("https://www.youtube.com/embed/tgbNymZ7vqY")
+		nod.AppendChild(embed.Node)
+
+	} else {
+		println("erreur", err.Error())
+	}
 	ch := make(chan struct{})
 	<-ch
 
