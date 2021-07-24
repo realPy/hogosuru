@@ -58,6 +58,7 @@ func (d DOMStringList) Item(index int) js.Value {
 }
 
 func (d DOMStringList) Contains(search string) (bool, error) {
+
 	var err error
 	var obj js.Value
 	var result bool

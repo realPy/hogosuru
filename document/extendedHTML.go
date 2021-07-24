@@ -3,7 +3,6 @@ package document
 import (
 	"syscall/js"
 
-	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/nodelist"
 )
 
@@ -34,18 +33,7 @@ func (d Document) getSelection() {
 
 func (d Document) HasFocus() (bool, error) {
 
-	var err error
-	var result bool
-	var obj js.Value
-
-	if obj, err = d.JSObject().GetWithErr("hasFocus"); err == nil {
-		if obj.Type() == js.TypeBoolean {
-			result = obj.Bool()
-		} else {
-			err = baseobject.ErrObjectNotBool
-		}
-	}
-	return result, err
+	return d.GetAttributeBool("hasFocus")
 }
 
 //Close Closer interface

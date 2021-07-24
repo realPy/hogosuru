@@ -256,6 +256,21 @@ func (o BaseObject) CallInt64(method string) (int64, error) {
 	return ret, err
 }
 
+func (o BaseObject) CallBool(method string) (bool, error) {
+	var err error
+	var obj js.Value
+	var result bool
+
+	if obj, err = o.JSObject().CallWithErr(method); err == nil {
+		if obj.Type() == js.TypeBoolean {
+			result = obj.Bool()
+		} else {
+			err = ErrObjectNotBool
+		}
+	}
+	return result, err
+}
+
 func Eval(str string) (js.Value, error) {
 
 	return js.Global().CallWithErr("eval", str)

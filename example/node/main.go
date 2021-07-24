@@ -5,6 +5,10 @@ import (
 	"github.com/realPy/hogosuru/event"
 	"github.com/realPy/hogosuru/htmlanchorelement"
 	"github.com/realPy/hogosuru/htmlbrelement"
+	"github.com/realPy/hogosuru/htmlbuttonelement"
+	"github.com/realPy/hogosuru/htmldatalistelement"
+	"github.com/realPy/hogosuru/htmldetailselement"
+	"github.com/realPy/hogosuru/htmlformelement"
 	"github.com/realPy/hogosuru/htmlinputelement"
 	"github.com/realPy/hogosuru/htmlprogresselement"
 )
@@ -119,6 +123,54 @@ func main() {
 
 		br.SetDataset("test", "test")
 		nod.AppendChild(br.Node)
+	} else {
+		println("erreur", err.Error())
+	}
+
+	if form, err := htmlformelement.New(d); err == nil {
+		form.SetID("pouet")
+		nod.AppendChild(form.Node)
+
+		if b1, err := htmlbuttonelement.New(d); err == nil {
+			b1.SetName("submit")
+			b1.SetTextContent("submit")
+			form.AppendChild(b1.Node)
+		} else {
+			println("erreur", err.Error())
+		}
+
+	} else {
+		println("erreur", err.Error())
+	}
+
+	inputlist, _ := htmlinputelement.New(d)
+	inputlist.SetAttribute("list", "ice-cream-flavors")
+	inputlist.SetTextContent("ddd")
+	nod.AppendChild(inputlist.Node)
+	if datalist, err := htmldatalistelement.New(d); err == nil {
+
+		datalist.SetID("ice-cream-flavors")
+		opt, _ := d.CreateElement("option")
+		opt.SetAttribute("value", "chocolate")
+		datalist.AppendChild(opt.Node)
+		opt, _ = d.CreateElement("option")
+		opt.SetAttribute("value", "coconut")
+		datalist.AppendChild(opt.Node)
+		opt, _ = d.CreateElement("option")
+		opt.SetAttribute("value", "vanilla")
+		datalist.AppendChild(opt.Node)
+
+		nod.AppendChild(datalist.Node)
+	} else {
+		println("erreur", err.Error())
+	}
+
+	if details, err := htmldetailselement.New(d); err == nil {
+		details.SetTextContent("A keyboard.")
+		sum, _ := d.CreateElement("summary")
+		sum.SetTextContent("I have keys but no doors. I have space but no room. You can enter but can’t leave. What am I?")
+		details.AppendChild(sum.Node)
+		nod.AppendChild(details.Node)
 	} else {
 		println("erreur", err.Error())
 	}
