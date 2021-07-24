@@ -83,18 +83,7 @@ func (r Response) Ok() (bool, error) {
 }
 
 func (r Response) Redirected() (bool, error) {
-
-	var err error
-	var obj js.Value
-
-	if obj, err = r.JSObject().GetWithErr("redirected"); err == nil {
-		if obj.Type() == js.TypeBoolean {
-			return obj.Bool(), nil
-		} else {
-			err = baseobject.ErrObjectNotBool
-		}
-	}
-	return false, err
+	return r.CallBool("redirected")
 }
 
 func (r Response) Status() (int, error) {
@@ -164,17 +153,7 @@ func (r Response) Text() (string, error) {
 
 func (r Response) UseFinalURL() (bool, error) {
 
-	var err error
-	var obj js.Value
-
-	if obj, err = r.JSObject().GetWithErr("useFinalURL"); err == nil {
-		if obj.Type() == js.TypeBoolean {
-			return obj.Bool(), nil
-		} else {
-			err = baseobject.ErrObjectNotBool
-		}
-	}
-	return false, err
+	return r.CallBool("useFinalURL")
 }
 
 func (r Response) SetUseFinalURL(b bool) {

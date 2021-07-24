@@ -203,26 +203,13 @@ func (n Node) GetRootNode() (Node, error) {
 }
 
 func (n Node) HasChildNodes() (bool, error) {
-	var err error
-	var obj js.Value
-	var result bool
-
-	if obj, err = n.JSObject().CallWithErr("hasChildNodes"); err == nil {
-		if obj.Type() == js.TypeBoolean {
-			result = obj.Bool()
-		} else {
-			err = baseobject.ErrObjectNotBool
-		}
-	}
-
-	return result, err
-
+	return n.CallBool("hasChildNodes")
 }
 
 func (n Node) InsertBefore(elem, before Node) (Node, error) {
 	var err error
 
-	_, err = n.JSObject().CallWithErr("insertBefore", elem, before)
+	_, err = n.JSObject().CallWithErr("insertBefore", elem.JSObject(), before.JSObject())
 
 	return elem, err
 
@@ -245,12 +232,13 @@ func (n *Node) IsDefaultNamespace() (bool, error) {
 
 }
 
-func (n *Node) IsEqualNode() (bool, error) {
+func (n *Node) IsEqualNode(n1 Node) (bool, error) {
+
 	var err error
 	var obj js.Value
 	var result bool
 
-	if obj, err = n.JSObject().CallWithErr("isEqualNode"); err == nil {
+	if obj, err = n.JSObject().CallWithErr("isEqualNode", n1.JSObject()); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
@@ -262,12 +250,12 @@ func (n *Node) IsEqualNode() (bool, error) {
 
 }
 
-func (n *Node) IsSameNode() (bool, error) {
+func (n *Node) IsSameNode(n1 Node) (bool, error) {
 	var err error
 	var obj js.Value
 	var result bool
 
-	if obj, err = n.JSObject().CallWithErr("isSameNode"); err == nil {
+	if obj, err = n.JSObject().CallWithErr("isSameNode", n1.JSObject()); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
@@ -308,7 +296,7 @@ func (n *Node) Normalize() error {
 
 func (n Node) RemoveChild(node Node) (Node, error) {
 	var err error
-	_, err = n.JSObject().CallWithErr("removeChild", node)
+	_, err = n.JSObject().CallWithErr("removeChild", node.JSObject())
 	return node, err
 
 }
@@ -316,7 +304,7 @@ func (n Node) RemoveChild(node Node) (Node, error) {
 func (n Node) ReplaceChild(new, old Node) (Node, error) {
 	var err error
 
-	_, err = n.JSObject().CallWithErr("replaceChild", new, old)
+	_, err = n.JSObject().CallWithErr("replaceChild", new.JSObject(), old.JSObject())
 
 	return old, err
 

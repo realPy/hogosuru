@@ -64,18 +64,7 @@ func NewFromJSObject(obj js.Value) (ProgressEvent, error) {
 }
 
 func (p ProgressEvent) LengthComputable() (bool, error) {
-	var err error
-	var result bool
-	var obj js.Value
-
-	if obj, err = p.JSObject().GetWithErr("lengthComputable"); err == nil {
-		if obj.Type() == js.TypeBoolean {
-			result = obj.Bool()
-		} else {
-			err = baseobject.ErrObjectNotBool
-		}
-	}
-	return result, err
+	return p.CallBool("lengthComputable")
 }
 
 func (p ProgressEvent) Loaded() (int, error) {
