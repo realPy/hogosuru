@@ -9,6 +9,7 @@ import (
 	"github.com/realPy/hogosuru/htmldatalistelement"
 	"github.com/realPy/hogosuru/htmldetailselement"
 	"github.com/realPy/hogosuru/htmldlistelement"
+	"github.com/realPy/hogosuru/htmlembedelement"
 	"github.com/realPy/hogosuru/htmlformelement"
 	"github.com/realPy/hogosuru/htmlinputelement"
 	"github.com/realPy/hogosuru/htmlprogresselement"
@@ -182,6 +183,18 @@ func main() {
 
 	if dlist, err := htmldlistelement.New(d); err == nil {
 		nod.AppendChild(dlist.Node)
+
+	} else {
+		println("erreur", err.Error())
+	}
+
+	if embed, err := htmlembedelement.New(d); err == nil {
+
+		embed.SetType("video/webm")
+		embed.SetWidth("250")
+		embed.SetHeight("200")
+		embed.SetSrc("https://www.youtube.com/embed/tgbNymZ7vqY")
+		nod.AppendChild(embed.Node)
 
 	} else {
 		println("erreur", err.Error())
