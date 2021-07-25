@@ -105,6 +105,34 @@ func (p Promise) Async(resolve func(baseobject.BaseObject) *Promise, reject func
 	return err
 }
 
+func (p Promise) Then(resolve func(interface{}) *Promise, reject func(error)) error {
+
+	var err error
+	var obj interface{}
+	resolveFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+
+		if len(args) > 0 {
+			obj, err = baseobject.Discover(args[0])
+			if retp := resolve(obj); retp != nil {
+				return retp.JSObject()
+			}
+
+		}
+
+		return nil
+	})
+
+	rejectedFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		var err error
+		err = errors.New(args[0].String())
+		reject(err)
+		return nil
+	})
+
+	_, err = p.JSObject().CallWithErr("then", resolveFunc, rejectedFunc)
+	return err
+}
+
 func iterablePromises(method string, values ...interface{}) (Promise, error) {
 	var err error
 	var pr Promise
