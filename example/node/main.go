@@ -10,8 +10,11 @@ import (
 	"github.com/realPy/hogosuru/htmldetailselement"
 	"github.com/realPy/hogosuru/htmldlistelement"
 	"github.com/realPy/hogosuru/htmlembedelement"
+	"github.com/realPy/hogosuru/htmlfieldsetelement"
 	"github.com/realPy/hogosuru/htmlformelement"
 	"github.com/realPy/hogosuru/htmlinputelement"
+	"github.com/realPy/hogosuru/htmllabelelement"
+	"github.com/realPy/hogosuru/htmllegendelement"
 	"github.com/realPy/hogosuru/htmlprogresselement"
 )
 
@@ -199,6 +202,62 @@ func main() {
 	} else {
 		println("erreur", err.Error())
 	}
+
+	if formelem, err := htmlformelement.New(d); err == nil {
+
+		if fieldset, err := htmlfieldsetelement.New(d); err == nil {
+
+			l1, _ := htmllegendelement.New(d)
+			l1.SetTextContent("Choose your favorite monster")
+			fieldset.AppendChild(l1.Node)
+			i1, _ := htmlinputelement.New(d)
+			i1.SetType("radio")
+			i1.SetName("monster")
+			i1.SetID("kraken")
+			fieldset.AppendChild(i1.Node)
+			label1, _ := htmllabelelement.New(d)
+			label1.SetHtmlFor("kraken")
+			label1.SetTextContent("Kraken")
+			fieldset.AppendChild(label1.Node)
+			br1, _ := htmlbrelement.New(d)
+			fieldset.AppendChild(br1.Node)
+
+			i2, _ := htmlinputelement.New(d)
+			i2.SetType("radio")
+			i2.SetName("monster")
+			i2.SetID("sasquatch")
+			fieldset.AppendChild(i2.Node)
+			label2, _ := htmllabelelement.New(d)
+			label2.SetHtmlFor("sasquatch")
+			label2.SetTextContent("Sasquatch")
+			fieldset.AppendChild(label2.Node)
+			br2, _ := htmlbrelement.New(d)
+			fieldset.AppendChild(br2.Node)
+
+			i3, _ := htmlinputelement.New(d)
+			i3.SetType("radio")
+			i3.SetName("monster")
+			i3.SetID("mothman")
+			fieldset.AppendChild(i3.Node)
+			label3, _ := htmllabelelement.New(d)
+			label3.SetHtmlFor("mothman")
+			label3.SetTextContent("Mothman")
+			fieldset.AppendChild(label3.Node)
+			br3, _ := htmlbrelement.New(d)
+			fieldset.AppendChild(br3.Node)
+
+			formelem.AppendChild(fieldset.Node)
+
+		} else {
+			println("erreur", err.Error())
+		}
+
+		nod.AppendChild(formelem.Node)
+
+	} else {
+		println("erreur", err.Error())
+	}
+
 	ch := make(chan struct{})
 	<-ch
 
