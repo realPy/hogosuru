@@ -13,10 +13,12 @@ import (
 	"github.com/realPy/hogosuru/htmlfieldsetelement"
 	"github.com/realPy/hogosuru/htmlformelement"
 	"github.com/realPy/hogosuru/htmlheadingelement"
+	"github.com/realPy/hogosuru/htmlimageelement"
 	"github.com/realPy/hogosuru/htmlinputelement"
 	"github.com/realPy/hogosuru/htmllabelelement"
 	"github.com/realPy/hogosuru/htmllegendelement"
 	"github.com/realPy/hogosuru/htmlprogresselement"
+	"github.com/realPy/hogosuru/promise"
 )
 
 func main() {
@@ -262,6 +264,24 @@ func main() {
 	if h1, err := htmlheadingelement.NewH1(d); err == nil {
 		h1.SetTextContent("The title")
 		nod.AppendChild(h1.Node)
+
+	} else {
+		println("erreur", err.Error())
+	}
+
+	if img, err := htmlimageelement.New(d); err == nil {
+
+		img.SetSrc("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/500px-Image_created_with_a_mobile_phone.png")
+		if p, err := img.Decode(); err == nil {
+			p.Then(func(obj interface{}) *promise.Promise {
+
+				nod.AppendChild(img.Node)
+				return nil
+
+			}, nil)
+		} else {
+			println("erreur", err.Error())
+		}
 
 	} else {
 		println("erreur", err.Error())
