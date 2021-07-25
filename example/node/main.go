@@ -12,6 +12,7 @@ import (
 	"github.com/realPy/hogosuru/htmlembedelement"
 	"github.com/realPy/hogosuru/htmlfieldsetelement"
 	"github.com/realPy/hogosuru/htmlformelement"
+	"github.com/realPy/hogosuru/htmlheadingelement"
 	"github.com/realPy/hogosuru/htmlinputelement"
 	"github.com/realPy/hogosuru/htmllabelelement"
 	"github.com/realPy/hogosuru/htmllegendelement"
@@ -253,6 +254,14 @@ func main() {
 		}
 
 		nod.AppendChild(formelem.Node)
+
+	} else {
+		println("erreur", err.Error())
+	}
+
+	if h1, err := htmlheadingelement.NewH1(d); err == nil {
+		h1.SetTextContent("The title")
+		nod.AppendChild(h1.Node)
 
 	} else {
 		println("erreur", err.Error())
