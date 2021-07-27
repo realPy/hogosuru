@@ -13,10 +13,12 @@ import (
 	"github.com/realPy/hogosuru/htmlfieldsetelement"
 	"github.com/realPy/hogosuru/htmlformelement"
 	"github.com/realPy/hogosuru/htmlheadingelement"
+	"github.com/realPy/hogosuru/htmliframelement"
 	"github.com/realPy/hogosuru/htmlimageelement"
 	"github.com/realPy/hogosuru/htmlinputelement"
 	"github.com/realPy/hogosuru/htmllabelelement"
 	"github.com/realPy/hogosuru/htmllegendelement"
+	"github.com/realPy/hogosuru/htmlmeterelement"
 	"github.com/realPy/hogosuru/htmlprogresselement"
 	"github.com/realPy/hogosuru/promise"
 )
@@ -272,10 +274,13 @@ func main() {
 	if img, err := htmlimageelement.New(d); err == nil {
 
 		img.SetSrc("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/500px-Image_created_with_a_mobile_phone.png")
+		img.SetHidden(true)
+		nod.AppendChild(img.Node)
 		if p, err := img.Decode(); err == nil {
 			p.Then(func(obj interface{}) *promise.Promise {
 
-				nod.AppendChild(img.Node)
+				//nod.AppendChild(img.Node)
+				img.SetHidden(false)
 				return nil
 
 			}, nil)
@@ -287,6 +292,32 @@ func main() {
 		println("erreur", err.Error())
 	}
 
+	br, _ := htmlbrelement.New(d)
+	nod.AppendChild(br.Node)
+	if iframe, err := htmliframelement.New(d); err == nil {
+		iframe.SetSrcdoc("<!DOCTYPE html><p>Hello World!</p>")
+		iframe.SetWidth("25%")
+		iframe.SetHeight("50")
+
+		nod.AppendChild(iframe.Node)
+
+	} else {
+		println("erreur", err.Error())
+	}
+	br, _ = htmlbrelement.New(d)
+	nod.AppendChild(br.Node)
+	if meter, err := htmlmeterelement.New(d); err == nil {
+		meter.SetMin(0)
+		meter.SetMax(100)
+		meter.SetLow(33)
+		meter.SetHigh(75)
+		meter.SetValue(50)
+
+		nod.AppendChild(meter.Node)
+
+	} else {
+		println("erreur", err.Error())
+	}
 	ch := make(chan struct{})
 	<-ch
 
