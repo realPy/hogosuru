@@ -5,6 +5,7 @@ import (
 
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/node"
 )
 
@@ -12,21 +13,25 @@ var singleton sync.Once
 
 var docinterface js.Value
 
-//GetInterface get teh JS interface of broadcast channel
+type Document struct {
+	node.Node
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
+
 		var err error
 		if docinterface, err = js.Global().GetWithErr("document"); err != nil {
 			docinterface = js.Null()
 		}
 	})
 
-	return docinterface
-}
+	baseobject.Register(docinterface, func(v js.Value) (interface{}, error) {
+		return NewFromJSObject(v)
+	})
 
-type Document struct {
-	node.Node
+	return docinterface
 }
 
 func New() (Document, error) {
@@ -42,4 +47,17 @@ func New() (Document, error) {
 	}
 
 	return d, err
+}
+
+func NewFromJSObject(obj js.Value) (Document, error) {
+	var d Document
+
+	if dci := GetInterface(); !dci.IsNull() {
+		if obj.InstanceOf(dci) {
+
+			d.BaseObject = d.SetObject(obj)
+			return d, nil
+		}
+	}
+	return d, ErrNotADocument
 }
