@@ -247,8 +247,8 @@
 
 			const timeOrigin = Date.now() - performance.now();
 			this.importObject = {
-				wasi_snapshot_preview1: {
-					// https://github.com/WebAssembly/WASI/blob/main/phases/snapshot/docs.md#fd_write
+				wasi_unstable: {
+					// https://github.com/bytecodealliance/wasmtime/blob/master/docs/WASI-api.md#__wasi_fd_write
 					fd_write: function(fd, iovs_ptr, iovs_len, nwritten_ptr) {
 						let nwritten = 0;
 						if (fd == 1) {
@@ -276,15 +276,6 @@
 						mem().setUint32(nwritten_ptr, nwritten, true);
 						return 0;
 					},
-					"proc_exit": (code) => {
-						if (global.process) {
-							// Node.js
-							process.exit(code);
-						} else {
-							// Can't exit in a browser.
-							throw 'trying to exit with code ' + code;
-						}
-					},
 				},
 				env: {
 					// func ticks() float64
@@ -298,11 +289,22 @@
 						setTimeout(this._inst.exports.go_scheduler, timeout);
 					},
 
+					// func Exit(code int)
+					"syscall.Exit": (code) => {
+						if (global.process) {
+							// Node.js
+							process.exit(code);
+						} else {
+							// Can't exit in a browser.
+							throw 'trying to exit with code ' + code;
+						}
+					},
+
 					// func finalizeRef(v ref)
 					"syscall/js.finalizeRef": (sp) => {
 						// Note: TinyGo does not support finalizers so this should never be
 						// called.
-						console.error('syscall/js.finalizeRef not implemented');
+						//console.error('syscall/js.finalizeRef not implemented');
 					},
 
 					// func stringVal(value string) ref
@@ -496,6 +498,16 @@
 		_makeFuncWrapper(id) {
 			const go = this;
 			return function () {
+				const event = { id: id, this: this, args: arguments };
+				go._pendingEvent = event;
+				go._resume();
+				return event.result;
+			};
+		}
+
+		_makeAsyncFuncWrapper(id) {
+			const go = this;
+			return async function () {
 				const event = { id: id, this: this, args: arguments };
 				go._pendingEvent = event;
 				go._resume();
