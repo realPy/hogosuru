@@ -20,6 +20,7 @@ import (
 	"github.com/realPy/hogosuru/htmllegendelement"
 	"github.com/realPy/hogosuru/htmlmeterelement"
 	"github.com/realPy/hogosuru/htmlprogresselement"
+	"github.com/realPy/hogosuru/htmlscriptelement"
 	"github.com/realPy/hogosuru/promise"
 )
 
@@ -275,15 +276,16 @@ func main() {
 
 		img.SetSrc("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/500px-Image_created_with_a_mobile_phone.png")
 		img.SetHidden(true)
-		nod.AppendChild(img.Node)
 		if p, err := img.Decode(); err == nil {
 			p.Then(func(obj interface{}) *promise.Promise {
 
-				//nod.AppendChild(img.Node)
+				nod.AppendChild(img.Node)
 				img.SetHidden(false)
 				return nil
 
-			}, nil)
+			}, func(e error) {
+				println("erreur", e.Error())
+			})
 		} else {
 			println("erreur", err.Error())
 		}
@@ -318,6 +320,25 @@ func main() {
 	} else {
 		println("erreur", err.Error())
 	}
+
+	buttonLoad, _ := htmlbuttonelement.New(d)
+	buttonLoad.SetTextContent("click here to load script")
+	buttonLoad.OnClick(func(e event.Event) {
+
+		script, _ := htmlscriptelement.New(d)
+		script.SetAsync(true)
+		script.SetText("window.alert(\"Hello !\");")
+
+		if element, err := d.Head(); err == nil {
+
+			element.AppendChild(script.Node)
+		} else {
+			println("erreur", err.Error())
+		}
+
+	})
+
+	nod.AppendChild(buttonLoad.Node)
 	ch := make(chan struct{})
 	<-ch
 

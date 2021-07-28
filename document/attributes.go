@@ -107,8 +107,8 @@ func (d Document) FullscreenElement() (element.Element, error) {
 	return d.getAttributeElement("fullscreenElement")
 }
 
-func (d Document) Head() (htmlcollection.HTMLCollection, error) {
-	return d.getAttributeHTMLCollection("head")
+func (d Document) Head() (element.Element, error) {
+	return d.getAttributeElement("head")
 }
 
 func (d Document) Hidden() (bool, error) {
