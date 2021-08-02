@@ -117,9 +117,7 @@ func (h HtmlSelectElement) Form() (htmlformelement.HtmlFormElement, error) {
 }
 
 func (h HtmlSelectElement) Length() (int, error) {
-
 	return h.GetAttributeInt("length")
-
 }
 
 func (h HtmlSelectElement) Name() (string, error) {

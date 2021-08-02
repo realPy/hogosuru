@@ -91,6 +91,7 @@ func (h HtmlProgressElement) SetMax(value float64) error {
 func (h HtmlProgressElement) Position() (float64, error) {
 	return h.GetAttributeDouble("position")
 }
+
 func (h HtmlProgressElement) Value() (float64, error) {
 	return h.GetAttributeDouble("value")
 }
