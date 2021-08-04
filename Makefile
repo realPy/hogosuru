@@ -34,3 +34,5 @@ websocket:
 
 history:
 	$(GO) build  -o ./example/static/history.wasm --no-debug -target wasm example/history/main.go
+routing:
+	$(GO) build  -o ./example/static/routing.wasm --no-debug -target wasm example/routing/main.go
