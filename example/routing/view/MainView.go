@@ -9,6 +9,29 @@ import (
 	"github.com/realPy/hogosuru/node"
 )
 
+type GlobalContainer struct {
+	node node.Node
+}
+
+func (w *GlobalContainer) OnLoad(d document.Document, n node.Node, route string) []hogosuru.Rendering {
+	if global, err := htmldivelement.New(d); err == nil {
+
+		global.SetID("Global")
+		w.node = global.Node
+
+	}
+	return nil
+}
+
+func (w *GlobalContainer) Node() node.Node {
+
+	return w.node
+}
+
+func (w *GlobalContainer) OnUnload() {
+
+}
+
 type WebMain struct {
 	divmain *htmldivelement.HtmlDivElement
 }
@@ -29,11 +52,12 @@ func (w *WebMain) OnLoad(d document.Document, n node.Node, route string) []hogos
 			w.divmain.AppendChild(b.Node)
 			w.divmain.InsertAdjacentText("beforeend", "sssssss")
 			b.OnClick(func(e event.Event) {
+				hogosuru.Router().Go("#hello")
+				/*
+					p, _ := w.divmain.ParentNode()
+					p.RemoveChild(w.divmain.Node)
 
-				p, _ := w.divmain.ParentNode()
-				p.RemoveChild(w.divmain.Node)
-
-				w.divmain = nil
+					w.divmain = nil*/
 
 			})
 

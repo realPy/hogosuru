@@ -6,6 +6,7 @@ import (
 
 	"github.com/realPy/hogosuru/document"
 	"github.com/realPy/hogosuru/event"
+	"github.com/realPy/hogosuru/history"
 	"github.com/realPy/hogosuru/node"
 	"github.com/realPy/hogosuru/window"
 )
@@ -35,6 +36,7 @@ type Rendering interface {
 //Router struct
 type RouteMap struct {
 	mode             int
+	defaultRendering Rendering
 	currentRoute     string
 	currentRendering Rendering
 	routing          map[string]Rendering
@@ -65,12 +67,19 @@ func init() {
 func Router() *RouteMap {
 
 	singleton.Do(func() {
-
 		route.routing = make(map[string]Rendering)
-
 	})
 
 	return &route
+}
+
+func (r *RouteMap) DefaultRendering(obj Rendering) {
+	r.defaultRendering = obj
+	if d, err := document.New(); err == nil {
+		if body, err := d.Body(); err == nil {
+			r.loadChilds(d, obj, body)
+		}
+	}
 }
 
 func (r *RouteMap) Route() string {
@@ -86,6 +95,14 @@ func (r *RouteMap) loadChilds(d document.Document, obj Rendering, node node.Node
 	}
 
 	node.AppendChild(obj.Node())
+}
+
+func (r *RouteMap) Go(newroute string) {
+	if historyObj, err := history.GetHistory(); err == nil {
+		historyObj.PushState(nil, newroute, newroute)
+		r.onhashchange()
+	}
+
 }
 
 func (r *RouteMap) onChangeRoute(newroute string) {
@@ -109,10 +126,15 @@ func (r *RouteMap) LoadRendering(obj Rendering) {
 
 	r.currentRendering = obj
 	if d, err := document.New(); err == nil {
-		if body, err := d.Body(); err == nil {
-			r.loadChilds(d, obj, body)
-		}
 
+		if r.defaultRendering != nil {
+			r.loadChilds(d, obj, r.defaultRendering.Node())
+		} else {
+			if body, err := d.Body(); err == nil {
+				r.loadChilds(d, obj, body)
+
+			}
+		}
 	}
 }
 
