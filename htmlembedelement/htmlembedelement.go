@@ -19,6 +19,14 @@ type HtmlEmbedElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlEmbedElementFrom interface {
+	HtmlEmbedElement() HtmlEmbedElement
+}
+
+func (h HtmlEmbedElement) HtmlEmbedElement() HtmlEmbedElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

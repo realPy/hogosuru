@@ -19,6 +19,14 @@ type HtmlTableCellElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlTableCellElementFrom interface {
+	HtmlTableCellElement() HtmlTableCellElement
+}
+
+func (h HtmlTableCellElement) HtmlTableCellElement() HtmlTableCellElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

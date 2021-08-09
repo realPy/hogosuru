@@ -15,6 +15,14 @@ type IDBOpenDBRequest struct {
 	IDBRequest
 }
 
+type IDBOpenDBRequestFrom interface {
+	IDBOpenDBRequest() IDBOpenDBRequest
+}
+
+func (i IDBOpenDBRequest) IDBOpenDBRequest() IDBOpenDBRequest {
+	return i
+}
+
 var singletonIDBOpenRequest sync.Once
 
 var idbopendbrequestinterface js.Value

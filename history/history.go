@@ -1,7 +1,6 @@
 package history
 
 import (
-	"fmt"
 	"sync"
 	"syscall/js"
 
@@ -24,6 +23,14 @@ var historyinterface js.Value
 //HTMLCollection struct
 type History struct {
 	baseobject.BaseObject
+}
+
+type HistoryFrom interface {
+	History() History
+}
+
+func (h History) History() History {
+	return h
 }
 
 //GetJSInterface get the JS interface of formdata
@@ -56,25 +63,6 @@ func NewFromJSObject(obj js.Value) (History, error) {
 		}
 	}
 	return h, ErrCantImplementedHistory
-}
-
-func GetHistory() (History, error) {
-
-	var window, historyObj js.Value
-	var err error
-	var h History
-
-	if window, err = js.Global().GetWithErr("window"); err == nil {
-		if historyObj, err = window.GetWithErr("history"); err == nil {
-			h, err = NewFromJSObject(historyObj)
-		} else {
-			err = fmt.Errorf("Can't find history")
-		}
-	} else {
-		err = fmt.Errorf("Can't find window")
-	}
-
-	return h, err
 }
 
 func (h History) Forward() error {

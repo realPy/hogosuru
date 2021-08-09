@@ -19,6 +19,14 @@ type HtmlBRElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlBRElementFrom interface {
+	HtmlBRElement() HtmlBRElement
+}
+
+func (h HtmlBRElement) HtmlBRElement() HtmlBRElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

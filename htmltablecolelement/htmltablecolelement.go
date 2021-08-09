@@ -19,6 +19,14 @@ type HtmlTableColElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlTableColElementFrom interface {
+	HtmlTableColElement() HtmlTableColElement
+}
+
+func (h HtmlTableColElement) HtmlTableColElement() HtmlTableColElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

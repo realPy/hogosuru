@@ -19,6 +19,14 @@ type HtmlQuoteElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlQuoteElementFrom interface {
+	HtmlQuoteElement() HtmlQuoteElement
+}
+
+func (h HtmlQuoteElement) HtmlQuoteElement() HtmlQuoteElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

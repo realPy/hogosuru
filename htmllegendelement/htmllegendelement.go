@@ -20,6 +20,14 @@ type HtmlLegendElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlLegendElementFrom interface {
+	HtmlLegendElement() HtmlLegendElement
+}
+
+func (h HtmlLegendElement) HtmlLegendElement() HtmlLegendElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

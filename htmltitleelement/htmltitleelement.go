@@ -19,6 +19,14 @@ type HtmlTitleElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlTitleElementFrom interface {
+	HtmlTitleElement() HtmlTitleElement
+}
+
+func (h HtmlTitleElement) HtmlTitleElement() HtmlTitleElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

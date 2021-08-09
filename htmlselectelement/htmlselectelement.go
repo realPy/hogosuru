@@ -24,6 +24,14 @@ type HtmlSelectElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlSelectElementFrom interface {
+	HtmlSelectElement() HtmlSelectElement
+}
+
+func (h HtmlSelectElement) HtmlSelectElement() HtmlSelectElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
@@ -129,11 +137,11 @@ func (h HtmlSelectElement) SetName(name string) error {
 	return h.SetAttributeString("name", name)
 }
 
-func (h HtmlSelectElement) Options() (htmloptionscollection.HTMLOptionsCollection, error) {
+func (h HtmlSelectElement) Options() (htmloptionscollection.HtmlOptionsCollection, error) {
 
 	var err error
 	var obj js.Value
-	var optioncollection htmloptionscollection.HTMLOptionsCollection
+	var optioncollection htmloptionscollection.HtmlOptionsCollection
 
 	if obj, err = h.JSObject().GetWithErr("options"); err == nil {
 
@@ -167,11 +175,11 @@ func (h HtmlSelectElement) SetSelectedIndex(value int) error {
 	return h.SetAttributeInt("selectedIndex", value)
 }
 
-func (h HtmlSelectElement) SelectedOptions() (htmlcollection.HTMLCollection, error) {
+func (h HtmlSelectElement) SelectedOptions() (htmlcollection.HtmlCollection, error) {
 
 	var err error
 	var obj js.Value
-	var collection htmlcollection.HTMLCollection
+	var collection htmlcollection.HtmlCollection
 
 	if obj, err = h.JSObject().GetWithErr("selectedOptions"); err == nil {
 

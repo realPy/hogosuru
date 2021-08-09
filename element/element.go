@@ -41,6 +41,14 @@ type Element struct {
 	node.Node
 }
 
+type ElementFrom interface {
+	Element() Element
+}
+
+func (e Element) Element() Element {
+	return e
+}
+
 func New() (Element, error) {
 	var err error
 	var e Element
@@ -72,7 +80,7 @@ func NewFromJSObject(obj js.Value) (Element, error) {
 	return e, err
 }
 
-func ItemFromHTMLCollection(collection htmlcollection.HTMLCollection, index int) (Element, error) {
+func ItemFromHTMLCollection(collection htmlcollection.HtmlCollection, index int) (Element, error) {
 
 	return NewFromJSObject(collection.Item(index))
 
@@ -115,10 +123,10 @@ func (e Element) ChildElementCount() (int, error) {
 	return e.GetAttributeInt("childElementCount")
 }
 
-func (e Element) Children() (htmlcollection.HTMLCollection, error) {
+func (e Element) Children() (htmlcollection.HtmlCollection, error) {
 	var err error
 	var obj js.Value
-	var collection htmlcollection.HTMLCollection
+	var collection htmlcollection.HtmlCollection
 
 	if obj, err = e.JSObject().GetWithErr("children"); err == nil {
 

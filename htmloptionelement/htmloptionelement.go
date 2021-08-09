@@ -19,6 +19,14 @@ type HtmlOptionElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlOptionElementFrom interface {
+	HtmlOptionElement() HtmlOptionElement
+}
+
+func (h HtmlOptionElement) HtmlOptionElement() HtmlOptionElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

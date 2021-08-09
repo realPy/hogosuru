@@ -19,6 +19,14 @@ type NamedNodeMap struct {
 	baseobject.BaseObject
 }
 
+type NamedNodeMapFrom interface {
+	NamedNodeMap() NamedNodeMap
+}
+
+func (n NamedNodeMap) NamedNodeMap() NamedNodeMap {
+	return n
+}
+
 //GetInterface get the JS interface of formdata
 func GetInterface() js.Value {
 

@@ -36,6 +36,14 @@ type ArrayBuffer struct {
 	baseobject.BaseObject
 }
 
+type ArrayBufferFrom interface {
+	ArrayBuffer() ArrayBuffer
+}
+
+func (a ArrayBuffer) ArrayBuffer() ArrayBuffer {
+	return a
+}
+
 func New(size int) (ArrayBuffer, error) {
 
 	var a ArrayBuffer

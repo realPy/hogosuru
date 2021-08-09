@@ -19,6 +19,14 @@ type DOMTokenList struct {
 	baseobject.BaseObject
 }
 
+type DOMTokenListFrom interface {
+	DOMTokenList() DOMTokenList
+}
+
+func (d DOMTokenList) DOMTokenList() DOMTokenList {
+	return d
+}
+
 //GetJSInterface get the JS interface of formdata
 func GetInterface() js.Value {
 

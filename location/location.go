@@ -31,6 +31,14 @@ type Location struct {
 	baseobject.BaseObject
 }
 
+type LocationFrom interface {
+	Location() Location
+}
+
+func (l Location) Location() Location {
+	return l
+}
+
 func NewFromJSObject(obj js.Value) (Location, error) {
 	var l Location
 
@@ -43,19 +51,6 @@ func NewFromJSObject(obj js.Value) (Location, error) {
 	}
 
 	return l, ErrNotImplemented
-}
-
-func WindowLocation() (Location, error) {
-
-	var err error
-	var l Location
-	var window, locationObj js.Value
-	if window, err = js.Global().GetWithErr("window"); err == nil {
-		if locationObj, err = window.GetWithErr("location"); err == nil {
-			l, err = NewFromJSObject(locationObj)
-		}
-	}
-	return l, err
 }
 
 func (l Location) Hash() (string, error) {

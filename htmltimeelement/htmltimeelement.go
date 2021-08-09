@@ -19,6 +19,14 @@ type HtmlTimeElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlTimeElementFrom interface {
+	HtmlTimeElement() HtmlTimeElement
+}
+
+func (h HtmlTimeElement) HtmlTimeElement() HtmlTimeElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

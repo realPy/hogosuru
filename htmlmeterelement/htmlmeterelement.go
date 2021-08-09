@@ -20,6 +20,14 @@ type HtmlMeterElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlMeterElementFrom interface {
+	HtmlMeterElement() HtmlMeterElement
+}
+
+func (h HtmlMeterElement) HtmlMeterElement() HtmlMeterElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

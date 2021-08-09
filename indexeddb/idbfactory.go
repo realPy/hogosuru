@@ -30,18 +30,12 @@ type IDBFactory struct {
 	baseobject.BaseObject
 }
 
-func GetIDBFactory() (IDBFactory, error) {
-	var window, factoryobj js.Value
-	var f IDBFactory
-	var err error
-	if window, err = js.Global().GetWithErr("window"); err == nil {
-		if factoryobj, err = window.GetWithErr("indexedDB"); err == nil {
-			f, err = IDBFactoryNewFromJSObject(factoryobj)
-		}
+type IDBFactoryFrom interface {
+	IDBFactory() IDBFactory
+}
 
-	}
-
-	return f, err
+func (i IDBFactory) IDBFactory() IDBFactory {
+	return i
 }
 
 func IDBFactoryNewFromJSObject(obj js.Value) (IDBFactory, error) {

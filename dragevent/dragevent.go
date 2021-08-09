@@ -21,6 +21,14 @@ type DragEvent struct {
 	event.Event
 }
 
+type DragEventFrom interface {
+	DragEvent() DragEvent
+}
+
+func (d DragEvent) DragEvent() DragEvent {
+	return d
+}
+
 //GetInterface get teh JS interface of event
 func GetInterface() js.Value {
 

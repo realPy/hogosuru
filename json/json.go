@@ -21,6 +21,14 @@ type Json struct {
 	object.Object
 }
 
+type JsonFrom interface {
+	Json() Json
+}
+
+func (i Json) Json() Json {
+	return i
+}
+
 //GetInterface get teh JS interface of broadcast channel
 func GetInterface() js.Value {
 

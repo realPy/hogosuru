@@ -33,6 +33,14 @@ type Node struct {
 	eventtarget.EventTarget
 }
 
+type NodeFrom interface {
+	Node() Node
+}
+
+func (n Node) Node() Node {
+	return n
+}
+
 func NewFromJSObject(obj js.Value) (Node, error) {
 	var n Node
 	var err error

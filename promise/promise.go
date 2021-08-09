@@ -36,6 +36,14 @@ type Promise struct {
 	baseobject.BaseObject
 }
 
+type PromiseFrom interface {
+	Promise() Promise
+}
+
+func (p Promise) Promise() Promise {
+	return p
+}
+
 func New(handler func(Promise) (interface{}, error)) (Promise, error) {
 
 	var p Promise

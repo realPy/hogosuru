@@ -39,18 +39,27 @@ type MessageEvent struct {
 	event.Event
 }
 
+type MessageEventFrom interface {
+	MessageEvent() MessageEvent
+}
+
+func (m MessageEvent) MessageEvent() MessageEvent {
+	return m
+}
+
 func NewFromJSObject(obj js.Value) (MessageEvent, error) {
-	var m MessageEvent
+
+	var message MessageEvent
 
 	if mi := GetInterface(); !mi.IsNull() {
 		if obj.InstanceOf(mi) {
-			m.BaseObject = m.SetObject(obj)
-			return m, nil
-
+			message.BaseObject = message.SetObject(obj)
+			return message, nil
 		}
 	}
 
-	return m, ErrNotAMessageEvent
+	return message, ErrNotAMessageEvent
+
 }
 
 func (m MessageEvent) Data() (interface{}, error) {

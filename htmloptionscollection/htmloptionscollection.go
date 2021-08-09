@@ -13,8 +13,16 @@ var singleton sync.Once
 var htmloptionscollectioninterface js.Value
 
 //HTMLOptionsCollection struct
-type HTMLOptionsCollection struct {
-	htmlcollection.HTMLCollection
+type HtmlOptionsCollection struct {
+	htmlcollection.HtmlCollection
+}
+
+type HtmlOptionsCollectionFrom interface {
+	HtmlOptionsCollection() HtmlOptionsCollection
+}
+
+func (h HtmlOptionsCollection) HTMLOptionsCollection() HtmlOptionsCollection {
+	return h
 }
 
 //GetInterface get the JS interface of formdata
@@ -35,8 +43,8 @@ func GetInterface() js.Value {
 	return htmloptionscollectioninterface
 }
 
-func NewFromJSObject(obj js.Value) (HTMLOptionsCollection, error) {
-	var h HTMLOptionsCollection
+func NewFromJSObject(obj js.Value) (HtmlOptionsCollection, error) {
+	var h HtmlOptionsCollection
 	var err error
 	if fli := GetInterface(); !fli.IsNull() {
 		if obj.InstanceOf(fli) {
@@ -49,7 +57,7 @@ func NewFromJSObject(obj js.Value) (HTMLOptionsCollection, error) {
 	return h, err
 }
 
-func (h HTMLOptionsCollection) length() (int, error) {
+func (h HtmlOptionsCollection) length() (int, error) {
 
 	return h.GetAttributeInt("length")
 

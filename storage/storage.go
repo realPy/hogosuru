@@ -34,6 +34,14 @@ type Storage struct {
 	baseobject.BaseObject
 }
 
+type StorageFrom interface {
+	Storage() Storage
+}
+
+func (s Storage) Storage() Storage {
+	return s
+}
+
 func NewFromJSObject(obj js.Value) (Storage, error) {
 	var s Storage
 
@@ -45,28 +53,6 @@ func NewFromJSObject(obj js.Value) (Storage, error) {
 	}
 
 	return s, ErrNotAnLocalStorage
-}
-
-func New(typeStorage string) (Storage, error) {
-	var err error
-	var localstorage Storage
-	var localstorageobject, window js.Value
-
-	if window, err = js.Global().GetWithErr("window"); err == nil {
-		var strType string = "undefined"
-		switch typeStorage {
-		case "local":
-			strType = "localStorage"
-		case "session":
-			strType = "sessionStorage"
-		}
-		if localstorageobject, err = window.GetWithErr(strType); err == nil {
-
-			localstorage, err = NewFromJSObject(localstorageobject)
-		}
-
-	}
-	return localstorage, err
 }
 
 func (l Storage) SetItem(key, value string) error {

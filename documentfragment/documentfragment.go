@@ -19,6 +19,14 @@ type DocumentFragment struct {
 	node.Node
 }
 
+type DocumentFragmentFrom interface {
+	DocumentFragment() DocumentFragment
+}
+
+func (d DocumentFragment) DocumentFragment() DocumentFragment {
+	return d
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
@@ -68,10 +76,10 @@ func (d DocumentFragment) ChildElementCount() (int, error) {
 	return d.GetAttributeInt("childElementCount")
 }
 
-func (e DocumentFragment) Children() (htmlcollection.HTMLCollection, error) {
+func (e DocumentFragment) Children() (htmlcollection.HtmlCollection, error) {
 	var err error
 	var obj js.Value
-	var collection htmlcollection.HTMLCollection
+	var collection htmlcollection.HtmlCollection
 
 	if obj, err = e.JSObject().GetWithErr("children"); err == nil {
 

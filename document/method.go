@@ -192,11 +192,11 @@ func (d Document) getAnimations() {
 	//TO IMPLEMENT
 }
 
-func (d Document) GetElementsByClassName(classname string) (htmlcollection.HTMLCollection, error) {
+func (d Document) GetElementsByClassName(classname string) (htmlcollection.HtmlCollection, error) {
 
 	var err error
 	var obj js.Value
-	var collection htmlcollection.HTMLCollection
+	var collection htmlcollection.HtmlCollection
 
 	if obj, err = d.JSObject().CallWithErr("getElementsByClassName", js.ValueOf(classname)); err == nil {
 

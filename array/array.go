@@ -34,6 +34,14 @@ type Array struct {
 	baseobject.BaseObject
 }
 
+type ArrayFrom interface {
+	Array() Array
+}
+
+func (a Array) Array() Array {
+	return a
+}
+
 func NewEmpty(size int) (Array, error) {
 
 	var a Array

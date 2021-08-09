@@ -19,6 +19,14 @@ type HtmlTableCaptionElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlTableCaptionElementFrom interface {
+	HtmlTableCaptionElement() HtmlTableCaptionElement
+}
+
+func (h HtmlTableCaptionElement) HtmlTableCaptionElement() HtmlTableCaptionElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

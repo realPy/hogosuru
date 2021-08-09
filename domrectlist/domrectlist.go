@@ -19,6 +19,14 @@ type DOMRectList struct {
 	baseobject.BaseObject
 }
 
+type DOMRectListFrom interface {
+	DOMRectList() DOMRectList
+}
+
+func (d DOMRectList) DOMRectList() DOMRectList {
+	return d
+}
+
 //GetJSInterface get the JS interface of formdata
 func GetInterface() js.Value {
 

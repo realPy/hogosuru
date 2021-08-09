@@ -19,6 +19,14 @@ type HtmlSpanElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlSpanElementFrom interface {
+	HtmlSpanElement() HtmlSpanElement
+}
+
+func (h HtmlSpanElement) HtmlSpanElement() HtmlSpanElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

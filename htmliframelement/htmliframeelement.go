@@ -19,6 +19,14 @@ type HtmlIFrameElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlIFrameElementFrom interface {
+	HtmlIFrameElement() HtmlIFrameElement
+}
+
+func (h HtmlIFrameElement) HtmlIFrameElement() HtmlIFrameElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

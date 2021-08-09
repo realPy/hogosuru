@@ -20,6 +20,14 @@ type HtmlMapElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlMapElementFrom interface {
+	HtmlMapElement() HtmlMapElement
+}
+
+func (h HtmlMapElement) HtmlMapElement() HtmlMapElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
@@ -88,10 +96,10 @@ func (h HtmlMapElement) SetName(value string) error {
 	return h.SetAttributeString("name", value)
 }
 
-func (h HtmlMapElement) Areas() (htmlcollection.HTMLCollection, error) {
+func (h HtmlMapElement) Areas() (htmlcollection.HtmlCollection, error) {
 	var err error
 	var obj js.Value
-	var collection htmlcollection.HTMLCollection
+	var collection htmlcollection.HtmlCollection
 
 	if obj, err = h.JSObject().GetWithErr("areas"); err == nil {
 

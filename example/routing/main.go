@@ -8,9 +8,9 @@ import (
 func main() {
 
 	hogosuru.Router().DefaultRendering(&view.GlobalContainer{})
-	hogosuru.Router().Add("", &view.WebMain{})
-	hogosuru.Router().Add("hello", &view.HelloView{})
-	hogosuru.Router().Start()
+	hogosuru.Router().Add("/app/", &view.WebMain{})
+	hogosuru.Router().Add("/app/hello", &view.HelloView{})
+	hogosuru.Router().Start(hogosuru.STDROUTE)
 	ch := make(chan struct{})
 	<-ch
 

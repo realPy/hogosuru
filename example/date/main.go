@@ -4,23 +4,21 @@ import (
 	"syscall/js"
 	"time"
 
+	"github.com/realPy/hogosuru"
 	"github.com/realPy/hogosuru/date"
 	"github.com/realPy/hogosuru/promise"
 )
 
 func main() {
-	if d, err := date.New(); err == nil {
+	if d, err := date.New(); hogosuru.AssertErr(err) {
 		value, _ := d.GetMilliseconds()
 		println("-->", value)
 
-	} else {
-		println("-->", err.Error())
 	}
 
 	value, _ := date.UTC(2012, 11, 20, 3, 0, 0)
-	if d2, err := date.New(value); err != nil {
-		println("erreur", err.Error())
-	} else {
+
+	if d2, err := date.New(value); hogosuru.AssertErr(err) {
 		d2.Export("oto")
 		if t, _ := d2.ValueOf(); t == value {
 			println("Ok")

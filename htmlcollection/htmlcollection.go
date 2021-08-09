@@ -14,8 +14,16 @@ var singleton sync.Once
 var htmlcollectioninterface js.Value
 
 //HTMLCollection struct
-type HTMLCollection struct {
+type HtmlCollection struct {
 	baseobject.BaseObject
+}
+
+type HtmlCollectionFrom interface {
+	HtmlCollection() HtmlCollection
+}
+
+func (h HtmlCollection) HtmlCollection() HtmlCollection {
+	return h
 }
 
 //GetInterface get the JS interface of formdata
@@ -36,8 +44,8 @@ func GetInterface() js.Value {
 	return htmlcollectioninterface
 }
 
-func NewFromJSObject(obj js.Value) (HTMLCollection, error) {
-	var h HTMLCollection
+func NewFromJSObject(obj js.Value) (HtmlCollection, error) {
+	var h HtmlCollection
 	var err error
 	if fli := GetInterface(); !fli.IsNull() {
 		if obj.InstanceOf(fli) {
@@ -50,7 +58,7 @@ func NewFromJSObject(obj js.Value) (HTMLCollection, error) {
 	return h, err
 }
 
-func (h HTMLCollection) Item(index int) js.Value {
+func (h HtmlCollection) Item(index int) js.Value {
 
 	return h.JSObject().Index(index)
 

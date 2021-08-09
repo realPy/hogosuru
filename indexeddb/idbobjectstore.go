@@ -15,6 +15,14 @@ type IDBObjectStore struct {
 	eventtarget.EventTarget
 }
 
+type IDBObjectStoreFrom interface {
+	IDBObjectStore() IDBObjectStore
+}
+
+func (i IDBObjectStore) IDBObjectStore() IDBObjectStore {
+	return i
+}
+
 var singletonIDBObjectStore sync.Once
 
 var idbobjectstoreinterface js.Value

@@ -13,6 +13,14 @@ type IDBCursor struct {
 	eventtarget.EventTarget
 }
 
+type IDBCursorFrom interface {
+	IDBCursor() IDBCursor
+}
+
+func (i IDBCursor) IDBCursor() IDBCursor {
+	return i
+}
+
 var singletonIDBCursor sync.Once
 
 var idbcursorinterface js.Value

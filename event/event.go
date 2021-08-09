@@ -20,6 +20,14 @@ type Event struct {
 	baseobject.BaseObject
 }
 
+type EventFrom interface {
+	Event() Event
+}
+
+func (e Event) Event() Event {
+	return e
+}
+
 //GetInterface get the JS interface of event
 func GetInterface() js.Value {
 

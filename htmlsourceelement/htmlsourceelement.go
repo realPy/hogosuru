@@ -19,6 +19,14 @@ type HtmlSourceElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlSourceElementFrom interface {
+	HtmlSourceElement() HtmlSourceElement
+}
+
+func (h HtmlSourceElement) HtmlSourceElement() HtmlSourceElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

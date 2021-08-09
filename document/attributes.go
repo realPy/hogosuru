@@ -22,10 +22,10 @@ func (d Document) getAttributeElement(attribute string) (element.Element, error)
 	return elem, err
 }
 
-func (d Document) getAttributeHTMLCollection(attribute string) (htmlcollection.HTMLCollection, error) {
+func (d Document) getAttributeHTMLCollection(attribute string) (htmlcollection.HtmlCollection, error) {
 	var err error
 	var obj js.Value
-	var collection htmlcollection.HTMLCollection
+	var collection htmlcollection.HtmlCollection
 
 	if obj, err = d.JSObject().GetWithErr(attribute); err == nil {
 		collection, err = htmlcollection.NewFromJSObject(obj)
@@ -62,7 +62,7 @@ func (d Document) ChildElementCount() (int, error) {
 	return d.GetAttributeInt("childElementCount")
 }
 
-func (d Document) Children() (htmlcollection.HTMLCollection, error) {
+func (d Document) Children() (htmlcollection.HtmlCollection, error) {
 	return d.getAttributeHTMLCollection("children")
 }
 
@@ -86,7 +86,7 @@ func (d *Document) DocumentURI() (string, error) {
 	return d.GetAttributeString("documentURI")
 }
 
-func (d Document) Embeds() (htmlcollection.HTMLCollection, error) {
+func (d Document) Embeds() (htmlcollection.HtmlCollection, error) {
 
 	return d.getAttributeHTMLCollection("embeds")
 }
@@ -99,7 +99,7 @@ func (d Document) Fonts() {
 	//TO IMPLEMENT
 }
 
-func (d Document) Forms() (htmlcollection.HTMLCollection, error) {
+func (d Document) Forms() (htmlcollection.HtmlCollection, error) {
 	return d.getAttributeHTMLCollection("forms")
 }
 
@@ -116,7 +116,7 @@ func (d Document) Hidden() (bool, error) {
 	return d.GetAttributeBool("hidden")
 }
 
-func (d Document) Images() (htmlcollection.HTMLCollection, error) {
+func (d Document) Images() (htmlcollection.HtmlCollection, error) {
 
 	return d.getAttributeHTMLCollection("images")
 }
@@ -128,7 +128,7 @@ func (d Document) LastElementChild() (element.Element, error) {
 	return d.getAttributeElement("lastElementChild")
 }
 
-func (d Document) Links() (htmlcollection.HTMLCollection, error) {
+func (d Document) Links() (htmlcollection.HtmlCollection, error) {
 	return d.getAttributeHTMLCollection("links")
 }
 
@@ -140,7 +140,7 @@ func (d Document) PictureInPictureEnabled() (bool, error) {
 	return d.GetAttributeBool("pictureInPictureEnabled")
 }
 
-func (d Document) Plugins() (htmlcollection.HTMLCollection, error) {
+func (d Document) Plugins() (htmlcollection.HtmlCollection, error) {
 	return d.getAttributeHTMLCollection("plugins")
 }
 
@@ -148,7 +148,7 @@ func (d Document) PointerLockElement() (element.Element, error) {
 	return d.getAttributeElement("pointerLockElement")
 }
 
-func (d Document) Scripts() (htmlcollection.HTMLCollection, error) {
+func (d Document) Scripts() (htmlcollection.HtmlCollection, error) {
 
 	return d.getAttributeHTMLCollection("scripts")
 }

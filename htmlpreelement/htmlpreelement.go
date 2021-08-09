@@ -19,6 +19,14 @@ type HtmlPreElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlPreElementFrom interface {
+	HtmlPreElement() HtmlPreElement
+}
+
+func (h HtmlPreElement) HtmlPreElement() HtmlPreElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

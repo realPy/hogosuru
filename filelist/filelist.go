@@ -19,6 +19,14 @@ type FileList struct {
 	baseobject.BaseObject
 }
 
+type FileListFrom interface {
+	FileList() FileList
+}
+
+func (f FileList) FileList() FileList {
+	return f
+}
+
 //GetJSInterface get the JS interface of formdata
 func GetInterface() js.Value {
 

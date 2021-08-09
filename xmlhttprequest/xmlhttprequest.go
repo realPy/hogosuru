@@ -30,6 +30,14 @@ type XMLHTTPRequest struct {
 	baseobject.BaseObject
 }
 
+type XMLHTTPRequestFrom interface {
+	XMLHTTPRequest() XMLHTTPRequest
+}
+
+func (x XMLHTTPRequest) XMLHTTPRequest() XMLHTTPRequest {
+	return x
+}
+
 //GetInterface Get the JS XMLHTTPRequest Interface If nil browser doesn't implement it
 func GetInterface() js.Value {
 

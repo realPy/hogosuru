@@ -23,6 +23,14 @@ type HtmlTableElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlTableElementFrom interface {
+	HtmlTableElement() HtmlTableElement
+}
+
+func (h HtmlTableElement) HtmlTableElement() HtmlTableElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
@@ -91,11 +99,11 @@ func (h HtmlTableElement) SetCaption(value string) error {
 	return h.SetAttributeString("caption", value)
 }
 
-func (h HtmlTableElement) getCollectionMethod(method string) (htmlcollection.HTMLCollection, error) {
+func (h HtmlTableElement) getCollectionMethod(method string) (htmlcollection.HtmlCollection, error) {
 
 	var err error
 	var obj js.Value
-	var collection htmlcollection.HTMLCollection
+	var collection htmlcollection.HtmlCollection
 
 	if obj, err = h.JSObject().GetWithErr(method); err == nil {
 
@@ -119,12 +127,12 @@ func (h HtmlTableElement) getElemMethod(method string) (htmltablesectionelement.
 	return elem, err
 }
 
-func (h HtmlTableElement) Rows() (htmlcollection.HTMLCollection, error) {
+func (h HtmlTableElement) Rows() (htmlcollection.HtmlCollection, error) {
 	return h.getCollectionMethod("rows")
 
 }
 
-func (h HtmlTableElement) TBodies() (htmlcollection.HTMLCollection, error) {
+func (h HtmlTableElement) TBodies() (htmlcollection.HtmlCollection, error) {
 	return h.getCollectionMethod("tBodies")
 }
 

@@ -33,6 +33,14 @@ type IDBKeyRange struct {
 	baseobject.BaseObject
 }
 
+type IDBKeyRangeFrom interface {
+	IDBKeyRange() IDBKeyRange
+}
+
+func (i IDBKeyRange) IDBKeyRange() IDBKeyRange {
+	return i
+}
+
 func IDBDKeyRangeNewFromJSObject(obj js.Value) (IDBKeyRange, error) {
 	var i IDBKeyRange
 	var err error

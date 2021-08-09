@@ -35,6 +35,14 @@ type Object struct {
 	baseobject.BaseObject
 }
 
+type ObjectFrom interface {
+	Object() Object
+}
+
+func (o Object) Object() Object {
+	return o
+}
+
 func NewFromJSObject(obj js.Value) (Object, error) {
 	var o Object
 	var err error

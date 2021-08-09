@@ -21,6 +21,14 @@ type HtmlLinkElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlLinkElementFrom interface {
+	HtmlLinkElement() HtmlLinkElement
+}
+
+func (h HtmlLinkElement) HtmlLinkElement() HtmlLinkElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

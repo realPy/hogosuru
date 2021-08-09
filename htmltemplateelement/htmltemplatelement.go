@@ -20,6 +20,14 @@ type HtmlTemplateElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlTemplateElementFrom interface {
+	HtmlTemplateElement() HtmlTemplateElement
+}
+
+func (h HtmlTemplateElement) HtmlTemplateElement() HtmlTemplateElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

@@ -16,6 +16,14 @@ type DomException struct {
 	baseobject.BaseObject
 }
 
+type DomExceptionFrom interface {
+	DomException() DomException
+}
+
+func (d DomException) DomException() DomException {
+	return d
+}
+
 //GetJSInterface get teh JS interface of broadcast channel
 func GetInterface() js.Value {
 

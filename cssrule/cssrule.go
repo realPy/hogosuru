@@ -17,6 +17,14 @@ type CSSRule struct {
 	baseobject.BaseObject
 }
 
+type CSSRuleFrom interface {
+	CSSRule() CSSRule
+}
+
+func (c CSSRule) CSSRule() CSSRule {
+	return c
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

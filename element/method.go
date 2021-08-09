@@ -118,11 +118,11 @@ func (e Element) GetClientRects() (domrectlist.DOMRectList, error) {
 	return arr, err
 }
 
-func (e Element) GetElementsByClassName(classname string) (htmlcollection.HTMLCollection, error) {
+func (e Element) GetElementsByClassName(classname string) (htmlcollection.HtmlCollection, error) {
 
 	var err error
 	var obj js.Value
-	var collection htmlcollection.HTMLCollection
+	var collection htmlcollection.HtmlCollection
 
 	if obj, err = e.JSObject().CallWithErr("getElementsByClassName", js.ValueOf(classname)); err == nil {
 

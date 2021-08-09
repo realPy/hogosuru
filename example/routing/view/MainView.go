@@ -16,7 +16,7 @@ type GlobalContainer struct {
 func (w *GlobalContainer) OnLoad(d document.Document, n node.Node, route string) []hogosuru.Rendering {
 	if global, err := htmldivelement.New(d); err == nil {
 
-		global.SetID("Global")
+		global.SetID("main-container")
 		w.node = global.Node
 
 	}
@@ -47,18 +47,12 @@ func (w *WebMain) OnLoad(d document.Document, n node.Node, route string) []hogos
 		divmain.SetID("MainView")
 
 		w.divmain = &divmain
+
 		if b, err := htmlbuttonelement.New(d); err == nil {
 			b.SetTextContent("Go Hello")
 			w.divmain.AppendChild(b.Node)
-			w.divmain.InsertAdjacentText("beforeend", "sssssss")
 			b.OnClick(func(e event.Event) {
-				hogosuru.Router().Go("#hello")
-				/*
-					p, _ := w.divmain.ParentNode()
-					p.RemoveChild(w.divmain.Node)
-
-					w.divmain = nil*/
-
+				hogosuru.Router().Go("/app/hello")
 			})
 
 		}

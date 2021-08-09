@@ -29,6 +29,14 @@ type ReadableStream struct {
 	baseobject.BaseObject
 }
 
+type ReadableStreameFrom interface {
+	ReadableStream() ReadableStream
+}
+
+func (r ReadableStream) ReadableStream() ReadableStream {
+	return r
+}
+
 func NewFromJSObject(obj js.Value) (ReadableStream, error) {
 	var r ReadableStream
 

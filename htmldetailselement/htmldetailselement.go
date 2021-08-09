@@ -19,6 +19,14 @@ type HtmlDetailsElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlDetailsElementFrom interface {
+	HtmlDetailsElement() HtmlDetailsElement
+}
+
+func (h HtmlDetailsElement) HtmlDetailsElement() HtmlDetailsElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

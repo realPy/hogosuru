@@ -6,7 +6,6 @@ import (
 
 	"github.com/realPy/hogosuru/document"
 	"github.com/realPy/hogosuru/event"
-	"github.com/realPy/hogosuru/history"
 	"github.com/realPy/hogosuru/node"
 	"github.com/realPy/hogosuru/window"
 )
@@ -23,7 +22,7 @@ const (
 	HASHROUTE
 )
 
-var singleton sync.Once
+var singletonRoute sync.Once
 var route RouteMap
 
 //Rendering interfacee
@@ -37,7 +36,8 @@ type Rendering interface {
 type RouteMap struct {
 	mode             int
 	defaultRendering Rendering
-	currentRoute     string
+	currentHashRoute string
+	currentStdRoute  string
 	currentRendering Rendering
 	routing          map[string]Rendering
 }
@@ -45,12 +45,19 @@ type RouteMap struct {
 func init() {
 	if w, err := window.New(); err == nil {
 
-		r := Router()
-		r.onhashchange()
-
+		//Vérifier si cette fonction a du sens
 		w.OnHashChange(func(e event.Event) {
 			r := Router()
-			r.onhashchange()
+			if r.mode == HASHROUTE {
+				r.onurlchange()
+			}
+
+		})
+
+		w.OnPopState(func(e event.Event) {
+			r := Router()
+
+			r.onurlchange()
 
 		})
 
@@ -66,7 +73,7 @@ func init() {
 //Router
 func Router() *RouteMap {
 
-	singleton.Do(func() {
+	singletonRoute.Do(func() {
 		route.routing = make(map[string]Rendering)
 	})
 
@@ -83,11 +90,21 @@ func (r *RouteMap) DefaultRendering(obj Rendering) {
 }
 
 func (r *RouteMap) Route() string {
-	return r.currentRoute
+	if r.mode == STDROUTE {
+		return r.currentStdRoute
+	}
+	return r.currentHashRoute
+}
+
+func (r *RouteMap) SetRoute(route string) {
+	if r.mode == STDROUTE {
+		r.currentStdRoute = route
+	}
+	r.currentHashRoute = route
 }
 
 func (r *RouteMap) loadChilds(d document.Document, obj Rendering, node node.Node) {
-	arrayRendering := obj.OnLoad(d, node, r.currentRoute)
+	arrayRendering := obj.OnLoad(d, node, r.Route())
 	if arrayRendering != nil {
 		for _, render := range arrayRendering {
 			r.loadChilds(d, render, obj.Node())
@@ -98,16 +115,21 @@ func (r *RouteMap) loadChilds(d document.Document, obj Rendering, node node.Node
 }
 
 func (r *RouteMap) Go(newroute string) {
-	if historyObj, err := history.GetHistory(); err == nil {
-		historyObj.PushState(nil, newroute, newroute)
-		r.onhashchange()
+
+	if w, err := window.New(); err == nil {
+
+		if historyObj, err := w.History(); err == nil {
+			historyObj.PushState(nil, newroute, newroute)
+			r.onurlchange()
+		}
 	}
 
 }
 
 func (r *RouteMap) onChangeRoute(newroute string) {
 	if len(r.routing) == 0 {
-		r.currentRoute = newroute
+		r.SetRoute(newroute)
+
 	}
 
 	for route, render := range r.routing {
@@ -115,8 +137,7 @@ func (r *RouteMap) onChangeRoute(newroute string) {
 			if r.currentRendering != nil {
 				r.currentRendering.OnUnload()
 			}
-
-			r.currentRoute = newroute
+			r.SetRoute(newroute)
 			r.LoadRendering(render)
 		}
 	}
@@ -138,8 +159,10 @@ func (r *RouteMap) LoadRendering(obj Rendering) {
 	}
 }
 
-func (r *RouteMap) Start() {
-	r.onChangeRoute(r.currentRoute)
+func (r *RouteMap) Start(mode int) {
+	r.mode = mode
+	r.onurlchange()
+
 }
 
 func (r *RouteMap) Add(route string, obj Rendering) error {
@@ -153,7 +176,7 @@ func (r *RouteMap) Add(route string, obj Rendering) error {
 	return err
 }
 
-func (r *RouteMap) onhashchange() {
+func (r *RouteMap) onhashechange() {
 	if w, err := window.New(); err == nil {
 
 		if l, err := w.Location(); err == nil {
@@ -165,6 +188,40 @@ func (r *RouteMap) onhashchange() {
 				} else {
 					r.onChangeRoute("")
 				}
+
+			} else {
+				println("Router " + err.Error())
+			}
+
+		} else {
+			println("Router " + err.Error())
+		}
+
+	} else {
+		println("Router " + err.Error())
+	}
+
+}
+
+func (r *RouteMap) onurlchange() {
+	if w, err := window.New(); err == nil {
+
+		if l, err := w.Location(); err == nil {
+			var route string = ""
+			var err error
+			if r.mode == STDROUTE {
+				route, err = l.Pathname()
+
+			} else {
+				route, err = l.Hash()
+				if len(route) > 1 {
+					route = route[1:]
+
+				}
+			}
+			if err == nil {
+
+				r.onChangeRoute(route)
 
 			} else {
 				println("Router " + err.Error())

@@ -35,6 +35,14 @@ type Fetch struct {
 	promise.Promise
 }
 
+type FetchFrom interface {
+	Fetch() Fetch
+}
+
+func (f Fetch) Fetch() Fetch {
+	return f
+}
+
 func NewFetch(urlfetch *url.URL, method string, headers *map[string]interface{}, data *url.Values, handlerResponse func(jsresponse.Response, error)) (Fetch, error) {
 	var fetch Fetch
 	var err error

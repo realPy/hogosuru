@@ -17,6 +17,14 @@ type Document struct {
 	node.Node
 }
 
+type DocumentFrom interface {
+	Document() Document
+}
+
+func (d Document) Document() Document {
+	return d
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

@@ -21,6 +21,14 @@ type HtmlTableSectionElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlTableSectionElementFrom interface {
+	HtmlTableSectionElement() HtmlTableSectionElement
+}
+
+func (h HtmlTableSectionElement) HtmlTableSectionElement() HtmlTableSectionElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
@@ -105,10 +113,10 @@ func NewFromJSObject(obj js.Value) (HtmlTableSectionElement, error) {
 	return h, ErrNotAnHTMLTableSectionElement
 }
 
-func (h HtmlTableSectionElement) Rows() (htmlcollection.HTMLCollection, error) {
+func (h HtmlTableSectionElement) Rows() (htmlcollection.HtmlCollection, error) {
 	var err error
 	var obj js.Value
-	var collection htmlcollection.HTMLCollection
+	var collection htmlcollection.HtmlCollection
 
 	if obj, err = h.JSObject().GetWithErr("rows"); err == nil {
 

@@ -31,7 +31,7 @@ func Discover(obj js.Value) (interface{}, error) {
 			var obji interface{}
 			var ok bool
 			obji, err = f(obj)
-			if bobj, ok = obji.(BaseObject); !ok {
+			if bobj, ok = obji.(ObjectFrom); !ok {
 				err = ErrNotABaseObject
 			}
 

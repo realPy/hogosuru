@@ -22,6 +22,14 @@ type HtmlTextAreaElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlTextAreaElementFrom interface {
+	HtmlTextAreaElement() HtmlTextAreaElement
+}
+
+func (h HtmlTextAreaElement) HtmlTextAreaElement() HtmlTextAreaElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

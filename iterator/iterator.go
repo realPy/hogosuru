@@ -11,6 +11,14 @@ type Iterator struct {
 	baseobject.BaseObject
 }
 
+type IteratorFrom interface {
+	Iterator() Iterator
+}
+
+func (i Iterator) Iterator() Iterator {
+	return i
+}
+
 func NewFromJSObject(obj js.Value) Iterator {
 	var i Iterator
 	i.BaseObject = i.SetObject(obj)

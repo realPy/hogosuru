@@ -20,6 +20,14 @@ type HtmlImageElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlImageElementFrom interface {
+	HtmlImageElement() HtmlImageElement
+}
+
+func (h HtmlImageElement) HtmlImageElement() HtmlImageElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

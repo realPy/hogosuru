@@ -19,6 +19,14 @@ type HtmlDataElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlDataElementFrom interface {
+	HtmlDataElement() HtmlDataElement
+}
+
+func (h HtmlDataElement) HtmlDataElement() HtmlDataElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

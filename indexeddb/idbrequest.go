@@ -19,6 +19,14 @@ type IDBRequest struct {
 	eventtarget.EventTarget
 }
 
+type IDBRequestFrom interface {
+	IDBRequest() IDBRequest
+}
+
+func (i IDBRequest) IDBRequest() IDBRequest {
+	return i
+}
+
 var singletonIDBRequest sync.Once
 
 var idbrequestinterface js.Value

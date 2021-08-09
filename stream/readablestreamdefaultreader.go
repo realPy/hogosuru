@@ -33,6 +33,14 @@ type ReadableStreamDefaultReader struct {
 	baseobject.BaseObject
 }
 
+type ReadableStreamDefaultReaderFrom interface {
+	ReadableStreamDefaultReader() ReadableStreamDefaultReader
+}
+
+func (r ReadableStreamDefaultReader) ReadableStreamDefaultReader() ReadableStreamDefaultReader {
+	return r
+}
+
 func NewReadableStreamDefaultReaderFromJSObject(obj js.Value) (ReadableStreamDefaultReader, error) {
 	var r ReadableStreamDefaultReader
 

@@ -20,6 +20,14 @@ type HtmlProgressElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlProgressElementFrom interface {
+	HtmlProgressElement() HtmlProgressElement
+}
+
+func (h HtmlProgressElement) HtmlProgressElement() HtmlProgressElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

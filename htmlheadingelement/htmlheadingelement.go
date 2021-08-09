@@ -19,6 +19,14 @@ type HtmlHeadingElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlHeadingElementFrom interface {
+	HtmlHeadingElement() HtmlHeadingElement
+}
+
+func (h HtmlHeadingElement) HtmlHeadingElement() HtmlHeadingElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

@@ -21,6 +21,14 @@ type HtmlFieldSetElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlFieldSetElementFrom interface {
+	HtmlFieldSetElement() HtmlFieldSetElement
+}
+
+func (h HtmlFieldSetElement) HtmlFieldSetElement() HtmlFieldSetElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
@@ -89,11 +97,11 @@ func (h HtmlFieldSetElement) SetDisabled(value bool) error {
 	return h.SetAttributeBool("disabled", value)
 }
 
-func (h HtmlFieldSetElement) Elements() (htmlcollection.HTMLCollection, error) {
+func (h HtmlFieldSetElement) Elements() (htmlcollection.HtmlCollection, error) {
 
 	var err error
 	var obj js.Value
-	var collection htmlcollection.HTMLCollection
+	var collection htmlcollection.HtmlCollection
 
 	if obj, err = h.JSObject().GetWithErr("elements"); err == nil {
 
@@ -103,10 +111,10 @@ func (h HtmlFieldSetElement) Elements() (htmlcollection.HTMLCollection, error) {
 	return collection, err
 }
 
-func (h HtmlFieldSetElement) Form() (htmlcollection.HTMLCollection, error) {
+func (h HtmlFieldSetElement) Form() (htmlcollection.HtmlCollection, error) {
 	var err error
 	var obj js.Value
-	var collection htmlcollection.HTMLCollection
+	var collection htmlcollection.HtmlCollection
 
 	if obj, err = h.JSObject().GetWithErr("form"); err == nil {
 

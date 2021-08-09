@@ -19,6 +19,14 @@ type HtmlDListElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlDListElementFrom interface {
+	HtmlDListElement() HtmlDListElement
+}
+
+func (h HtmlDListElement) HtmlDivElement() HtmlDListElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

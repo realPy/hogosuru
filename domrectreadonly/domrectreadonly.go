@@ -34,6 +34,14 @@ type DOMRectReadOnly struct {
 	baseobject.BaseObject
 }
 
+type DOMRectReadOnlyFrom interface {
+	DOMRectReadOnly() DOMRectReadOnly
+}
+
+func (d DOMRectReadOnly) DOMRectReadOnly() DOMRectReadOnly {
+	return d
+}
+
 func New() (DOMRectReadOnly, error) {
 
 	var d DOMRectReadOnly
