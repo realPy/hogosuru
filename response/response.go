@@ -27,6 +27,14 @@ type Response struct {
 	baseobject.BaseObject
 }
 
+type ResponseFrom interface {
+	Response() Response
+}
+
+func (r Response) Response() Response {
+	return r
+}
+
 //GetInterface get teh JS interface of broadcast channel
 func GetInterface() js.Value {
 

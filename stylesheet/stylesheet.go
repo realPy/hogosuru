@@ -17,6 +17,14 @@ type StyleSheet struct {
 	baseobject.BaseObject
 }
 
+type StyleSheetFrom interface {
+	StyleSheet() StyleSheet
+}
+
+func (s StyleSheet) StyleSheet() StyleSheet {
+	return s
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

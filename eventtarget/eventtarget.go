@@ -37,6 +37,14 @@ type EventTarget struct {
 	registerFunc map[string]js.Func
 }
 
+type EventTargetFrom interface {
+	EventTarget() EventTarget
+}
+
+func (e EventTarget) EventTarget() EventTarget {
+	return e
+}
+
 func New() (EventTarget, error) {
 
 	var e EventTarget

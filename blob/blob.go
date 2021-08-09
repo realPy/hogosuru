@@ -39,6 +39,14 @@ type Blob struct {
 	baseobject.BaseObject
 }
 
+type BlobFrom interface {
+	Blob() Blob
+}
+
+func (b Blob) Blob() Blob {
+	return b
+}
+
 func New() (Blob, error) {
 
 	var b Blob

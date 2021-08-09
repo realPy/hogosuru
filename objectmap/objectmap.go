@@ -35,6 +35,14 @@ type ObjectMap struct {
 	baseobject.BaseObject
 }
 
+type ObjectMapFrom interface {
+	ObjectMap() ObjectMap
+}
+
+func (o ObjectMap) ObjectMap() ObjectMap {
+	return o
+}
+
 func NewFromJSObject(obj js.Value) (ObjectMap, error) {
 	var o ObjectMap
 	var err error

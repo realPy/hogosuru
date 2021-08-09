@@ -20,6 +20,14 @@ type HtmlLabelElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlLabelElementFrom interface {
+	HtmlLabelElement() HtmlLabelElement
+}
+
+func (h HtmlLabelElement) HtmlLabelElement() HtmlLabelElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

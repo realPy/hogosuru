@@ -22,6 +22,14 @@ type HtmlButtonElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlButtonElementFrom interface {
+	HtmlButtonElement() HtmlButtonElement
+}
+
+func (h HtmlButtonElement) HtmlButtonElement() HtmlButtonElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

@@ -37,6 +37,14 @@ type ProgressEvent struct {
 	event.Event
 }
 
+type ProgressEventFrom interface {
+	ProgressEvent() ProgressEvent
+}
+
+func (p ProgressEvent) ProgressEvent() ProgressEvent {
+	return p
+}
+
 func New() (ProgressEvent, error) {
 
 	var p ProgressEvent

@@ -18,6 +18,14 @@ type DOMStringList struct {
 	baseobject.BaseObject
 }
 
+type DOMStringListFrom interface {
+	DOMStringList() DOMStringList
+}
+
+func (d DOMStringList) DOMStringList() DOMStringList {
+	return d
+}
+
 //GetJSInterface get the JS interface of formdata
 func GetInterface() js.Value {
 

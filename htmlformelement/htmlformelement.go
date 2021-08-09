@@ -19,6 +19,14 @@ type HtmlFormElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlFormElementFrom interface {
+	HtmlFormElement() HtmlFormElement
+}
+
+func (h HtmlFormElement) HtmlFormElement() HtmlFormElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

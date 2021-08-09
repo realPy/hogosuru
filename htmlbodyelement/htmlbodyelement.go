@@ -19,6 +19,14 @@ type HtmlBodyElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlBodyElementFrom interface {
+	HtmlBodyElement() HtmlBodyElement
+}
+
+func (h HtmlBodyElement) HtmlBodyElement() HtmlBodyElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

@@ -19,6 +19,14 @@ type HtmlParagraphElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlParagraphElementFrom interface {
+	HtmlParagraphElement() HtmlParagraphElement
+}
+
+func (h HtmlParagraphElement) HtmlParagraphElement() HtmlParagraphElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

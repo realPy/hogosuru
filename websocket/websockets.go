@@ -25,6 +25,14 @@ type WebSocket struct {
 	eventtarget.EventTarget
 }
 
+type WebSocketFrom interface {
+	WebSocket() WebSocket
+}
+
+func (w WebSocket) WebSocket() WebSocket {
+	return w
+}
+
 const (
 	BlobType        = "blob"
 	ArrayBufferType = "arraybuffer"
@@ -112,10 +120,12 @@ func (w WebSocket) SetOnError(handler func(e event.Event)) {
 //SetOnClose Set onClose Handler
 func (w WebSocket) SetOnMessage(handler func(e messageevent.MessageEvent)) {
 	w.setHandler("onmessage", func(e event.Event) {
-		var m messageevent.MessageEvent
-		var err error
-		if m, err = messageevent.NewFromJSObject(e.JSObject()); err == nil {
-			handler(m)
+
+		if obj, err := baseobject.Discover(e.JSObject()); err == nil {
+
+			if m, ok := obj.(messageevent.MessageEventFrom); ok {
+				handler(m.MessageEvent())
+			}
 		}
 	})
 }
@@ -169,10 +179,12 @@ func (w WebSocket) SetBinaryType(binaryType string) error {
 func (w WebSocket) OnMessage(handler func(m messageevent.MessageEvent)) error {
 
 	return w.AddEventListener("message", func(e event.Event) {
-		var m messageevent.MessageEvent
-		var err error
-		if m, err = messageevent.NewFromJSObject(e.JSObject()); err == nil {
-			handler(m)
+
+		if obj, err := baseobject.Discover(e.JSObject()); err == nil {
+
+			if m, ok := obj.(messageevent.MessageEventFrom); ok {
+				handler(m.MessageEvent())
+			}
 		}
 	})
 }

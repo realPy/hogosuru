@@ -20,6 +20,14 @@ type HtmlAnchorElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlAnchorElementFrom interface {
+	HtmlAnchorElement() HtmlAnchorElement
+}
+
+func (h HtmlAnchorElement) HtmlAnchorElement() HtmlAnchorElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

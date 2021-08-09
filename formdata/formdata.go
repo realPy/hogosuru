@@ -19,6 +19,14 @@ type FormData struct {
 	baseobject.BaseObject
 }
 
+type FormDataFrom interface {
+	FormData() FormData
+}
+
+func (f FormData) FormData() FormData {
+	return f
+}
+
 //GetJSInterface get the JS interface of formdata
 func GetInterface() js.Value {
 

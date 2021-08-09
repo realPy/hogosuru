@@ -19,6 +19,14 @@ type HtmlMetaElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlMetaElementFrom interface {
+	HtmlMetaElement() HtmlMetaElement
+}
+
+func (h HtmlMetaElement) HtmlMetaElement() HtmlMetaElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

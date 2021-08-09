@@ -19,6 +19,14 @@ type HtmlLIElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlLIElementFrom interface {
+	HtmlLIElement() HtmlLIElement
+}
+
+func (h HtmlLIElement) HtmlLIElement() HtmlLIElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

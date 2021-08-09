@@ -18,6 +18,14 @@ type IDBDatabase struct {
 	eventtarget.EventTarget
 }
 
+type IDBDatabaseFrom interface {
+	IDBDatabase() IDBDatabase
+}
+
+func (i IDBDatabase) IDBDatabase() IDBDatabase {
+	return i
+}
+
 var singletonIDBDatabase sync.Once
 
 var idbdatabaseinterface js.Value

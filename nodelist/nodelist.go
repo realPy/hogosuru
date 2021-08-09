@@ -19,6 +19,14 @@ type NodeList struct {
 	baseobject.BaseObject
 }
 
+type NodeListFrom interface {
+	NodeList() NodeList
+}
+
+func (n NodeList) NodeList() NodeList {
+	return n
+}
+
 //GetInterface get the JS interface of formdata
 func GetInterface() js.Value {
 

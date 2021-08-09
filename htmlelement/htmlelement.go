@@ -21,6 +21,14 @@ type HtmlElement struct {
 	element.Element
 }
 
+type HtmlElementFrom interface {
+	HtmlElement() HtmlElement
+}
+
+func (h HtmlElement) HtmlElement() HtmlElement {
+	return h
+}
+
 //GetInterface get the JS interface of formdata
 func GetInterface() js.Value {
 

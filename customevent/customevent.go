@@ -19,6 +19,14 @@ type CustomEvent struct {
 	event.Event
 }
 
+type CustomEventFrom interface {
+	CustomEvent() CustomEvent
+}
+
+func (c CustomEvent) CustomEvent() CustomEvent {
+	return c
+}
+
 //GetInterface get teh JS interface of event
 func GetInterface() js.Value {
 

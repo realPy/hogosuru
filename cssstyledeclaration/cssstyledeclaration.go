@@ -17,6 +17,14 @@ type CSSStyleDeclaration struct {
 	baseobject.BaseObject
 }
 
+type CSSStyleDeclarationFrom interface {
+	CSSStyleDeclaration() CSSStyleDeclaration
+}
+
+func (c CSSStyleDeclaration) CSSStyleDeclaration() CSSStyleDeclaration {
+	return c
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

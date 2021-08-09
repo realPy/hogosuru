@@ -34,6 +34,14 @@ type File struct {
 	blob.Blob
 }
 
+type FileFrom interface {
+	File() File
+}
+
+func (f File) File() File {
+	return f
+}
+
 func NewFromJSObject(obj js.Value) (File, error) {
 	var f File
 

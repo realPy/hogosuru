@@ -19,6 +19,14 @@ type Uint8Array struct {
 	baseobject.BaseObject
 }
 
+type Uint8ArrayFrom interface {
+	Uint8Array() Uint8Array
+}
+
+func (u Uint8Array) Uint8Array() Uint8Array {
+	return u
+}
+
 //GetInterface get teh JS interface of broadcast channel
 func GetInterface() js.Value {
 

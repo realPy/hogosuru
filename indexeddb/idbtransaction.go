@@ -17,6 +17,14 @@ type IDBTransaction struct {
 	eventtarget.EventTarget
 }
 
+type IDBTransactionFrom interface {
+	IDBTransaction() IDBTransaction
+}
+
+func (i IDBTransaction) IDBTransaction() IDBTransaction {
+	return i
+}
+
 var singletonIDBTransaction sync.Once
 
 var idbtransactioninterface js.Value

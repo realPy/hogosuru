@@ -1,5 +1,7 @@
 package element
 
+// https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers
+
 import "github.com/realPy/hogosuru/event"
 
 func (e Element) OnAuxClick(handler func(e event.Event)) error {

@@ -8,6 +8,7 @@ import (
 	"github.com/realPy/hogosuru/htmlbuttonelement"
 	"github.com/realPy/hogosuru/htmldatalistelement"
 	"github.com/realPy/hogosuru/htmldetailselement"
+	"github.com/realPy/hogosuru/htmldivelement"
 	"github.com/realPy/hogosuru/htmldlistelement"
 	"github.com/realPy/hogosuru/htmlembedelement"
 	"github.com/realPy/hogosuru/htmlfieldsetelement"
@@ -20,6 +21,11 @@ import (
 	"github.com/realPy/hogosuru/htmllegendelement"
 	"github.com/realPy/hogosuru/htmlmeterelement"
 	"github.com/realPy/hogosuru/htmlprogresselement"
+	"github.com/realPy/hogosuru/htmlscriptelement"
+	"github.com/realPy/hogosuru/htmlselectelement"
+	"github.com/realPy/hogosuru/htmltableelement"
+	htmltemplatelement "github.com/realPy/hogosuru/htmltemplateelement"
+	"github.com/realPy/hogosuru/htmltextareaelement"
 	"github.com/realPy/hogosuru/promise"
 )
 
@@ -271,19 +277,26 @@ func main() {
 		println("erreur", err.Error())
 	}
 
+	template, _ := htmltemplatelement.New(d)
+	nod.AppendChild(template.Node)
+
 	if img, err := htmlimageelement.New(d); err == nil {
 
 		img.SetSrc("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/500px-Image_created_with_a_mobile_phone.png")
 		img.SetHidden(true)
-		nod.AppendChild(img.Node)
 		if p, err := img.Decode(); err == nil {
 			p.Then(func(obj interface{}) *promise.Promise {
 
 				//nod.AppendChild(img.Node)
+				p, _ := template.ParentNode()
+				p.ReplaceChild(img.Node, template.Node)
+
 				img.SetHidden(false)
 				return nil
 
-			}, nil)
+			}, func(e error) {
+				println("erreur", e.Error())
+			})
 		} else {
 			println("erreur", err.Error())
 		}
@@ -318,6 +331,65 @@ func main() {
 	} else {
 		println("erreur", err.Error())
 	}
+
+	buttonLoad, _ := htmlbuttonelement.New(d)
+	buttonLoad.SetTextContent("click here to load script")
+	buttonLoad.OnClick(func(e event.Event) {
+
+		script, _ := htmlscriptelement.New(d)
+		script.SetAsync(true)
+		script.SetText("window.alert(\"Hello !\");")
+
+		if element, err := d.Head(); err == nil {
+
+			element.AppendChild(script.Node)
+		} else {
+			println("erreur", err.Error())
+		}
+
+	})
+
+	nod.AppendChild(buttonLoad.Node)
+
+	div, _ := htmldivelement.New(d)
+	content := `<label for="pet-select">Choose a pet:</label>
+	<select name="pets" id="pet-select">
+	<option value="">--Please choose an option--</option>
+	<option value="dog">Dog</option>
+	<option value="cat">Cat</option>
+	<option value="hamster">Hamster</option>
+	<option value="parrot">Parrot</option>
+	<option value="spider">Spider</option>
+	<option value="goldfish">Goldfish</option>
+</select>`
+
+	nod.AppendChild(div.Node)
+	div.SetOuterHTML(content)
+
+	selectelem, _ := d.GetElementById("pet-select")
+
+	selecth, _ := htmlselectelement.NewFromElement(selectelem)
+
+	selecth.OnInput(func(e event.Event) {
+
+		println("selected!!")
+	})
+
+	table, _ := htmltableelement.New(d)
+
+	caption, _ := table.CreateCaption()
+	tfoot, _ := table.CreateTFoot()
+	tfoot.SetTextContent("foot")
+	caption.SetTextContent("hello")
+	row, _ := table.InsertRow()
+	cell, _ := row.InsertCell()
+	cell.SetTextContent("pouet")
+
+	nod.AppendChild(table.Node)
+
+	textarea, _ := htmltextareaelement.New(d)
+	nod.AppendChild(textarea.Node)
+
 	ch := make(chan struct{})
 	<-ch
 

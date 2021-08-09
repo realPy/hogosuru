@@ -34,6 +34,14 @@ type Attr struct {
 	node.Node
 }
 
+type AttrFrom interface {
+	Attr() Attr
+}
+
+func (a Attr) Attr() Attr {
+	return a
+}
+
 func New() (Attr, error) {
 
 	var a Attr

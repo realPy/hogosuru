@@ -11,9 +11,17 @@ var singleton sync.Once
 
 var validitystateinterface js.Value
 
-//HtmlInputElement struct
+//ValidityState struct
 type ValidityState struct {
 	baseobject.BaseObject
+}
+
+type ValidityStateFrom interface {
+	ValidityState() ValidityState
+}
+
+func (v ValidityState) ValidityState() ValidityState {
+	return v
 }
 
 //GetInterface get the JS interface of formdata

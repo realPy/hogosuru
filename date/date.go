@@ -33,6 +33,14 @@ type Date struct {
 	object.Object
 }
 
+type DateFrom interface {
+	Date() Date
+}
+
+func (d Date) Date() Date {
+	return d
+}
+
 func New(values ...interface{}) (Date, error) {
 	var d Date
 	var err error

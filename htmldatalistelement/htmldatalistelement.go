@@ -20,6 +20,14 @@ type HtmlDataListElement struct {
 	htmlelement.HtmlElement
 }
 
+type HtmlDataListElementFrom interface {
+	HtmlDataListElement() HtmlDataListElement
+}
+
+func (h HtmlDataListElement) HtmlDataListElement() HtmlDataListElement {
+	return h
+}
+
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
@@ -80,10 +88,10 @@ func NewFromJSObject(obj js.Value) (HtmlDataListElement, error) {
 	return h, ErrNotAnHtmlDataListElement
 }
 
-func (h HtmlDataListElement) Options() (htmlcollection.HTMLCollection, error) {
+func (h HtmlDataListElement) Options() (htmlcollection.HtmlCollection, error) {
 	var err error
 	var obj js.Value
-	var collection htmlcollection.HTMLCollection
+	var collection htmlcollection.HtmlCollection
 
 	if obj, err = h.JSObject().CallWithErr("options"); err == nil {
 

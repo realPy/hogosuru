@@ -33,6 +33,14 @@ type IDBIndex struct {
 	baseobject.BaseObject
 }
 
+type IDBIndexFrom interface {
+	IDBIndex() IDBIndex
+}
+
+func (i IDBIndex) IDBIndex() IDBIndex {
+	return i
+}
+
 func IDBDIndexNewFromJSObject(obj js.Value) (IDBIndex, error) {
 	var i IDBIndex
 	var err error

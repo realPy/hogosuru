@@ -35,6 +35,14 @@ type DOMRect struct {
 	domrectreadonly.DOMRectReadOnly
 }
 
+type DOMRectFrom interface {
+	DOMRect() DOMRect
+}
+
+func (d DOMRect) DOMRect() DOMRect {
+	return d
+}
+
 func New() (DOMRect, error) {
 
 	var d DOMRect

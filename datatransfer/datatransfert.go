@@ -17,6 +17,14 @@ type DataTransfer struct {
 	baseobject.BaseObject
 }
 
+type DataTransferFrom interface {
+	DataTransfer() DataTransfer
+}
+
+func (d DataTransfer) DataTransfer() DataTransfer {
+	return d
+}
+
 //GetJSInterface get teh JS interface of broadcast channel
 func GetInterface() js.Value {
 

@@ -1,9 +1,7 @@
 GO=tinygo
 
-.PHONY: array json draganddrop fetch websocket node xmlhttprequest map date promise indexeddb
-all: array json draganddrop fetch websocket node xmlhttprequest map date promise indexeddb
-
-
+.PHONY: array json draganddrop fetch websocket node xmlhttprequest map date promise indexeddb history broadcastchannel console
+all: array json draganddrop fetch websocket node xmlhttprequest map date promise indexeddb history broadcastchannel console
 
 array:
 	$(GO) build  -o ./example/static/array.wasm --no-debug -target wasm example/array/main.go
@@ -33,3 +31,12 @@ xmlhttprequest:
 
 websocket:
 	$(GO) build  -o ./example/static/websocket.wasm --no-debug -target wasm example/websocket/main.go
+
+history:
+	$(GO) build  -o ./example/static/history.wasm --no-debug -target wasm example/history/main.go
+routing:
+	$(GO) build  -o ./example/static/routing.wasm --no-debug -target wasm example/routing/main.go
+broadcastchannel:
+	$(GO) build  -o ./example/static/broadcastchannel.wasm --no-debug -target wasm example/broadcastchannel/main.go
+console:
+	$(GO) build  -o ./example/static/console.wasm --no-debug -target wasm example/console/main.go

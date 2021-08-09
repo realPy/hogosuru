@@ -7,6 +7,7 @@ import (
 
 	"github.com/realPy/hogosuru/array"
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/domexception"
 )
 
 var singleton sync.Once
@@ -33,6 +34,14 @@ func GetInterface() js.Value {
 //Promise struct
 type Promise struct {
 	baseobject.BaseObject
+}
+
+type PromiseFrom interface {
+	Promise() Promise
+}
+
+func (p Promise) Promise() Promise {
+	return p
 }
 
 func New(handler func(Promise) (interface{}, error)) (Promise, error) {
@@ -96,8 +105,18 @@ func (p Promise) Async(resolve func(baseobject.BaseObject) *Promise, reject func
 
 	rejectedFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		var err error
-		err = errors.New(args[0].String())
-		reject(err)
+		var exception domexception.DomException
+		if exception, err = domexception.NewFromJSObject(args[0]); err == nil {
+			message, _ := exception.Message()
+			err = errors.New(message)
+		} else {
+			err = errors.New(args[0].String())
+		}
+
+		if reject != nil {
+			reject(err)
+		}
+
 		return nil
 	})
 
@@ -113,8 +132,10 @@ func (p Promise) Then(resolve func(interface{}) *Promise, reject func(error)) er
 
 		if len(args) > 0 {
 			obj, err = baseobject.Discover(args[0])
-			if retp := resolve(obj); retp != nil {
-				return retp.JSObject()
+			if resolve != nil {
+				if retp := resolve(obj); retp != nil {
+					return retp.JSObject()
+				}
 			}
 
 		}
@@ -123,9 +144,20 @@ func (p Promise) Then(resolve func(interface{}) *Promise, reject func(error)) er
 	})
 
 	rejectedFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+
 		var err error
-		err = errors.New(args[0].String())
-		reject(err)
+		var exception domexception.DomException
+		if exception, err = domexception.NewFromJSObject(args[0]); err == nil {
+			message, _ := exception.Message()
+			err = errors.New(message)
+		} else {
+			err = errors.New(args[0].String())
+		}
+
+		if reject != nil {
+			reject(err)
+		}
+
 		return nil
 	})
 
@@ -181,8 +213,17 @@ func (p Promise) Catch(reject func(error)) error {
 	var err error
 	rejectedFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		var err error
-		err = errors.New(args[0].String())
-		reject(err)
+		var exception domexception.DomException
+		if exception, err = domexception.NewFromJSObject(args[0]); err == nil {
+			message, _ := exception.Message()
+			err = errors.New(message)
+		} else {
+			err = errors.New(args[0].String())
+		}
+
+		if reject != nil {
+			reject(err)
+		}
 		return nil
 	})
 	_, err = p.JSObject().CallWithErr("catch", rejectedFunc)
