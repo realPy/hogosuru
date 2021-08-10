@@ -354,7 +354,7 @@ This is a young project and there are a lot of work to do
 All help is welcome. If you are interested by this project, please contact me
 
 
-## Implemented API/Object status (This array is not up to date)
+## Implemented API/Object status 
 
     
 
