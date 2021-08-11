@@ -42,39 +42,32 @@ type RouteMap struct {
 	routing          map[string]Rendering
 }
 
-func init() {
-	if w, err := window.New(); err == nil {
-
-		//Vérifier si cette fonction a du sens
-		w.OnHashChange(func(e event.Event) {
-			r := Router()
-			if r.mode == HASHROUTE {
-				r.onurlchange()
-			}
-
-		})
-
-		w.OnPopState(func(e event.Event) {
-			r := Router()
-
-			r.onurlchange()
-
-		})
-
-	} else {
-		println("Router " + err.Error())
-	}
-	//get the current location
-
-	//on new event hash , load the new observer (https://developer.mozilla.org/en-US/docs/Web/API/Window/hashchange_event)
-
-}
-
 //Router
 func Router() *RouteMap {
 
 	singletonRoute.Do(func() {
 		route.routing = make(map[string]Rendering)
+		if w, err := window.New(); err == nil {
+
+			//Vérifier si cette fonction a du sens
+			w.OnHashChange(func(e event.Event) {
+				r := Router()
+				if r.mode == HASHROUTE {
+					r.onurlchange()
+				}
+
+			})
+
+			w.OnPopState(func(e event.Event) {
+				r := Router()
+
+				r.onurlchange()
+
+			})
+
+		} else {
+			println("Router " + err.Error())
+		}
 	})
 
 	return &route

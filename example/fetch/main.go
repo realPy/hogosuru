@@ -16,7 +16,7 @@ func main() {
 	//dont forget that fetch url need cors
 	endpoint, _ := url.Parse("http://localhost:9090/static.json")
 
-	fetch.NewFetch(endpoint, "GET", nil, nil, func(r response.Response, err error) {
+	fetch.NewFetch(endpoint.String(), "GET", nil, nil, func(r response.Response, err error) {
 
 		if err == nil {
 			if s, _ := r.Status(); s == 200 {
@@ -41,7 +41,7 @@ func main() {
 	<-fetchsync
 
 	//fetch same ressource but as Bytes
-	fetch.NewFetch(endpoint, "GET", nil, nil, func(r response.Response, err error) {
+	fetch.NewFetch(endpoint.String(), "GET", nil, nil, func(r response.Response, err error) {
 
 		if err == nil {
 			if s, _ := r.Status(); s == 200 {
@@ -64,7 +64,7 @@ func main() {
 
 	dataPost.Set("test", "ok")
 
-	fetch.NewFetch(endpoint,
+	fetch.NewFetch(endpoint.String(),
 		"POST",
 		&map[string]interface{}{"content-type": "application/x-www-form-urlencoded", "User-Agent": "Tester"},
 		&dataPost, func(r response.Response, err error) {
