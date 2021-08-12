@@ -48,6 +48,8 @@ func GetInterface() js.Value {
 			wsinterface = js.Null()
 		}
 
+		messageevent.GetInterface()
+
 	})
 	baseobject.Register(wsinterface, func(v js.Value) (interface{}, error) {
 		return NewFromJSObject(v)
@@ -181,7 +183,6 @@ func (w WebSocket) OnMessage(handler func(m messageevent.MessageEvent)) error {
 	return w.AddEventListener("message", func(e event.Event) {
 
 		if obj, err := baseobject.Discover(e.JSObject()); err == nil {
-
 			if m, ok := obj.(messageevent.MessageEventFrom); ok {
 				handler(m.MessageEvent())
 			}

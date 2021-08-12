@@ -8,6 +8,7 @@ import (
 
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/eventtarget"
 	"github.com/realPy/hogosuru/messageevent"
 )
@@ -58,9 +59,19 @@ func New(channelname string) (BroadcastChannel, error) {
 }
 
 //PostMessage Post a message on channel
-func (c BroadcastChannel) PostMessage(message string) error {
+func (c BroadcastChannel) PostMessage(message interface{}) error {
+
 	var err error
-	_, err = c.JSObject().CallWithErr("postMessage", js.ValueOf(message))
+	var data js.Value
+
+	if objGo, ok := message.(baseobject.ObjectFrom); ok {
+
+		data = objGo.JSObject()
+	} else {
+		data = js.ValueOf(message)
+	}
+
+	_, err = c.JSObject().CallWithErr("postMessage", data)
 
 	return err
 }

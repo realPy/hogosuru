@@ -43,7 +43,7 @@ func (f Fetch) Fetch() Fetch {
 	return f
 }
 
-func NewFetch(urlfetch *url.URL, method string, headers *map[string]interface{}, data *url.Values, handlerResponse func(jsresponse.Response, error)) (Fetch, error) {
+func NewFetch(urlfetch string, method string, headers *map[string]interface{}, data *url.Values, handlerResponse func(jsresponse.Response, error)) (Fetch, error) {
 	var fetch Fetch
 	var err error
 	var p promise.Promise
@@ -68,19 +68,22 @@ func NewFetch(urlfetch *url.URL, method string, headers *map[string]interface{},
 
 		arg := js.ValueOf(goarg)
 
-		promisefetchobj := fetchi.Invoke(urlfetch.String(), arg)
+		promisefetchobj := fetchi.Invoke(urlfetch, arg)
 		if p, err = promise.NewFromJSObject(promisefetchobj); err == nil {
 
-			p.Async(func(obj baseobject.BaseObject) *promise.Promise {
+			if handlerResponse != nil {
+				p.Async(func(obj baseobject.BaseObject) *promise.Promise {
 
-				var r jsresponse.Response
-				r, err = jsresponse.NewFromJSObject(obj.JSObject())
-				handlerResponse(r, err)
+					var r jsresponse.Response
+					r, err = jsresponse.NewFromJSObject(obj.JSObject())
+					handlerResponse(r, err)
 
-				return nil
-			}, func(e error) {
-				handlerResponse(jsresponse.Response{}, err)
-			})
+					return nil
+				}, func(e error) {
+					handlerResponse(jsresponse.Response{}, err)
+				})
+			}
+
 			fetch.BaseObject = fetch.SetObject(p.JSObject())
 		}
 

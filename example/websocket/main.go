@@ -11,7 +11,7 @@ import (
 func main() {
 
 	//connect on echo websocket
-	if ws, err := websocket.New("wss://echo.websocket.org"); err == nil {
+	if ws, err := websocket.New("ws://localhost:9090/echo"); err == nil {
 
 		/*
 

@@ -15,22 +15,22 @@ import (
 
 var singleton sync.Once
 
-var locationinterface js.Value
+var windowinterface js.Value
 
 //GetInterface get the JS interface of formdata
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if locationinterface, err = js.Global().GetWithErr("Window"); err != nil {
-			locationinterface = js.Null()
+		if windowinterface, err = js.Global().GetWithErr("Window"); err != nil {
+			windowinterface = js.Null()
 		}
 
 	})
-	baseobject.Register(locationinterface, func(v js.Value) (interface{}, error) {
+	baseobject.Register(windowinterface, func(v js.Value) (interface{}, error) {
 		return NewFromJSObject(v)
 	})
-	return locationinterface
+	return windowinterface
 }
 
 type Window struct {

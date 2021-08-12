@@ -25,9 +25,12 @@ func main() {
 		c.Count("countme")
 		c.GroupEnd()
 		c.Warn("Warn message")
+
 		c.Log("Log message")
 		c.TimeEnd("console")
 		c.Count("countme")
+		c.Export("pouet")
+
 	} else {
 		println("erreur", err.Error())
 	}
