@@ -22,8 +22,9 @@ func Console() console.Console {
 }
 
 func AssertErr(err error) bool {
-
-	Console().Assert(err == nil, err.Error())
+	if err != nil {
+		Console().Assert(err == nil, err.Error())
+	}
 
 	return err == nil
 }
