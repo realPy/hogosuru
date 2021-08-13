@@ -51,9 +51,6 @@ type ObjectFrom interface {
 
 func String(object js.Value) string {
 	return object.String()
-
-	/*	s, _ := StringWithErr(object)
-		return s*/
 }
 
 //String return the string javascript value represent the object
@@ -121,6 +118,19 @@ func (o BaseObject) Value() string {
 
 func (o BaseObject) Length() int {
 	return o.object.Length()
+}
+
+func (o BaseObject) Bind(to BaseObject) (interface{}, error) {
+	var err error
+	var bindObj js.Value
+	var gobj interface{}
+
+	if bindObj, err = o.JSObject().CallWithErr("bind", to.JSObject()); err == nil {
+
+		gobj, err = Discover(bindObj)
+
+	}
+	return gobj, err
 }
 
 func (o BaseObject) Export(name string) {
