@@ -133,6 +133,10 @@ func (o BaseObject) Bind(to BaseObject) (interface{}, error) {
 	return gobj, err
 }
 
+func (o BaseObject) SetFunc(attribute string, f func(this js.Value, args []js.Value) interface{}) error {
+	return o.JSObject().SetWithErr(attribute, js.FuncOf(f))
+}
+
 func (o BaseObject) Export(name string) {
 	js.Global().Set(name, o.object)
 }
