@@ -35,11 +35,9 @@ func GetInterface() js.Value {
 		if htmlmeterelementinterface, err = js.Global().GetWithErr("HTMLMeterElement"); err != nil {
 			htmlmeterelementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmlmeterelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmlmeterelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmlmeterelementinterface

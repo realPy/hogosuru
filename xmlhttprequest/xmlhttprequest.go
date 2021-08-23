@@ -47,11 +47,11 @@ func GetInterface() js.Value {
 		if xhrinterface, err = js.Global().GetWithErr("XMLHttpRequest"); err != nil {
 			xhrinterface = js.Null()
 		}
+		baseobject.Register(xhrinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
+	})
 
-	})
-	baseobject.Register(xhrinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
-	})
 	return xhrinterface
 }
 

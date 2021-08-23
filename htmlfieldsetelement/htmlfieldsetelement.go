@@ -36,11 +36,9 @@ func GetInterface() js.Value {
 		if htmlfieldsetelementinterface, err = js.Global().GetWithErr("HTMLFieldSetElement"); err != nil {
 			htmlfieldsetelementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmlfieldsetelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmlfieldsetelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmlfieldsetelementinterface

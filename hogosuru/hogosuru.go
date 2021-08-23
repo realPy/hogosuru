@@ -50,7 +50,7 @@ func (v Value) CallWithErr(m string, args ...interface{}) (Value, error) {
 
 func (v Value) GetWithErr(p string) (Value, error) {
 	if vType := v.Type(); !vType.isObject() {
-		return Value{}, errors.New("Unable to get value" + p)
+		return Value{}, errors.New("Unable to get value " + p)
 	}
 	r := makeValue(valueGet(v.ref, p))
 	runtime.KeepAlive(v)

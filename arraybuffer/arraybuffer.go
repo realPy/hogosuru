@@ -23,9 +23,9 @@ func GetInterface() js.Value {
 		if arraybufferinterface, err = js.Global().GetWithErr("ArrayBuffer"); err != nil {
 			arraybufferinterface = js.Null()
 		}
-	})
-	baseobject.Register(arraybufferinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(arraybufferinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return arraybufferinterface

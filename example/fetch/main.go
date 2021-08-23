@@ -95,9 +95,17 @@ func main() {
 
 	if f, err := fetch.New(endpoint.String(), map[string]interface{}{"method": "GET"}); hogosuru.AssertErr(err) {
 
-		f.Async(func(r response.Response) *promise.Promise {
+		f.Then(func(r response.Response) *promise.Promise {
 
-			println(r.Response().StatusText())
+			if header, err := r.Response().Headers(); hogosuru.AssertErr(err) {
+				it, _ := header.Entries()
+				for key, value, err := it.Next(); err == nil; key, value, err = it.Next() {
+					println(key, ":", value)
+
+				}
+
+			}
+
 			return nil
 
 		}, func(e error) {

@@ -34,11 +34,9 @@ func GetInterface() js.Value {
 		if htmltablecolelementinterface, err = js.Global().GetWithErr("HTMLTableColElement"); err != nil {
 			htmltablecolelementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmltablecolelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmltablecolelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmltablecolelementinterface

@@ -36,10 +36,10 @@ func GetInterface() js.Value {
 			customeventinterface = js.Null()
 		}
 
-	})
+		baseobject.Register(customeventinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 
-	baseobject.Register(customeventinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
 	})
 
 	return customeventinterface

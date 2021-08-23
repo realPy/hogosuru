@@ -23,11 +23,11 @@ func GetInterface() js.Value {
 		if promiseinterface, err = js.Global().GetWithErr("Promise"); err != nil {
 			promiseinterface = js.Null()
 		}
+		baseobject.Register(promiseinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
-	baseobject.Register(promiseinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
-	})
 	return promiseinterface
 }
 
@@ -86,6 +86,7 @@ func NewFromJSObject(obj js.Value) (Promise, error) {
 	return p, err
 }
 
+//will be deprecated
 func (p Promise) Async(resolve func(baseobject.BaseObject) *Promise, reject func(error)) error {
 	var err error
 	var obj baseobject.BaseObject
@@ -120,6 +121,7 @@ func (p Promise) Async(resolve func(baseobject.BaseObject) *Promise, reject func
 		return nil
 	})
 
+	p.Debug("❗❗Use of promise.Async is deprecated❗❗")
 	_, err = p.JSObject().CallWithErr("then", resolveFunc, rejectedFunc)
 	return err
 }
@@ -240,27 +242,27 @@ func (p Promise) Finally(f func()) error {
 	return err
 }
 
-func (p Promise) Await() (baseobject.BaseObject, error) {
-	var obj baseobject.BaseObject
+func (p Promise) Await() (interface{}, error) {
+	var obj interface{}
 	var err error
 	var ok bool
 
 	ch := make(chan interface{})
 
-	err = p.Async(func(obj baseobject.BaseObject) *Promise {
-		ch <- obj
-		return nil
-	}, func(e error) {
+	err = p.Then(func(i interface{}) *Promise {
 
+		ch <- i
+		return nil
+
+	}, func(e error) {
 		ch <- e
 	})
+
 	returnvalue := <-ch
 
 	if err, ok = returnvalue.(error); !ok {
-		if obj, ok = returnvalue.(baseobject.BaseObject); !ok {
-			err = ErrResultPromiseError
 
-		}
+		obj = returnvalue
 	}
 
 	return obj, err

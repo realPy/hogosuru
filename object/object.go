@@ -21,10 +21,9 @@ func GetInterface() js.Value {
 		if objectinterface, err = js.Global().GetWithErr("Object"); err != nil {
 			objectinterface = js.Null()
 		}
-
-	})
-	baseobject.Register(objectinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(objectinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return objectinterface

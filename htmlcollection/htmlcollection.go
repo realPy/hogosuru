@@ -35,10 +35,9 @@ func GetInterface() js.Value {
 		if htmlcollectioninterface, err = js.Global().GetWithErr("HTMLCollection"); err != nil {
 			htmlcollectioninterface = js.Null()
 		}
-
-	})
-	baseobject.Register(htmlcollectioninterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmlcollectioninterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmlcollectioninterface

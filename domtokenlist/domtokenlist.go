@@ -36,9 +36,9 @@ func GetInterface() js.Value {
 		if domtokenlistinterface, err = js.Global().GetWithErr("DOMTokenList"); err != nil {
 			domtokenlistinterface = js.Null()
 		}
-	})
-	baseobject.Register(domtokenlistinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(domtokenlistinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return domtokenlistinterface

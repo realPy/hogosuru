@@ -35,11 +35,9 @@ func GetInterface() js.Value {
 		if htmlanchorlementinterface, err = js.Global().GetWithErr("HTMLAnchorElement"); err != nil {
 			htmlanchorlementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmlanchorlementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmlanchorlementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmlanchorlementinterface

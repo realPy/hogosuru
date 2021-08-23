@@ -35,10 +35,9 @@ func GetInterface() js.Value {
 		if documentfragementinterface, err = js.Global().GetWithErr("DocumentFragment"); err != nil {
 			documentfragementinterface = js.Null()
 		}
-	})
-
-	baseobject.Register(documentfragementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(documentfragementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return documentfragementinterface

@@ -27,21 +27,23 @@ func LoadWasm(urlfetch string) (fetch.Fetch, promise.Promise, error) {
 			var importobj js.Value
 			if importobj, err = gobj.GetWithErr("importObject"); err == nil {
 
-				if f, err = fetch.NewFetch(urlfetch, "GET", nil, nil, nil); err == nil {
-
+				if f, err = fetch.New(urlfetch, map[string]interface{}{"method": "GET"}); err == nil {
 					if p, err = w.InstantiateStreaming(f.Promise, importobj); err == nil {
 
-						p.Async(func(module baseobject.BaseObject) *promise.Promise {
+						p.Then(func(obj interface{}) *promise.Promise {
 							var instance js.Value
 
-							if instance, err = module.JSObject().GetWithErr("instance"); err == nil {
-								_, err = gobj.JSValue().CallWithErr("run", instance)
+							if module, ok := obj.(baseobject.ObjectFrom); ok {
+
+								if instance, err = module.JSObject().GetWithErr("instance"); err == nil {
+									_, err = gobj.JSValue().CallWithErr("run", instance)
+								}
 							}
+
 							return nil
 						}, nil)
 
 					}
-
 				}
 
 			}

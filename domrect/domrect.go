@@ -21,10 +21,9 @@ func GetInterface() js.Value {
 		if domrectinterface, err = js.Global().GetWithErr("DOMRect"); err != nil {
 			domrectinterface = js.Null()
 		}
-
-	})
-	baseobject.Register(domrectinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(domrectinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return domrectinterface

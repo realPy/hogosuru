@@ -38,11 +38,12 @@ func IDBDatabaseGetInterface() js.Value {
 		if idbrequestinterface, err = js.Global().GetWithErr("IDBDatabase"); err != nil {
 			idbrequestinterface = js.Null()
 		}
+
+		baseobject.Register(idbrequestinterface, func(v js.Value) (interface{}, error) {
+			return IDBDatabaseNewFromJSObject(v)
+		})
 	})
 
-	baseobject.Register(idbrequestinterface, func(v js.Value) (interface{}, error) {
-		return IDBDatabaseNewFromJSObject(v)
-	})
 	return idbrequestinterface
 }
 

@@ -37,10 +37,9 @@ func GetInterface() js.Value {
 			headersinterface = js.Null()
 		}
 
-	})
-
-	baseobject.Register(headersinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(headersinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return headersinterface

@@ -35,11 +35,9 @@ func GetInterface() js.Value {
 		if htmllabelelementinterface, err = js.Global().GetWithErr("HTMLLabelElement"); err != nil {
 			htmllabelelementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmllabelelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmllabelelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmllabelelementinterface

@@ -22,11 +22,11 @@ func GetInterface() js.Value {
 		if mapinterface, err = js.Global().GetWithErr("Map"); err != nil {
 			mapinterface = js.Null()
 		}
+		baseobject.Register(mapinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
+	})
 
-	})
-	baseobject.Register(mapinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
-	})
 	return mapinterface
 }
 

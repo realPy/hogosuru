@@ -34,11 +34,9 @@ func GetInterface() js.Value {
 		if htmltimeelementinterface, err = js.Global().GetWithErr("HTMLTimeElement"); err != nil {
 			htmltimeelementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmltimeelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmltimeelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmltimeelementinterface

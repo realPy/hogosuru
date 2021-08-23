@@ -20,9 +20,9 @@ func GetInterface() js.Value {
 		if dateinterface, err = js.Global().GetWithErr("Date"); err != nil {
 			dateinterface = js.Null()
 		}
-	})
-	baseobject.Register(dateinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(dateinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return dateinterface

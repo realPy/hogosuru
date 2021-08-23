@@ -37,11 +37,11 @@ func GetInterface() js.Value {
 		if jsoninterface, err = js.Global().GetWithErr("JSON"); err != nil {
 			jsoninterface = js.Null()
 		}
+		baseobject.Register(jsoninterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
+	})
 
-	})
-	baseobject.Register(jsoninterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
-	})
 	return jsoninterface
 }
 

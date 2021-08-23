@@ -1,8 +1,10 @@
 package hogosurudebug
 
 import (
+	"sync"
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/console"
 )
 
@@ -39,4 +41,39 @@ func InstallConsoleHandler(typehandler string, handler func(string)) error {
 	}
 
 	return err
+}
+
+var singletonConsole sync.Once
+var globalconsole console.Console
+
+func Console() console.Console {
+
+	singletonConsole.Do(func() {
+		var err error
+		if globalconsole, err = console.New(); err != nil {
+			panic(err)
+		}
+
+	})
+	return globalconsole
+}
+
+func EnableDebug() {
+	baseobject.SetConsoleDebug(Console())
+}
+
+func AssertErr(err error) bool {
+	if err != nil {
+		Console().Assert(err == nil, err.Error())
+	}
+
+	return err == nil
+}
+
+func AssertDebug(err error) bool {
+	if err != nil {
+		Console().BaseObject.Debug(err.Error())
+	}
+
+	return err == nil
 }

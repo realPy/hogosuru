@@ -34,11 +34,9 @@ func GetInterface() js.Value {
 		if htmlformelementinterface, err = js.Global().GetWithErr("HTMLFormElement"); err != nil {
 			htmlformelementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmlformelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmlformelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmlformelementinterface

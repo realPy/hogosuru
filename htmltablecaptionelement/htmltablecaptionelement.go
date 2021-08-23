@@ -35,10 +35,9 @@ func GetInterface() js.Value {
 			htmltablecaptionelementinterface = js.Null()
 		}
 
-	})
-
-	baseobject.Register(htmltablecaptionelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmltablecaptionelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmltablecaptionelementinterface

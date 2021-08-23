@@ -35,11 +35,11 @@ func GetInterface() js.Value {
 		if nodelistinterface, err = js.Global().GetWithErr("NodeList"); err != nil {
 			nodelistinterface = js.Null()
 		}
+		baseobject.Register(nodelistinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
+	})
 
-	})
-	baseobject.Register(nodelistinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
-	})
 	return nodelistinterface
 }
 

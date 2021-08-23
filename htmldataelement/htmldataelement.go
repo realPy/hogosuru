@@ -34,11 +34,9 @@ func GetInterface() js.Value {
 		if htmldataelementinterface, err = js.Global().GetWithErr("HTMLDataElement"); err != nil {
 			htmldataelementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmldataelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmldataelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmldataelementinterface

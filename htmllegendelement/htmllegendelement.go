@@ -35,11 +35,9 @@ func GetInterface() js.Value {
 		if htmllegendelementinterface, err = js.Global().GetWithErr("HTMLLegendElement"); err != nil {
 			htmllegendelementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmllegendelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmllegendelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmllegendelementinterface

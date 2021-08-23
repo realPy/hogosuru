@@ -35,11 +35,9 @@ func GetInterface() js.Value {
 		if htmlmapelementinterface, err = js.Global().GetWithErr("HTMLMapElement"); err != nil {
 			htmlmapelementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmlmapelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmlmapelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmlmapelementinterface

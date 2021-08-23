@@ -25,11 +25,11 @@ func GetInterface() js.Value {
 		if windowinterface, err = js.Global().GetWithErr("Window"); err != nil {
 			windowinterface = js.Null()
 		}
+		baseobject.Register(windowinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
+	})
 
-	})
-	baseobject.Register(windowinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
-	})
 	return windowinterface
 }
 

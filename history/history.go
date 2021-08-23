@@ -42,11 +42,10 @@ func GetInterface() js.Value {
 		if historyinterface, err = js.Global().GetWithErr("History"); err != nil {
 			historyinterface = js.Null()
 		}
+		baseobject.Register(historyinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 
-	})
-
-	baseobject.Register(historyinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
 	})
 
 	return historyinterface

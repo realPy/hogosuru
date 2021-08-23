@@ -5,6 +5,7 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/promise"
 )
 
 var singleton sync.Once
@@ -37,6 +38,10 @@ func (r ReadableStream) ReadableStream() ReadableStream {
 	return r
 }
 
+func (r ReadableStream) Locked() (bool, error) {
+	return r.GetAttributeBool("locked")
+}
+
 func NewFromJSObject(obj js.Value) (ReadableStream, error) {
 	var r ReadableStream
 
@@ -49,6 +54,19 @@ func NewFromJSObject(obj js.Value) (ReadableStream, error) {
 	}
 
 	return r, ErrNotAReadableStream
+}
+
+func (r ReadableStream) Cancel() (promise.Promise, error) {
+	var err error
+	var obj js.Value
+	var p promise.Promise
+
+	if obj, err = r.JSObject().CallWithErr("cancel"); err == nil {
+		p, err = promise.NewFromJSObject(obj)
+
+	}
+	return p, err
+
 }
 
 func (r ReadableStream) GetReader() (ReadableStreamDefaultReader, error) {

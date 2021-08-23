@@ -34,11 +34,9 @@ func GetInterface() js.Value {
 		if htmlsourceelementinterface, err = js.Global().GetWithErr("HTMLSourceElement"); err != nil {
 			htmlsourceelementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmlsourceelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmlsourceelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmlsourceelementinterface

@@ -36,10 +36,9 @@ func GetInterface() js.Value {
 		if filelistinterface, err = js.Global().GetWithErr("FileList"); err != nil {
 			filelistinterface = js.Null()
 		}
-
-	})
-	baseobject.Register(filelistinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(filelistinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return filelistinterface

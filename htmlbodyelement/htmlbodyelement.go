@@ -34,11 +34,9 @@ func GetInterface() js.Value {
 		if htmlbodyelementinterface, err = js.Global().GetWithErr("HTMLBodyElement"); err != nil {
 			htmlbodyelementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmlbodyelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmlbodyelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmlbodyelementinterface

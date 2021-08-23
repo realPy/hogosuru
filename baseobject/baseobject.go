@@ -23,21 +23,28 @@ func Register(inter js.Value, contruct func(js.Value) (interface{}, error)) erro
 func Discover(obj js.Value) (interface{}, error) {
 	var err error
 	var bobj interface{}
+	var objname js.Value
 
-	//if f, ok := registry[obj.Get("constructor").Get("prototype").Call("toString").String()]; ok {
+	if objconstructor, err := obj.GetWithErr("constructor"); err == nil {
 
-	if objcontructor, err := obj.GetWithErr("constructor"); err == nil {
-		if f, ok := registry[objcontructor.Get("name").String()]; ok {
-			var obji interface{}
-			var ok bool
-			obji, err = f(obj)
-			if bobj, ok = obji.(ObjectFrom); !ok {
-				err = ErrNotABaseObject
+		if objname, err = objconstructor.GetWithErr("name"); err == nil {
+			if f, ok := registry[objname.String()]; ok {
+				var obji interface{}
+				var ok bool
+
+				obji, err = f(obj)
+				if bobj, ok = obji.(ObjectFrom); !ok {
+					err = ErrNotABaseObject
+				}
+
+			} else {
+				bobj, err = NewFromJSObject(obj)
 			}
 
 		} else {
 			bobj, err = NewFromJSObject(obj)
 		}
+
 	} else {
 		bobj, err = NewFromJSObject(obj)
 	}
@@ -47,6 +54,11 @@ func Discover(obj js.Value) (interface{}, error) {
 
 type ObjectFrom interface {
 	JSObject() js.Value
+	BaseObject() BaseObject
+}
+
+func (b BaseObject) BaseObject() BaseObject {
+	return b
 }
 
 func String(object js.Value) string {
@@ -82,26 +94,26 @@ func NewFromJSObject(obj js.Value) (BaseObject, error) {
 
 }
 
-func (o BaseObject) SetObject(object js.Value) BaseObject {
+func (b BaseObject) SetObject(object js.Value) BaseObject {
 
-	o.object = object
+	b.object = object
 
-	return o
+	return b
 }
 
-func (o BaseObject) JSObject() js.Value {
-	return o.object
+func (b BaseObject) JSObject() js.Value {
+	return b.object
 }
 
-func (o BaseObject) String() string {
-	return String(o.object)
+func (b BaseObject) String() string {
+	return String(b.object)
 }
 
-func (o BaseObject) ToString() (string, error) {
+func (b BaseObject) ToString() (string, error) {
 	var value js.Value
 	var err error
-	if o.JSObject().Type() == js.TypeObject {
-		if value, err = o.JSObject().CallWithErr("toString"); err == nil {
+	if b.JSObject().Type() == js.TypeObject {
+		if value, err = b.JSObject().CallWithErr("toString"); err == nil {
 			return value.String(), nil
 		} else {
 			return "", err
@@ -112,20 +124,20 @@ func (o BaseObject) ToString() (string, error) {
 	return "", ErrNotAnObject
 }
 
-func (o BaseObject) Value() string {
-	return o.object.String()
+func (b BaseObject) Value() string {
+	return b.object.String()
 }
 
-func (o BaseObject) Length() int {
-	return o.object.Length()
+func (b BaseObject) Length() int {
+	return b.object.Length()
 }
 
-func (o BaseObject) Bind(to BaseObject) (interface{}, error) {
+func (b BaseObject) Bind(to BaseObject) (interface{}, error) {
 	var err error
 	var bindObj js.Value
 	var gobj interface{}
 
-	if bindObj, err = o.JSObject().CallWithErr("bind", to.JSObject()); err == nil {
+	if bindObj, err = b.JSObject().CallWithErr("bind", to.JSObject()); err == nil {
 
 		gobj, err = Discover(bindObj)
 
@@ -133,21 +145,53 @@ func (o BaseObject) Bind(to BaseObject) (interface{}, error) {
 	return gobj, err
 }
 
-func (o BaseObject) SetFunc(attribute string, f func(this js.Value, args []js.Value) interface{}) error {
-	return o.JSObject().SetWithErr(attribute, js.FuncOf(f))
+func (b BaseObject) Implement(method string) (bool, error) {
+
+	var obj js.Value
+
+	var err error
+
+	if obj, err = b.JSObject().GetWithErr(method); err == nil {
+
+		if obj.Type() == js.TypeFunction {
+			return true, nil
+		}
+
+	}
+
+	return false, err
 }
 
-func (o BaseObject) Export(name string) {
-	js.Global().Set(name, o.object)
+func (b BaseObject) Class() (string, error) {
+	var err error
+	var objconstructor, objname js.Value
+	var classname string
+
+	if objconstructor, err = b.JSObject().GetWithErr("constructor"); err == nil {
+
+		if objname, err = objconstructor.GetWithErr("name"); err == nil {
+			classname = objname.String()
+		}
+
+	}
+	return classname, err
 }
 
-func (o BaseObject) GetAttributeString(attribute string) (string, error) {
+func (b BaseObject) SetFunc(attribute string, f func(this js.Value, args []js.Value) interface{}) error {
+	return b.JSObject().SetWithErr(attribute, js.FuncOf(f))
+}
+
+func (b BaseObject) Export(name string) {
+	js.Global().Set(name, b.object)
+}
+
+func (b BaseObject) GetAttributeString(attribute string) (string, error) {
 
 	var err error
 	var obj js.Value
 	var valueStr = ""
 
-	if obj, err = o.JSObject().GetWithErr(attribute); err == nil {
+	if obj, err = b.JSObject().GetWithErr(attribute); err == nil {
 
 		if obj.IsNull() {
 			err = ErrNotAnObject
@@ -163,13 +207,13 @@ func (o BaseObject) GetAttributeString(attribute string) (string, error) {
 
 }
 
-func (o BaseObject) GetAttributeGlobal(attribute string) (interface{}, error) {
+func (b BaseObject) GetAttributeGlobal(attribute string) (interface{}, error) {
 
 	var err error
 	var obj js.Value
 	var objGlobal interface{}
 
-	if obj, err = o.JSObject().GetWithErr(attribute); err == nil {
+	if obj, err = b.JSObject().GetWithErr(attribute); err == nil {
 
 		if obj.IsNull() {
 			err = ErrNotAnObject
@@ -184,18 +228,18 @@ func (o BaseObject) GetAttributeGlobal(attribute string) (interface{}, error) {
 
 }
 
-func (o BaseObject) SetAttributeString(attribute string, value string) error {
+func (b BaseObject) SetAttributeString(attribute string, value string) error {
 
-	return o.JSObject().SetWithErr(attribute, js.ValueOf(value))
+	return b.JSObject().SetWithErr(attribute, js.ValueOf(value))
 }
 
-func (o BaseObject) GetAttributeBool(attribute string) (bool, error) {
+func (b BaseObject) GetAttributeBool(attribute string) (bool, error) {
 
 	var err error
 	var obj js.Value
 	var ret bool
 
-	if obj, err = o.JSObject().GetWithErr(attribute); err == nil {
+	if obj, err = b.JSObject().GetWithErr(attribute); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			ret = obj.Bool()
 		} else {
@@ -206,18 +250,18 @@ func (o BaseObject) GetAttributeBool(attribute string) (bool, error) {
 	return ret, err
 }
 
-func (o BaseObject) SetAttributeBool(attribute string, value bool) error {
+func (b BaseObject) SetAttributeBool(attribute string, value bool) error {
 
-	return o.JSObject().SetWithErr(attribute, js.ValueOf(value))
+	return b.JSObject().SetWithErr(attribute, js.ValueOf(value))
 }
 
-func (o BaseObject) GetAttributeInt(attribute string) (int, error) {
+func (b BaseObject) GetAttributeInt(attribute string) (int, error) {
 
 	var err error
 	var obj js.Value
 	var result int
 
-	if obj, err = o.JSObject().GetWithErr(attribute); err == nil {
+	if obj, err = b.JSObject().GetWithErr(attribute); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Int()
 		} else {
@@ -227,18 +271,18 @@ func (o BaseObject) GetAttributeInt(attribute string) (int, error) {
 
 	return result, err
 }
-func (o BaseObject) SetAttributeInt(attribute string, value int) error {
+func (b BaseObject) SetAttributeInt(attribute string, value int) error {
 
-	return o.JSObject().SetWithErr(attribute, js.ValueOf(value))
+	return b.JSObject().SetWithErr(attribute, js.ValueOf(value))
 }
 
-func (o BaseObject) GetAttributeDouble(attribute string) (float64, error) {
+func (b BaseObject) GetAttributeDouble(attribute string) (float64, error) {
 
 	var err error
 	var obj js.Value
 	var result float64
 
-	if obj, err = o.JSObject().GetWithErr(attribute); err == nil {
+	if obj, err = b.JSObject().GetWithErr(attribute); err == nil {
 		if obj.Type() == js.TypeNumber {
 			result = obj.Float()
 		} else {
@@ -249,18 +293,18 @@ func (o BaseObject) GetAttributeDouble(attribute string) (float64, error) {
 	return result, err
 }
 
-func (o BaseObject) SetAttributeDouble(attribute string, value float64) error {
+func (b BaseObject) SetAttributeDouble(attribute string, value float64) error {
 
-	return o.JSObject().SetWithErr(attribute, js.ValueOf(value))
+	return b.JSObject().SetWithErr(attribute, js.ValueOf(value))
 }
 
-func (o BaseObject) CallInt64(method string) (int64, error) {
+func (b BaseObject) CallInt64(method string) (int64, error) {
 
 	var err error
 	var obj js.Value
 	var ret int64
 
-	if obj, err = o.JSObject().CallWithErr(method); err == nil {
+	if obj, err = b.JSObject().CallWithErr(method); err == nil {
 		if obj.Type() == js.TypeNumber {
 			ret = int64(obj.Float())
 		} else {
@@ -270,12 +314,12 @@ func (o BaseObject) CallInt64(method string) (int64, error) {
 	return ret, err
 }
 
-func (o BaseObject) CallBool(method string) (bool, error) {
+func (b BaseObject) CallBool(method string) (bool, error) {
 	var err error
 	var obj js.Value
 	var result bool
 
-	if obj, err = o.JSObject().CallWithErr(method); err == nil {
+	if obj, err = b.JSObject().CallWithErr(method); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
@@ -306,8 +350,8 @@ func GoValue(object js.Value) interface{} {
 	case js.TypeBoolean:
 		return object.Bool()
 	}
-	if obj, err := NewFromJSObject(object); err == nil {
-		return obj
-	}
-	return nil
+
+	obj, _ := Discover(object)
+
+	return obj
 }

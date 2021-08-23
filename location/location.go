@@ -19,11 +19,11 @@ func GetInterface() js.Value {
 		if locationinterface, err = js.Global().GetWithErr("Location"); err != nil {
 			locationinterface = js.Null()
 		}
+		baseobject.Register(locationinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
+	})
 
-	})
-	baseobject.Register(locationinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
-	})
 	return locationinterface
 }
 

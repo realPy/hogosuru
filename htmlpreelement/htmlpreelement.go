@@ -35,10 +35,9 @@ func GetInterface() js.Value {
 			htmlpreelementinterface = js.Null()
 		}
 
-	})
-
-	baseobject.Register(htmlpreelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmlpreelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmlpreelementinterface

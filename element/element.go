@@ -27,11 +27,10 @@ func GetInterface() js.Value {
 		if elementinterface, err = js.Global().GetWithErr("Element"); err != nil {
 			elementinterface = js.Null()
 		}
+		baseobject.Register(elementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 
-	})
-
-	baseobject.Register(elementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
 	})
 
 	return elementinterface

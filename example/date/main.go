@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/realPy/hogosuru"
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/date"
 	"github.com/realPy/hogosuru/promise"
 )
@@ -47,7 +48,10 @@ func main() {
 	p3, _ := promise.Any(p1, p2)
 
 	data, _ := p3.Await()
-	println("First elem response", data.String())
+
+	if obj, ok := data.(baseobject.ObjectFrom); ok {
+		println("First elem response", obj.BaseObject().String())
+	}
 
 	ch := make(chan struct{})
 	<-ch

@@ -23,11 +23,9 @@ func GetInterface() js.Value {
 		if progresseeventinterface, err = js.Global().GetWithErr("ProgressEvent"); err != nil {
 			progresseeventinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(progresseeventinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(progresseeventinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return progresseeventinterface

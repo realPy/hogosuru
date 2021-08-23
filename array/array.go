@@ -21,11 +21,11 @@ func GetInterface() js.Value {
 		if arrayinterface, err = js.Global().GetWithErr("Array"); err != nil {
 			arrayinterface = js.Null()
 		}
+		baseobject.Register(arrayinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
-	baseobject.Register(arrayinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
-	})
 	return arrayinterface
 }
 

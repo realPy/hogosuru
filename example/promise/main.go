@@ -27,8 +27,13 @@ func main() {
 	p3, _ := promise.Any(p1, p2)
 
 	//data, _ := p3.Await()
-	p3.Async(func(bo baseobject.BaseObject) *promise.Promise {
-		println("First elem response", bo.String())
+
+	p3.Then(func(i interface{}) *promise.Promise {
+
+		if b, ok := i.(baseobject.ObjectFrom); ok {
+			println("First elem response", b.JSObject().String())
+		}
+
 		return nil
 	}, func(e error) {
 

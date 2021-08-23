@@ -22,9 +22,10 @@ func GetInterface() js.Value {
 		if fileinterface, err = js.Global().GetWithErr("File"); err != nil {
 			fileinterface = js.Null()
 		}
-	})
-	baseobject.Register(fileinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		blob.GetInterface()
+		baseobject.Register(fileinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return fileinterface

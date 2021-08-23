@@ -27,7 +27,9 @@ func GetInterface() js.Value {
 		}
 
 		response.GetInterface()
-
+		baseobject.Register(fetchinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return fetchinterface
@@ -84,21 +86,24 @@ func NewFromJSObject(obj js.Value) (Fetch, error) {
 	return h, ErrNotAFetch
 }
 
-func (f Fetch) Async(resolve func(response.Response) *promise.Promise, reject func(error)) error {
+func (f Fetch) Then(resolve func(response.Response) *promise.Promise, reject func(error)) error {
 
-	return f.Promise.Async(func(bo baseobject.BaseObject) *promise.Promise {
+	return f.Promise.Then(func(obj interface{}) *promise.Promise {
 		var resp interface{}
 		var err error
-		if resp, err = baseobject.Discover(bo.JSObject()); err == nil {
 
-			if r, ok := resp.(response.ResponseFrom); ok {
-				return resolve(r.Response())
-			}
-		} else {
-			if reject != nil {
-				reject(err)
-			}
+		if bo, ok := obj.(baseobject.ObjectFrom); ok {
+			if resp, err = baseobject.Discover(bo.JSObject()); err == nil {
 
+				if r, ok := resp.(response.ResponseFrom); ok {
+					return resolve(r.Response())
+				}
+			} else {
+				if reject != nil {
+					reject(err)
+				}
+
+			}
 		}
 
 		return nil
@@ -112,9 +117,10 @@ func (f Fetch) Async(resolve func(response.Response) *promise.Promise, reject fu
 
 }
 
-//for backward compatibilities
+//deprecated for backward compatibilities
 
 func NewFetch(urlfetch string, method string, headers *map[string]interface{}, data *url.Values, handlerResponse func(response.Response, error)) (Fetch, error) {
+
 	var fetch Fetch
 	var err error
 	var p promise.Promise
@@ -161,5 +167,7 @@ func NewFetch(urlfetch string, method string, headers *map[string]interface{}, d
 	} else {
 		err = ErrNotImplemented
 	}
+
+	fetch.Debug("❗❗Use of fetch.NewFetch is deprecated❗❗")
 	return fetch, err
 }

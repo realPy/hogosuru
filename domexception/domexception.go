@@ -34,6 +34,10 @@ func GetInterface() js.Value {
 			domexceptioninterface = js.Null()
 		}
 
+		baseobject.Register(domexceptioninterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
+
 	})
 	return domexceptioninterface
 }

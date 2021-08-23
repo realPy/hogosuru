@@ -35,11 +35,11 @@ func GetInterface() js.Value {
 		if namednodemapinterface, err = js.Global().GetWithErr("NamedNodeMap"); err != nil {
 			namednodemapinterface = js.Null()
 		}
+		baseobject.Register(namednodemapinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
+	})
 
-	})
-	baseobject.Register(namednodemapinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
-	})
 	return namednodemapinterface
 }
 

@@ -25,15 +25,15 @@ func NewFromJSObject(obj js.Value) Iterator {
 	return i
 }
 
-func pairValues(obj js.Value) (int, interface{}) {
+func pairValues(obj js.Value) (interface{}, interface{}) {
 
 	var value interface{}
-	var index int = -1
+	var index interface{}
 
 	if obj.Type() == js.TypeObject {
 		if obj.Length() == 2 {
 
-			index = obj.Index(0).Int()
+			index = baseobject.GoValue(obj.Index(0))
 
 			value = baseobject.GoValue(obj.Index(1))
 
@@ -50,12 +50,12 @@ for index, value, err := it.Next(); err == nil; index, value, err = it.Next() {
 }
 */
 
-func (i Iterator) Next() (int, interface{}, error) {
+func (i Iterator) Next() (interface{}, interface{}, error) {
 
 	var err error
 	var done bool = true
 	var obj, doneobj, valueobj js.Value
-	var index int = -1
+	var index interface{}
 	var value interface{}
 
 	if obj, err = i.JSObject().CallWithErr("next"); err == nil {
