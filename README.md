@@ -376,7 +376,7 @@ All help is welcome. If you are interested by this project, please contact me
 | Element | Full | https://developer.mozilla.org/fr/docs/Web/API/Element | 
 | Event | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/Event |
 | EventTarget | Full | https://developer.mozilla.org/fr/docs/Web/API/EventTarget/EventTarget | 
-| Fetch | Partial implemented  | https://developer.mozilla.org/fr/docs/Web/API/Fetch_API |
+| Fetch | Full | https://developer.mozilla.org/fr/docs/Web/API/Fetch_API |
 | File | Full | https://developer.mozilla.org/fr/docs/Web/API/File |
 | FileList | Full | https://developer.mozilla.org/fr/docs/Web/API/FileList |
 | FormData | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/FormData |
@@ -449,6 +449,7 @@ All help is welcome. If you are interested by this project, please contact me
 | Uint8array | Partial implemented | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array |
 | ValidityState | Full | https://developer.mozilla.org/en-US/docs/Web/API/ValidityState |
 | WebSocket | Full | https://developer.mozilla.org/fr/docs/Web/API/WebSocket |
+| Webassembly | Partial |https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly|
 | Window | Partial |https://developer.mozilla.org/en-US/docs/Web/API/Window |
 | XMLHttpRequest | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/XMLHttpRequest/XMLHttpRequest |
 
