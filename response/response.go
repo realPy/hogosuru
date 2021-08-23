@@ -10,6 +10,7 @@ import (
 
 	"github.com/realPy/hogosuru/arraybuffer"
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/headers"
 	"github.com/realPy/hogosuru/promise"
 	"github.com/realPy/hogosuru/uint8array"
 )
@@ -207,4 +208,15 @@ func (r Response) ArrayBufferBytes() ([]byte, error) {
 	}
 
 	return buffer, err
+}
+
+func (r Response) Headers() (headers.Headers, error) {
+	var obj js.Value
+	var err error
+	var h headers.Headers
+	if obj, err = r.JSObject().GetWithErr("headers"); err == nil {
+		h, err = headers.NewFromJSObject(obj)
+
+	}
+	return h, err
 }

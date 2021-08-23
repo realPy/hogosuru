@@ -13,7 +13,7 @@ var singleton sync.Once
 
 var mapinterface js.Value
 
-//GetInterface get teh JS interface of broadcast channel
+//GetInterface get the JS interface of object channel
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

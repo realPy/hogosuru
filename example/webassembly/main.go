@@ -7,7 +7,14 @@ import (
 )
 
 func main() {
-	p, _ := hogosuru.LoadWasm("console.wasm")
+	f, p, _ := hogosuru.LoadWasm("console.wasm")
+
+	f.Async(func(bo baseobject.BaseObject) *promise.Promise {
+		println("wasm download success")
+		return nil
+	}, func(e error) {
+		hogosuru.AssertErr(e)
+	})
 
 	p.Async(func(bo baseobject.BaseObject) *promise.Promise {
 

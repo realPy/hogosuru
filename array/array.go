@@ -477,7 +477,7 @@ func (a Array) Push(i interface{}) (int, error) {
 		pushdata = js.ValueOf(i)
 	}
 
-	if obj, err = a.JSObject().CallWithErr("lastIndexOf", pushdata); err == nil {
+	if obj, err = a.JSObject().CallWithErr("push", pushdata); err == nil {
 		if obj.Type() == js.TypeNumber {
 			index = obj.Int()
 		}

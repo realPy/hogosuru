@@ -10,7 +10,7 @@ import (
 
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/promise"
-	jsresponse "github.com/realPy/hogosuru/response"
+	"github.com/realPy/hogosuru/response"
 )
 
 var singleton sync.Once
@@ -25,6 +25,9 @@ func GetInterface() js.Value {
 		if fetchinterface, err = js.Global().GetWithErr("fetch"); err != nil {
 			fetchinterface = js.Null()
 		}
+
+		response.GetInterface()
+
 	})
 
 	return fetchinterface
@@ -43,7 +46,75 @@ func (f Fetch) Fetch() Fetch {
 	return f
 }
 
-func NewFetch(urlfetch string, method string, headers *map[string]interface{}, data *url.Values, handlerResponse func(jsresponse.Response, error)) (Fetch, error) {
+func New(urlfetch string, opts ...interface{}) (Fetch, error) {
+
+	var arrayJS []interface{}
+	var f Fetch
+	var err error
+
+	for _, value := range opts {
+		if objGo, ok := value.(baseobject.ObjectFrom); ok {
+			arrayJS = append(arrayJS, objGo.JSObject())
+		} else {
+			arrayJS = append(arrayJS, js.ValueOf(value))
+		}
+
+	}
+
+	if fetchi := GetInterface(); !fetchi.IsNull() {
+		promisefetchobj := fetchi.Invoke(urlfetch, arrayJS)
+		f.BaseObject = f.SetObject(promisefetchobj)
+	} else {
+		err = ErrNotImplemented
+	}
+	return f, err
+
+}
+
+func NewFromJSObject(obj js.Value) (Fetch, error) {
+	var h Fetch
+
+	if fetchi := GetInterface(); !fetchi.IsNull() {
+		if obj.InstanceOf(fetchi) {
+
+			h.BaseObject = h.SetObject(obj)
+			return h, nil
+		}
+	}
+	return h, ErrNotAFetch
+}
+
+func (f Fetch) Async(resolve func(response.Response) *promise.Promise, reject func(error)) error {
+
+	return f.Promise.Async(func(bo baseobject.BaseObject) *promise.Promise {
+		var resp interface{}
+		var err error
+		if resp, err = baseobject.Discover(bo.JSObject()); err == nil {
+
+			if r, ok := resp.(response.ResponseFrom); ok {
+				return resolve(r.Response())
+			}
+		} else {
+			if reject != nil {
+				reject(err)
+			}
+
+		}
+
+		return nil
+
+	}, func(e error) {
+		if reject != nil {
+			reject(e)
+		}
+
+	})
+
+}
+
+//for backward compatibilities
+
+func NewFetch(urlfetch string, method string, headers *map[string]interface{}, data *url.Values, handlerResponse func(response.Response, error)) (Fetch, error) {
 	var fetch Fetch
 	var err error
 	var p promise.Promise
@@ -74,13 +145,13 @@ func NewFetch(urlfetch string, method string, headers *map[string]interface{}, d
 			if handlerResponse != nil {
 				p.Async(func(obj baseobject.BaseObject) *promise.Promise {
 
-					var r jsresponse.Response
-					r, err = jsresponse.NewFromJSObject(obj.JSObject())
+					var r response.Response
+					r, err = response.NewFromJSObject(obj.JSObject())
 					handlerResponse(r, err)
 
 					return nil
 				}, func(e error) {
-					handlerResponse(jsresponse.Response{}, err)
+					handlerResponse(response.Response{}, err)
 				})
 			}
 

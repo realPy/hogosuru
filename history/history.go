@@ -20,7 +20,7 @@ var historyinterface js.Value
 // 	objectInterface js.Value
 // }
 
-//HTMLCollection struct
+//History struct
 type History struct {
 	baseobject.BaseObject
 }
@@ -62,7 +62,7 @@ func NewFromJSObject(obj js.Value) (History, error) {
 			return h, nil
 		}
 	}
-	return h, ErrCantImplementedHistory
+	return h, ErrNotAnHistory
 }
 
 func (h History) Forward() error {
