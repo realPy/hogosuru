@@ -66,22 +66,26 @@ func (r ReadableStreamDefaultReader) Read(b []byte) (n int, err error) {
 
 		if p, err = promise.NewFromJSObject(promiseread); err == nil {
 
-			p.Async(func(obj baseobject.BaseObject) *promise.Promise {
+			p.Then(func(i interface{}) *promise.Promise {
+				if obj, ok := i.(baseobject.ObjectFrom); ok {
+					if obj.JSObject().Get("done").Bool() == true {
+						err = io.EOF
+						donechan <- true
+						return nil
+					} else {
+						var u8array uint8array.Uint8Array
+						uint8arrayObject := obj.JSObject().Get("value")
+						if u8array, err = uint8array.NewFromJSObject(uint8arrayObject); err == nil {
+							n, err = u8array.CopyBytes(b)
+						}
 
-				if obj.JSObject().Get("done").Bool() == true {
-					err = io.EOF
-					donechan <- true
-					return nil
-				} else {
-					var u8array uint8array.Uint8Array
-					uint8arrayObject := obj.JSObject().Get("value")
-					if u8array, err = uint8array.NewFromJSObject(uint8arrayObject); err == nil {
-						n, err = u8array.CopyBytes(b)
 					}
 
 				}
+
 				donechan <- false
 				return nil
+
 			}, func(e error) {
 				err = e
 				donechan <- false
@@ -106,33 +110,40 @@ func (r ReadableStreamDefaultReader) asyncRead(preallocateBytes []byte, dataHand
 
 		if p, err = promise.NewFromJSObject(promiseread); err == nil {
 
-			p.Async(func(obj baseobject.BaseObject) *promise.Promise {
+			p.Then(func(i interface{}) *promise.Promise {
+				var obj js.Value
 
-				if obj.JSObject().Get("done").Bool() == true {
-					err = io.EOF
-					dataHandle(nil, err)
-					return nil
-				} else {
-					var u8array uint8array.Uint8Array
+				if b, ok := i.(baseobject.ObjectFrom); ok {
+					obj = b.JSObject()
+					if obj.Get("done").Bool() == true {
+						err = io.EOF
+						dataHandle(nil, err)
+						return nil
+					} else {
+						var u8array uint8array.Uint8Array
 
-					uint8arrayObject := obj.JSObject().Get("value")
+						uint8arrayObject := obj.Get("value")
 
-					if u8array, err = uint8array.NewFromJSObject(uint8arrayObject); err == nil {
+						if u8array, err = uint8array.NewFromJSObject(uint8arrayObject); err == nil {
 
-						if _, err = u8array.CopyBytes(preallocateBytes); err == nil {
-							dataHandle(preallocateBytes, err)
+							if _, err = u8array.CopyBytes(preallocateBytes); err == nil {
+								dataHandle(preallocateBytes, err)
+							}
+
 						}
 
+						p2, _ := promise.New(func(p promise.Promise) (interface{}, error) {
+							_, err := r.asyncRead(preallocateBytes, dataHandle)
+							return nil, err
+						})
+						return &p2
+
 					}
-
-					p2, _ := promise.New(func(p promise.Promise) (interface{}, error) {
-						_, err := r.asyncRead(preallocateBytes, dataHandle)
-						return nil, err
-					})
-					return &p2
-
+				} else {
+					dataHandle(nil, baseobject.ErrNotABaseObject)
 				}
 
+				return nil
 			}, func(e error) {
 				err = e
 				dataHandle(nil, err)

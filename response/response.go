@@ -10,7 +10,9 @@ import (
 
 	"github.com/realPy/hogosuru/arraybuffer"
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/headers"
 	"github.com/realPy/hogosuru/promise"
+	"github.com/realPy/hogosuru/stream"
 	"github.com/realPy/hogosuru/uint8array"
 )
 
@@ -43,10 +45,11 @@ func GetInterface() js.Value {
 		if responseinterface, err = js.Global().GetWithErr("Response"); err != nil {
 			responseinterface = js.Null()
 		}
+		baseobject.Register(responseinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
-	baseobject.Register(responseinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
-	})
+
 	return responseinterface
 }
 
@@ -143,14 +146,18 @@ func (r Response) Text() (string, error) {
 
 	var promiseObject js.Value
 	var p promise.Promise
-	var jsTxt baseobject.BaseObject
+	var jsTxtObj interface{}
 	var err error
 	if promiseObject, err = r.JSObject().CallWithErr("text"); err == nil {
 		if p, err = promise.NewFromJSObject(promiseObject); err == nil {
 
-			if jsTxt, err = p.Await(); err == nil {
+			if jsTxtObj, err = p.Await(); err == nil {
 
-				return jsTxt.JSObject().String(), nil
+				if jsTxt, ok := jsTxtObj.(baseobject.ObjectFrom); ok {
+					return jsTxt.JSObject().String(), nil
+				} else {
+					err = baseobject.ErrNotABaseObject
+				}
 
 			}
 		}
@@ -175,14 +182,18 @@ func (r Response) ArrayBuffer() (arraybuffer.ArrayBuffer, error) {
 	var err error
 	var promiseObject js.Value
 	var p promise.Promise
-	var binary baseobject.BaseObject
+	var binaryObj interface{}
 
 	if promiseObject, err = r.JSObject().CallWithErr("arrayBuffer"); err == nil {
 		if p, err = promise.NewFromJSObject(promiseObject); err == nil {
 
-			if binary, err = p.Await(); err == nil {
+			if binaryObj, err = p.Await(); err == nil {
+				if binary, ok := binaryObj.(arraybuffer.ArrayBufferFrom); ok {
+					ab = binary.ArrayBuffer()
+				} else {
+					err = baseobject.ErrNotABaseObject
+				}
 
-				ab, err = arraybuffer.NewFromJSObject(binary.JSObject())
 			}
 
 		}
@@ -207,4 +218,26 @@ func (r Response) ArrayBufferBytes() ([]byte, error) {
 	}
 
 	return buffer, err
+}
+
+func (r Response) Headers() (headers.Headers, error) {
+	var obj js.Value
+	var err error
+	var h headers.Headers
+	if obj, err = r.JSObject().GetWithErr("headers"); err == nil {
+		h, err = headers.NewFromJSObject(obj)
+
+	}
+	return h, err
+}
+
+func (r Response) Body() (stream.ReadableStream, error) {
+	var obj js.Value
+	var err error
+	var s stream.ReadableStream
+	if obj, err = r.JSObject().GetWithErr("body"); err == nil {
+		s, err = stream.NewFromJSObject(obj)
+
+	}
+	return s, err
 }

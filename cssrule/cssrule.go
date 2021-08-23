@@ -33,10 +33,9 @@ func GetInterface() js.Value {
 		if cssruleinterface, err = js.Global().GetWithErr("CSSRule"); err != nil {
 			cssruleinterface = js.Null()
 		}
-	})
-
-	baseobject.Register(cssruleinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(cssruleinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return cssruleinterface

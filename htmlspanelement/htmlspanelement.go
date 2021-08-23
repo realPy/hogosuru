@@ -34,11 +34,9 @@ func GetInterface() js.Value {
 		if htmlspanelementinterface, err = js.Global().GetWithErr("HTMLSpanElement"); err != nil {
 			htmlspanelementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmlspanelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmlspanelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmlspanelementinterface

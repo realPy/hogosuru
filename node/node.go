@@ -20,10 +20,11 @@ func GetInterface() js.Value {
 		if nodeinterface, err = js.Global().GetWithErr("Node"); err != nil {
 			nodeinterface = js.Null()
 		}
+		baseobject.Register(nodeinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
-	baseobject.Register(nodeinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
-	})
+
 	return nodeinterface
 }
 

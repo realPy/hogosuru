@@ -42,11 +42,10 @@ func GetInterface() js.Value {
 		if htmlinputelementinterface, err = js.Global().GetWithErr("HTMLInputElement"); err != nil {
 			htmlinputelementinterface = js.Null()
 		}
+		baseobject.Register(htmlinputelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 
-	})
-
-	baseobject.Register(htmlinputelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
 	})
 
 	return htmlinputelementinterface

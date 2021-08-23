@@ -49,11 +49,11 @@ func GetInterface() js.Value {
 		}
 
 		messageevent.GetInterface()
+		baseobject.Register(wsinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
+	})
 
-	})
-	baseobject.Register(wsinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
-	})
 	return wsinterface
 }
 

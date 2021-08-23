@@ -22,11 +22,9 @@ func GetInterface() js.Value {
 		if eventtargetinterface, err = js.Global().GetWithErr("EventTarget"); err != nil {
 			eventtargetinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(eventtargetinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(eventtargetinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return eventtargetinterface

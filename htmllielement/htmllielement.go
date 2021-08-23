@@ -34,11 +34,9 @@ func GetInterface() js.Value {
 		if htmllielementinterface, err = js.Global().GetWithErr("HTMLLIElement"); err != nil {
 			htmllielementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmllielementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmllielementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmllielementinterface

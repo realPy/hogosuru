@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"net/url"
 
+	"github.com/realPy/hogosuru"
 	"github.com/realPy/hogosuru/fetch"
 	"github.com/realPy/hogosuru/json"
+	"github.com/realPy/hogosuru/promise"
 	"github.com/realPy/hogosuru/response"
 )
 
@@ -90,6 +92,27 @@ func main() {
 		})
 
 	<-fetchsync
+
+	if f, err := fetch.New(endpoint.String(), map[string]interface{}{"method": "GET"}); hogosuru.AssertErr(err) {
+
+		f.Then(func(r response.Response) *promise.Promise {
+
+			if header, err := r.Response().Headers(); hogosuru.AssertErr(err) {
+				it, _ := header.Entries()
+				for key, value, err := it.Next(); err == nil; key, value, err = it.Next() {
+					println(key, ":", value)
+
+				}
+
+			}
+
+			return nil
+
+		}, func(e error) {
+			hogosuru.AssertErr(e)
+		})
+
+	}
 
 	ch := make(chan struct{})
 	<-ch

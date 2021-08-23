@@ -41,6 +41,7 @@ func md5File(f file.File) string {
 
 func sha256FileStream(f file.File) string {
 
+	var sha256result string
 	if stream, err := f.Stream(); err == nil {
 
 		if read, err := stream.GetReader(); err == nil {
@@ -51,31 +52,11 @@ func sha256FileStream(f file.File) string {
 				if err == nil {
 					hashsha256.Write(b)
 				} else {
-					//donechan <- true
-					println(f.Name() + "  SHA256 Stream: " + hex.EncodeToString(hashsha256.Sum(nil)))
-
+					sha256result = hex.EncodeToString(hashsha256.Sum(nil))
+					println(f.Name() + "  SHA256 Stream: " + sha256result)
 				}
 
 			})
-			/*
-
-				var n int
-				var err error
-
-				hashsha256 := sha256.New()
-
-				for {
-					n, err = read.Read(data)
-
-					hashsha256.Write(data[:n])
-					if err != nil {
-						break
-					}
-				}
-				if err == io.EOF {
-					return hex.EncodeToString(hashsha256.Sum(nil))
-				}
-			*/
 
 		} else {
 			println(err.Error())
@@ -85,7 +66,7 @@ func sha256FileStream(f file.File) string {
 }
 
 func sha256File(f file.File) string {
-
+	var sha256result string
 	var buffersize int = 2 * 1024 * 1024
 	stream := blob.NewBlobStream(f.Blob, buffersize)
 
@@ -103,10 +84,13 @@ func sha256File(f file.File) string {
 		}
 	}
 	if err == io.EOF {
-		return hex.EncodeToString(hashsha256.Sum(nil))
+		sha256result = hex.EncodeToString(hashsha256.Sum(nil))
+		println(f.Name() + "  SHA256 Blob: " + sha256result)
+	} else {
+		println(err.Error())
 	}
 
-	return ""
+	return sha256result
 }
 
 func dropHandler() js.Func {
@@ -129,7 +113,8 @@ func dropHandler() js.Func {
 							//println(f.Name() + "  MD5: " + md5sum)
 							//sha256sum := sha256File(f)
 							//println(f.Name() + "  SHA256: " + sha256sum)
-							sha256FileStream(f)
+							//sha256FileStream(f)
+							sha256File(f)
 
 						}
 					}

@@ -1,6 +1,0 @@
-revoir les events xmlhttprequest
-
-func (e Element) OnTouchWheel(handler func(e event.Event)) error {
-
-	return e.AddEventListener("wheel", handler)
-}

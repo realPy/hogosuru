@@ -34,11 +34,9 @@ func GetInterface() js.Value {
 		if htmlheadelementinterface, err = js.Global().GetWithErr("HTMLHeadElement"); err != nil {
 			htmlheadelementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmlheadelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmlheadelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmlheadelementinterface

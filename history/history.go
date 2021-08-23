@@ -20,7 +20,7 @@ var historyinterface js.Value
 // 	objectInterface js.Value
 // }
 
-//HTMLCollection struct
+//History struct
 type History struct {
 	baseobject.BaseObject
 }
@@ -42,11 +42,10 @@ func GetInterface() js.Value {
 		if historyinterface, err = js.Global().GetWithErr("History"); err != nil {
 			historyinterface = js.Null()
 		}
+		baseobject.Register(historyinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 
-	})
-
-	baseobject.Register(historyinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
 	})
 
 	return historyinterface
@@ -62,7 +61,7 @@ func NewFromJSObject(obj js.Value) (History, error) {
 			return h, nil
 		}
 	}
-	return h, ErrCantImplementedHistory
+	return h, ErrNotAnHistory
 }
 
 func (h History) Forward() error {

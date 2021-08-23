@@ -34,11 +34,9 @@ func GetInterface() js.Value {
 		if htmltitleelementinterface, err = js.Global().GetWithErr("HTMLTitleElement"); err != nil {
 			htmltitleelementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmltitleelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmltitleelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmltitleelementinterface

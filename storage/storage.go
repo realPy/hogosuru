@@ -22,11 +22,11 @@ func GetInterface() js.Value {
 		if storageinterface, err = js.Global().GetWithErr("Storage"); err != nil {
 			storageinterface = js.Null()
 		}
+		baseobject.Register(storageinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
+	})
 
-	})
-	baseobject.Register(storageinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
-	})
 	return storageinterface
 }
 

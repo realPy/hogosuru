@@ -34,11 +34,9 @@ func GetInterface() js.Value {
 		if htmlbrelementinterface, err = js.Global().GetWithErr("HTMLBRElement"); err != nil {
 			htmlbrelementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmlbrelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmlbrelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmlbrelementinterface

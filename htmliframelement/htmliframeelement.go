@@ -35,10 +35,9 @@ func GetInterface() js.Value {
 			htmliframelementinterface = js.Null()
 		}
 
-	})
-
-	baseobject.Register(htmliframelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmliframelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmliframelementinterface

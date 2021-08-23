@@ -21,11 +21,11 @@ func GetInterface() js.Value {
 		if arrayinterface, err = js.Global().GetWithErr("Array"); err != nil {
 			arrayinterface = js.Null()
 		}
+		baseobject.Register(arrayinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
-	baseobject.Register(arrayinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
-	})
 	return arrayinterface
 }
 
@@ -477,7 +477,7 @@ func (a Array) Push(i interface{}) (int, error) {
 		pushdata = js.ValueOf(i)
 	}
 
-	if obj, err = a.JSObject().CallWithErr("lastIndexOf", pushdata); err == nil {
+	if obj, err = a.JSObject().CallWithErr("push", pushdata); err == nil {
 		if obj.Type() == js.TypeNumber {
 			index = obj.Int()
 		}

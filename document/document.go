@@ -33,10 +33,9 @@ func GetInterface() js.Value {
 		if docinterface, err = js.Global().GetWithErr("document"); err != nil {
 			docinterface = js.Null()
 		}
-	})
-
-	baseobject.Register(docinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(docinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return docinterface

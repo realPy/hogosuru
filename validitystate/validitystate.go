@@ -33,11 +33,11 @@ func GetInterface() js.Value {
 		if validitystateinterface, err = js.Global().GetWithErr("ValidityState"); err != nil {
 			validitystateinterface = js.Null()
 		}
+		baseobject.Register(validitystateinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
+	})
 
-	})
-	baseobject.Register(validitystateinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
-	})
 	return validitystateinterface
 }
 

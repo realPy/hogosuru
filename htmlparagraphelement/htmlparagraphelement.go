@@ -34,11 +34,9 @@ func GetInterface() js.Value {
 		if htmlparagraphelementinterface, err = js.Global().GetWithErr("HTMLParagraphElement"); err != nil {
 			htmlparagraphelementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmlparagraphelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmlparagraphelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmlparagraphelementinterface

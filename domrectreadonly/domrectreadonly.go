@@ -20,10 +20,9 @@ func GetInterface() js.Value {
 		if domrectreadonlyinterface, err = js.Global().GetWithErr("DOMRectReadOnly"); err != nil {
 			domrectreadonlyinterface = js.Null()
 		}
-	})
-
-	baseobject.Register(domrectreadonlyinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(domrectreadonlyinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return domrectreadonlyinterface

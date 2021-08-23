@@ -38,10 +38,9 @@ func GetInterface() js.Value {
 			htmltextareaelementinterface = js.Null()
 		}
 
-	})
-
-	baseobject.Register(htmltextareaelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmltextareaelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmltextareaelementinterface

@@ -35,11 +35,9 @@ func GetInterface() js.Value {
 		if htmlprogresselementinterface, err = js.Global().GetWithErr("HTMLProgressElement"); err != nil {
 			htmlprogresselementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmlprogresselementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmlprogresselementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmlprogresselementinterface

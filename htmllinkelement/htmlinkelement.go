@@ -36,11 +36,9 @@ func GetInterface() js.Value {
 		if htmllinklementinterface, err = js.Global().GetWithErr("HTMLLinkElement"); err != nil {
 			htmllinklementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmllinklementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmllinklementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmllinklementinterface

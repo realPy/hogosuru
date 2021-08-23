@@ -33,10 +33,9 @@ func GetInterface() js.Value {
 		if cssstyledeclarationinterface, err = js.Global().GetWithErr("CSSStyleDeclaration"); err != nil {
 			cssstyledeclarationinterface = js.Null()
 		}
-	})
-
-	baseobject.Register(cssstyledeclarationinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(cssstyledeclarationinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return cssstyledeclarationinterface

@@ -27,9 +27,11 @@ func GetInterface() js.Value {
 		if blobinterface, err = js.Global().GetWithErr("Blob"); err != nil {
 			blobinterface = js.Null()
 		}
-	})
-	baseobject.Register(blobinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		//autodiscover
+		arraybuffer.GetInterface()
+		baseobject.Register(blobinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return blobinterface
@@ -181,14 +183,20 @@ func (b Blob) ArrayBuffer() (arraybuffer.ArrayBuffer, error) {
 	var promisebuffer js.Value
 	var arrayb arraybuffer.ArrayBuffer
 	var p promise.Promise
-	var bobj baseobject.BaseObject
+	var binaryObj interface{}
 
 	if promisebuffer, err = b.JSObject().CallWithErr("arrayBuffer"); err == nil {
 
 		if p, err = promise.NewFromJSObject(promisebuffer); err == nil {
 
-			if bobj, err = p.Await(); err == nil {
-				arrayb, err = arraybuffer.NewFromJSObject(bobj.JSObject())
+			if binaryObj, err = p.Await(); err == nil {
+				if binary, ok := binaryObj.(arraybuffer.ArrayBufferFrom); ok {
+					arrayb = binary.ArrayBuffer()
+				} else {
+					i, _ := binaryObj.(baseobject.BaseObject)
+					i.Export("test")
+					err = arraybuffer.ErrNotAnArrayBuffer
+				}
 
 			}
 		}
@@ -201,15 +209,22 @@ func (b Blob) Text() (string, error) {
 	var err error
 	var promisetext js.Value
 	var p promise.Promise
-	var bobj baseobject.BaseObject
+	var jsTxtObj interface{}
 	var text string = ""
 
 	if promisetext, err = b.JSObject().CallWithErr("text"); err == nil {
 		if p, err = promise.NewFromJSObject(promisetext); err == nil {
 
-			if bobj, err = p.Await(); err == nil {
-				text = bobj.JSObject().String()
+			if jsTxtObj, err = p.Await(); err == nil {
+
+				if jsTxt, ok := jsTxtObj.(baseobject.ObjectFrom); ok {
+					text = jsTxt.JSObject().String()
+				} else {
+					err = baseobject.ErrNotABaseObject
+				}
+
 			}
+
 		}
 	}
 

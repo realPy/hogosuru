@@ -34,11 +34,9 @@ func GetInterface() js.Value {
 		if htmlembedelementinterface, err = js.Global().GetWithErr("HTMLEmbedElement"); err != nil {
 			htmlembedelementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmlembedelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmlembedelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmlembedelementinterface

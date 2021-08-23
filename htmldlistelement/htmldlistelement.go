@@ -34,11 +34,9 @@ func GetInterface() js.Value {
 		if htmldlistinterface, err = js.Global().GetWithErr("HTMLDListElement"); err != nil {
 			htmldlistinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmldlistinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmldlistinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmldlistinterface

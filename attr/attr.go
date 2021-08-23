@@ -21,10 +21,9 @@ func GetInterface() js.Value {
 		if attrinterface, err = js.Global().GetWithErr("Attr"); err != nil {
 			attrinterface = js.Null()
 		}
-	})
-
-	baseobject.Register(attrinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(attrinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return attrinterface

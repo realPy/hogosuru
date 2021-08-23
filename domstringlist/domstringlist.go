@@ -35,9 +35,9 @@ func GetInterface() js.Value {
 		if domstringlistinterface, err = js.Global().GetWithErr("DOMStringList"); err != nil {
 			domstringlistinterface = js.Null()
 		}
-	})
-	baseobject.Register(domstringlistinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(domstringlistinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return domstringlistinterface

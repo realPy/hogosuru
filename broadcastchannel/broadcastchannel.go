@@ -39,9 +39,9 @@ func GetInterface() js.Value {
 			bcinterface = js.Null()
 		}
 
+		messageevent.GetInterface()
+
 	})
-	//for autodiscover
-	messageevent.GetInterface()
 
 	return bcinterface
 }

@@ -4,6 +4,7 @@ import (
 	"sync"
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/arraybuffer"
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/promise"
 )
@@ -83,4 +84,16 @@ func (w WebAssembly) InstantiateStreaming(source promise.Promise, imports js.Val
 
 	}
 	return p, err
+}
+
+func (w WebAssembly) Instantiate(source arraybuffer.ArrayBuffer, imports js.Value) (baseobject.BaseObject, error) {
+	var obj js.Value
+	var err error
+	var b baseobject.BaseObject
+
+	if obj, err = w.JSObject().CallWithErr("instantiate", source.JSObject(), imports); err == nil {
+		b, err = baseobject.NewFromJSObject(obj)
+
+	}
+	return b, err
 }

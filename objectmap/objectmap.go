@@ -13,7 +13,7 @@ var singleton sync.Once
 
 var mapinterface js.Value
 
-//GetInterface get teh JS interface of broadcast channel
+//GetInterface get the JS interface of object channel
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
@@ -22,11 +22,11 @@ func GetInterface() js.Value {
 		if mapinterface, err = js.Global().GetWithErr("Map"); err != nil {
 			mapinterface = js.Null()
 		}
+		baseobject.Register(mapinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
+	})
 
-	})
-	baseobject.Register(mapinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
-	})
 	return mapinterface
 }
 
@@ -103,11 +103,19 @@ func (o ObjectMap) Clear() error {
 	return err
 }
 
-func (o ObjectMap) Delete(b baseobject.BaseObject) (bool, error) {
+func (o ObjectMap) Delete(key interface{}) (bool, error) {
 	var err error
 	var obj js.Value
 	var result bool
-	if obj, err = o.JSObject().CallWithErr("delete", b.JSObject()); err == nil {
+	var globalKeyObj interface{}
+
+	if objGo, ok := key.(baseobject.ObjectFrom); ok {
+		globalKeyObj = objGo.JSObject()
+	} else {
+		globalKeyObj = js.ValueOf(key)
+	}
+
+	if obj, err = o.JSObject().CallWithErr("delete", globalKeyObj); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
@@ -130,11 +138,11 @@ func (o ObjectMap) Entries() (iterator.Iterator, error) {
 	return iter, err
 }
 
-func (o ObjectMap) ForEach(f func(ObjectMap, interface{}, interface{})) error {
+func (o ObjectMap) ForEach(f func(interface{}, interface{})) error {
 	var err error
 
 	jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		f(o, baseobject.GoValue(args[0]), baseobject.GoValue(args[1]))
+		f(baseobject.GoValue(args[0]), baseobject.GoValue(args[1]))
 		return nil
 	})
 
@@ -143,23 +151,40 @@ func (o ObjectMap) ForEach(f func(ObjectMap, interface{}, interface{})) error {
 	return err
 }
 
-func (o ObjectMap) Get(b baseobject.BaseObject) (interface{}, error) {
+func (o ObjectMap) Get(key interface{}) (interface{}, error) {
 
 	var err error
 	var obj js.Value
 	var result interface{}
 
-	if obj, err = o.JSObject().CallWithErr("get", b.JSObject()); err == nil {
+	var globalKeyObj interface{}
+
+	if objGo, ok := key.(baseobject.ObjectFrom); ok {
+		globalKeyObj = objGo.JSObject()
+	} else {
+		globalKeyObj = js.ValueOf(key)
+	}
+
+	if obj, err = o.JSObject().CallWithErr("get", globalKeyObj); err == nil {
 		result = baseobject.GoValue(obj)
 	}
 	return result, err
 }
 
-func (o ObjectMap) Has(b baseobject.BaseObject) (bool, error) {
+func (o ObjectMap) Has(key interface{}) (bool, error) {
 	var err error
 	var obj js.Value
 	var result bool
-	if obj, err = o.JSObject().CallWithErr("has", b.JSObject()); err == nil {
+
+	var globalKeyObj interface{}
+
+	if objGo, ok := key.(baseobject.ObjectFrom); ok {
+		globalKeyObj = objGo.JSObject()
+	} else {
+		globalKeyObj = js.ValueOf(key)
+	}
+
+	if obj, err = o.JSObject().CallWithErr("has", globalKeyObj); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
@@ -182,9 +207,24 @@ func (o ObjectMap) Keys() (iterator.Iterator, error) {
 	return iter, err
 }
 
-func (o ObjectMap) Set(b baseobject.BaseObject) error {
+func (o ObjectMap) Set(key interface{}, value interface{}) error {
 	var err error
-	_, err = o.JSObject().CallWithErr("set", b.JSObject())
+	var globalKeyObj interface{}
+	var globalValueObj interface{}
+
+	if objGo, ok := key.(baseobject.ObjectFrom); ok {
+		globalKeyObj = objGo.JSObject()
+	} else {
+		globalKeyObj = js.ValueOf(key)
+	}
+
+	if objGo, ok := value.(baseobject.ObjectFrom); ok {
+		globalValueObj = objGo.JSObject()
+	} else {
+		globalValueObj = js.ValueOf(value)
+	}
+
+	_, err = o.JSObject().CallWithErr("set", globalKeyObj, globalValueObj)
 	return err
 }
 

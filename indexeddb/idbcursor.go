@@ -33,11 +33,11 @@ func IDBCursorGetInterface() js.Value {
 		if idbcursorinterface, err = js.Global().GetWithErr("IDBCursor"); err != nil {
 			idbcursorinterface = js.Null()
 		}
+		baseobject.Register(idbcursorinterface, func(v js.Value) (interface{}, error) {
+			return IDBDatabaseNewFromJSObject(v)
+		})
 	})
 
-	baseobject.Register(idbcursorinterface, func(v js.Value) (interface{}, error) {
-		return IDBDatabaseNewFromJSObject(v)
-	})
 	return idbcursorinterface
 }
 

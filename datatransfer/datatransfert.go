@@ -33,10 +33,10 @@ func GetInterface() js.Value {
 		if dtinterface, err = js.Global().GetWithErr("DataTransfer"); err != nil {
 			dtinterface = js.Null()
 		}
-	})
+		baseobject.Register(dtinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 
-	baseobject.Register(dtinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
 	})
 
 	return dtinterface

@@ -37,11 +37,9 @@ func GetInterface() js.Value {
 		if htmlbuttonelementinterface, err = js.Global().GetWithErr("HTMLButtonElement"); err != nil {
 			htmlbuttonelementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmlbuttonelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmlbuttonelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmlbuttonelementinterface

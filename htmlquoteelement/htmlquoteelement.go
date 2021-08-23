@@ -34,11 +34,9 @@ func GetInterface() js.Value {
 		if htmlquoteelementinterface, err = js.Global().GetWithErr("HTMLQuoteElement"); err != nil {
 			htmlquoteelementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmlquoteelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmlquoteelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmlquoteelementinterface

@@ -36,10 +36,9 @@ func GetInterface() js.Value {
 		if domrectlistinterface, err = js.Global().GetWithErr("DOMRectList"); err != nil {
 			domrectlistinterface = js.Null()
 		}
-	})
-
-	baseobject.Register(domrectlistinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(domrectlistinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return domrectlistinterface

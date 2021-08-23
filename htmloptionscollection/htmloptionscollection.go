@@ -34,10 +34,10 @@ func GetInterface() js.Value {
 		if htmloptionscollectioninterface, err = js.Global().GetWithErr("HTMLOptionsCollection"); err != nil {
 			htmloptionscollectioninterface = js.Null()
 		}
+		baseobject.Register(htmloptionscollectioninterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 
-	})
-	baseobject.Register(htmloptionscollectioninterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
 	})
 
 	return htmloptionscollectioninterface

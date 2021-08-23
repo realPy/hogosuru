@@ -34,11 +34,9 @@ func GetInterface() js.Value {
 		if htmloptionelementinterface, err = js.Global().GetWithErr("HTMLOptionElement"); err != nil {
 			htmloptionelementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmloptionelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmloptionelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmloptionelementinterface

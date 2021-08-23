@@ -33,10 +33,9 @@ func GetInterface() js.Value {
 		if stylesheetinterface, err = js.Global().GetWithErr("StyleSheet"); err != nil {
 			stylesheetinterface = js.Null()
 		}
-	})
-
-	baseobject.Register(stylesheetinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(stylesheetinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return stylesheetinterface

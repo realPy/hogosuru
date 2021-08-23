@@ -34,11 +34,9 @@ func GetInterface() js.Value {
 		if htmlmetaelementinterface, err = js.Global().GetWithErr("HTMLMetaElement"); err != nil {
 			htmlmetaelementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmlmetaelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmlmetaelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmlmetaelementinterface

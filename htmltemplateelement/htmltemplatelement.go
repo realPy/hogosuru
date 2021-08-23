@@ -35,11 +35,9 @@ func GetInterface() js.Value {
 		if htmltemplateelementinterface, err = js.Global().GetWithErr("HTMLTemplateElement"); err != nil {
 			htmltemplateelementinterface = js.Null()
 		}
-
-	})
-
-	baseobject.Register(htmltemplateelementinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
+		baseobject.Register(htmltemplateelementinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return htmltemplateelementinterface

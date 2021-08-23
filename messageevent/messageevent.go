@@ -27,11 +27,11 @@ func GetInterface() js.Value {
 		//instance object for autodiscovery
 		arraybuffer.GetInterface()
 		blob.GetInterface()
+		baseobject.Register(messageeventinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
+	})
 
-	})
-	baseobject.Register(messageeventinterface, func(v js.Value) (interface{}, error) {
-		return NewFromJSObject(v)
-	})
 	return messageeventinterface
 }
 
