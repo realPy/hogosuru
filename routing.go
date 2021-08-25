@@ -7,6 +7,7 @@ import (
 	"github.com/realPy/hogosuru/document"
 	"github.com/realPy/hogosuru/event"
 	"github.com/realPy/hogosuru/node"
+	"github.com/realPy/hogosuru/promise"
 	"github.com/realPy/hogosuru/window"
 )
 
@@ -27,7 +28,9 @@ var route RouteMap
 
 //Rendering interfacee
 type Rendering interface {
-	OnLoad(d document.Document, n node.Node, route string) []Rendering
+	OnLoad(d document.Document, n node.Node, route string) (*promise.Promise, []Rendering)
+	AttachChild(n node.Node)
+	OnEndRendering()
 	Node() node.Node
 	OnUnload()
 }
@@ -75,8 +78,8 @@ func Router() *RouteMap {
 
 func (r *RouteMap) DefaultRendering(obj Rendering) {
 	r.defaultRendering = obj
-	if d, err := document.New(); err == nil {
-		if body, err := d.Body(); err == nil {
+	if d, err := document.New(); AssertErr(err) {
+		if body, err := d.Body(); AssertErr(err) {
 			r.loadChilds(d, obj, body)
 		}
 	}
@@ -96,15 +99,35 @@ func (r *RouteMap) SetRoute(route string) {
 	r.currentHashRoute = route
 }
 
-func (r *RouteMap) loadChilds(d document.Document, obj Rendering, node node.Node) {
-	arrayRendering := obj.OnLoad(d, node, r.Route())
+func (r *RouteMap) loadChilds(d document.Document, obj Rendering, node node.Node) promise.Promise {
+	p, arrayRendering := obj.OnLoad(d, node, r.Route())
+
+	var allpromise []interface{}
+	if p != nil {
+		allpromise = append(allpromise, *p)
+	}
+
 	if arrayRendering != nil {
 		for _, render := range arrayRendering {
-			r.loadChilds(d, render, obj.Node())
+			childpromise := r.loadChilds(d, render, obj.Node())
+			allpromise = append(allpromise, childpromise)
+
 		}
 	}
 
-	node.AppendChild(obj.Node())
+	var promisewaitAll promise.Promise
+	var err error
+	if p != nil {
+		if promisewaitAll, err = promise.All(allpromise...); AssertErr(err) {
+			promisewaitAll.Finally(func() {
+				node.AppendChild(obj.Node())
+			})
+		}
+	} else {
+		node.AppendChild(obj.Node())
+	}
+
+	return promisewaitAll
 }
 
 func (r *RouteMap) Go(newroute string) {

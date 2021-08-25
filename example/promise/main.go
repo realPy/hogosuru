@@ -10,14 +10,14 @@ import (
 
 func main() {
 
-	p1, _ := promise.New(func(p promise.Promise) (interface{}, error) {
+	p1, _ := promise.New(func() (interface{}, error) {
 		println("Waiting p1")
 		time.Sleep(8 * time.Second)
 		println("End p1")
 		return js.ValueOf("p1"), nil
 	})
 
-	p2, _ := promise.New(func(p promise.Promise) (interface{}, error) {
+	p2, _ := promise.New(func() (interface{}, error) {
 		println("Waiting p2")
 		time.Sleep(3 * time.Second)
 		println("End p2")

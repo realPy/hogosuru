@@ -98,11 +98,11 @@ func (h HtmlElement) SetAccessKeyLabel(value string) error {
 }
 
 func (h HtmlElement) ClassName() (string, error) {
-	return h.GetAttributeString("accessKeyLabel")
+	return h.GetAttributeString("className")
 }
 
 func (h HtmlElement) SetClassName(classname string) error {
-	return h.SetAttributeString("accessKeyLabel", classname)
+	return h.SetAttributeString("className", classname)
 }
 
 func (h HtmlElement) ContentEditable() (string, error) {

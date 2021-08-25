@@ -44,7 +44,7 @@ func (p Promise) Promise() Promise {
 	return p
 }
 
-func New(handler func(Promise) (interface{}, error)) (Promise, error) {
+func New(handler func() (interface{}, error)) (Promise, error) {
 
 	var p Promise
 	var err error
@@ -52,7 +52,7 @@ func New(handler func(Promise) (interface{}, error)) (Promise, error) {
 	if pi := GetInterface(); !pi.IsNull() {
 		fh := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
-			if result, err := handler(p); err == nil {
+			if result, err := handler(); err == nil {
 				args[0].Invoke(result)
 			} else {
 				args[1].Invoke(err.Error())
@@ -68,6 +68,30 @@ func New(handler func(Promise) (interface{}, error)) (Promise, error) {
 	}
 
 	return p, err
+}
+
+func SetTimeout(handler func() (interface{}, error), ms int) (Promise, error) {
+
+	var c chan bool
+
+	c = make(chan bool)
+
+	return New(func() (interface{}, error) {
+		timeout := js.Global().Get("window").Get("setTimeout")
+		var i interface{}
+		var err error
+		fh := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+
+			i, err = handler()
+			c <- true
+			return nil
+		})
+		timeout.Invoke(fh, js.ValueOf(ms))
+
+		<-c
+		return i, err
+	})
+
 }
 
 func NewFromJSObject(obj js.Value) (Promise, error) {

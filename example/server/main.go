@@ -42,7 +42,7 @@ func main() {
 
 		if strings.HasPrefix(r.URL.Path, "/app/") {
 
-			http.ServeFile(w, r, "example/static/routing.html")
+			http.ServeFile(w, r, "example/static/loading.html")
 		} else {
 			http.ServeFile(w, r, "example/static/"+r.URL.Path[1:])
 		}
