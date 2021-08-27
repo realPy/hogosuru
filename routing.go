@@ -29,8 +29,9 @@ var route RouteMap
 //Rendering interfacee
 type Rendering interface {
 	OnLoad(d document.Document, n node.Node, route string) (*promise.Promise, []Rendering)
-	AttachChild(n node.Node)
-	OnEndRendering()
+	OnEndChildsRendering(tree node.Node)
+	OnEndChildRendering(r Rendering)
+	//Node attach childs to this node
 	Node() node.Node
 	OnUnload()
 }
@@ -78,9 +79,12 @@ func Router() *RouteMap {
 
 func (r *RouteMap) DefaultRendering(obj Rendering) {
 	r.defaultRendering = obj
+}
+
+func (r *RouteMap) loadDefaultRendering() {
 	if d, err := document.New(); AssertErr(err) {
 		if body, err := d.Body(); AssertErr(err) {
-			r.loadChilds(d, obj, body)
+			r.loadChilds(d, r.defaultRendering, body)
 		}
 	}
 }
@@ -107,9 +111,21 @@ func (r *RouteMap) loadChilds(d document.Document, obj Rendering, node node.Node
 		allpromise = append(allpromise, *p)
 	}
 
+	attachChilds := obj.Node()
+
 	if arrayRendering != nil {
 		for _, render := range arrayRendering {
-			childpromise := r.loadChilds(d, render, obj.Node())
+			var rthis Rendering
+			rthis = render
+			childpromise := r.loadChilds(d, rthis, attachChilds)
+			if childpromise.Empty() {
+				obj.OnEndChildRendering(rthis)
+			} else {
+				childpromise.Finally(func() {
+					obj.OnEndChildRendering(rthis)
+				})
+			}
+
 			allpromise = append(allpromise, childpromise)
 
 		}
@@ -120,11 +136,21 @@ func (r *RouteMap) loadChilds(d document.Document, obj Rendering, node node.Node
 	if p != nil {
 		if promisewaitAll, err = promise.All(allpromise...); AssertErr(err) {
 			promisewaitAll.Finally(func() {
-				node.AppendChild(obj.Node())
+				obj.OnEndChildsRendering(attachChilds)
+
 			})
 		}
 	} else {
-		node.AppendChild(obj.Node())
+
+		if obj == r.defaultRendering {
+			if promisewaitAll, err = promise.All(allpromise...); AssertErr(err) {
+				promisewaitAll.Finally(func() {
+					r.onurlchange()
+
+				})
+			}
+		}
+		obj.OnEndChildsRendering(attachChilds)
 	}
 
 	return promisewaitAll
@@ -162,6 +188,7 @@ func (r *RouteMap) onChangeRoute(newroute string) {
 func (r *RouteMap) LoadRendering(obj Rendering) {
 
 	r.currentRendering = obj
+
 	if d, err := document.New(); err == nil {
 
 		if r.defaultRendering != nil {
@@ -173,11 +200,12 @@ func (r *RouteMap) LoadRendering(obj Rendering) {
 			}
 		}
 	}
+
 }
 
 func (r *RouteMap) Start(mode int) {
 	r.mode = mode
-	r.onurlchange()
+	r.loadDefaultRendering()
 
 }
 

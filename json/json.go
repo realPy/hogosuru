@@ -85,7 +85,7 @@ func extractJsonFromObject(jsobj js.Value) interface{} {
 
 		if ok, err := array.IsArray(obj.BaseObject); ok && err == nil {
 			var array []interface{}
-			keys, _ := object.Values(obj)
+			keys, _ := obj.Values()
 			itkeys, _ := keys.Values()
 
 			for _, vkey, err := itkeys.Next(); err == nil; _, vkey, err = itkeys.Next() {
@@ -102,7 +102,7 @@ func extractJsonFromObject(jsobj js.Value) interface{} {
 
 		} else {
 			json := make(map[string]interface{})
-			keys, _ := object.Keys(obj)
+			keys, _ := obj.Keys()
 
 			itkeys, _ := keys.Values()
 

@@ -9,23 +9,33 @@ import (
 )
 
 type ButtonD struct {
-	node node.Node
+	parentNode node.Node
+	button     htmlbuttonelement.HtmlButtonElement
 }
 
 func (l *ButtonD) OnLoad(d document.Document, n node.Node, route string) (*promise.Promise, []hogosuru.Rendering) {
 
+	l.parentNode = n
 	if button, err := htmlbuttonelement.New(d); hogosuru.AssertErr(err) {
 		button.SetID("pouet")
-		button.SetTextContent("test")
-		l.node = button.Node
+		button.SetTextContent("Loading Ok :)")
+		l.button = button
 	}
 
 	return nil, nil
 }
 
+func (w *ButtonD) OnEndChildRendering(r hogosuru.Rendering) {
+
+}
+
+func (w *ButtonD) OnEndChildsRendering(tree node.Node) {
+	w.parentNode.AppendChild(tree)
+}
+
 func (l *ButtonD) Node() node.Node {
 
-	return l.node
+	return l.button.Node
 }
 
 func (l *ButtonD) OnUnload() {

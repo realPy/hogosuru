@@ -419,6 +419,7 @@ All help is welcome. If you are interested by this project, please contact me
 | HTMLSelectElement| Full| https://developer.mozilla.org/en-US/docs/Web/API/HTMLSelectElement|
 | HTMLSourceElement| Full| https://developer.mozilla.org/en-US/docs/Web/API/HTMLSourceElement|
 | HTMLSpanElement| Full| https://developer.mozilla.org/en-US/docs/Web/API/HTMLSpanElement|
+| HTMLStyleElement | Full| https://developer.mozilla.org/en-US/docs/Web/API/HTMLStyleElement |
 | HTMLCaptionElement| Full| https://developer.mozilla.org/en-US/docs/Web/API/HTMLCaptionElement|
 | HTMLTableCaptionElement| Full| https://developer.mozilla.org/en-US/docs/Web/API/HTMLTableCaptionElement|
 | HTMLTableCellElement| Full| https://developer.mozilla.org/en-US/docs/Web/API/HTMLTableCellElement|

@@ -238,7 +238,7 @@ func (d Document) ImportNode(externalNode node.Node, deep bool) (node.Node, erro
 	var obj js.Value
 	var nod node.Node
 
-	if obj, err = d.JSObject().CallWithErr("importNode", externalNode.JSObject()); err == nil {
+	if obj, err = d.JSObject().CallWithErr("importNode", externalNode.JSObject(), js.ValueOf(deep)); err == nil {
 
 		nod, err = node.NewFromJSObject(obj)
 	}

@@ -8,6 +8,7 @@ import (
 func main() {
 
 	hogosuru.Router().DefaultRendering(&loadingview.LoadingGlobalContainer{})
+	hogosuru.Router().Add("/app/", &loadingview.RedSquare{})
 	hogosuru.Router().Start(hogosuru.STDROUTE)
 	ch := make(chan struct{})
 	<-ch

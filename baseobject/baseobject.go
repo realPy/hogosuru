@@ -83,30 +83,44 @@ func ToStringWithErr(object js.Value) (string, error) {
 /*------------------------------------------------------*/
 
 type BaseObject struct {
-	object js.Value
+	object *js.Value
 }
 
 func NewFromJSObject(obj js.Value) (BaseObject, error) {
 	var o BaseObject
 
-	o.object = obj
+	o.object = &obj
 	return o, nil
 
 }
 
+func (b BaseObject) Empty() bool {
+
+	return b.object == nil
+}
+
+func (b BaseObject) Discover() (interface{}, error) {
+	return Discover(b.JSObject())
+}
+
 func (b BaseObject) SetObject(object js.Value) BaseObject {
 
-	b.object = object
+	b.object = &object
 
 	return b
 }
 
 func (b BaseObject) JSObject() js.Value {
-	return b.object
+	if b.object != nil {
+		return *b.object
+	} else {
+		return js.Null()
+	}
+
 }
 
 func (b BaseObject) String() string {
-	return String(b.object)
+	return String(*b.object)
 }
 
 func (b BaseObject) ToString() (string, error) {

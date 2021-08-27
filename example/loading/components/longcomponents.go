@@ -8,19 +8,30 @@ import (
 )
 
 type Long struct {
-	node node.Node
+	parentNode  node.Node
+	node        node.Node
+	WaitingTime int
 }
 
 func (l *Long) OnLoad(d document.Document, n node.Node, route string) (*promise.Promise, []hogosuru.Rendering) {
 
+	l.parentNode = n
 	var p promise.Promise
-	l.node = n
+	l.node, _ = d.CreateDocumentFragment()
+
 	p, _ = promise.SetTimeout(func() (interface{}, error) {
-		println("ended")
 		return nil, nil
-	}, 3000)
+	}, l.WaitingTime)
 
 	return &p, []hogosuru.Rendering{&ButtonD{}}
+}
+
+func (w *Long) OnEndChildRendering(r hogosuru.Rendering) {
+
+}
+
+func (w *Long) OnEndChildsRendering(tree node.Node) {
+	w.parentNode.AppendChild(tree)
 }
 
 func (l *Long) Node() node.Node {

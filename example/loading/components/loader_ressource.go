@@ -1,7 +1,7 @@
 package components
 
 var loaderhtml string = ` <div class="load">
-<div class="item">hogosuru loading<progress max="100" value="3" id="loadprogress"></progress><div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div></div>
+<div class="item" ><div id="loadtext">hogosuru loading</div><progress max="100" value="3" id="loadprogress"></progress><div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div></div>
 </div>`
 
 var loadercss string = `   .loader {

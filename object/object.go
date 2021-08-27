@@ -6,6 +6,7 @@ import (
 
 	"github.com/realPy/hogosuru/array"
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/objectmap"
 )
 
 var singleton sync.Once
@@ -58,7 +59,7 @@ func NewFromJSObject(obj js.Value) (Object, error) {
 	return o, err
 }
 
-func Keys(o Object) (array.Array, error) {
+func (o Object) Keys() (array.Array, error) {
 
 	var err error
 	var obj js.Value
@@ -75,7 +76,7 @@ func Keys(o Object) (array.Array, error) {
 	return newArr, err
 }
 
-func Values(o Object) (array.Array, error) {
+func (o Object) Values() (array.Array, error) {
 
 	var err error
 	var obj js.Value
@@ -90,4 +91,19 @@ func Values(o Object) (array.Array, error) {
 	}
 
 	return newArr, err
+}
+
+func (o Object) Map() (objectmap.ObjectMap, error) {
+	var err error
+	var obj js.Value
+	var newMap objectmap.ObjectMap
+
+	if ai := GetInterface(); !ai.IsNull() {
+		if obj, err = ai.CallWithErr("entries", o.JSObject()); err == nil {
+			newMap, err = objectmap.New(obj)
+
+		}
+
+	}
+	return newMap, err
 }
