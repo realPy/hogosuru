@@ -35,7 +35,7 @@ If you upgrade your compiler dont forget to copy the new wasm_exec.js that targe
 
 Start the tinygo container with your source  
 ```
-docker run --rm -it -w /go/src/hogosuru -v $PWD:/go/src/hogosuru tinygo/tinygo bash 
+docker run --rm -it -w /go/src/hogosuru -v "$PWD":/go/src/hogosuru tinygo/tinygo bash 
 ```
 
 Inside the container dont forget to copy the native syscall 
@@ -52,7 +52,8 @@ cp /usr/local/tinygo/targets/wasm_exec.js /go/src/hogosuru/example/static/
 Optional: If you want compile all example you need make:  
 
 ```
-apt-get update && apt-get install make
+apt-get update
+apt-get install make
 ```
 
 
@@ -419,6 +420,7 @@ All help is welcome. If you are interested by this project, please contact me
 | HTMLSelectElement| Full| https://developer.mozilla.org/en-US/docs/Web/API/HTMLSelectElement|
 | HTMLSourceElement| Full| https://developer.mozilla.org/en-US/docs/Web/API/HTMLSourceElement|
 | HTMLSpanElement| Full| https://developer.mozilla.org/en-US/docs/Web/API/HTMLSpanElement|
+| HTMLStyleElement | Full| https://developer.mozilla.org/en-US/docs/Web/API/HTMLStyleElement |
 | HTMLCaptionElement| Full| https://developer.mozilla.org/en-US/docs/Web/API/HTMLCaptionElement|
 | HTMLTableCaptionElement| Full| https://developer.mozilla.org/en-US/docs/Web/API/HTMLTableCaptionElement|
 | HTMLTableCellElement| Full| https://developer.mozilla.org/en-US/docs/Web/API/HTMLTableCellElement|

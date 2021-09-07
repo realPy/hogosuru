@@ -193,8 +193,6 @@ func (b Blob) ArrayBuffer() (arraybuffer.ArrayBuffer, error) {
 				if binary, ok := binaryObj.(arraybuffer.ArrayBufferFrom); ok {
 					arrayb = binary.ArrayBuffer()
 				} else {
-					i, _ := binaryObj.(baseobject.BaseObject)
-					i.Export("test")
 					err = arraybuffer.ErrNotAnArrayBuffer
 				}
 

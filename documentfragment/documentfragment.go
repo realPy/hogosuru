@@ -48,7 +48,7 @@ func New() (DocumentFragment, error) {
 	var d DocumentFragment
 	var err error
 	if di := GetInterface(); !di.IsNull() {
-		d.BaseObject = d.SetObject(di)
+		d.BaseObject = d.SetObject(di.New())
 
 	} else {
 
