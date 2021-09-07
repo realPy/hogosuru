@@ -11,6 +11,7 @@ import (
 
 type RedSquare struct {
 	parentNode node.Node
+	node       node.Node
 	div        htmldivelement.HtmlDivElement
 }
 
@@ -18,25 +19,29 @@ func (rs *RedSquare) OnLoad(d document.Document, n node.Node, route string) (*pr
 
 	components.StartLoader("RedSquare loading")
 	rs.parentNode = n
-	if div, err := htmldivelement.New(d); hogosuru.AssertErr(err) {
-		div.SetID("redsquare")
-		div.Style_().SetProperty("background-color", "red")
-		div.Style_().SetProperty("position", "fixed")
-		div.Style_().SetProperty("top", "0")
-		div.Style_().SetProperty("right", "0")
-		div.Style_().SetProperty("bottom", "0")
-		div.Style_().SetProperty("left", "0")
-
-		rs.div = div
-	}
 
 	var p promise.Promise
 
 	p, _ = promise.SetTimeout(func() (interface{}, error) {
 		return nil, nil
-	}, 3000)
+	}, 1000)
 
-	return &p, nil
+	if rs.div.Empty() {
+		if div, err := htmldivelement.New(d); hogosuru.AssertErr(err) {
+			div.SetID("redsquare")
+			div.Style_().SetProperty("background-color", "white")
+			div.Style_().SetProperty("position", "fixed")
+			div.Style_().SetProperty("top", "0")
+			div.Style_().SetProperty("right", "0")
+			div.Style_().SetProperty("bottom", "0")
+			div.Style_().SetProperty("left", "0")
+
+			rs.div = div
+		}
+		return &p, []hogosuru.Rendering{&components.Menu{Items: map[string]string{"#1": "menu 1", "#2": "menu 2", "#3": "Menu 3"}}}
+	}
+
+	return nil, nil
 }
 
 func (rs *RedSquare) OnEndChildRendering(r hogosuru.Rendering) {
@@ -44,7 +49,9 @@ func (rs *RedSquare) OnEndChildRendering(r hogosuru.Rendering) {
 }
 
 func (rs *RedSquare) OnEndChildsRendering(tree node.Node) {
-	rs.parentNode.AppendChild(tree)
+
+	rs.parentNode.AppendChild(rs.div.Node)
+	rs.node = rs.div.Node
 	components.StopLoader()
 }
 
@@ -54,5 +61,9 @@ func (rs *RedSquare) Node() node.Node {
 }
 
 func (rs *RedSquare) OnUnload() {
+
+	p, _ := rs.node.ParentNode()
+
+	p.RemoveChild(rs.node)
 
 }

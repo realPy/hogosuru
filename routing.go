@@ -43,6 +43,7 @@ type RouteMap struct {
 	currentHashRoute string
 	currentStdRoute  string
 	currentRendering Rendering
+	nextRendering    Rendering
 	routing          map[string]Rendering
 }
 
@@ -119,9 +120,12 @@ func (r *RouteMap) loadChilds(d document.Document, obj Rendering, node node.Node
 			rthis = render
 			childpromise := r.loadChilds(d, rthis, attachChilds)
 			if childpromise.Empty() {
+
 				obj.OnEndChildRendering(rthis)
+
 			} else {
 				childpromise.Finally(func() {
+
 					obj.OnEndChildRendering(rthis)
 				})
 			}
@@ -136,6 +140,13 @@ func (r *RouteMap) loadChilds(d document.Document, obj Rendering, node node.Node
 	if p != nil {
 		if promisewaitAll, err = promise.All(allpromise...); AssertErr(err) {
 			promisewaitAll.Finally(func() {
+				if r.nextRendering == obj {
+					if r.currentRendering != nil {
+						r.currentRendering.OnUnload()
+					}
+					r.currentRendering = r.nextRendering
+
+				}
 				obj.OnEndChildsRendering(attachChilds)
 
 			})
@@ -149,6 +160,14 @@ func (r *RouteMap) loadChilds(d document.Document, obj Rendering, node node.Node
 
 				})
 			}
+		}
+
+		if r.nextRendering == obj {
+			if r.currentRendering != nil {
+				r.currentRendering.OnUnload()
+			}
+			r.currentRendering = r.nextRendering
+
 		}
 		obj.OnEndChildsRendering(attachChilds)
 	}
@@ -176,18 +195,23 @@ func (r *RouteMap) onChangeRoute(newroute string) {
 
 	for route, render := range r.routing {
 		if newroute == route {
-			if r.currentRendering != nil {
-				r.currentRendering.OnUnload()
-			}
+
+			/*
+				if r.currentRendering != nil {
+					r.currentRendering.OnUnload()
+				}*/
+
 			r.SetRoute(newroute)
 			r.LoadRendering(render)
+
 		}
 	}
 
 }
 func (r *RouteMap) LoadRendering(obj Rendering) {
 
-	r.currentRendering = obj
+	//	r.currentRendering = obj
+	r.nextRendering = obj
 
 	if d, err := document.New(); err == nil {
 

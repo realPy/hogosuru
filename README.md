@@ -35,7 +35,7 @@ If you upgrade your compiler dont forget to copy the new wasm_exec.js that targe
 
 Start the tinygo container with your source  
 ```
-docker run --rm -it -w /go/src/hogosuru -v $PWD:/go/src/hogosuru tinygo/tinygo bash 
+docker run --rm -it -w /go/src/hogosuru -v "$PWD":/go/src/hogosuru tinygo/tinygo bash 
 ```
 
 Inside the container dont forget to copy the native syscall 
@@ -52,7 +52,8 @@ cp /usr/local/tinygo/targets/wasm_exec.js /go/src/hogosuru/example/static/
 Optional: If you want compile all example you need make:  
 
 ```
-apt-get update && apt-get install make
+apt-get update
+apt-get install make
 ```
 
 

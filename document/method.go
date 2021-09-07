@@ -4,6 +4,7 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/attr"
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/element"
 	"github.com/realPy/hogosuru/event"
 	"github.com/realPy/hogosuru/htmlcollection"
@@ -233,17 +234,15 @@ func (d Document) getElementsByTagNameNS(namespace, tagname string) (nodelist.No
 	return nlist, err
 }
 
-func (d Document) ImportNode(externalNode node.Node, deep bool) (node.Node, error) {
+func (d Document) ImportNode(externalNode node.Node, deep bool) (interface{}, error) {
 	var err error
 	var obj js.Value
-	var nod node.Node
+	var r interface{}
 
 	if obj, err = d.JSObject().CallWithErr("importNode", externalNode.JSObject(), js.ValueOf(deep)); err == nil {
-
-		nod, err = node.NewFromJSObject(obj)
+		r, err = baseobject.Discover(obj)
 	}
-	return nod, err
-
+	return r, err
 }
 
 func (d Document) ReleaseCapture() error {

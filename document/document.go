@@ -6,6 +6,7 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/documentfragment"
 	"github.com/realPy/hogosuru/node"
 )
 
@@ -36,6 +37,9 @@ func GetInterface() js.Value {
 		baseobject.Register(docinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
 		})
+		node.GetInterface()
+		documentfragment.GetInterface()
+
 	})
 
 	return docinterface
