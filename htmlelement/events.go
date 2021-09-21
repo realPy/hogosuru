@@ -1,25 +1,46 @@
 package htmlelement
 
-import "github.com/realPy/hogosuru/event"
+import (
+	"github.com/realPy/hogosuru/animationevent"
+	"github.com/realPy/hogosuru/event"
+)
 
-func (h HtmlElement) OnAnimationCancel(handler func(e event.Event)) error {
+func (h HtmlElement) addAnimationEventListener(name string, handler func(a animationevent.AnimationEvent)) error {
 
-	return h.AddEventListener("animationcancel", handler)
+	var err, err2 error
+
+	err = h.AddEventListener(name, func(e event.Event) {
+		var a animationevent.AnimationEvent
+		if a, err2 = animationevent.NewFromJSObject(e.JSObject()); err2 == nil {
+			handler(a)
+		}
+	})
+
+	if err2 != nil {
+		return err2
+	}
+
+	return err
 }
 
-func (h HtmlElement) OnAnimationEnd(handler func(e event.Event)) error {
+func (h HtmlElement) OnAnimationCancel(handler func(a animationevent.AnimationEvent)) error {
 
-	return h.AddEventListener("animationend", handler)
+	return h.addAnimationEventListener("animationcancel", handler)
 }
 
-func (h HtmlElement) OnAnimationStart(handler func(e event.Event)) error {
+func (h HtmlElement) OnAnimationEnd(handler func(a animationevent.AnimationEvent)) error {
 
-	return h.AddEventListener("animationstart", handler)
+	return h.addAnimationEventListener("animationend", handler)
 }
 
-func (h HtmlElement) OnAnimationIteration(handler func(e event.Event)) error {
+func (h HtmlElement) OnAnimationStart(handler func(a animationevent.AnimationEvent)) error {
 
-	return h.AddEventListener("animationiteration", handler)
+	return h.addAnimationEventListener("animationstart", handler)
+}
+
+func (h HtmlElement) OnAnimationIteration(handler func(a animationevent.AnimationEvent)) error {
+
+	return h.addAnimationEventListener("animationiteration", handler)
 }
 
 func (h HtmlElement) OnBeforeInput(handler func(e event.Event)) error {

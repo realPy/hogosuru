@@ -8,7 +8,7 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/blob"
-	datatransfert "github.com/realPy/hogosuru/datatransfer"
+	"github.com/realPy/hogosuru/datatransfer"
 	"github.com/realPy/hogosuru/dragevent"
 	"github.com/realPy/hogosuru/file"
 	"github.com/realPy/hogosuru/filelist"
@@ -98,7 +98,7 @@ func dropHandler() js.Func {
 
 		var err error
 		var e dragevent.DragEvent
-		var dt datatransfert.DataTransfer
+		var dt datatransfer.DataTransfer
 		var files filelist.FileList
 		var f file.File
 

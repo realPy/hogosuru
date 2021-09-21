@@ -8,7 +8,7 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/baseobject"
-	datatransfert "github.com/realPy/hogosuru/datatransfer"
+	"github.com/realPy/hogosuru/datatransfer"
 	"github.com/realPy/hogosuru/event"
 )
 
@@ -58,15 +58,15 @@ func NewFromJSObject(obj js.Value) (DragEvent, error) {
 	return e, ErrNotAnDragEvent
 }
 
-func (d DragEvent) DataTransfer() (datatransfert.DataTransfer, error) {
+func (d DragEvent) DataTransfer() (datatransfer.DataTransfer, error) {
 
 	var err error
 	var obj js.Value
 
 	if obj, err = d.JSObject().GetWithErr("dataTransfer"); err == nil {
 
-		return datatransfert.NewFromJSObject(obj)
+		return datatransfer.NewFromJSObject(obj)
 	}
-	return datatransfert.DataTransfer{}, err
+	return datatransfer.DataTransfer{}, err
 
 }
