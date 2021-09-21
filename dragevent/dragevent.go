@@ -8,7 +8,7 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/baseobject"
-	datatransfert "github.com/realPy/hogosuru/datatransfer"
+	"github.com/realPy/hogosuru/datatransfert"
 	"github.com/realPy/hogosuru/event"
 )
 
