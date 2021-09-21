@@ -1,4 +1,4 @@
-package datatransfert
+package datatransfer
 
 import (
 	"sync"
@@ -63,7 +63,7 @@ func NewFromJSObject(obj js.Value) (DataTransfer, error) {
 		}
 	}
 
-	return dt, ErrNotADataTransfert
+	return dt, ErrNotADataTransfer
 }
 
 func (dt DataTransfer) Files() (filelist.FileList, error) {
