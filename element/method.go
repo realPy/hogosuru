@@ -17,8 +17,26 @@ func (e Element) attachShadow() {
 	//TODO IMPLEMENT
 }
 
-func (e Element) animate() {
-	//TODO IMPLEMENT
+func (e Element) Animate(keyframes, options interface{}) error {
+	var argCall []interface{}
+
+	var err error
+	if keyframesObject, ok := keyframes.(array.ArrayFrom); ok {
+		argCall = append(argCall, keyframesObject.Array().JSObject())
+
+	}
+
+	if keyframesObject, ok := keyframes.(object.ObjectFrom); ok {
+		argCall = append(argCall, keyframesObject.Object().JSObject())
+	}
+
+	if optionsObject, ok := keyframes.(object.ObjectFrom); ok {
+		argCall = append(argCall, optionsObject.Object().JSObject())
+	} else {
+		argCall = append(argCall, js.ValueOf(options))
+	}
+	_, err = e.JSObject().CallWithErr("animate")
+	return err
 }
 
 func (e Element) Closest() (Element, error) {
