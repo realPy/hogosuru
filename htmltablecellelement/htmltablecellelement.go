@@ -42,7 +42,7 @@ func GetInterface() js.Value {
 	return htmltablecellelementinterface
 }
 
-func NewTD(d document.Document) (HtmlTableCellElement, error) {
+func NewTd(d document.Document) (HtmlTableCellElement, error) {
 	var err error
 
 	var h HtmlTableCellElement
@@ -54,7 +54,7 @@ func NewTD(d document.Document) (HtmlTableCellElement, error) {
 	return h, err
 }
 
-func NewTH(d document.Document) (HtmlTableCellElement, error) {
+func NewTh(d document.Document) (HtmlTableCellElement, error) {
 	var err error
 
 	var h HtmlTableCellElement
