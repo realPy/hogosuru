@@ -201,7 +201,12 @@ func (d Document) GetElementsByClassName(classname string) (htmlcollection.HtmlC
 
 	if obj, err = d.JSObject().CallWithErr("getElementsByClassName", js.ValueOf(classname)); err == nil {
 
-		collection, err = htmlcollection.NewFromJSObject(obj)
+		if !obj.IsNull() {
+			collection, err = htmlcollection.NewFromJSObject(obj)
+		} else {
+			err = ErrElementsNotFound
+		}
+
 	}
 
 	return collection, err
@@ -215,7 +220,12 @@ func (d Document) GetElementsByTagName(tagname string) (nodelist.NodeList, error
 
 	if obj, err = d.JSObject().CallWithErr("getElementsByTagName", js.ValueOf(tagname)); err == nil {
 
-		nlist, err = nodelist.NewFromJSObject(obj)
+		if !obj.IsNull() {
+			nlist, err = nodelist.NewFromJSObject(obj)
+		} else {
+			err = ErrElementsNotFound
+		}
+
 	}
 
 	return nlist, err
@@ -228,7 +238,12 @@ func (d Document) getElementsByTagNameNS(namespace, tagname string) (nodelist.No
 
 	if obj, err = d.JSObject().CallWithErr("getElementsByTagNameNS", js.ValueOf(namespace), js.ValueOf(tagname)); err == nil {
 
-		nlist, err = nodelist.NewFromJSObject(obj)
+		if !obj.IsNull() {
+			nlist, err = nodelist.NewFromJSObject(obj)
+		} else {
+			err = ErrElementsNotFound
+		}
+
 	}
 
 	return nlist, err
@@ -257,8 +272,12 @@ func (d Document) GetElementById(id string) (element.Element, error) {
 	var elem element.Element
 
 	if obj, err = d.JSObject().CallWithErr("getElementById", js.ValueOf(id)); err == nil {
+		if !obj.IsNull() {
+			elem, err = element.NewFromJSObject(obj)
+		} else {
+			err = ErrElementNotFound
+		}
 
-		elem, err = element.NewFromJSObject(obj)
 	}
 
 	return elem, err
