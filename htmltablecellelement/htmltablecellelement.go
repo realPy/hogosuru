@@ -42,13 +42,25 @@ func GetInterface() js.Value {
 	return htmltablecellelementinterface
 }
 
-func New(d document.Document) (HtmlTableCellElement, error) {
+func NewTD(d document.Document) (HtmlTableCellElement, error) {
 	var err error
 
 	var h HtmlTableCellElement
 	var e element.Element
 
 	if e, err = d.CreateElement("td"); err == nil {
+		h, err = NewFromElement(e)
+	}
+	return h, err
+}
+
+func NewTH(d document.Document) (HtmlTableCellElement, error) {
+	var err error
+
+	var h HtmlTableCellElement
+	var e element.Element
+
+	if e, err = d.CreateElement("th"); err == nil {
 		h, err = NewFromElement(e)
 	}
 	return h, err

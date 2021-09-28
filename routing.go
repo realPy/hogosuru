@@ -26,7 +26,7 @@ const (
 var singletonRoute sync.Once
 var route RouteMap
 
-//Rendering interfacee
+//Rendering interface
 type Rendering interface {
 	OnLoad(d document.Document, n node.Node, route string) (*promise.Promise, []Rendering)
 	OnEndChildsRendering(tree node.Node)
