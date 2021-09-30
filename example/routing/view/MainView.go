@@ -7,25 +7,33 @@ import (
 	"github.com/realPy/hogosuru/htmlbuttonelement"
 	"github.com/realPy/hogosuru/htmldivelement"
 	"github.com/realPy/hogosuru/node"
+	"github.com/realPy/hogosuru/promise"
 )
 
 type GlobalContainer struct {
 	node node.Node
 }
 
-func (w *GlobalContainer) OnLoad(d document.Document, n node.Node, route string) []hogosuru.Rendering {
+func (w *GlobalContainer) OnLoad(d document.Document, n node.Node, route string) (*promise.Promise, []hogosuru.Rendering) {
 	if global, err := htmldivelement.New(d); err == nil {
 
 		global.SetID("main-container")
 		w.node = global.Node
 
 	}
-	return nil
+	return nil, nil
 }
 
-func (w *GlobalContainer) Node() node.Node {
+func (w *GlobalContainer) Node(r hogosuru.Rendering) node.Node {
 
 	return w.node
+}
+
+func (w *GlobalContainer) OnEndChildsRendering() {
+
+}
+func (w *GlobalContainer) OnEndChildRendering(r hogosuru.Rendering) {
+
 }
 
 func (w *GlobalContainer) OnUnload() {
@@ -36,12 +44,12 @@ type WebMain struct {
 	divmain *htmldivelement.HtmlDivElement
 }
 
-func (w *WebMain) Node() node.Node {
+func (w *WebMain) Node(r hogosuru.Rendering) node.Node {
 
 	return w.divmain.Node
 }
 
-func (w *WebMain) OnLoad(d document.Document, n node.Node, route string) []hogosuru.Rendering {
+func (w *WebMain) OnLoad(d document.Document, n node.Node, route string) (*promise.Promise, []hogosuru.Rendering) {
 
 	if divmain, err := htmldivelement.New(d); err == nil {
 		divmain.SetID("MainView")
@@ -59,7 +67,13 @@ func (w *WebMain) OnLoad(d document.Document, n node.Node, route string) []hogos
 
 	}
 	//components will be added to Node()
-	return []hogosuru.Rendering{&ComplexComponents{}}
+	return nil, []hogosuru.Rendering{&ComplexComponents{}}
+}
+func (w *WebMain) OnEndChildsRendering() {
+
+}
+func (w *WebMain) OnEndChildRendering(r hogosuru.Rendering) {
+
 }
 
 func (w *WebMain) OnUnload() {

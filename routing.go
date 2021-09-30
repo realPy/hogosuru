@@ -29,10 +29,10 @@ var route RouteMap
 //Rendering interface
 type Rendering interface {
 	OnLoad(d document.Document, n node.Node, route string) (*promise.Promise, []Rendering)
-	OnEndChildsRendering(tree node.Node)
+	OnEndChildsRendering()
 	OnEndChildRendering(r Rendering)
 	//Node attach childs to this node
-	Node() node.Node
+	Node(r Rendering) node.Node
 	OnUnload()
 }
 
@@ -112,12 +112,11 @@ func (r *RouteMap) loadChilds(d document.Document, obj Rendering, node node.Node
 		allpromise = append(allpromise, *p)
 	}
 
-	attachChilds := obj.Node()
-
 	if arrayRendering != nil {
 		for _, render := range arrayRendering {
 			var rthis Rendering
 			rthis = render
+			attachChilds := obj.Node(rthis)
 			childpromise := r.loadChilds(d, rthis, attachChilds)
 			if childpromise.Empty() {
 
@@ -147,7 +146,8 @@ func (r *RouteMap) loadChilds(d document.Document, obj Rendering, node node.Node
 					r.currentRendering = r.nextRendering
 
 				}
-				obj.OnEndChildsRendering(attachChilds)
+
+				obj.OnEndChildsRendering()
 
 			})
 		}
@@ -169,7 +169,8 @@ func (r *RouteMap) loadChilds(d document.Document, obj Rendering, node node.Node
 			r.currentRendering = r.nextRendering
 
 		}
-		obj.OnEndChildsRendering(attachChilds)
+
+		obj.OnEndChildsRendering()
 	}
 
 	return promisewaitAll
@@ -196,11 +197,6 @@ func (r *RouteMap) onChangeRoute(newroute string) {
 	for route, render := range r.routing {
 		if newroute == route {
 
-			/*
-				if r.currentRendering != nil {
-					r.currentRendering.OnUnload()
-				}*/
-
 			r.SetRoute(newroute)
 			r.LoadRendering(render)
 
@@ -210,13 +206,12 @@ func (r *RouteMap) onChangeRoute(newroute string) {
 }
 func (r *RouteMap) LoadRendering(obj Rendering) {
 
-	//	r.currentRendering = obj
 	r.nextRendering = obj
 
 	if d, err := document.New(); err == nil {
 
 		if r.defaultRendering != nil {
-			r.loadChilds(d, obj, r.defaultRendering.Node())
+			r.loadChilds(d, obj, r.defaultRendering.Node(r.defaultRendering))
 		} else {
 			if body, err := d.Body(); err == nil {
 				r.loadChilds(d, obj, body)

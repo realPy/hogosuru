@@ -30,11 +30,11 @@ func (w *Long) OnEndChildRendering(r hogosuru.Rendering) {
 
 }
 
-func (w *Long) OnEndChildsRendering(tree node.Node) {
-	w.parentNode.AppendChild(tree)
+func (l *Long) OnEndChildsRendering() {
+	l.parentNode.AppendChild(l.node)
 }
 
-func (l *Long) Node() node.Node {
+func (l *Long) Node(r hogosuru.Rendering) node.Node {
 
 	return l.node
 }

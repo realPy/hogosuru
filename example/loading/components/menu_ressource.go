@@ -20,24 +20,12 @@ var menucss string = `
   padding: 10px;
   text-decoration: none;
   display: inline-block;
-  background-color: #f4f4f4;
   border-bottom: solid 0px;
   border-top: solid 0px;
 
   
 }
 
-#menu > li:first-child {
-  border-left: solid 0px;
-  border-bottom-left-radius: 6px;
-  border-top-left-radius: 6px;
-}
-
-li:last-child {
-  border-right: solid 0px;
-  border-bottom-right-radius: 6px;
-  border-top-right-radius: 6px;
-}
 
 
 a {
@@ -46,14 +34,5 @@ a {
 }
 
 li.selected {
-  background-color: #f4f4f4;
   font-weight: bold;
- /* border-left: rgb(204, 201, 201) solid;*/
-}
-
-
-  li:hover {
-
-    background-color:grey;
-
 }`
