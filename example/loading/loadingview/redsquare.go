@@ -48,14 +48,14 @@ func (rs *RedSquare) OnEndChildRendering(r hogosuru.Rendering) {
 
 }
 
-func (rs *RedSquare) OnEndChildsRendering(tree node.Node) {
+func (rs *RedSquare) OnEndChildsRendering() {
 
 	rs.parentNode.AppendChild(rs.div.Node)
 	rs.node = rs.div.Node
 	components.StopLoader()
 }
 
-func (rs *RedSquare) Node() node.Node {
+func (rs *RedSquare) Node(r hogosuru.Rendering) node.Node {
 
 	return rs.div.Node
 }

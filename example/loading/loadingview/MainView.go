@@ -35,7 +35,7 @@ func (w *LoadingGlobalContainer) OnLoad(d document.Document, n node.Node, route 
 	return nil, []hogosuru.Rendering{&w.loader, &w.long, &w.long2}
 }
 
-func (w *LoadingGlobalContainer) Node() node.Node {
+func (w *LoadingGlobalContainer) Node(r hogosuru.Rendering) node.Node {
 
 	return w.node
 }
@@ -54,9 +54,9 @@ func (w *LoadingGlobalContainer) OnEndChildRendering(r hogosuru.Rendering) {
 	}
 }
 
-func (w *LoadingGlobalContainer) OnEndChildsRendering(tree node.Node) {
+func (w *LoadingGlobalContainer) OnEndChildsRendering() {
 
-	w.parentNode.AppendChild(tree)
+	w.parentNode.AppendChild(w.node)
 }
 
 func (w *LoadingGlobalContainer) OnUnload() {

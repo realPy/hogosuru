@@ -33,11 +33,6 @@ func (m *Menu) RefreshMenu(d document.Document) {
 			for r, err := ulmenu.FirstChild(); err == nil; r, err = ulmenu.FirstChild() {
 				ulmenu.RemoveChild(r)
 			}
-			/*
-				for r, err := t.NextSibling(); err == nil; r, err = t.NextSibling() {
-					ulmenu.RemoveChild(r)
-
-				}*/
 
 			if p, err := n.Discover(); hogosuru.AssertErr(err) {
 				if t, ok := p.(htmltemplatelement.HtmlTemplateElement); ok {
@@ -141,7 +136,7 @@ func (m *Menu) OnLoad(d document.Document, n node.Node, route string) (*promise.
 	return nil, nil
 }
 
-func (m *Menu) Node() node.Node {
+func (m *Menu) Node(r hogosuru.Rendering) node.Node {
 
 	return m.div.Node
 }
@@ -150,8 +145,8 @@ func (m *Menu) OnEndChildRendering(r hogosuru.Rendering) {
 
 }
 
-func (m *Menu) OnEndChildsRendering(tree node.Node) {
-	m.parentNode.AppendChild(tree)
+func (m *Menu) OnEndChildsRendering() {
+	m.parentNode.AppendChild(m.div.Node)
 
 }
 

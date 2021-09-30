@@ -69,7 +69,7 @@ func (l *Loader) OnLoad(d document.Document, n node.Node, route string) (*promis
 	return nil, nil
 }
 
-func (l *Loader) Node() node.Node {
+func (l *Loader) Node(r hogosuru.Rendering) node.Node {
 
 	return l.div.Node
 }
@@ -78,8 +78,8 @@ func (l *Loader) OnEndChildRendering(r hogosuru.Rendering) {
 
 }
 
-func (l *Loader) OnEndChildsRendering(tree node.Node) {
-	l.parentNode.AppendChild(tree)
+func (l *Loader) OnEndChildsRendering() {
+	l.parentNode.AppendChild(l.div.Node)
 	if n, err := l.div.QuerySelector("#loadprogress"); hogosuru.AssertErr(err) {
 		if p, err := n.Discover(); hogosuru.AssertErr(err) {
 

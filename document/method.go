@@ -290,8 +290,11 @@ func (d Document) QuerySelector(selector string) (element.Element, error) {
 	var elem element.Element
 
 	if obj, err = d.JSObject().CallWithErr("querySelector", js.ValueOf(selector)); err == nil {
-
-		elem, err = element.NewFromJSObject(obj)
+		if !obj.IsNull() {
+			elem, err = element.NewFromJSObject(obj)
+		} else {
+			err = ErrElementNotFound
+		}
 	}
 	return elem, err
 }
@@ -303,8 +306,11 @@ func (d Document) QuerySelectorAll(selector string) (nodelist.NodeList, error) {
 	var nlist nodelist.NodeList
 
 	if obj, err = d.JSObject().CallWithErr("querySelectorAll", js.ValueOf(selector)); err == nil {
-
-		nlist, err = nodelist.NewFromJSObject(obj)
+		if !obj.IsNull() {
+			nlist, err = nodelist.NewFromJSObject(obj)
+		} else {
+			err = ErrElementsNotFound
+		}
 	}
 	return nlist, err
 }

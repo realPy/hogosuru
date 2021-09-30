@@ -13,29 +13,29 @@ type ButtonD struct {
 	button     htmlbuttonelement.HtmlButtonElement
 }
 
-func (l *ButtonD) OnLoad(d document.Document, n node.Node, route string) (*promise.Promise, []hogosuru.Rendering) {
+func (b *ButtonD) OnLoad(d document.Document, n node.Node, route string) (*promise.Promise, []hogosuru.Rendering) {
 
-	l.parentNode = n
+	b.parentNode = n
 	if button, err := htmlbuttonelement.New(d); hogosuru.AssertErr(err) {
 		button.SetID("pouet")
 		button.SetTextContent("Loading Ok :)")
-		l.button = button
+		b.button = button
 	}
 
 	return nil, nil
 }
 
-func (w *ButtonD) OnEndChildRendering(r hogosuru.Rendering) {
+func (b *ButtonD) OnEndChildRendering(r hogosuru.Rendering) {
 
 }
 
-func (w *ButtonD) OnEndChildsRendering(tree node.Node) {
-	w.parentNode.AppendChild(tree)
+func (b *ButtonD) OnEndChildsRendering() {
+	b.parentNode.AppendChild(b.button.Node)
 }
 
-func (l *ButtonD) Node() node.Node {
+func (b *ButtonD) Node(r hogosuru.Rendering) node.Node {
 
-	return l.button.Node
+	return b.button.Node
 }
 
 func (l *ButtonD) OnUnload() {
