@@ -487,6 +487,12 @@ Open you console developer. Drag some file and see result :)
 
 
 
+## Custom components
+
+### A toaster components for hogosuru
+
+https://github.com/realPy/hogosurutoaster
+
 
 
 ## How to help
