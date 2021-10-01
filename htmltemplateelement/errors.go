@@ -1,4 +1,4 @@
-package htmltemplatelement
+package htmltemplateelement
 
 import "errors"
 
