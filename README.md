@@ -558,7 +558,14 @@ Open you console developer. Drag some file and see result :)
 
 https://github.com/realPy/hogosurutoaster
 
+### A pagination components for hogosuru with templating
 
+https://github.com/realPy/hogosurupagination
+
+
+### A datatable components for hogosuru with templating
+
+https://github.com/realPy/hogosurudatatable
 
 ## How to help
 
