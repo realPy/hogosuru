@@ -144,7 +144,12 @@ func (e Element) GetElementsByClassName(classname string) (htmlcollection.HtmlCo
 
 	if obj, err = e.JSObject().CallWithErr("getElementsByClassName", js.ValueOf(classname)); err == nil {
 
-		collection, err = htmlcollection.NewFromJSObject(obj)
+		if !obj.IsNull() {
+			collection, err = htmlcollection.NewFromJSObject(obj)
+		} else {
+			err = ErrElementsNotFound
+		}
+
 	}
 
 	return collection, err
@@ -157,8 +162,11 @@ func (e Element) GetElementsByTagName(tagname string) (nodelist.NodeList, error)
 	var nlist nodelist.NodeList
 
 	if obj, err = e.JSObject().CallWithErr("getElementsByTagName", js.ValueOf(tagname)); err == nil {
-
-		nlist, err = nodelist.NewFromJSObject(obj)
+		if !obj.IsNull() {
+			nlist, err = nodelist.NewFromJSObject(obj)
+		} else {
+			err = ErrElementsNotFound
+		}
 	}
 
 	return nlist, err
@@ -170,8 +178,11 @@ func (e Element) getElementsByTagNameNS(namespace, tagname string) (nodelist.Nod
 	var nlist nodelist.NodeList
 
 	if obj, err = e.JSObject().CallWithErr("getElementsByTagNameNS", js.ValueOf(namespace), js.ValueOf(tagname)); err == nil {
-
-		nlist, err = nodelist.NewFromJSObject(obj)
+		if !obj.IsNull() {
+			nlist, err = nodelist.NewFromJSObject(obj)
+		} else {
+			err = ErrElementsNotFound
+		}
 	}
 
 	return nlist, err
@@ -268,8 +279,11 @@ func (e Element) QuerySelector(selector string) (node.Node, error) {
 	var nod node.Node
 
 	if obj, err = e.JSObject().CallWithErr("querySelector", js.ValueOf(selector)); err == nil {
-
-		nod, err = node.NewFromJSObject(obj)
+		if !obj.IsNull() {
+			nod, err = node.NewFromJSObject(obj)
+		} else {
+			err = ErrElementNotFound
+		}
 	}
 	return nod, err
 }
@@ -281,8 +295,11 @@ func (e Element) QuerySelectorAll(selector string) (nodelist.NodeList, error) {
 	var nlist nodelist.NodeList
 
 	if obj, err = e.JSObject().CallWithErr("querySelectorAll", js.ValueOf(selector)); err == nil {
-
-		nlist, err = nodelist.NewFromJSObject(obj)
+		if !obj.IsNull() {
+			nlist, err = nodelist.NewFromJSObject(obj)
+		} else {
+			err = ErrElementsNotFound
+		}
 	}
 	return nlist, err
 }
