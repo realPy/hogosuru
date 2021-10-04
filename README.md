@@ -257,9 +257,9 @@ same language. I want to create an alternative to angular/react write in go.
 
 All this capabilities will be publish on the "hogosuru" namespace.  
 
-## The router (WIP)
+## The router)
 
-*The router is in working progress and can be changed in the next iteration.*
+
 
 There are 2 sort of routing in single page application  
 The url hashes : routing is used after the # in the url. This routing can confuse the true utility of # (hash). This can be used when we dont have the possibility to configure properly the server.
@@ -276,20 +276,85 @@ The struct must implement interface
 
 ```
 type Rendering interface {
-	OnLoad(d document.Document, n node.Node, route string) []Rendering
-	Node() node.Node
+	OnLoad(d document.Document, n node.Node, route string) (*promise.Promise, []Rendering)
+	OnEndChildsRendering()
+	OnEndChildRendering(r Rendering)
+	Node(r Rendering) node.Node
 	OnUnload()
 }
 ```
 
-OnLoad is call when the route is called.
+OnLoad is call when the route is called for each components and childs components
+
+
  * d : The current document is given in parameter to create dynamic components  
- * n : is the current node where the component will be added
+ * n : is the current node given node by parents and suggest to be attached for this renderer
  * route: is the current route called
 
-Node(): Is called from router to attach the node return to the current node.
+Return :  
+*  *promise.Promise: Pointer to a promise Struct that ca be empty (promise.Promise{}), nil or a true promise. If the components will not wait children to be rendering. If not null, the current promise and childrens will wait before call OnEndChildRendering
 
-OnUnload(): Is called from router when the route change 
+
+Note: Thanks to this return , you sync loading a drawing elements;
+
+* []Rendering: The childrens renderings (that vbe contained childrens etc..)
+
+
+	Node(r Rendering) node.Node: Is called from children to parents to get the node that will be given to OnLoad methods.
+
+
+OnEndChildRendering(r Rendering) : Is called for for each children when rendering is ready but always before OnEndChildsRendering()
+
+OnUnload(): Is called from router when the route change and must detach (or destruct/reset) elements 
+
+### Arts of struct and Syncing
+
+With the rendering interface you can easly sync all your components and place anywhere in your body
+
+You can use the suggested node given by parents and attached if after rendering or get the node on the parent points of view and attached in dedicated place on your body (thanks to getElementById or other method).
+
+
+A simple example with a node container (div) with three other components inside it:
+
+![image info](./ressources/simpleRendering.png)
+
+
+Sequence of rendering
+
+ * P1: Will be executed the P1 promise, and return 3 rendering (C1,C2,C3)
+the Promise P1 will be processed in parallels of loading C1,C2,C3
+* C1 will be load and ask parents the node parents to attach and porpurse to the loading method of C1(Node method)
+* C1 finished to renderings (and have no child), OnEndChildRendering of parents is called
+OnEndChildsRendering is called on C1 and can be attached to parents
+* C2,C3 will be proceed in the same way
+OnEndChildsRendering is called on P1  when P1, C1,C2,C3 is finished of loading
+* P1 can be attached to body with C1,C2,C3  sync
+
+
+A more complex and common example:  
+
+M1 is for example the left bar menu and top menu and will be loaded as soon as possible
+P1 wil contain C1,C2,C3 and will be show only when C1,C2,C3 is loaded as the same time.
+P1 dosn't contain a loading so it will be just return an empty Promise.
+
+
+![image info](./ressources/menutopbarRendering.png)
+
+
+* M1 OnLoaded will return nil and P1 rendering
+* P1 Onloaded wil return an empty promise (no operation todo but want wait childrens) and C1,C2,C3
+
+
+Another use can be as a virtual Rendering. Rendering can be see as a cooordinator of the childs elements.
+The virtual rendering can set all childs nodes thanks to Node(), and select a div contains in the body (thanks to getElementByID).
+The childs will be attached to this elements. The coordinator never allocate a node.
+
+![image info](./ressources/virtualRendering.png)
+
+
+You can check hogousuru components to see example of use of rendering.
+
+
 
 ### Example (/example/routing/main.go)
 This example below show you how to build a single page application and can be found in the example directory
