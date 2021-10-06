@@ -127,9 +127,8 @@ func (r *RouteMap) loadChilds(d document.Document, obj Rendering, node node.Node
 
 					obj.OnEndChildRendering(rthis)
 				})
+				allpromise = append(allpromise, childpromise)
 			}
-
-			allpromise = append(allpromise, childpromise)
 
 		}
 	}
