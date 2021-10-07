@@ -22,10 +22,10 @@ type HtmlElement struct {
 }
 
 type HtmlElementFrom interface {
-	HtmlElement() HtmlElement
+	HtmlElement_() HtmlElement
 }
 
-func (h HtmlElement) HtmlElement() HtmlElement {
+func (h HtmlElement) HtmlElement_() HtmlElement {
 	return h
 }
 

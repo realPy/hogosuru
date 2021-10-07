@@ -35,10 +35,10 @@ type ObjectMap struct {
 }
 
 type ObjectMapFrom interface {
-	ObjectMap() ObjectMap
+	ObjectMap_() ObjectMap
 }
 
-func (o ObjectMap) ObjectMap() ObjectMap {
+func (o ObjectMap) ObjectMap_() ObjectMap {
 	return o
 }
 

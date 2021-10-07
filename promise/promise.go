@@ -37,10 +37,10 @@ type Promise struct {
 }
 
 type PromiseFrom interface {
-	Promise() Promise
+	Promise_() Promise
 }
 
-func (p Promise) Promise() Promise {
+func (p Promise) Promise_() Promise {
 	return p
 }
 

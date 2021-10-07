@@ -35,10 +35,10 @@ type Node struct {
 }
 
 type NodeFrom interface {
-	Node() Node
+	Node_() Node
 }
 
-func (n Node) Node() Node {
+func (n Node) Node_() Node {
 	return n
 }
 

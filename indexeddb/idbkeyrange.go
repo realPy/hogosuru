@@ -34,10 +34,10 @@ type IDBKeyRange struct {
 }
 
 type IDBKeyRangeFrom interface {
-	IDBKeyRange() IDBKeyRange
+	IDBKeyRange_() IDBKeyRange
 }
 
-func (i IDBKeyRange) IDBKeyRange() IDBKeyRange {
+func (i IDBKeyRange) IDBKeyRange_() IDBKeyRange {
 	return i
 }
 

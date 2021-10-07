@@ -20,10 +20,10 @@ type HtmlDetailsElement struct {
 }
 
 type HtmlDetailsElementFrom interface {
-	HtmlDetailsElement() HtmlDetailsElement
+	HtmlDetailsElement_() HtmlDetailsElement
 }
 
-func (h HtmlDetailsElement) HtmlDetailsElement() HtmlDetailsElement {
+func (h HtmlDetailsElement) HtmlDetailsElement_() HtmlDetailsElement {
 	return h
 }
 

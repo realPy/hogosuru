@@ -24,10 +24,10 @@ type HtmlTableElement struct {
 }
 
 type HtmlTableElementFrom interface {
-	HtmlTableElement() HtmlTableElement
+	HtmlTableElement_() HtmlTableElement
 }
 
-func (h HtmlTableElement) HtmlTableElement() HtmlTableElement {
+func (h HtmlTableElement) HtmlTableElement_() HtmlTableElement {
 	return h
 }
 

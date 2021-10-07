@@ -19,10 +19,10 @@ type Document struct {
 }
 
 type DocumentFrom interface {
-	Document() Document
+	Document_() Document
 }
 
-func (d Document) Document() Document {
+func (d Document) Document_() Document {
 	return d
 }
 

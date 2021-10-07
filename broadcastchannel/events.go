@@ -13,7 +13,7 @@ func (c BroadcastChannel) OnMessage(handler func(m messageevent.MessageEvent)) e
 		if globalObj, err := baseobject.Discover(e.JSObject()); err == nil {
 
 			if m, ok := globalObj.(messageevent.MessageEventFrom); ok {
-				handler(m.MessageEvent())
+				handler(m.MessageEvent_())
 			}
 		}
 	})

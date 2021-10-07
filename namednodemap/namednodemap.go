@@ -20,10 +20,10 @@ type NamedNodeMap struct {
 }
 
 type NamedNodeMapFrom interface {
-	NamedNodeMap() NamedNodeMap
+	NamedNodeMap_() NamedNodeMap
 }
 
-func (n NamedNodeMap) NamedNodeMap() NamedNodeMap {
+func (n NamedNodeMap) NamedNodeMap_() NamedNodeMap {
 	return n
 }
 

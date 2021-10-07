@@ -20,10 +20,10 @@ type NodeList struct {
 }
 
 type NodeListFrom interface {
-	NodeList() NodeList
+	NodeList_() NodeList
 }
 
-func (n NodeList) NodeList() NodeList {
+func (n NodeList) NodeList_() NodeList {
 	return n
 }
 

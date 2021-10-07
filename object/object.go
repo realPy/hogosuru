@@ -36,10 +36,10 @@ type Object struct {
 }
 
 type ObjectFrom interface {
-	Object() Object
+	Object_() Object
 }
 
-func (o Object) Object() Object {
+func (o Object) Object_() Object {
 	return o
 }
 

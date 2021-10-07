@@ -12,10 +12,10 @@ type Iterator struct {
 }
 
 type IteratorFrom interface {
-	Iterator() Iterator
+	Iterator_() Iterator
 }
 
-func (i Iterator) Iterator() Iterator {
+func (i Iterator) Iterator_() Iterator {
 	return i
 }
 

@@ -20,10 +20,10 @@ type HtmlScriptElement struct {
 }
 
 type HtmlScriptElementFrom interface {
-	HtmlScriptElement() HtmlScriptElement
+	HtmlScriptElement_() HtmlScriptElement
 }
 
-func (h HtmlScriptElement) HtmlScriptElement() HtmlScriptElement {
+func (h HtmlScriptElement) HtmlScriptElement_() HtmlScriptElement {
 	return h
 }
 

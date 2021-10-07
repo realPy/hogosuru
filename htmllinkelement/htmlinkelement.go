@@ -22,10 +22,10 @@ type HtmlLinkElement struct {
 }
 
 type HtmlLinkElementFrom interface {
-	HtmlLinkElement() HtmlLinkElement
+	HtmlLinkElement_() HtmlLinkElement
 }
 
-func (h HtmlLinkElement) HtmlLinkElement() HtmlLinkElement {
+func (h HtmlLinkElement) HtmlLinkElement_() HtmlLinkElement {
 	return h
 }
 

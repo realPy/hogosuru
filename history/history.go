@@ -26,10 +26,10 @@ type History struct {
 }
 
 type HistoryFrom interface {
-	History() History
+	History_() History
 }
 
-func (h History) History() History {
+func (h History) History_() History {
 	return h
 }
 

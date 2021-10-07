@@ -20,10 +20,10 @@ type HtmlEmbedElement struct {
 }
 
 type HtmlEmbedElementFrom interface {
-	HtmlEmbedElement() HtmlEmbedElement
+	HtmlEmbedElement_() HtmlEmbedElement
 }
 
-func (h HtmlEmbedElement) HtmlEmbedElement() HtmlEmbedElement {
+func (h HtmlEmbedElement) HtmlEmbedElement_() HtmlEmbedElement {
 	return h
 }
 

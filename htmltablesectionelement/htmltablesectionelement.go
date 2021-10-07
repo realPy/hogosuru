@@ -22,10 +22,10 @@ type HtmlTableSectionElement struct {
 }
 
 type HtmlTableSectionElementFrom interface {
-	HtmlTableSectionElement() HtmlTableSectionElement
+	HtmlTableSectionElement_() HtmlTableSectionElement
 }
 
-func (h HtmlTableSectionElement) HtmlTableSectionElement() HtmlTableSectionElement {
+func (h HtmlTableSectionElement) HtmlTableSectionElement_() HtmlTableSectionElement {
 	return h
 }
 

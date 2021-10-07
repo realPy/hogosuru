@@ -20,10 +20,10 @@ type HtmlPreElement struct {
 }
 
 type HtmlPreElementFrom interface {
-	HtmlPreElement() HtmlPreElement
+	HtmlPreElement_() HtmlPreElement
 }
 
-func (h HtmlPreElement) HtmlPreElement() HtmlPreElement {
+func (h HtmlPreElement) HtmlPreElement_() HtmlPreElement {
 	return h
 }
 

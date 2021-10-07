@@ -25,10 +25,10 @@ type HtmlSelectElement struct {
 }
 
 type HtmlSelectElementFrom interface {
-	HtmlSelectElement() HtmlSelectElement
+	HtmlSelectElement_() HtmlSelectElement
 }
 
-func (h HtmlSelectElement) HtmlSelectElement() HtmlSelectElement {
+func (h HtmlSelectElement) HtmlSelectElement_() HtmlSelectElement {
 	return h
 }
 

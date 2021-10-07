@@ -35,10 +35,10 @@ type DOMRect struct {
 }
 
 type DOMRectFrom interface {
-	DOMRect() DOMRect
+	DOMRect_() DOMRect
 }
 
-func (d DOMRect) DOMRect() DOMRect {
+func (d DOMRect) DOMRect_() DOMRect {
 	return d
 }
 

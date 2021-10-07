@@ -20,10 +20,10 @@ type HtmlHrElement struct {
 }
 
 type HtmlHrElementFrom interface {
-	HtmlHrElement() HtmlHrElement
+	HtmlHrElement_() HtmlHrElement
 }
 
-func (h HtmlHrElement) HtmlHrElement() HtmlHrElement {
+func (h HtmlHrElement) HtmlHrElement_() HtmlHrElement {
 	return h
 }
 

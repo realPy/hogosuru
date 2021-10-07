@@ -20,10 +20,10 @@ type Uint8Array struct {
 }
 
 type Uint8ArrayFrom interface {
-	Uint8Array() Uint8Array
+	Uint8Array_() Uint8Array
 }
 
-func (u Uint8Array) Uint8Array() Uint8Array {
+func (u Uint8Array) Uint8Array_() Uint8Array {
 	return u
 }
 

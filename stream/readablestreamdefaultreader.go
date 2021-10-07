@@ -34,10 +34,10 @@ type ReadableStreamDefaultReader struct {
 }
 
 type ReadableStreamDefaultReaderFrom interface {
-	ReadableStreamDefaultReader() ReadableStreamDefaultReader
+	ReadableStreamDefaultReader_() ReadableStreamDefaultReader
 }
 
-func (r ReadableStreamDefaultReader) ReadableStreamDefaultReader() ReadableStreamDefaultReader {
+func (r ReadableStreamDefaultReader) ReadableStreamDefaultReader_() ReadableStreamDefaultReader {
 	return r
 }
 

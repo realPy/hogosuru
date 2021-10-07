@@ -20,10 +20,10 @@ type HtmlOptionElement struct {
 }
 
 type HtmlOptionElementFrom interface {
-	HtmlOptionElement() HtmlOptionElement
+	HtmlOptionElement_() HtmlOptionElement
 }
 
-func (h HtmlOptionElement) HtmlOptionElement() HtmlOptionElement {
+func (h HtmlOptionElement) HtmlOptionElement_() HtmlOptionElement {
 	return h
 }
 

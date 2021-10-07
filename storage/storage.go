@@ -35,10 +35,10 @@ type Storage struct {
 }
 
 type StorageFrom interface {
-	Storage() Storage
+	Storage_() Storage
 }
 
-func (s Storage) Storage() Storage {
+func (s Storage) Storage_() Storage {
 	return s
 }
 

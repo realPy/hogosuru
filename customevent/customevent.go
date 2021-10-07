@@ -20,10 +20,10 @@ type CustomEvent struct {
 }
 
 type CustomEventFrom interface {
-	CustomEvent() CustomEvent
+	CustomEvent_() CustomEvent
 }
 
-func (c CustomEvent) CustomEvent() CustomEvent {
+func (c CustomEvent) CustomEvent_() CustomEvent {
 	return c
 }
 

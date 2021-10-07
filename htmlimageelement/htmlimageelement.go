@@ -21,10 +21,10 @@ type HtmlImageElement struct {
 }
 
 type HtmlImageElementFrom interface {
-	HtmlImageElement() HtmlImageElement
+	HtmlImageElement_() HtmlImageElement
 }
 
-func (h HtmlImageElement) HtmlImageElement() HtmlImageElement {
+func (h HtmlImageElement) HtmlImageElement_() HtmlImageElement {
 	return h
 }
 

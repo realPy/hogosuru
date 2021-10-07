@@ -21,10 +21,10 @@ type HtmlStyleElement struct {
 }
 
 type HtmlStyleElementFrom interface {
-	HtmlStyleElement() HtmlStyleElement
+	HtmlStyleElement_() HtmlStyleElement
 }
 
-func (h HtmlStyleElement) HtmlStyleElement() HtmlStyleElement {
+func (h HtmlStyleElement) HtmlStyleElement_() HtmlStyleElement {
 	return h
 }
 

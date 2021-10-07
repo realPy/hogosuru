@@ -38,10 +38,10 @@ type Window struct {
 }
 
 type WindowFrom interface {
-	Window() Window
+	Window_() Window
 }
 
-func (w Window) Window() Window {
+func (w Window) Window_() Window {
 	return w
 }
 

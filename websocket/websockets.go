@@ -26,10 +26,10 @@ type WebSocket struct {
 }
 
 type WebSocketFrom interface {
-	WebSocket() WebSocket
+	WebSocket_() WebSocket
 }
 
-func (w WebSocket) WebSocket() WebSocket {
+func (w WebSocket) WebSocket_() WebSocket {
 	return w
 }
 
@@ -126,7 +126,7 @@ func (w WebSocket) SetOnMessage(handler func(e messageevent.MessageEvent)) {
 		if obj, err := baseobject.Discover(e.JSObject()); err == nil {
 
 			if m, ok := obj.(messageevent.MessageEventFrom); ok {
-				handler(m.MessageEvent())
+				handler(m.MessageEvent_())
 			}
 		}
 	})
@@ -184,7 +184,7 @@ func (w WebSocket) OnMessage(handler func(m messageevent.MessageEvent)) error {
 
 		if obj, err := baseobject.Discover(e.JSObject()); err == nil {
 			if m, ok := obj.(messageevent.MessageEventFrom); ok {
-				handler(m.MessageEvent())
+				handler(m.MessageEvent_())
 			}
 		}
 	})

@@ -20,10 +20,10 @@ type HtmlFormElement struct {
 }
 
 type HtmlFormElementFrom interface {
-	HtmlFormElement() HtmlFormElement
+	HtmlFormElement_() HtmlFormElement
 }
 
-func (h HtmlFormElement) HtmlFormElement() HtmlFormElement {
+func (h HtmlFormElement) HtmlFormElement_() HtmlFormElement {
 	return h
 }
 

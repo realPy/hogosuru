@@ -42,10 +42,10 @@ type Blob struct {
 }
 
 type BlobFrom interface {
-	Blob() Blob
+	Blob_() Blob
 }
 
-func (b Blob) Blob() Blob {
+func (b Blob) Blob_() Blob {
 	return b
 }
 
@@ -191,7 +191,7 @@ func (b Blob) ArrayBuffer() (arraybuffer.ArrayBuffer, error) {
 
 			if binaryObj, err = p.Await(); err == nil {
 				if binary, ok := binaryObj.(arraybuffer.ArrayBufferFrom); ok {
-					arrayb = binary.ArrayBuffer()
+					arrayb = binary.ArrayBuffer_()
 				} else {
 					err = arraybuffer.ErrNotAnArrayBuffer
 				}

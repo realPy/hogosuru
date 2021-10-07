@@ -21,10 +21,10 @@ type HtmlLabelElement struct {
 }
 
 type HtmlLabelElementFrom interface {
-	HtmlLabelElement() HtmlLabelElement
+	HtmlLabelElement_() HtmlLabelElement
 }
 
-func (h HtmlLabelElement) HtmlLabelElement() HtmlLabelElement {
+func (h HtmlLabelElement) HtmlLabelElement_() HtmlLabelElement {
 	return h
 }
 

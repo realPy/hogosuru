@@ -21,10 +21,10 @@ type HtmlMeterElement struct {
 }
 
 type HtmlMeterElementFrom interface {
-	HtmlMeterElement() HtmlMeterElement
+	HtmlMeterElement_() HtmlMeterElement
 }
 
-func (h HtmlMeterElement) HtmlMeterElement() HtmlMeterElement {
+func (h HtmlMeterElement) HtmlMeterElement_() HtmlMeterElement {
 	return h
 }
 

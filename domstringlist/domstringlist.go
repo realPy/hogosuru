@@ -19,10 +19,10 @@ type DOMStringList struct {
 }
 
 type DOMStringListFrom interface {
-	DOMStringList() DOMStringList
+	DOMStringList_() DOMStringList
 }
 
-func (d DOMStringList) DOMStringList() DOMStringList {
+func (d DOMStringList) DOMStringList_() DOMStringList {
 	return d
 }
 

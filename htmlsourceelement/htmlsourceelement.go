@@ -20,10 +20,10 @@ type HtmlSourceElement struct {
 }
 
 type HtmlSourceElementFrom interface {
-	HtmlSourceElement() HtmlSourceElement
+	HtmlSourceElement_() HtmlSourceElement
 }
 
-func (h HtmlSourceElement) HtmlSourceElement() HtmlSourceElement {
+func (h HtmlSourceElement) HtmlSourceElement_() HtmlSourceElement {
 	return h
 }
 

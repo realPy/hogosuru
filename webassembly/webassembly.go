@@ -38,10 +38,10 @@ type WebAssembly struct {
 }
 
 type WebAssemblyFrom interface {
-	WebAssembly() WebAssembly
+	WebAssembly_() WebAssembly
 }
 
-func (w WebAssembly) WebAssembly() WebAssembly {
+func (w WebAssembly) WebAssembly_() WebAssembly {
 	return w
 }
 

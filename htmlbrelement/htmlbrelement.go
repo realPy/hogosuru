@@ -20,10 +20,10 @@ type HtmlBRElement struct {
 }
 
 type HtmlBRElementFrom interface {
-	HtmlBRElement() HtmlBRElement
+	HtmlBRElement_() HtmlBRElement
 }
 
-func (h HtmlBRElement) HtmlBRElement() HtmlBRElement {
+func (h HtmlBRElement) HtmlBRElement_() HtmlBRElement {
 	return h
 }
 

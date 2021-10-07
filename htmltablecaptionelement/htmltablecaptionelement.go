@@ -20,10 +20,10 @@ type HtmlTableCaptionElement struct {
 }
 
 type HtmlTableCaptionElementFrom interface {
-	HtmlTableCaptionElement() HtmlTableCaptionElement
+	HtmlTableCaptionElement_() HtmlTableCaptionElement
 }
 
-func (h HtmlTableCaptionElement) HtmlTableCaptionElement() HtmlTableCaptionElement {
+func (h HtmlTableCaptionElement) HtmlTableCaptionElement_() HtmlTableCaptionElement {
 	return h
 }
 

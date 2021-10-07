@@ -22,10 +22,10 @@ type DragEvent struct {
 }
 
 type DragEventFrom interface {
-	DragEvent() DragEvent
+	DragEvent_() DragEvent
 }
 
-func (d DragEvent) DragEvent() DragEvent {
+func (d DragEvent) DragEvent_() DragEvent {
 	return d
 }
 

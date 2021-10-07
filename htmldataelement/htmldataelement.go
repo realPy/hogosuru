@@ -20,10 +20,10 @@ type HtmlDataElement struct {
 }
 
 type HtmlDataElementFrom interface {
-	HtmlDataElement() HtmlDataElement
+	HtmlDataElement_() HtmlDataElement
 }
 
-func (h HtmlDataElement) HtmlDataElement() HtmlDataElement {
+func (h HtmlDataElement) HtmlDataElement_() HtmlDataElement {
 	return h
 }
 

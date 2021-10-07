@@ -21,10 +21,10 @@ type HtmlAreaElement struct {
 }
 
 type HtmlAreaElementFrom interface {
-	HtmlAreaElement() HtmlAreaElement
+	HtmlAreaElement_() HtmlAreaElement
 }
 
-func (h HtmlAreaElement) HtmlAreaElement() HtmlAreaElement {
+func (h HtmlAreaElement) HtmlAreaElement_() HtmlAreaElement {
 	return h
 }
 

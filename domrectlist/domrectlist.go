@@ -20,10 +20,10 @@ type DOMRectList struct {
 }
 
 type DOMRectListFrom interface {
-	DOMRectList() DOMRectList
+	DOMRectList_() DOMRectList
 }
 
-func (d DOMRectList) DOMRectList() DOMRectList {
+func (d DOMRectList) DOMRectList_() DOMRectList {
 	return d
 }
 

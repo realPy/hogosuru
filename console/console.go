@@ -17,10 +17,10 @@ type Console struct {
 }
 
 type ConsoleFrom interface {
-	Console() Console
+	Console_() Console
 }
 
-func (c Console) Console() Console {
+func (c Console) Console_() Console {
 	return c
 }
 

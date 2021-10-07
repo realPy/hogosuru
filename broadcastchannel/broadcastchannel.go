@@ -23,10 +23,10 @@ type BroadcastChannel struct {
 }
 
 type BroadcastChannelFrom interface {
-	BroadcastChannel() BroadcastChannel
+	BroadcastChannel_() BroadcastChannel
 }
 
-func (b BroadcastChannel) BroadcastChannel() BroadcastChannel {
+func (b BroadcastChannel) BroadcastChannel_() BroadcastChannel {
 	return b
 }
 

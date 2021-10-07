@@ -30,10 +30,10 @@ type Response struct {
 }
 
 type ResponseFrom interface {
-	Response() Response
+	Response_() Response
 }
 
-func (r Response) Response() Response {
+func (r Response) Response_() Response {
 	return r
 }
 
@@ -189,7 +189,7 @@ func (r Response) ArrayBuffer() (arraybuffer.ArrayBuffer, error) {
 
 			if binaryObj, err = p.Await(); err == nil {
 				if binary, ok := binaryObj.(arraybuffer.ArrayBufferFrom); ok {
-					ab = binary.ArrayBuffer()
+					ab = binary.ArrayBuffer_()
 				} else {
 					err = baseobject.ErrNotABaseObject
 				}

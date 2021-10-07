@@ -22,9 +22,9 @@ func main() {
 					println("Ws receive arraybuffer:" + a.String())
 				} else {
 
-					if b, ok := o.(baseobject.BaseObject); ok {
+					if b, ok := o.(baseobject.ObjectFrom); ok {
 
-						println("Ws receive data :" + b.String())
+						println("Ws receive data :" + b.BaseObject_().String())
 					}
 				}
 			}

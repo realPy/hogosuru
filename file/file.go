@@ -36,10 +36,10 @@ type File struct {
 }
 
 type FileFrom interface {
-	File() File
+	File_() File
 }
 
-func (f File) File() File {
+func (f File) File_() File {
 	return f
 }
 

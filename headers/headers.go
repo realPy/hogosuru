@@ -20,10 +20,10 @@ type Headers struct {
 }
 
 type HeadersFrom interface {
-	Headers() Headers
+	Headers_() Headers
 }
 
-func (h Headers) Headers() Headers {
+func (h Headers) Headers_() Headers {
 	return h
 }
 

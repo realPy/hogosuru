@@ -97,7 +97,7 @@ func main() {
 
 		f.Then(func(r response.Response) *promise.Promise {
 
-			if header, err := r.Response().Headers(); hogosuru.AssertErr(err) {
+			if header, err := r.Response_().Headers(); hogosuru.AssertErr(err) {
 				it, _ := header.Entries()
 				for key, value, err := it.Next(); err == nil; key, value, err = it.Next() {
 					println(key, ":", value)

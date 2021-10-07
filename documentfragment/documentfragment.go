@@ -20,10 +20,10 @@ type DocumentFragment struct {
 }
 
 type DocumentFragmentFrom interface {
-	DocumentFragment() DocumentFragment
+	DocumentFragment_() DocumentFragment
 }
 
-func (d DocumentFragment) DocumentFragment() DocumentFragment {
+func (d DocumentFragment) DocumentFragment_() DocumentFragment {
 	return d
 }
 

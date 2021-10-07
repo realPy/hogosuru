@@ -27,10 +27,10 @@ type HtmlInputElement struct {
 }
 
 type HtmlInputElementFrom interface {
-	HtmlInputElement() HtmlInputElement
+	HtmlInputElement_() HtmlInputElement
 }
 
-func (h HtmlInputElement) HtmlInputElement() HtmlInputElement {
+func (h HtmlInputElement) HtmlInputElement_() HtmlInputElement {
 	return h
 }
 

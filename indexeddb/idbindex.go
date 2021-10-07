@@ -34,10 +34,10 @@ type IDBIndex struct {
 }
 
 type IDBIndexFrom interface {
-	IDBIndex() IDBIndex
+	IDBIndex_() IDBIndex
 }
 
-func (i IDBIndex) IDBIndex() IDBIndex {
+func (i IDBIndex) IDBIndex_() IDBIndex {
 	return i
 }
 

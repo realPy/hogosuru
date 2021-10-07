@@ -40,10 +40,10 @@ type MessageEvent struct {
 }
 
 type MessageEventFrom interface {
-	MessageEvent() MessageEvent
+	MessageEvent_() MessageEvent
 }
 
-func (m MessageEvent) MessageEvent() MessageEvent {
+func (m MessageEvent) MessageEvent_() MessageEvent {
 	return m
 }
 

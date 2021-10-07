@@ -20,10 +20,10 @@ type FileList struct {
 }
 
 type FileListFrom interface {
-	FileList() FileList
+	FileList_() FileList
 }
 
-func (f FileList) FileList() FileList {
+func (f FileList) FileList_() FileList {
 	return f
 }
 

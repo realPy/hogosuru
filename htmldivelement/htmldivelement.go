@@ -20,10 +20,10 @@ type HtmlDivElement struct {
 }
 
 type HtmlDivElementFrom interface {
-	HtmlDivElement() HtmlDivElement
+	HtmlDivElement_() HtmlDivElement
 }
 
-func (h HtmlDivElement) HtmlDivElement() HtmlDivElement {
+func (h HtmlDivElement) HtmlDivElement_() HtmlDivElement {
 	return h
 }
 

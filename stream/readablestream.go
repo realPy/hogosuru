@@ -31,10 +31,10 @@ type ReadableStream struct {
 }
 
 type ReadableStreameFrom interface {
-	ReadableStream() ReadableStream
+	ReadableStream_() ReadableStream
 }
 
-func (r ReadableStream) ReadableStream() ReadableStream {
+func (r ReadableStream) ReadableStream_() ReadableStream {
 	return r
 }
 

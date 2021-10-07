@@ -34,10 +34,10 @@ type DOMRectReadOnly struct {
 }
 
 type DOMRectReadOnlyFrom interface {
-	DOMRectReadOnly() DOMRectReadOnly
+	DOMRectReadOnly_() DOMRectReadOnly
 }
 
-func (d DOMRectReadOnly) DOMRectReadOnly() DOMRectReadOnly {
+func (d DOMRectReadOnly) DOMRectReadOnly_() DOMRectReadOnly {
 	return d
 }
 

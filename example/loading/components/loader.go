@@ -108,7 +108,7 @@ func (l *Loader) OnEndChildsRendering() {
 
 			if obj, err := baseobject.Discover(e.JSObject()); err == nil {
 				if c, ok := obj.(customevent.CustomEventFrom); ok {
-					if detail, err := c.CustomEvent().Detail(); hogosuru.AssertErr(err) {
+					if detail, err := c.CustomEvent_().Detail(); hogosuru.AssertErr(err) {
 
 						if objdetail, ok := detail.(object.Object); ok {
 

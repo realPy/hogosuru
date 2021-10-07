@@ -34,10 +34,10 @@ type Date struct {
 }
 
 type DateFrom interface {
-	Date() Date
+	Date_() Date
 }
 
-func (d Date) Date() Date {
+func (d Date) Date_() Date {
 	return d
 }
 

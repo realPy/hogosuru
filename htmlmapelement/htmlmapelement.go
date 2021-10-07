@@ -21,10 +21,10 @@ type HtmlMapElement struct {
 }
 
 type HtmlMapElementFrom interface {
-	HtmlMapElement() HtmlMapElement
+	HtmlMapElement_() HtmlMapElement
 }
 
-func (h HtmlMapElement) HtmlMapElement() HtmlMapElement {
+func (h HtmlMapElement) HtmlMapElement_() HtmlMapElement {
 	return h
 }
 

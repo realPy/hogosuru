@@ -18,10 +18,10 @@ type DataTransfer struct {
 }
 
 type DataTransferFrom interface {
-	DataTransfer() DataTransfer
+	DataTransfer_() DataTransfer
 }
 
-func (d DataTransfer) DataTransfer() DataTransfer {
+func (d DataTransfer) DataTransfer_() DataTransfer {
 	return d
 }
 

@@ -20,10 +20,10 @@ type DOMTokenList struct {
 }
 
 type DOMTokenListFrom interface {
-	DOMTokenList() DOMTokenList
+	DOMTokenList_() DOMTokenList
 }
 
-func (d DOMTokenList) DOMTokenList() DOMTokenList {
+func (d DOMTokenList) DOMTokenList_() DOMTokenList {
 	return d
 }
 

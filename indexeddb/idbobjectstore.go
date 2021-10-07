@@ -16,10 +16,10 @@ type IDBObjectStore struct {
 }
 
 type IDBObjectStoreFrom interface {
-	IDBObjectStore() IDBObjectStore
+	IDBObjectStore_() IDBObjectStore
 }
 
-func (i IDBObjectStore) IDBObjectStore() IDBObjectStore {
+func (i IDBObjectStore) IDBObjectStore_() IDBObjectStore {
 	return i
 }
 

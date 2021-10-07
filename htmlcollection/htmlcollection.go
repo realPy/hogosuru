@@ -19,10 +19,10 @@ type HtmlCollection struct {
 }
 
 type HtmlCollectionFrom interface {
-	HtmlCollection() HtmlCollection
+	HtmlCollection_() HtmlCollection
 }
 
-func (h HtmlCollection) HtmlCollection() HtmlCollection {
+func (h HtmlCollection) HtmlCollection_() HtmlCollection {
 	return h
 }
 

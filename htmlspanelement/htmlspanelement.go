@@ -20,10 +20,10 @@ type HtmlSpanElement struct {
 }
 
 type HtmlSpanElementFrom interface {
-	HtmlSpanElement() HtmlSpanElement
+	HtmlSpanElement_() HtmlSpanElement
 }
 
-func (h HtmlSpanElement) HtmlSpanElement() HtmlSpanElement {
+func (h HtmlSpanElement) HtmlSpanElement_() HtmlSpanElement {
 	return h
 }
 

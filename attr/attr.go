@@ -34,10 +34,10 @@ type Attr struct {
 }
 
 type AttrFrom interface {
-	Attr() Attr
+	Attr_() Attr
 }
 
-func (a Attr) Attr() Attr {
+func (a Attr) Attr_() Attr {
 	return a
 }
 

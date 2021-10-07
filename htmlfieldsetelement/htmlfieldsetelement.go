@@ -22,10 +22,10 @@ type HtmlFieldSetElement struct {
 }
 
 type HtmlFieldSetElementFrom interface {
-	HtmlFieldSetElement() HtmlFieldSetElement
+	HtmlFieldSetElement_() HtmlFieldSetElement
 }
 
-func (h HtmlFieldSetElement) HtmlFieldSetElement() HtmlFieldSetElement {
+func (h HtmlFieldSetElement) HtmlFieldSetElement_() HtmlFieldSetElement {
 	return h
 }
 

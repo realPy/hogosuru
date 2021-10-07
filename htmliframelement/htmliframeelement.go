@@ -20,10 +20,10 @@ type HtmlIFrameElement struct {
 }
 
 type HtmlIFrameElementFrom interface {
-	HtmlIFrameElement() HtmlIFrameElement
+	HtmlIFrameElement_() HtmlIFrameElement
 }
 
-func (h HtmlIFrameElement) HtmlIFrameElement() HtmlIFrameElement {
+func (h HtmlIFrameElement) HtmlIFrameElement_() HtmlIFrameElement {
 	return h
 }
 

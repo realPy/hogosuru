@@ -36,10 +36,10 @@ type EventTarget struct {
 }
 
 type EventTargetFrom interface {
-	EventTarget() EventTarget
+	EventTarget_() EventTarget
 }
 
-func (e EventTarget) EventTarget() EventTarget {
+func (e EventTarget) EventTarget_() EventTarget {
 	return e
 }
 

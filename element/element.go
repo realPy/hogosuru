@@ -41,10 +41,10 @@ type Element struct {
 }
 
 type ElementFrom interface {
-	Element() Element
+	Element_() Element
 }
 
-func (e Element) Element() Element {
+func (e Element) Element_() Element {
 	return e
 }
 

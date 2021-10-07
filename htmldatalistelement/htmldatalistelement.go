@@ -21,10 +21,10 @@ type HtmlDataListElement struct {
 }
 
 type HtmlDataListElementFrom interface {
-	HtmlDataListElement() HtmlDataListElement
+	HtmlDataListElement_() HtmlDataListElement
 }
 
-func (h HtmlDataListElement) HtmlDataListElement() HtmlDataListElement {
+func (h HtmlDataListElement) HtmlDataListElement_() HtmlDataListElement {
 	return h
 }
 
