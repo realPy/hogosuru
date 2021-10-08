@@ -132,7 +132,7 @@ func (r ReadableStreamDefaultReader) asyncRead(preallocateBytes []byte, dataHand
 
 						}
 
-						p2, _ := promise.New(func() (interface{}, error) {
+						p2, _ := promise.New(func(resolvefunc, errfunc js.Value) (interface{}, error) {
 							_, err := r.asyncRead(preallocateBytes, dataHandle)
 							return nil, err
 						})
