@@ -21,10 +21,10 @@ type HtmlAnchorElement struct {
 }
 
 type HtmlAnchorElementFrom interface {
-	HtmlAnchorElement() HtmlAnchorElement
+	HtmlAnchorElement_() HtmlAnchorElement
 }
 
-func (h HtmlAnchorElement) HtmlAnchorElement() HtmlAnchorElement {
+func (h HtmlAnchorElement) HtmlAnchorElement_() HtmlAnchorElement {
 	return h
 }
 

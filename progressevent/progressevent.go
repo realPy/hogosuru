@@ -36,10 +36,10 @@ type ProgressEvent struct {
 }
 
 type ProgressEventFrom interface {
-	ProgressEvent() ProgressEvent
+	ProgressEvent_() ProgressEvent
 }
 
-func (p ProgressEvent) ProgressEvent() ProgressEvent {
+func (p ProgressEvent) ProgressEvent_() ProgressEvent {
 	return p
 }
 

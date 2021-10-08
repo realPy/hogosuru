@@ -20,10 +20,10 @@ type HtmlLIElement struct {
 }
 
 type HtmlLIElementFrom interface {
-	HtmlLIElement() HtmlLIElement
+	HtmlLIElement_() HtmlLIElement
 }
 
-func (h HtmlLIElement) HtmlLIElement() HtmlLIElement {
+func (h HtmlLIElement) HtmlLIElement_() HtmlLIElement {
 	return h
 }
 

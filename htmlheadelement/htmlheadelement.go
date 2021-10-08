@@ -20,10 +20,10 @@ type HtmlHeadElement struct {
 }
 
 type HtmlHeadElementFrom interface {
-	HtmlHeadElement() HtmlHeadElement
+	HtmlHeadElement_() HtmlHeadElement
 }
 
-func (h HtmlHeadElement) HtmlHeadElement() HtmlHeadElement {
+func (h HtmlHeadElement) HtmlHeadElement_() HtmlHeadElement {
 	return h
 }
 

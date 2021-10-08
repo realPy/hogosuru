@@ -14,7 +14,7 @@ func main() {
 		c.OnMessage(func(m messageevent.MessageEvent) {
 
 			if b, err := m.Data(); hogosuru.AssertErr(err) {
-				println("receive message " + b.(baseobject.BaseObject).String())
+				println("receive message " + b.(baseobject.ObjectFrom).BaseObject_().String())
 
 			}
 

@@ -21,10 +21,10 @@ type HtmlProgressElement struct {
 }
 
 type HtmlProgressElementFrom interface {
-	HtmlProgressElement() HtmlProgressElement
+	HtmlProgressElement_() HtmlProgressElement
 }
 
-func (h HtmlProgressElement) HtmlProgressElement() HtmlProgressElement {
+func (h HtmlProgressElement) HtmlProgressElement_() HtmlProgressElement {
 	return h
 }
 

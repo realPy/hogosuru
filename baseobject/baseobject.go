@@ -24,17 +24,19 @@ func Discover(obj js.Value) (interface{}, error) {
 	var err error
 	var bobj interface{}
 	var objname js.Value
+	var objconstructor js.Value
 
-	if objconstructor, err := obj.GetWithErr("constructor"); err == nil {
+	if objconstructor, err = obj.GetWithErr("constructor"); err == nil {
 
 		if objname, err = objconstructor.GetWithErr("name"); err == nil {
 			if f, ok := registry[objname.String()]; ok {
 				var obji interface{}
 				var ok bool
 
-				obji, err = f(obj)
-				if bobj, ok = obji.(ObjectFrom); !ok {
-					err = ErrNotABaseObject
+				if obji, err = f(obj); err == nil {
+					if bobj, ok = obji.(ObjectFrom); !ok {
+						err = ErrNotABaseObject
+					}
 				}
 
 			} else {
@@ -54,10 +56,10 @@ func Discover(obj js.Value) (interface{}, error) {
 
 type ObjectFrom interface {
 	JSObject() js.Value
-	BaseObject() BaseObject
+	BaseObject_() BaseObject
 }
 
-func (b BaseObject) BaseObject() BaseObject {
+func (b BaseObject) BaseObject_() BaseObject {
 	return b
 }
 

@@ -35,10 +35,10 @@ type Array struct {
 }
 
 type ArrayFrom interface {
-	Array() Array
+	Array_() Array
 }
 
-func (a Array) Array() Array {
+func (a Array) Array_() Array {
 	return a
 }
 

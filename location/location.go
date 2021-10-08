@@ -32,10 +32,10 @@ type Location struct {
 }
 
 type LocationFrom interface {
-	Location() Location
+	Location_() Location
 }
 
-func (l Location) Location() Location {
+func (l Location) Location_() Location {
 	return l
 }
 

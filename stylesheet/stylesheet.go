@@ -18,10 +18,10 @@ type StyleSheet struct {
 }
 
 type StyleSheetFrom interface {
-	StyleSheet() StyleSheet
+	StyleSheet_() StyleSheet
 }
 
-func (s StyleSheet) StyleSheet() StyleSheet {
+func (s StyleSheet) StyleSheet_() StyleSheet {
 	return s
 }
 

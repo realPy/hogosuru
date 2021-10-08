@@ -20,10 +20,10 @@ type HtmlQuoteElement struct {
 }
 
 type HtmlQuoteElementFrom interface {
-	HtmlQuoteElement() HtmlQuoteElement
+	HtmlQuoteElement_() HtmlQuoteElement
 }
 
-func (h HtmlQuoteElement) HtmlQuoteElement() HtmlQuoteElement {
+func (h HtmlQuoteElement) HtmlQuoteElement_() HtmlQuoteElement {
 	return h
 }
 

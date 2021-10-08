@@ -19,10 +19,10 @@ type IDBDatabase struct {
 }
 
 type IDBDatabaseFrom interface {
-	IDBDatabase() IDBDatabase
+	IDBDatabase_() IDBDatabase
 }
 
-func (i IDBDatabase) IDBDatabase() IDBDatabase {
+func (i IDBDatabase) IDBDatabase_() IDBDatabase {
 	return i
 }
 

@@ -18,10 +18,10 @@ type IDBTransaction struct {
 }
 
 type IDBTransactionFrom interface {
-	IDBTransaction() IDBTransaction
+	IDBTransaction_() IDBTransaction
 }
 
-func (i IDBTransaction) IDBTransaction() IDBTransaction {
+func (i IDBTransaction) IDBTransaction_() IDBTransaction {
 	return i
 }
 

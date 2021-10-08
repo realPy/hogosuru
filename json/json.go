@@ -22,10 +22,10 @@ type Json struct {
 }
 
 type JsonFrom interface {
-	Json() Json
+	Json_() Json
 }
 
-func (i Json) Json() Json {
+func (i Json) Json_() Json {
 	return i
 }
 
@@ -90,7 +90,7 @@ func extractJsonFromObject(jsobj js.Value) interface{} {
 
 			for _, vkey, err := itkeys.Next(); err == nil; _, vkey, err = itkeys.Next() {
 
-				if obj1, ok := vkey.(baseobject.BaseObject); !ok {
+				if obj1, ok := vkey.(baseobject.ObjectFrom); !ok {
 					array = append(array, vkey)
 
 				} else {
@@ -98,9 +98,11 @@ func extractJsonFromObject(jsobj js.Value) interface{} {
 				}
 
 			}
+
 			retvalue = array
 
 		} else {
+
 			json := make(map[string]interface{})
 			keys, _ := obj.Keys()
 
@@ -111,7 +113,7 @@ func extractJsonFromObject(jsobj js.Value) interface{} {
 				if key, ok := vkey.(string); ok {
 					if value, err := jsobj.GetWithErr(key); err == nil {
 						i := baseobject.GoValue(value)
-						if obj1, ok := i.(baseobject.BaseObject); !ok {
+						if obj1, ok := i.(baseobject.ObjectFrom); !ok {
 							json[key] = i
 						} else {
 							json[key] = extractJsonFromObject(obj1.JSObject())

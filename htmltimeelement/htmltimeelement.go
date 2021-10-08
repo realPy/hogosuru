@@ -20,10 +20,10 @@ type HtmlTimeElement struct {
 }
 
 type HtmlTimeElementFrom interface {
-	HtmlTimeElement() HtmlTimeElement
+	HtmlTimeElement_() HtmlTimeElement
 }
 
-func (h HtmlTimeElement) HtmlTimeElement() HtmlTimeElement {
+func (h HtmlTimeElement) HtmlTimeElement_() HtmlTimeElement {
 	return h
 }
 

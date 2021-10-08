@@ -23,10 +23,10 @@ type HtmlButtonElement struct {
 }
 
 type HtmlButtonElementFrom interface {
-	HtmlButtonElement() HtmlButtonElement
+	HtmlButtonElement_() HtmlButtonElement
 }
 
-func (h HtmlButtonElement) HtmlButtonElement() HtmlButtonElement {
+func (h HtmlButtonElement) HtmlButtonElement_() HtmlButtonElement {
 	return h
 }
 

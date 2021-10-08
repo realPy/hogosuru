@@ -17,10 +17,10 @@ type DomException struct {
 }
 
 type DomExceptionFrom interface {
-	DomException() DomException
+	DomException_() DomException
 }
 
-func (d DomException) DomException() DomException {
+func (d DomException) DomException_() DomException {
 	return d
 }
 

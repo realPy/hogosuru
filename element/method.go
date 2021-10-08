@@ -22,16 +22,16 @@ func (e Element) Animate(keyframes, options interface{}) error {
 
 	var err error
 	if keyframesObject, ok := keyframes.(array.ArrayFrom); ok {
-		argCall = append(argCall, keyframesObject.Array().JSObject())
+		argCall = append(argCall, keyframesObject.Array_().JSObject())
 
 	}
 
 	if keyframesObject, ok := keyframes.(object.ObjectFrom); ok {
-		argCall = append(argCall, keyframesObject.Object().JSObject())
+		argCall = append(argCall, keyframesObject.Object_().JSObject())
 	}
 
 	if optionsObject, ok := keyframes.(object.ObjectFrom); ok {
-		argCall = append(argCall, optionsObject.Object().JSObject())
+		argCall = append(argCall, optionsObject.Object_().JSObject())
 	} else {
 		argCall = append(argCall, js.ValueOf(options))
 	}

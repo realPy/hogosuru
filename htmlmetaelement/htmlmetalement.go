@@ -20,10 +20,10 @@ type HtmlMetaElement struct {
 }
 
 type HtmlMetaElementFrom interface {
-	HtmlMetaElement() HtmlMetaElement
+	HtmlMetaElement_() HtmlMetaElement
 }
 
-func (h HtmlMetaElement) HtmlMetaElement() HtmlMetaElement {
+func (h HtmlMetaElement) HtmlMetaElement_() HtmlMetaElement {
 	return h
 }
 

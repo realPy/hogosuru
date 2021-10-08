@@ -31,10 +31,10 @@ type XMLHTTPRequest struct {
 }
 
 type XMLHTTPRequestFrom interface {
-	XMLHTTPRequest() XMLHTTPRequest
+	XMLHTTPRequest_() XMLHTTPRequest
 }
 
-func (x XMLHTTPRequest) XMLHTTPRequest() XMLHTTPRequest {
+func (x XMLHTTPRequest) XMLHTTPRequest_() XMLHTTPRequest {
 	return x
 }
 

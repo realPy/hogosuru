@@ -18,10 +18,10 @@ type CSSRule struct {
 }
 
 type CSSRuleFrom interface {
-	CSSRule() CSSRule
+	CSSRule_() CSSRule
 }
 
-func (c CSSRule) CSSRule() CSSRule {
+func (c CSSRule) CSSRule_() CSSRule {
 	return c
 }
 

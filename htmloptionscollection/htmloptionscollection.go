@@ -18,10 +18,10 @@ type HtmlOptionsCollection struct {
 }
 
 type HtmlOptionsCollectionFrom interface {
-	HtmlOptionsCollection() HtmlOptionsCollection
+	HtmlOptionsCollection_() HtmlOptionsCollection
 }
 
-func (h HtmlOptionsCollection) HTMLOptionsCollection() HtmlOptionsCollection {
+func (h HtmlOptionsCollection) HTMLOptionsCollection_() HtmlOptionsCollection {
 	return h
 }
 

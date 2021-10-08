@@ -21,10 +21,10 @@ type Event struct {
 }
 
 type EventFrom interface {
-	Event() Event
+	Event_() Event
 }
 
-func (e Event) Event() Event {
+func (e Event) Event_() Event {
 	return e
 }
 

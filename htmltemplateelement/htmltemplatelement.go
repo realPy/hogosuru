@@ -21,10 +21,10 @@ type HtmlTemplateElement struct {
 }
 
 type HtmlTemplateElementFrom interface {
-	HtmlTemplateElement() HtmlTemplateElement
+	HtmlTemplateElement_() HtmlTemplateElement
 }
 
-func (h HtmlTemplateElement) HtmlTemplateElement() HtmlTemplateElement {
+func (h HtmlTemplateElement) HtmlTemplateElement_() HtmlTemplateElement {
 	return h
 }
 

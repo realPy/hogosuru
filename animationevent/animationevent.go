@@ -20,10 +20,10 @@ type AnimationEvent struct {
 }
 
 type AnimationEventFrom interface {
-	AnimationEvent() AnimationEvent
+	AnimationEvent_() AnimationEvent
 }
 
-func (a AnimationEvent) AnimationEvent() AnimationEvent {
+func (a AnimationEvent) AnimationEvent_() AnimationEvent {
 	return a
 }
 

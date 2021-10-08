@@ -20,10 +20,10 @@ type IDBRequest struct {
 }
 
 type IDBRequestFrom interface {
-	IDBRequest() IDBRequest
+	IDBRequest_() IDBRequest
 }
 
-func (i IDBRequest) IDBRequest() IDBRequest {
+func (i IDBRequest) IDBRequest_() IDBRequest {
 	return i
 }
 

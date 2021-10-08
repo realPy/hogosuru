@@ -17,6 +17,7 @@ func main() {
 	if j, err := json.Parse(str2); err == nil {
 
 		p := j.Map()
+
 		println(p.(map[string]interface{})["cars"].([]interface{})[0])
 
 		j.Export("adrien")

@@ -41,10 +41,10 @@ type Fetch struct {
 }
 
 type FetchFrom interface {
-	Fetch() Fetch
+	Fetch_() Fetch
 }
 
-func (f Fetch) Fetch() Fetch {
+func (f Fetch) Fetch_() Fetch {
 	return f
 }
 
@@ -96,7 +96,7 @@ func (f Fetch) Then(resolve func(response.Response) *promise.Promise, reject fun
 			if resp, err = baseobject.Discover(bo.JSObject()); err == nil {
 
 				if r, ok := resp.(response.ResponseFrom); ok {
-					return resolve(r.Response())
+					return resolve(r.Response_())
 				}
 			} else {
 				if reject != nil {

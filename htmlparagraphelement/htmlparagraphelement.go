@@ -20,10 +20,10 @@ type HtmlParagraphElement struct {
 }
 
 type HtmlParagraphElementFrom interface {
-	HtmlParagraphElement() HtmlParagraphElement
+	HtmlParagraphElement_() HtmlParagraphElement
 }
 
-func (h HtmlParagraphElement) HtmlParagraphElement() HtmlParagraphElement {
+func (h HtmlParagraphElement) HtmlParagraphElement_() HtmlParagraphElement {
 	return h
 }
 

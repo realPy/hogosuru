@@ -21,10 +21,10 @@ type HtmlLegendElement struct {
 }
 
 type HtmlLegendElementFrom interface {
-	HtmlLegendElement() HtmlLegendElement
+	HtmlLegendElement_() HtmlLegendElement
 }
 
-func (h HtmlLegendElement) HtmlLegendElement() HtmlLegendElement {
+func (h HtmlLegendElement) HtmlLegendElement_() HtmlLegendElement {
 	return h
 }
 

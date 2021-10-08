@@ -34,10 +34,10 @@ type ReadableStreamDefaultReader struct {
 }
 
 type ReadableStreamDefaultReaderFrom interface {
-	ReadableStreamDefaultReader() ReadableStreamDefaultReader
+	ReadableStreamDefaultReader_() ReadableStreamDefaultReader
 }
 
-func (r ReadableStreamDefaultReader) ReadableStreamDefaultReader() ReadableStreamDefaultReader {
+func (r ReadableStreamDefaultReader) ReadableStreamDefaultReader_() ReadableStreamDefaultReader {
 	return r
 }
 
@@ -132,7 +132,7 @@ func (r ReadableStreamDefaultReader) asyncRead(preallocateBytes []byte, dataHand
 
 						}
 
-						p2, _ := promise.New(func() (interface{}, error) {
+						p2, _ := promise.New(func(resolvefunc, errfunc js.Value) (interface{}, error) {
 							_, err := r.asyncRead(preallocateBytes, dataHandle)
 							return nil, err
 						})

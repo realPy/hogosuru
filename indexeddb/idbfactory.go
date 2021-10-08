@@ -31,10 +31,10 @@ type IDBFactory struct {
 }
 
 type IDBFactoryFrom interface {
-	IDBFactory() IDBFactory
+	IDBFactory_() IDBFactory
 }
 
-func (i IDBFactory) IDBFactory() IDBFactory {
+func (i IDBFactory) IDBFactory_() IDBFactory {
 	return i
 }
 

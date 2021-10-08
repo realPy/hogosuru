@@ -18,10 +18,10 @@ type CSSStyleDeclaration struct {
 }
 
 type CSSStyleDeclarationFrom interface {
-	CSSStyleDeclaration() CSSStyleDeclaration
+	CSSStyleDeclaration_() CSSStyleDeclaration
 }
 
-func (c CSSStyleDeclaration) CSSStyleDeclaration() CSSStyleDeclaration {
+func (c CSSStyleDeclaration) CSSStyleDeclaration_() CSSStyleDeclaration {
 	return c
 }
 

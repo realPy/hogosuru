@@ -50,7 +50,7 @@ func main() {
 	data, _ := p3.Await()
 
 	if obj, ok := data.(baseobject.ObjectFrom); ok {
-		println("First elem response", obj.BaseObject().String())
+		println("First elem response", obj.BaseObject_().String())
 	}
 
 	ch := make(chan struct{})

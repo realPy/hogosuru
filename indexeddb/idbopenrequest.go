@@ -16,10 +16,10 @@ type IDBOpenDBRequest struct {
 }
 
 type IDBOpenDBRequestFrom interface {
-	IDBOpenDBRequest() IDBOpenDBRequest
+	IDBOpenDBRequest_() IDBOpenDBRequest
 }
 
-func (i IDBOpenDBRequest) IDBOpenDBRequest() IDBOpenDBRequest {
+func (i IDBOpenDBRequest) IDBOpenDBRequest_() IDBOpenDBRequest {
 	return i
 }
 

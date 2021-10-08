@@ -20,10 +20,10 @@ type HtmlBodyElement struct {
 }
 
 type HtmlBodyElementFrom interface {
-	HtmlBodyElement() HtmlBodyElement
+	HtmlBodyElement_() HtmlBodyElement
 }
 
-func (h HtmlBodyElement) HtmlBodyElement() HtmlBodyElement {
+func (h HtmlBodyElement) HtmlBodyElement_() HtmlBodyElement {
 	return h
 }
 

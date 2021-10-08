@@ -20,10 +20,10 @@ type HtmlBaseElement struct {
 }
 
 type HtmlBaseElementFrom interface {
-	HtmlBaseElement() HtmlBaseElement
+	HtmlBaseElement_() HtmlBaseElement
 }
 
-func (h HtmlBaseElement) HtmlBaseElement() HtmlBaseElement {
+func (h HtmlBaseElement) HtmlBaseElement_() HtmlBaseElement {
 	return h
 }
 

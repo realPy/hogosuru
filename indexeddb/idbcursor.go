@@ -14,10 +14,10 @@ type IDBCursor struct {
 }
 
 type IDBCursorFrom interface {
-	IDBCursor() IDBCursor
+	IDBCursor_() IDBCursor
 }
 
-func (i IDBCursor) IDBCursor() IDBCursor {
+func (i IDBCursor) IDBCursor_() IDBCursor {
 	return i
 }
 

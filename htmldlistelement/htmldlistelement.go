@@ -20,10 +20,10 @@ type HtmlDListElement struct {
 }
 
 type HtmlDListElementFrom interface {
-	HtmlDListElement() HtmlDListElement
+	HtmlDListElement_() HtmlDListElement
 }
 
-func (h HtmlDListElement) HtmlDivElement() HtmlDListElement {
+func (h HtmlDListElement) HtmlDivElement_() HtmlDListElement {
 	return h
 }
 

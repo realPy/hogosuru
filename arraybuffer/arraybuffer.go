@@ -37,10 +37,10 @@ type ArrayBuffer struct {
 }
 
 type ArrayBufferFrom interface {
-	ArrayBuffer() ArrayBuffer
+	ArrayBuffer_() ArrayBuffer
 }
 
-func (a ArrayBuffer) ArrayBuffer() ArrayBuffer {
+func (a ArrayBuffer) ArrayBuffer_() ArrayBuffer {
 	return a
 }
 

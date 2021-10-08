@@ -20,10 +20,10 @@ type FormData struct {
 }
 
 type FormDataFrom interface {
-	FormData() FormData
+	FormData_() FormData
 }
 
-func (f FormData) FormData() FormData {
+func (f FormData) FormData_() FormData {
 	return f
 }
 

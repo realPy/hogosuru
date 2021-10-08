@@ -17,10 +17,10 @@ type ValidityState struct {
 }
 
 type ValidityStateFrom interface {
-	ValidityState() ValidityState
+	ValidityState_() ValidityState
 }
 
-func (v ValidityState) ValidityState() ValidityState {
+func (v ValidityState) ValidityState_() ValidityState {
 	return v
 }
 
