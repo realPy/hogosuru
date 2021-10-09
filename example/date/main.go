@@ -31,14 +31,14 @@ func main() {
 	ret, _ := d1.ToLocaleString("en-GB", map[string]interface{}{"timeZone": "UTC"})
 	println(ret)
 
-	p1, _ := promise.New(func() (interface{}, error) {
+	p1, _ := promise.New(func(resolvefunc, errfunc js.Value) (interface{}, error) {
 		println("Waiting p1")
 		time.Sleep(8 * time.Second)
 		println("End p1")
 		return js.ValueOf("p1"), nil
 	})
 
-	p2, _ := promise.New(func() (interface{}, error) {
+	p2, _ := promise.New(func(resolvefunc, errfunc js.Value) (interface{}, error) {
 		println("Waiting p2")
 		time.Sleep(3 * time.Second)
 		println("End p2")

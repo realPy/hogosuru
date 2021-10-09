@@ -1,18 +1,22 @@
 package htmlformelement
 
-import "github.com/realPy/hogosuru/event"
+import (
+	"syscall/js"
 
-func (h HtmlFormElement) OnFormData(handler func(e event.Event)) error {
+	"github.com/realPy/hogosuru/event"
+)
+
+func (h HtmlFormElement) OnFormData(handler func(e event.Event)) (js.Func, error) {
 
 	return h.AddEventListener("formdata", handler)
 }
 
-func (h HtmlFormElement) OnReset(handler func(e event.Event)) error {
+func (h HtmlFormElement) OnReset(handler func(e event.Event)) (js.Func, error) {
 
 	return h.AddEventListener("reset", handler)
 }
 
-func (h HtmlFormElement) OnSubmit(handler func(e event.Event)) error {
+func (h HtmlFormElement) OnSubmit(handler func(e event.Event)) (js.Func, error) {
 
 	return h.AddEventListener("submit", handler)
 }

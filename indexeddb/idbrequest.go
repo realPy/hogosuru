@@ -63,12 +63,12 @@ func IDBRequestNewFromJSObject(obj js.Value) (IDBRequest, error) {
 	return i, err
 }
 
-func (i IDBRequest) OnError(handler func(e event.Event)) error {
+func (i IDBRequest) OnError(handler func(e event.Event)) (js.Func, error) {
 
 	return i.AddEventListener("error", handler)
 }
 
-func (i IDBRequest) OnSuccess(handler func(e event.Event)) error {
+func (i IDBRequest) OnSuccess(handler func(e event.Event)) (js.Func, error) {
 
 	return i.AddEventListener("success", handler)
 }

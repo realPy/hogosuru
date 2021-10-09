@@ -133,19 +133,19 @@ func (w WebSocket) SetOnMessage(handler func(e messageevent.MessageEvent)) {
 }
 
 //OnOpen Set onOpen Handler
-func (w WebSocket) OnOpen(handler func(e event.Event)) error {
+func (w WebSocket) OnOpen(handler func(e event.Event)) (js.Func, error) {
 
 	return w.AddEventListener("open", handler)
 }
 
 //OnClose Set onClose Handler
-func (w WebSocket) OnClose(handler func(e event.Event)) error {
+func (w WebSocket) OnClose(handler func(e event.Event)) (js.Func, error) {
 
 	return w.AddEventListener("close", handler)
 }
 
 //OnError Set onError Handler
-func (w WebSocket) OnError(handler func(e event.Event)) error {
+func (w WebSocket) OnError(handler func(e event.Event)) (js.Func, error) {
 
 	return w.AddEventListener("error", handler)
 }
@@ -178,7 +178,7 @@ func (w WebSocket) SetBinaryType(binaryType string) error {
 }
 
 //OnError Set onError Handler
-func (w WebSocket) OnMessage(handler func(m messageevent.MessageEvent)) error {
+func (w WebSocket) OnMessage(handler func(m messageevent.MessageEvent)) (js.Func, error) {
 
 	return w.AddEventListener("message", func(e event.Event) {
 

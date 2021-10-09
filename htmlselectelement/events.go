@@ -1,8 +1,12 @@
 package htmlselectelement
 
-import "github.com/realPy/hogosuru/event"
+import (
+	"syscall/js"
 
-func (h HtmlSelectElement) OnInput(handler func(e event.Event)) error {
+	"github.com/realPy/hogosuru/event"
+)
+
+func (h HtmlSelectElement) OnInput(handler func(e event.Event)) (js.Func, error) {
 
 	return h.AddEventListener("input", handler)
 }
