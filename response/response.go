@@ -48,6 +48,7 @@ func GetInterface() js.Value {
 		baseobject.Register(responseinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
 		})
+		arraybuffer.GetInterface()
 	})
 
 	return responseinterface
