@@ -1,12 +1,14 @@
 package broadcastchannel
 
 import (
+	"syscall/js"
+
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/event"
 	"github.com/realPy/hogosuru/messageevent"
 )
 
-func (c BroadcastChannel) OnMessage(handler func(m messageevent.MessageEvent)) error {
+func (c BroadcastChannel) OnMessage(handler func(m messageevent.MessageEvent)) (js.Func, error) {
 
 	return c.AddEventListener("message", func(e event.Event) {
 
@@ -19,7 +21,7 @@ func (c BroadcastChannel) OnMessage(handler func(m messageevent.MessageEvent)) e
 	})
 }
 
-func (c BroadcastChannel) OnMessageError(handler func(e event.Event)) error {
+func (c BroadcastChannel) OnMessageError(handler func(e event.Event)) (js.Func, error) {
 
 	return c.AddEventListener("messageerror", handler)
 }

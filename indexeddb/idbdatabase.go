@@ -160,17 +160,17 @@ func (i IDBDatabase) ObjectStoreNames() (domstringlist.DOMStringList, error) {
 	return d, err
 }
 
-func (i IDBDatabase) OnAbort(handler func(e event.Event)) error {
+func (i IDBDatabase) OnAbort(handler func(e event.Event)) (js.Func, error) {
 
 	return i.AddEventListener("onabort", handler)
 }
 
-func (i IDBDatabase) OnError(handler func(e event.Event)) error {
+func (i IDBDatabase) OnError(handler func(e event.Event)) (js.Func, error) {
 
 	return i.AddEventListener("onerror", handler)
 }
 
-func (i IDBDatabase) OnVersionChange(handler func(e event.Event)) error {
+func (i IDBDatabase) OnVersionChange(handler func(e event.Event)) (js.Func, error) {
 
 	return i.AddEventListener("onversionchange", handler)
 }

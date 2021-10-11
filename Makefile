@@ -1,7 +1,7 @@
 GO=tinygo
 
-.PHONY: hello array json draganddrop fetch websocket node xmlhttprequest map date promise indexeddb history broadcastchannel console webassembly
-all: hello array json draganddrop fetch websocket node xmlhttprequest map date promise indexeddb history broadcastchannel console webassembly loading
+.PHONY: hello array json draganddrop fetch websocket node xmlhttprequest map date promise indexeddb history broadcastchannel console webassembly keyobservable
+all: hello array json draganddrop fetch websocket node xmlhttprequest map date promise indexeddb history broadcastchannel console webassembly loading keyobservable
 
 
 hello:
@@ -48,3 +48,5 @@ webassembly:
 	$(GO) build  -o ./example/static/webassembly.wasm --no-debug -target wasm example/webassembly/main.go
 loading:
 	$(GO) build  -o ./example/static/loading.wasm --no-debug -target wasm example/loading/main.go
+keyobservable:
+	$(GO) build  -o ./example/static/keyobservable.wasm --no-debug -target wasm example/keyobservable/main.go

@@ -19,9 +19,7 @@ func (l *Long) OnLoad(d document.Document, n node.Node, route string) (*promise.
 	var p promise.Promise
 	l.node, _ = d.CreateDocumentFragment()
 
-	p, _ = promise.SetTimeout(func() (interface{}, error) {
-		return nil, nil
-	}, l.WaitingTime)
+	p, _ = promise.SetTimeout(l.WaitingTime)
 
 	return &p, []hogosuru.Rendering{&ButtonD{}}
 }

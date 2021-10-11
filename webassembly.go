@@ -6,6 +6,7 @@ import (
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/fetch"
 	"github.com/realPy/hogosuru/promise"
+	"github.com/realPy/hogosuru/response"
 	"github.com/realPy/hogosuru/webassembly"
 )
 
@@ -28,22 +29,61 @@ func LoadWasm(urlfetch string) (fetch.Fetch, promise.Promise, error) {
 			if importobj, err = gobj.GetWithErr("importObject"); err == nil {
 
 				if f, err = fetch.New(urlfetch, map[string]interface{}{"method": "GET"}); err == nil {
-					if p, err = w.InstantiateStreaming(f.Promise, importobj); err == nil {
 
-						p.Then(func(obj interface{}) *promise.Promise {
-							var instance js.Value
+					if ok, err := w.Implement("instantiateStreaming"); err == nil && ok {
 
-							if module, ok := obj.(baseobject.ObjectFrom); ok {
+						if p, err = w.InstantiateStreaming(f.Promise, importobj); err == nil {
 
-								if instance, err = module.JSObject().GetWithErr("instance"); err == nil {
-									_, err = gobj.JSValue().CallWithErr("run", instance)
+							p.Then(func(obj interface{}) *promise.Promise {
+								var instance js.Value
+
+								if module, ok := obj.(baseobject.ObjectFrom); ok {
+
+									if instance, err = module.JSObject().GetWithErr("instance"); err == nil {
+										_, err = gobj.JSValue().CallWithErr("run", instance)
+
+									}
 								}
-							}
 
-							return nil
-						}, nil)
+								return nil
+							}, nil)
+
+						}
+					} else {
+
+						p, err = promise.New(func(resolvefunc, errfunc js.Value) (interface{}, error) {
+
+							f.Then(func(r response.Response) *promise.Promise {
+								println("response ok")
+
+								if arr, err := r.ArrayBuffer(); err == nil {
+									arr.Export("manu")
+									if p1, err := w.Instantiate(arr, importobj); err == nil {
+										p1.Then(func(obj interface{}) *promise.Promise {
+											var instance js.Value
+
+											if module, ok := obj.(baseobject.ObjectFrom); ok {
+
+												if instance, err = module.JSObject().GetWithErr("instance"); err == nil {
+													_, err = gobj.JSValue().CallWithErr("run", instance)
+
+												}
+											}
+
+											return nil
+										}, nil)
+
+									}
+
+								}
+								return nil
+							}, nil)
+
+							return nil, nil
+						})
 
 					}
+
 				}
 
 			}

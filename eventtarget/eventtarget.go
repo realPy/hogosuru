@@ -22,6 +22,7 @@ func GetInterface() js.Value {
 		if eventtargetinterface, err = js.Global().GetWithErr("EventTarget"); err != nil {
 			eventtargetinterface = js.Null()
 		}
+
 		baseobject.Register(eventtargetinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
 		})
@@ -32,7 +33,6 @@ func GetInterface() js.Value {
 
 type EventTarget struct {
 	event.Event
-	registerFunc map[string]js.Func
 }
 
 type EventTargetFrom interface {
@@ -49,7 +49,6 @@ func New() (EventTarget, error) {
 
 	if eti := GetInterface(); !eti.IsNull() {
 		e.BaseObject = e.SetObject(eti.New())
-		e.registerFunc = make(map[string]js.Func)
 		return e, nil
 	}
 	return e, ErrNotImplemented
@@ -61,7 +60,6 @@ func NewFromJSObject(obj js.Value) (EventTarget, error) {
 	if eti := GetInterface(); !eti.IsNull() {
 		if obj.InstanceOf(eti) {
 			e.BaseObject = e.SetObject(obj)
-			e.registerFunc = make(map[string]js.Func)
 			return e, nil
 		}
 	}
@@ -69,33 +67,29 @@ func NewFromJSObject(obj js.Value) (EventTarget, error) {
 	return e, ErrNotAnEventTarget
 }
 
-func (e EventTarget) AddEventListener(name string, handler func(e event.Event)) error {
+func (e EventTarget) AddEventListener(name string, handler func(e event.Event)) (js.Func, error) {
 
 	var err error
+	var cb js.Func
 	if handler != nil {
-		cb := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		cb = js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
 			if e, err := event.NewFromJSObject(args[0]); err == nil {
 				handler(e)
 			}
 			return nil
 		})
-		if e.registerFunc == nil {
-			e.registerFunc = make(map[string]js.Func)
-		}
-		e.registerFunc[name] = cb
+
 		_, err = e.JSObject().CallWithErr("addEventListener", js.ValueOf(name), cb)
 	}
 
-	return err
+	return cb, err
 }
 
-func (e EventTarget) RemoveEventListener(name string, typeevent string) error {
+func (e EventTarget) RemoveEventListener(f js.Func, typeevent string) error {
 	var err error
-	_, err = e.JSObject().CallWithErr("removeEventListener", typeevent, e.registerFunc[name])
-	cb := e.registerFunc[name]
-	delete(e.registerFunc, name)
-	cb.Release()
+	_, err = e.JSObject().CallWithErr("removeEventListener", typeevent, f)
+	f.Release()
 	return err
 }
 

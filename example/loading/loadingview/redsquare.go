@@ -22,9 +22,7 @@ func (rs *RedSquare) OnLoad(d document.Document, n node.Node, route string) (*pr
 
 	var p promise.Promise
 
-	p, _ = promise.SetTimeout(func() (interface{}, error) {
-		return nil, nil
-	}, 1000)
+	p, _ = promise.SetTimeout(1000)
 
 	if rs.div.Empty() {
 		if div, err := htmldivelement.New(d); hogosuru.AssertErr(err) {
