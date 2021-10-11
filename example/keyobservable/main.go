@@ -38,8 +38,11 @@ func main() {
 
 	}
 
-	hogosuru.KeyObservable().Send("prenom", "manu", true)
+	hogosuru.KeyObservable().Set("prenom", "manu", true)
 
+	if _, err := hogosuru.KeyObservable().Get("nom"); hogosuru.AssertErr(err) {
+		println("Ok->")
+	}
 	ch := make(chan struct{})
 	<-ch
 

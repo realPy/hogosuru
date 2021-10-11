@@ -1,6 +1,7 @@
 package hogosuru
 
 import (
+	"errors"
 	"sync"
 	"syscall/js"
 
@@ -9,6 +10,11 @@ import (
 
 var singletonKeyObservable sync.Once
 var ko Observable
+
+var (
+	//ErrKeyNotFound ErrKeyNotFound error
+	ErrKeyNotFound = errors.New("Key ot found")
+)
 
 type KeyObservableFunc func(value interface{})
 
@@ -80,6 +86,10 @@ func (ko *Observable) UnRegisterFunc(key string, f KeyObservableFunc) {
 
 //Get Get key in persist array . return error if key is not found
 func (ko *Observable) Get(key string) (interface{}, error) {
+	if haskey, err := ko.persistData.Has(key); err == nil && haskey {
+		return ko.persistData.Get(key)
+	} else {
+		return nil, ErrKeyNotFound
+	}
 
-	return ko.persistData.Get(key)
 }
