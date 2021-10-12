@@ -20,6 +20,16 @@ func Register(inter js.Value, contruct func(js.Value) (interface{}, error)) erro
 	return err
 }
 
+func ErrorToJS(e error) (js.Value, error) {
+	var err error
+	var obj js.Value
+	if ei, err := js.Global().GetWithErr("Error"); err == nil {
+		obj = ei.New(e.Error())
+
+	}
+	return obj, err
+}
+
 func Discover(obj js.Value) (interface{}, error) {
 	var err error
 	var bobj interface{}

@@ -198,7 +198,13 @@ func (p Promise) Then(resolve func(interface{}) *Promise, reject func(error)) er
 			message, _ := exception.Message()
 			err = errors.New(message)
 		} else {
-			err = errors.New(args[0].String())
+
+			var strerr string
+
+			if strerr, err = baseobject.ToStringWithErr(args[0]); err == nil {
+				err = errors.New(strerr)
+			}
+
 		}
 
 		if reject != nil {

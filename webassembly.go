@@ -3,6 +3,7 @@ package hogosuru
 import (
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/arraybuffer"
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/fetch"
 	"github.com/realPy/hogosuru/promise"
@@ -54,28 +55,55 @@ func LoadWasm(urlfetch string) (fetch.Fetch, promise.Promise, error) {
 						p, err = promise.New(func(resolvefunc, errfunc js.Value) (interface{}, error) {
 
 							f.Then(func(r response.Response) *promise.Promise {
-								println("response ok")
-
-								if arr, err := r.ArrayBuffer(); err == nil {
-									arr.Export("manu")
-									if p1, err := w.Instantiate(arr, importobj); err == nil {
+								var arr arraybuffer.ArrayBuffer
+								var err error
+								if arr, err = r.ArrayBuffer(); err == nil {
+									var p1 promise.Promise
+									if p1, err = w.Instantiate(arr, importobj); err == nil {
 										p1.Then(func(obj interface{}) *promise.Promise {
 											var instance js.Value
 
 											if module, ok := obj.(baseobject.ObjectFrom); ok {
 
 												if instance, err = module.JSObject().GetWithErr("instance"); err == nil {
-													_, err = gobj.JSValue().CallWithErr("run", instance)
+													if _, err = gobj.JSValue().CallWithErr("run", instance); err == nil {
+														resolvefunc.Invoke()
+													}
 
 												}
 											}
-
+											if err != nil {
+												var errjs js.Value
+												if errjs, err = baseobject.ErrorToJS(err); err == nil {
+													errfunc.Invoke(errjs)
+												} else {
+													AssertErr(err)
+												}
+											}
 											return nil
-										}, nil)
+										}, func(e error) {
+
+											if errjs, err := baseobject.ErrorToJS(e); err == nil {
+												errfunc.Invoke(errjs)
+											} else {
+												AssertErr(err)
+											}
+
+										})
 
 									}
 
 								}
+
+								if err != nil {
+									var errjs js.Value
+									if errjs, err = baseobject.ErrorToJS(err); err == nil {
+										errfunc.Invoke(errjs)
+									} else {
+										AssertErr(err)
+									}
+								}
+
 								return nil
 							}, nil)
 
