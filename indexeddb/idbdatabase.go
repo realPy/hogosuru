@@ -36,7 +36,7 @@ func IDBDatabaseGetInterface() js.Value {
 
 		var err error
 		if idbrequestinterface, err = js.Global().GetWithErr("IDBDatabase"); err != nil {
-			idbrequestinterface = js.Null()
+			idbrequestinterface = js.Undefined()
 		}
 
 		baseobject.Register(idbrequestinterface, func(v js.Value) (interface{}, error) {
@@ -50,7 +50,7 @@ func IDBDatabaseGetInterface() js.Value {
 func IDBDatabaseNewFromJSObject(obj js.Value) (IDBDatabase, error) {
 	var i IDBDatabase
 	var err error
-	if ai := IDBDatabaseGetInterface(); !ai.IsNull() {
+	if ai := IDBDatabaseGetInterface(); !ai.IsUndefined() {
 		if obj.InstanceOf(ai) {
 			i.BaseObject = i.SetObject(obj)
 		} else {

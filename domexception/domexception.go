@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if domexceptioninterface, err = js.Global().GetWithErr("DOMException"); err != nil {
-			domexceptioninterface = js.Null()
+			domexceptioninterface = js.Undefined()
 		}
 
 		baseobject.Register(domexceptioninterface, func(v js.Value) (interface{}, error) {
@@ -45,7 +45,7 @@ func GetInterface() js.Value {
 func NewFromJSObject(obj js.Value) (DomException, error) {
 	var d DomException
 	var err error
-	if di := GetInterface(); !di.IsNull() {
+	if di := GetInterface(); !di.IsUndefined() {
 		if obj.InstanceOf(di) {
 			d.BaseObject = d.SetObject(obj)
 		} else {

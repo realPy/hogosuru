@@ -23,7 +23,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if fetchinterface, err = js.Global().GetWithErr("fetch"); err != nil {
-			fetchinterface = js.Null()
+			fetchinterface = js.Undefined()
 		}
 
 		response.GetInterface()
@@ -63,7 +63,7 @@ func New(urlfetch string, opts ...interface{}) (Fetch, error) {
 
 	}
 
-	if fetchi := GetInterface(); !fetchi.IsNull() {
+	if fetchi := GetInterface(); !fetchi.IsUndefined() {
 		promisefetchobj := fetchi.Invoke(urlfetch, arrayJS)
 		f.BaseObject = f.SetObject(promisefetchobj)
 	} else {
@@ -76,7 +76,7 @@ func New(urlfetch string, opts ...interface{}) (Fetch, error) {
 func NewFromJSObject(obj js.Value) (Fetch, error) {
 	var h Fetch
 
-	if fetchi := GetInterface(); !fetchi.IsNull() {
+	if fetchi := GetInterface(); !fetchi.IsUndefined() {
 		if obj.InstanceOf(fetchi) {
 
 			h.BaseObject = h.SetObject(obj)
@@ -124,7 +124,7 @@ func NewFetch(urlfetch string, method string, headers *map[string]interface{}, d
 	var fetch Fetch
 	var err error
 	var p promise.Promise
-	if fetchi := GetInterface(); !fetchi.IsNull() {
+	if fetchi := GetInterface(); !fetchi.IsUndefined() {
 		var goarg map[string]interface{} = make(map[string]interface{})
 
 		goarg["method"] = method

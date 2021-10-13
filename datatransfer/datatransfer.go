@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if dtinterface, err = js.Global().GetWithErr("DataTransfer"); err != nil {
-			dtinterface = js.Null()
+			dtinterface = js.Undefined()
 		}
 		baseobject.Register(dtinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -46,7 +46,7 @@ func GetInterface() js.Value {
 func New() (DataTransfer, error) {
 	var dt DataTransfer
 
-	if dti := GetInterface(); !dti.IsNull() {
+	if dti := GetInterface(); !dti.IsUndefined() {
 		dt.BaseObject = dt.SetObject(dti.New())
 		return dt, nil
 	}
@@ -56,7 +56,7 @@ func New() (DataTransfer, error) {
 func NewFromJSObject(obj js.Value) (DataTransfer, error) {
 	var dt DataTransfer
 
-	if dti := GetInterface(); !dti.IsNull() {
+	if dti := GetInterface(); !dti.IsUndefined() {
 		if obj.InstanceOf(dti) {
 			dt.BaseObject = dt.SetObject(obj)
 			return dt, nil

@@ -20,7 +20,7 @@ type AnimationEvent struct {
 }
 
 type AnimationEventFrom interface {
-	AnimationEvent_() AnimationEvent
+	AnimationEvent() AnimationEvent
 }
 
 func (a AnimationEvent) AnimationEvent_() AnimationEvent {
@@ -34,8 +34,10 @@ func GetInterface() js.Value {
 
 		var err error
 		if animationeventinterface, err = js.Global().GetWithErr("AnimationEvent"); err != nil {
-			animationeventinterface = js.Null()
+			animationeventinterface = js.Undefined()
+
 		}
+
 		baseobject.Register(animationeventinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
 		})
@@ -47,7 +49,7 @@ func GetInterface() js.Value {
 func NewFromJSObject(obj js.Value) (AnimationEvent, error) {
 	var e AnimationEvent
 
-	if di := GetInterface(); !di.IsNull() {
+	if di := GetInterface(); !di.IsUndefined() {
 		if obj.InstanceOf(di) {
 			e.BaseObject = e.SetObject(obj)
 			return e, nil

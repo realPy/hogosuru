@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if errorinterface, err = js.Global().GetWithErr("Error"); err != nil {
-			errorinterface = js.Null()
+			errorinterface = js.Undefined()
 		}
 
 		baseobject.Register(errorinterface, func(v js.Value) (interface{}, error) {
@@ -53,7 +53,7 @@ func New(value interface{}) (JSError, error) {
 		obj = value.(error).Error()
 	}
 
-	if ei := GetInterface(); !ei.IsNull() {
+	if ei := GetInterface(); !ei.IsUndefined() {
 		e.BaseObject = e.SetObject(ei.New(obj))
 		return e, nil
 	}
@@ -63,7 +63,7 @@ func New(value interface{}) (JSError, error) {
 func NewFromJSObject(obj js.Value) (JSError, error) {
 	var e JSError
 	var err error
-	if ei := GetInterface(); !ei.IsNull() {
+	if ei := GetInterface(); !ei.IsUndefined() {
 		if obj.InstanceOf(ei) {
 			e.BaseObject = e.SetObject(obj)
 		} else {

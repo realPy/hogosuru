@@ -37,7 +37,7 @@ func IDBRequestGetInterface() js.Value {
 
 		var err error
 		if idbrequestinterface, err = js.Global().GetWithErr(classIDBRequest); err != nil {
-			idbrequestinterface = js.Null()
+			idbrequestinterface = js.Undefined()
 		}
 
 		baseobject.Register(idbrequestinterface, func(v js.Value) (interface{}, error) {
@@ -50,7 +50,7 @@ func IDBRequestGetInterface() js.Value {
 func IDBRequestNewFromJSObject(obj js.Value) (IDBRequest, error) {
 	var i IDBRequest
 	var err error
-	if ai := IDBRequestGetInterface(); !ai.IsNull() {
+	if ai := IDBRequestGetInterface(); !ai.IsUndefined() {
 		if obj.InstanceOf(ai) {
 			i.BaseObject = i.SetObject(obj)
 		} else {
@@ -93,7 +93,7 @@ func (i IDBRequest) getObjectAttribute(attribute string) (baseobject.BaseObject,
 	var bobj baseobject.BaseObject
 
 	if obj, err = i.JSObject().GetWithErr(attribute); err == nil {
-		if obj.IsNull() {
+		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject
 
 		} else {

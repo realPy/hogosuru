@@ -35,7 +35,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if htmltextareaelementinterface, err = js.Global().GetWithErr("HTMLTextAreaElement"); err != nil {
-			htmltextareaelementinterface = js.Null()
+			htmltextareaelementinterface = js.Undefined()
 		}
 
 		baseobject.Register(htmltextareaelementinterface, func(v js.Value) (interface{}, error) {
@@ -62,7 +62,7 @@ func NewFromElement(elem element.Element) (HtmlTextAreaElement, error) {
 	var h HtmlTextAreaElement
 	var err error
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if elem.BaseObject.JSObject().InstanceOf(hci) {
 			h.BaseObject = h.SetObject(elem.BaseObject.JSObject())
 
@@ -79,7 +79,7 @@ func NewFromElement(elem element.Element) (HtmlTextAreaElement, error) {
 func NewFromJSObject(obj js.Value) (HtmlTextAreaElement, error) {
 	var h HtmlTextAreaElement
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if obj.InstanceOf(hci) {
 
 			h.BaseObject = h.SetObject(obj)
@@ -151,7 +151,7 @@ func (h HtmlTextAreaElement) Form() (htmlformelement.HtmlFormElement, error) {
 	var f htmlformelement.HtmlFormElement
 	if obj, err = h.JSObject().GetWithErr("form"); err == nil {
 
-		if obj.IsNull() {
+		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject
 
 		} else {

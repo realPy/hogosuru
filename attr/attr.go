@@ -19,7 +19,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if attrinterface, err = js.Global().GetWithErr("Attr"); err != nil {
-			attrinterface = js.Null()
+			attrinterface = js.Undefined()
 		}
 		baseobject.Register(attrinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -45,7 +45,7 @@ func New() (Attr, error) {
 
 	var a Attr
 	var err error
-	if ai := GetInterface(); !ai.IsNull() {
+	if ai := GetInterface(); !ai.IsUndefined() {
 		a.BaseObject = a.SetObject(ai.New())
 
 	} else {
@@ -58,7 +58,7 @@ func New() (Attr, error) {
 func NewFromJSObject(obj js.Value) (Attr, error) {
 	var a Attr
 	var err error
-	if ai := GetInterface(); !ai.IsNull() {
+	if ai := GetInterface(); !ai.IsUndefined() {
 		if obj.InstanceOf(ai) {
 			a.BaseObject = a.SetObject(obj)
 

@@ -33,7 +33,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if htmllabelelementinterface, err = js.Global().GetWithErr("HTMLLabelElement"); err != nil {
-			htmllabelelementinterface = js.Null()
+			htmllabelelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmllabelelementinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -59,7 +59,7 @@ func NewFromElement(elem element.Element) (HtmlLabelElement, error) {
 	var h HtmlLabelElement
 	var err error
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if elem.BaseObject.JSObject().InstanceOf(hci) {
 			h.BaseObject = h.SetObject(elem.BaseObject.JSObject())
 
@@ -76,7 +76,7 @@ func NewFromElement(elem element.Element) (HtmlLabelElement, error) {
 func NewFromJSObject(obj js.Value) (HtmlLabelElement, error) {
 	var h HtmlLabelElement
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if obj.InstanceOf(hci) {
 
 			h.BaseObject = h.SetObject(obj)

@@ -19,7 +19,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if arrayinterface, err = js.Global().GetWithErr("Array"); err != nil {
-			arrayinterface = js.Null()
+			arrayinterface = js.Undefined()
 		}
 		baseobject.Register(arrayinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -46,7 +46,7 @@ func NewEmpty(size int) (Array, error) {
 
 	var a Array
 
-	if ai := GetInterface(); !ai.IsNull() {
+	if ai := GetInterface(); !ai.IsUndefined() {
 
 		a.BaseObject = a.SetObject(ai.New(js.ValueOf(size)))
 		return a, nil
@@ -61,7 +61,7 @@ func From(iterable interface{}, f ...func(interface{}) interface{}) (Array, erro
 	var opts []interface{}
 	var jsfunc js.Func
 
-	if ai := GetInterface(); !ai.IsNull() {
+	if ai := GetInterface(); !ai.IsUndefined() {
 
 		if objGo, ok := iterable.(baseobject.ObjectFrom); ok {
 			opts = append(opts, objGo.JSObject())
@@ -104,7 +104,7 @@ func New(values ...interface{}) (Array, error) {
 		}
 
 	}
-	if ai := GetInterface(); !ai.IsNull() {
+	if ai := GetInterface(); !ai.IsUndefined() {
 		a.BaseObject = a.SetObject(ai.New(arrayJS...))
 		return a, nil
 	}
@@ -115,7 +115,7 @@ func New(values ...interface{}) (Array, error) {
 func NewFromJSObject(obj js.Value) (Array, error) {
 	var a Array
 	var err error
-	if ai := GetInterface(); !ai.IsNull() {
+	if ai := GetInterface(); !ai.IsUndefined() {
 		if obj.InstanceOf(ai) {
 			a.BaseObject = a.SetObject(obj)
 			return a, nil
@@ -374,7 +374,7 @@ func IsArray(bobj baseobject.BaseObject) (bool, error) {
 	var result bool
 	var obj js.Value
 
-	if ai := GetInterface(); !ai.IsNull() {
+	if ai := GetInterface(); !ai.IsUndefined() {
 
 		if obj, err = ai.CallWithErr("isArray", bobj.JSObject()); err == nil {
 			if obj.Type() == js.TypeBoolean {

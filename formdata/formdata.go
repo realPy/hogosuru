@@ -34,7 +34,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if formadatainterface, err = js.Global().GetWithErr("FormData"); err != nil {
-			formadatainterface = js.Null()
+			formadatainterface = js.Undefined()
 		}
 
 	})
@@ -46,7 +46,7 @@ func New() (FormData, error) {
 
 	var formdata FormData
 
-	if fci := GetInterface(); !fci.IsNull() {
+	if fci := GetInterface(); !fci.IsUndefined() {
 		formdata.BaseObject = formdata.SetObject(fci.New())
 
 		return formdata, nil

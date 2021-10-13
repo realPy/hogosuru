@@ -22,7 +22,7 @@ func GetReadStreamInterface() js.Value {
 
 		var err error
 		if readablestreamdefaultinterface, err = js.Global().GetWithErr("ReadableStreamDefaultReader"); err != nil {
-			readablestreamdefaultinterface = js.Null()
+			readablestreamdefaultinterface = js.Undefined()
 		}
 	})
 
@@ -44,7 +44,7 @@ func (r ReadableStreamDefaultReader) ReadableStreamDefaultReader_() ReadableStre
 func NewReadableStreamDefaultReaderFromJSObject(obj js.Value) (ReadableStreamDefaultReader, error) {
 	var r ReadableStreamDefaultReader
 
-	if rsi := GetReadStreamInterface(); !rsi.IsNull() {
+	if rsi := GetReadStreamInterface(); !rsi.IsUndefined() {
 		if obj.InstanceOf(rsi) {
 			r.BaseObject = r.SetObject(obj)
 			return r, nil

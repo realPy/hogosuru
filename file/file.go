@@ -20,7 +20,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if fileinterface, err = js.Global().GetWithErr("File"); err != nil {
-			fileinterface = js.Null()
+			fileinterface = js.Undefined()
 		}
 		blob.GetInterface()
 		baseobject.Register(fileinterface, func(v js.Value) (interface{}, error) {
@@ -46,7 +46,7 @@ func (f File) File_() File {
 func NewFromJSObject(obj js.Value) (File, error) {
 	var f File
 
-	if fi := GetInterface(); !fi.IsNull() {
+	if fi := GetInterface(); !fi.IsUndefined() {
 		if obj.InstanceOf(fi) {
 			f.BaseObject = f.SetObject(obj)
 			return f, nil

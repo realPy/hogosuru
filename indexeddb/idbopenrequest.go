@@ -33,7 +33,7 @@ func IDBOpenDBRequestGetInterface() js.Value {
 
 		var err error
 		if idbopendbrequestinterface, err = js.Global().GetWithErr("IDBOpenDBRequest"); err != nil {
-			idbopendbrequestinterface = js.Null()
+			idbopendbrequestinterface = js.Undefined()
 		}
 
 		baseobject.Register(idbopendbrequestinterface, func(v js.Value) (interface{}, error) {
@@ -46,7 +46,7 @@ func IDBOpenDBRequestGetInterface() js.Value {
 func IDBOpenDBRequestNewFromJSObject(obj js.Value) (IDBOpenDBRequest, error) {
 	var i IDBOpenDBRequest
 	var err error
-	if ai := IDBOpenDBRequestGetInterface(); !ai.IsNull() {
+	if ai := IDBOpenDBRequestGetInterface(); !ai.IsUndefined() {
 		if obj.InstanceOf(ai) {
 			i.BaseObject = i.SetObject(obj)
 		} else {

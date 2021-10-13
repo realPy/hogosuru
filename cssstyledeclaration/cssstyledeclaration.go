@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if cssstyledeclarationinterface, err = js.Global().GetWithErr("CSSStyleDeclaration"); err != nil {
-			cssstyledeclarationinterface = js.Null()
+			cssstyledeclarationinterface = js.Undefined()
 		}
 		baseobject.Register(cssstyledeclarationinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -44,7 +44,7 @@ func GetInterface() js.Value {
 func NewFromJSObject(obj js.Value) (CSSStyleDeclaration, error) {
 	var c CSSStyleDeclaration
 	var err error
-	if dli := GetInterface(); !dli.IsNull() {
+	if dli := GetInterface(); !dli.IsUndefined() {
 		if obj.InstanceOf(dli) {
 			c.BaseObject = c.SetObject(obj)
 
@@ -63,7 +63,7 @@ func (c CSSStyleDeclaration) ParentRule() (cssrule.CSSRule, error) {
 	var cr cssrule.CSSRule
 	if obj, err = c.JSObject().GetWithErr("parentRule"); err == nil {
 
-		if obj.IsNull() {
+		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject
 
 		} else {

@@ -17,7 +17,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if locationinterface, err = js.Global().GetWithErr("Location"); err != nil {
-			locationinterface = js.Null()
+			locationinterface = js.Undefined()
 		}
 		baseobject.Register(locationinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -42,7 +42,7 @@ func (l Location) Location_() Location {
 func NewFromJSObject(obj js.Value) (Location, error) {
 	var l Location
 
-	if li := GetInterface(); !li.IsNull() {
+	if li := GetInterface(); !li.IsUndefined() {
 		if obj.InstanceOf(li) {
 			l.BaseObject = l.SetObject(obj)
 			return l, nil

@@ -21,7 +21,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if promiseinterface, err = js.Global().GetWithErr("Promise"); err != nil {
-			promiseinterface = js.Null()
+			promiseinterface = js.Undefined()
 		}
 		baseobject.Register(promiseinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -49,7 +49,7 @@ func New(handler func(resolvefunc, errfunc js.Value) (interface{}, error)) (Prom
 	var p Promise
 	var err error
 
-	if pi := GetInterface(); !pi.IsNull() {
+	if pi := GetInterface(); !pi.IsUndefined() {
 		fh := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
 			if result, err := handler(args[0], args[1]); err == nil {
@@ -118,7 +118,7 @@ func SetTimeout(handler func() (interface{}, error), ms int) (Promise, error) {
 func NewFromJSObject(obj js.Value) (Promise, error) {
 	var p Promise
 	var err error
-	if pi := GetInterface(); !pi.IsNull() {
+	if pi := GetInterface(); !pi.IsUndefined() {
 		if obj.InstanceOf(pi) {
 			p.BaseObject = p.SetObject(obj)
 
@@ -225,7 +225,7 @@ func iterablePromises(method string, values ...interface{}) (Promise, error) {
 	var arr array.Array
 
 	var arrayJS []interface{}
-	if pi := GetInterface(); !pi.IsNull() {
+	if pi := GetInterface(); !pi.IsUndefined() {
 		for _, value := range values {
 			if objGo, ok := value.(baseobject.ObjectFrom); ok {
 				arrayJS = append(arrayJS, objGo.JSObject())

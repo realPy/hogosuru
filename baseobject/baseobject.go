@@ -6,6 +6,7 @@ import (
 
 var registry map[string]func(js.Value) (interface{}, error)
 
+//Register Register a construct func for type Object given
 func Register(inter js.Value, contruct func(js.Value) (interface{}, error)) error {
 	var obj js.Value
 	var err error
@@ -20,6 +21,7 @@ func Register(inter js.Value, contruct func(js.Value) (interface{}, error)) erro
 	return err
 }
 
+//Discover Discover the Object Given and return a Hogosuru Class if the construct is registered
 func Discover(obj js.Value) (interface{}, error) {
 	var err error
 	var bobj interface{}
@@ -54,20 +56,23 @@ func Discover(obj js.Value) (interface{}, error) {
 	return bobj, err
 }
 
+//ObjectFrom Interface to check if Object is a BaseObject
 type ObjectFrom interface {
 	JSObject() js.Value
 	BaseObject_() BaseObject
 }
 
+//BaseObject_ Return the current BaseObject
 func (b BaseObject) BaseObject_() BaseObject {
 	return b
 }
 
+//String return the string representation of the given Object
 func String(object js.Value) string {
 	return object.String()
 }
 
-//String return the string javascript value represent the object
+//ToStringWithErr return the ToString representation of the given Object
 func ToStringWithErr(object js.Value) (string, error) {
 
 	if object.Type() == js.TypeObject {
@@ -84,10 +89,12 @@ func ToStringWithErr(object js.Value) (string, error) {
 
 /*------------------------------------------------------*/
 
+//BaseObject Base Object where all hogosuru herited from
 type BaseObject struct {
 	object *js.Value
 }
 
+//NewFromJSObject Build a BaseObject from a Js Value Object given
 func NewFromJSObject(obj js.Value) (BaseObject, error) {
 	var o BaseObject
 
@@ -96,15 +103,18 @@ func NewFromJSObject(obj js.Value) (BaseObject, error) {
 
 }
 
+//Empty check if the struct is an empty Struct or have a JS Value attached
 func (b BaseObject) Empty() bool {
 
 	return b.object == nil
 }
 
+//Discover Use Discover of this struct
 func (b BaseObject) Discover() (interface{}, error) {
 	return Discover(b.JSObject())
 }
 
+//SetObject Set the JS value Object to this struct
 func (b BaseObject) SetObject(object js.Value) BaseObject {
 
 	b.object = &object
@@ -112,19 +122,22 @@ func (b BaseObject) SetObject(object js.Value) BaseObject {
 	return b
 }
 
+//JSObject Give the JS Value Object attach to this struct
 func (b BaseObject) JSObject() js.Value {
 	if b.object != nil {
 		return *b.object
 	} else {
-		return js.Null()
+		return js.Undefined()
 	}
 
 }
 
+//String Get the current string representation of the js Value attached to this struct
 func (b BaseObject) String() string {
 	return String(*b.object)
 }
 
+//ToString Get the current toString representation of the js Value attached to this struct
 func (b BaseObject) ToString() (string, error) {
 	var value js.Value
 	var err error
@@ -140,14 +153,17 @@ func (b BaseObject) ToString() (string, error) {
 	return "", ErrNotAnObject
 }
 
+//Value Equivalent to String()
 func (b BaseObject) Value() string {
 	return b.object.String()
 }
 
+//Length Length of the JS.Value attached of this strict
 func (b BaseObject) Length() int {
 	return b.object.Length()
 }
 
+//Bind Bind
 func (b BaseObject) Bind(to BaseObject) (interface{}, error) {
 	var err error
 	var bindObj js.Value
@@ -161,6 +177,7 @@ func (b BaseObject) Bind(to BaseObject) (interface{}, error) {
 	return gobj, err
 }
 
+//Implement Check if the stuct implement a given name method
 func (b BaseObject) Implement(method string) (bool, error) {
 
 	var obj js.Value
@@ -205,21 +222,18 @@ func (b BaseObject) GetAttributeString(attribute string) (string, error) {
 
 	var err error
 	var obj js.Value
-	var valueStr = ""
+	var ret = ""
 
 	if obj, err = b.JSObject().GetWithErr(attribute); err == nil {
 
-		if obj.IsNull() {
-			err = ErrNotAnObject
-
+		if obj.Type() == js.TypeString {
+			ret = obj.String()
 		} else {
-
-			//valueStr, err = ToStringWithErr(obj)
-			valueStr = obj.String()
+			err = ErrObjectNotString
 		}
-	}
 
-	return valueStr, err
+	}
+	return ret, err
 
 }
 
@@ -231,7 +245,7 @@ func (b BaseObject) GetAttributeGlobal(attribute string) (interface{}, error) {
 
 	if obj, err = b.JSObject().GetWithErr(attribute); err == nil {
 
-		if obj.IsNull() {
+		if obj.IsUndefined() {
 			err = ErrNotAnObject
 
 		} else {
@@ -278,10 +292,10 @@ func (b BaseObject) GetAttributeInt(attribute string) (int, error) {
 	var result int
 
 	if obj, err = b.JSObject().GetWithErr(attribute); err == nil {
-		if obj.Type() == js.TypeBoolean {
+		if obj.Type() == js.TypeNumber {
 			result = obj.Int()
 		} else {
-			err = ErrObjectNotBool
+			err = ErrObjectNotNumber
 		}
 	}
 
@@ -302,7 +316,7 @@ func (b BaseObject) GetAttributeDouble(attribute string) (float64, error) {
 		if obj.Type() == js.TypeNumber {
 			result = obj.Float()
 		} else {
-			err = ErrObjectNotNumber
+			err = ErrObjectNotDouble
 		}
 	}
 
@@ -314,6 +328,7 @@ func (b BaseObject) SetAttributeDouble(attribute string, value float64) error {
 	return b.JSObject().SetWithErr(attribute, js.ValueOf(value))
 }
 
+//CallInt64 Call method given and return a 64bit int
 func (b BaseObject) CallInt64(method string) (int64, error) {
 
 	var err error
@@ -330,6 +345,7 @@ func (b BaseObject) CallInt64(method string) (int64, error) {
 	return ret, err
 }
 
+//CallInt64 Call method given and return a bool int
 func (b BaseObject) CallBool(method string) (bool, error) {
 	var err error
 	var obj js.Value

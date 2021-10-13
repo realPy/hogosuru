@@ -19,7 +19,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if domrectinterface, err = js.Global().GetWithErr("DOMRect"); err != nil {
-			domrectinterface = js.Null()
+			domrectinterface = js.Undefined()
 		}
 		baseobject.Register(domrectinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -46,7 +46,7 @@ func New() (DOMRect, error) {
 
 	var d DOMRect
 
-	if di := GetInterface(); !di.IsNull() {
+	if di := GetInterface(); !di.IsUndefined() {
 
 		d.BaseObject = d.SetObject(di.New())
 		return d, nil
@@ -57,7 +57,7 @@ func New() (DOMRect, error) {
 func NewFromJSObject(obj js.Value) (DOMRect, error) {
 	var d DOMRect
 	var err error
-	if di := GetInterface(); !di.IsNull() {
+	if di := GetInterface(); !di.IsUndefined() {
 		if obj.InstanceOf(di) {
 			d.BaseObject = d.SetObject(obj)
 

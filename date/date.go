@@ -18,7 +18,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if dateinterface, err = js.Global().GetWithErr("Date"); err != nil {
-			dateinterface = js.Null()
+			dateinterface = js.Undefined()
 		}
 		baseobject.Register(dateinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -54,7 +54,7 @@ func New(values ...interface{}) (Date, error) {
 		}
 
 	}
-	if di := GetInterface(); !di.IsNull() {
+	if di := GetInterface(); !di.IsUndefined() {
 
 		d.BaseObject = d.SetObject(di.New(arrayJS...))
 
@@ -69,7 +69,7 @@ func NewFromJSObject(obj js.Value) (Date, error) {
 	var d Date
 	var err error
 
-	if di := GetInterface(); !di.IsNull() {
+	if di := GetInterface(); !di.IsUndefined() {
 		if obj.InstanceOf(di) {
 			d.BaseObject = d.SetObject(obj)
 		} else {
@@ -267,7 +267,7 @@ func Parse(value string) (int64, error) {
 	var err error
 	var obj js.Value
 	var ret int64
-	if di := GetInterface(); !di.IsNull() {
+	if di := GetInterface(); !di.IsUndefined() {
 
 		if obj, err = di.CallWithErr("parse", js.ValueOf(value)); err == nil {
 			if obj.Type() == js.TypeNumber {
@@ -289,7 +289,7 @@ func Now() (int64, error) {
 	var err error
 	var obj js.Value
 	var ret int64
-	if di := GetInterface(); !di.IsNull() {
+	if di := GetInterface(); !di.IsUndefined() {
 
 		if obj, err = di.CallWithErr("now"); err == nil {
 			if obj.Type() == js.TypeNumber {
@@ -365,7 +365,7 @@ func UTC(values ...interface{}) (int64, error) {
 
 	}
 
-	if di := GetInterface(); !di.IsNull() {
+	if di := GetInterface(); !di.IsUndefined() {
 
 		if obj, err = di.CallWithErr("UTC", arrayJS...); err == nil {
 			if obj.Type() == js.TypeNumber {

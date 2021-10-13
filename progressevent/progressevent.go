@@ -21,7 +21,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if progresseeventinterface, err = js.Global().GetWithErr("ProgressEvent"); err != nil {
-			progresseeventinterface = js.Null()
+			progresseeventinterface = js.Undefined()
 		}
 		baseobject.Register(progresseeventinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -47,7 +47,7 @@ func New() (ProgressEvent, error) {
 
 	var p ProgressEvent
 
-	if pei := GetInterface(); !pei.IsNull() {
+	if pei := GetInterface(); !pei.IsUndefined() {
 		p.BaseObject = p.SetObject(pei.New())
 
 		return p, nil
@@ -58,7 +58,7 @@ func New() (ProgressEvent, error) {
 func NewFromJSObject(obj js.Value) (ProgressEvent, error) {
 	var p ProgressEvent
 
-	if pei := GetInterface(); !pei.IsNull() {
+	if pei := GetInterface(); !pei.IsUndefined() {
 		if obj.InstanceOf(pei) {
 			p.BaseObject = p.SetObject(obj)
 

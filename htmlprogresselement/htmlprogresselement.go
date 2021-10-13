@@ -33,7 +33,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if htmlprogresselementinterface, err = js.Global().GetWithErr("HTMLProgressElement"); err != nil {
-			htmlprogresselementinterface = js.Null()
+			htmlprogresselementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlprogresselementinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -59,7 +59,7 @@ func NewFromElement(elem element.Element) (HtmlProgressElement, error) {
 	var h HtmlProgressElement
 	var err error
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if elem.BaseObject.JSObject().InstanceOf(hci) {
 			h.BaseObject = h.SetObject(elem.BaseObject.JSObject())
 
@@ -76,7 +76,7 @@ func NewFromElement(elem element.Element) (HtmlProgressElement, error) {
 func NewFromJSObject(obj js.Value) (HtmlProgressElement, error) {
 	var h HtmlProgressElement
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if obj.InstanceOf(hci) {
 
 			h.BaseObject = h.SetObject(obj)

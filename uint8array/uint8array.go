@@ -34,7 +34,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if uint8arrayinterface, err = js.Global().GetWithErr("Uint8Array"); err != nil {
-			uint8arrayinterface = js.Null()
+			uint8arrayinterface = js.Undefined()
 		}
 
 	})
@@ -45,7 +45,7 @@ func GetInterface() js.Value {
 func NewFromArrayBuffer(a arraybuffer.ArrayBuffer) (Uint8Array, error) {
 	var arr Uint8Array
 	var err error
-	if ai := GetInterface(); !ai.IsNull() {
+	if ai := GetInterface(); !ai.IsUndefined() {
 		uint8arrayObject := GetInterface().New(a.JSObject())
 		arr, err = NewFromJSObject(uint8arrayObject)
 
@@ -60,7 +60,7 @@ func NewFromArrayBuffer(a arraybuffer.ArrayBuffer) (Uint8Array, error) {
 func NewFromJSObject(obj js.Value) (Uint8Array, error) {
 	var u Uint8Array
 
-	if ui := GetInterface(); !ui.IsNull() {
+	if ui := GetInterface(); !ui.IsUndefined() {
 		if obj.InstanceOf(ui) {
 			u.BaseObject = u.SetObject(obj)
 			return u, nil
