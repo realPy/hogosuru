@@ -9,4 +9,4 @@ go:
 script:
 
 - cp hogosuru/hogosuru.go $(go env GOROOT)/src/syscall/js/
-- GOOS=js GOARCH=wasm go test -v
+- GOOS=js GOARCH=wasm go test -v ./...
