@@ -635,6 +635,127 @@ func TestMap(t *testing.T) {
 		t.Errorf(err.Error())
 	}
 }
+
+func TestPop(t *testing.T) {
+	var a Array
+	var err error
+	var goArray []interface{} = []interface{}{"hello"}
+	if a, err = New(goArray...); err == nil {
+
+		if err := a.Pop(); err == nil {
+			if l, _ := a.Length(); l != 0 {
+
+				t.Errorf("Array must be empty now")
+
+			}
+		} else {
+			t.Errorf(err.Error())
+		}
+	} else {
+		t.Errorf(err.Error())
+	}
+
+}
+
+func TestPush(t *testing.T) {
+	var a Array
+	var err error
+	var goArray []interface{} = []interface{}{"hello"}
+	if a, err = New(goArray...); err == nil {
+
+		if length, err := a.Push("world"); err == nil {
+			if length == 2 {
+				if str, err := a.ToString(); err == nil {
+					if str != "hello,world" {
+						t.Errorf("Mistmatch %s", str)
+					}
+				} else {
+					t.Errorf(err.Error())
+				}
+			} else {
+				t.Errorf("Index must be 2 has %d", length)
+			}
+		} else {
+			t.Errorf(err.Error())
+		}
+	} else {
+		t.Errorf(err.Error())
+	}
+
+}
+
+func TestReduce(t *testing.T) {
+
+	var a Array
+	var err error
+	var goArray []interface{} = []interface{}{1, 2, 3, 4}
+	if a, err = New(goArray...); err == nil {
+
+		if value, err := a.Reduce(func(accumulateur, value interface{}, opts ...interface{}) interface{} {
+			val := accumulateur.(int) + value.(int)
+
+			return val
+		}); err == nil {
+			if value.(int) != 10 {
+				t.Errorf("Must be equal 10 has %d", value.(int))
+			}
+		} else {
+			t.Errorf(err.Error())
+		}
+
+	} else {
+		t.Errorf(err.Error())
+	}
+}
+
+func TestReduceRight(t *testing.T) {
+
+	var a Array
+	var err error
+	var goArray []interface{} = []interface{}{9, 6, 8, 40}
+	if a, err = New(goArray...); err == nil {
+
+		if value, err := a.ReduceRight(func(accumulateur, value interface{}, opts ...interface{}) interface{} {
+			val := accumulateur.(int) - value.(int)
+
+			return val
+		}); err == nil {
+			if value.(int) != 17 {
+				t.Errorf("Must be equal 10 has %d", value.(int))
+			}
+		} else {
+			t.Errorf(err.Error())
+		}
+
+	} else {
+		t.Errorf(err.Error())
+	}
+}
+
+func TestReverse(t *testing.T) {
+
+	var a Array
+	var err error
+	var goArray []interface{} = []interface{}{9, 6, 8, 40}
+	if a, err = New(goArray...); err == nil {
+
+		if err := a.Reverse(); err == nil {
+			if str, err := a.ToString(); err == nil {
+				if str != "40,8,6,9" {
+					t.Errorf("Mistmatch %s", str)
+				}
+			} else {
+				t.Errorf(err.Error())
+			}
+
+		} else {
+			t.Errorf(err.Error())
+		}
+
+	} else {
+		t.Errorf(err.Error())
+	}
+}
 func TestMain(m *testing.M) {
 	m.Run()
 }

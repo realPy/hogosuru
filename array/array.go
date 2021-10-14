@@ -503,7 +503,7 @@ func (a Array) Push(i interface{}) (int, error) {
 
 }
 
-func (a Array) Reduce(f func(accumulateur interface{}, value interface{}, opts ...interface{}) interface{}, initialValue interface{}) (interface{}, error) {
+func (a Array) Reduce(f func(accumulateur interface{}, value interface{}, opts ...interface{}) interface{}, initialValue ...interface{}) (interface{}, error) {
 	var err error
 	var obj js.Value
 	var newValue interface{}
@@ -520,8 +520,8 @@ func (a Array) Reduce(f func(accumulateur interface{}, value interface{}, opts .
 	})
 
 	argCall = append(argCall, jsfunc)
-	if initialValue != nil {
-		argCall = append(argCall, js.ValueOf(initialValue))
+	if len(initialValue) > 0 {
+		argCall = append(argCall, js.ValueOf(initialValue[0]))
 	}
 	if obj, err = a.JSObject().CallWithErr("reduce", argCall...); err == nil {
 		newValue = baseobject.GoValue(obj)
@@ -530,7 +530,7 @@ func (a Array) Reduce(f func(accumulateur interface{}, value interface{}, opts .
 	return newValue, err
 }
 
-func (a Array) ReduceRight(f func(accumulateur interface{}, value interface{}, opts ...interface{}) interface{}, initialValue interface{}) (interface{}, error) {
+func (a Array) ReduceRight(f func(accumulateur interface{}, value interface{}, opts ...interface{}) interface{}, initialValue ...interface{}) (interface{}, error) {
 	var err error
 	var obj js.Value
 	var newValue interface{}
@@ -547,8 +547,8 @@ func (a Array) ReduceRight(f func(accumulateur interface{}, value interface{}, o
 	})
 
 	argCall = append(argCall, jsfunc)
-	if initialValue != nil {
-		argCall = append(argCall, js.ValueOf(initialValue))
+	if len(initialValue) > 0 {
+		argCall = append(argCall, js.ValueOf(initialValue[0]))
 	}
 	if obj, err = a.JSObject().CallWithErr("reduceRight", argCall...); err == nil {
 		newValue = baseobject.GoValue(obj)
