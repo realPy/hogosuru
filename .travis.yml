@@ -7,5 +7,6 @@ go:
 - 1.16.x
 
 script:
-- cp hogosuru/hogosuru.go /usr/local/go/src/syscall/js/
+
+- cp hogosuru/hogosuru.go $(go env GOROOT)/src/syscall/js/
 - GOOS=js GOARCH=wasm go test -v
