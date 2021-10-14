@@ -6,6 +6,14 @@ env:
 go:
 - 1.16.x
 
+addons:
+  chrome: stable
+
+install:
+- go get github.com/agnivade/wasmbrowsertest
+- mv $GOPATH/bin/wasmbrowsertest $GOPATH/bin/go_js_wasm_exec
+- export PATH=$GOPATH/bin:$PATH
+
 script:
 
 - cp hogosuru/hogosuru.go $(go env GOROOT)/src/syscall/js/
