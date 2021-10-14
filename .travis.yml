@@ -7,4 +7,4 @@ go:
 - 1.16.x
 
 script:
-- go test -v
+- GOOS=js GOARCH=wasm go test -v
