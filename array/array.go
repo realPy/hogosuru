@@ -89,7 +89,24 @@ func From(iterable interface{}, f ...func(interface{}) interface{}) (Array, erro
 }
 
 func Of(values ...interface{}) (Array, error) {
-	return New(values...)
+
+	var a Array
+	var arrayJS []interface{}
+
+	for _, value := range values {
+		if objGo, ok := value.(baseobject.ObjectFrom); ok {
+			arrayJS = append(arrayJS, objGo.JSObject())
+		} else {
+			arrayJS = append(arrayJS, js.ValueOf(value))
+		}
+
+	}
+	if ai := GetInterface(); !ai.IsUndefined() {
+		a.BaseObject = a.SetObject(ai.Call("of", arrayJS...))
+		return a, nil
+	}
+	return a, ErrNotImplemented
+
 }
 
 func New(values ...interface{}) (Array, error) {
@@ -299,7 +316,7 @@ func (a Array) FlatMap(f func(interface{}, int) interface{}) (Array, error) {
 
 	jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		b := f(baseobject.GoValue(args[0]), args[1].Int())
-		return js.ValueOf(b)
+		return b
 	})
 
 	if obj, err = a.JSObject().CallWithErr("flatMap", jsfunc); err == nil {
@@ -353,7 +370,6 @@ func (a Array) IndexOf(i interface{}) (int, error) {
 	var indexCheck js.Value
 
 	if objGo, ok := i.(baseobject.ObjectFrom); ok {
-
 		indexCheck = objGo.JSObject()
 	} else {
 		indexCheck = js.ValueOf(i)
@@ -665,4 +681,24 @@ func (a Array) Values() (iterator.Iterator, error) {
 	}
 
 	return iter, err
+}
+
+func (a Array) SetValue(index int, i interface{}) error {
+
+	var obj interface{}
+	if objGo, ok := i.(baseobject.ObjectFrom); ok {
+
+		obj = objGo.JSObject()
+	} else {
+		obj = i
+	}
+
+	a.JSObject().SetIndex(index, obj)
+	return nil
+}
+
+func (a Array) GetValue(index int) (interface{}, error) {
+
+	obj := a.JSObject().Index(index)
+	return baseobject.GoValue(obj), nil
 }
