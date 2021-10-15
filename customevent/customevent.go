@@ -33,7 +33,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if customeventinterface, err = js.Global().GetWithErr("CustomEvent"); err != nil {
-			customeventinterface = js.Null()
+			customeventinterface = js.Undefined()
 		}
 
 		baseobject.Register(customeventinterface, func(v js.Value) (interface{}, error) {
@@ -56,7 +56,7 @@ func New(message, detail interface{}) (CustomEvent, error) {
 		jsObj = js.ValueOf(detail)
 	}
 
-	if eventi := GetInterface(); !eventi.IsNull() {
+	if eventi := GetInterface(); !eventi.IsUndefined() {
 		event.BaseObject = event.SetObject(eventi.New(js.ValueOf(message), js.ValueOf(map[string]interface{}{"detail": jsObj})))
 		return event, nil
 	}
@@ -67,7 +67,7 @@ func NewFromJSObject(obj js.Value) (CustomEvent, error) {
 	var c CustomEvent
 	var err error
 
-	if bi := GetInterface(); !bi.IsNull() {
+	if bi := GetInterface(); !bi.IsUndefined() {
 		if obj.InstanceOf(bi) {
 			c.BaseObject = c.SetObject(obj)
 

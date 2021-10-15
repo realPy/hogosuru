@@ -19,7 +19,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if arrayinterface, err = js.Global().GetWithErr("Array"); err != nil {
-			arrayinterface = js.Null()
+			arrayinterface = js.Undefined()
 		}
 		baseobject.Register(arrayinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -46,7 +46,7 @@ func NewEmpty(size int) (Array, error) {
 
 	var a Array
 
-	if ai := GetInterface(); !ai.IsNull() {
+	if ai := GetInterface(); !ai.IsUndefined() {
 
 		a.BaseObject = a.SetObject(ai.New(js.ValueOf(size)))
 		return a, nil
@@ -61,7 +61,7 @@ func From(iterable interface{}, f ...func(interface{}) interface{}) (Array, erro
 	var opts []interface{}
 	var jsfunc js.Func
 
-	if ai := GetInterface(); !ai.IsNull() {
+	if ai := GetInterface(); !ai.IsUndefined() {
 
 		if objGo, ok := iterable.(baseobject.ObjectFrom); ok {
 			opts = append(opts, objGo.JSObject())
@@ -89,7 +89,24 @@ func From(iterable interface{}, f ...func(interface{}) interface{}) (Array, erro
 }
 
 func Of(values ...interface{}) (Array, error) {
-	return New(values...)
+
+	var a Array
+	var arrayJS []interface{}
+
+	for _, value := range values {
+		if objGo, ok := value.(baseobject.ObjectFrom); ok {
+			arrayJS = append(arrayJS, objGo.JSObject())
+		} else {
+			arrayJS = append(arrayJS, js.ValueOf(value))
+		}
+
+	}
+	if ai := GetInterface(); !ai.IsUndefined() {
+		a.BaseObject = a.SetObject(ai.Call("of", arrayJS...))
+		return a, nil
+	}
+	return a, ErrNotImplemented
+
 }
 
 func New(values ...interface{}) (Array, error) {
@@ -104,7 +121,7 @@ func New(values ...interface{}) (Array, error) {
 		}
 
 	}
-	if ai := GetInterface(); !ai.IsNull() {
+	if ai := GetInterface(); !ai.IsUndefined() {
 		a.BaseObject = a.SetObject(ai.New(arrayJS...))
 		return a, nil
 	}
@@ -115,7 +132,7 @@ func New(values ...interface{}) (Array, error) {
 func NewFromJSObject(obj js.Value) (Array, error) {
 	var a Array
 	var err error
-	if ai := GetInterface(); !ai.IsNull() {
+	if ai := GetInterface(); !ai.IsUndefined() {
 		if obj.InstanceOf(ai) {
 			a.BaseObject = a.SetObject(obj)
 			return a, nil
@@ -299,7 +316,7 @@ func (a Array) FlatMap(f func(interface{}, int) interface{}) (Array, error) {
 
 	jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		b := f(baseobject.GoValue(args[0]), args[1].Int())
-		return js.ValueOf(b)
+		return b
 	})
 
 	if obj, err = a.JSObject().CallWithErr("flatMap", jsfunc); err == nil {
@@ -353,7 +370,6 @@ func (a Array) IndexOf(i interface{}) (int, error) {
 	var indexCheck js.Value
 
 	if objGo, ok := i.(baseobject.ObjectFrom); ok {
-
 		indexCheck = objGo.JSObject()
 	} else {
 		indexCheck = js.ValueOf(i)
@@ -374,7 +390,7 @@ func IsArray(bobj baseobject.BaseObject) (bool, error) {
 	var result bool
 	var obj js.Value
 
-	if ai := GetInterface(); !ai.IsNull() {
+	if ai := GetInterface(); !ai.IsUndefined() {
 
 		if obj, err = ai.CallWithErr("isArray", bobj.JSObject()); err == nil {
 			if obj.Type() == js.TypeBoolean {
@@ -487,7 +503,7 @@ func (a Array) Push(i interface{}) (int, error) {
 
 }
 
-func (a Array) Reduce(f func(accumulateur interface{}, value interface{}, opts ...interface{}) interface{}, initialValue interface{}) (interface{}, error) {
+func (a Array) Reduce(f func(accumulateur interface{}, value interface{}, opts ...interface{}) interface{}, initialValue ...interface{}) (interface{}, error) {
 	var err error
 	var obj js.Value
 	var newValue interface{}
@@ -504,8 +520,8 @@ func (a Array) Reduce(f func(accumulateur interface{}, value interface{}, opts .
 	})
 
 	argCall = append(argCall, jsfunc)
-	if initialValue != nil {
-		argCall = append(argCall, js.ValueOf(initialValue))
+	if len(initialValue) > 0 {
+		argCall = append(argCall, js.ValueOf(initialValue[0]))
 	}
 	if obj, err = a.JSObject().CallWithErr("reduce", argCall...); err == nil {
 		newValue = baseobject.GoValue(obj)
@@ -514,7 +530,7 @@ func (a Array) Reduce(f func(accumulateur interface{}, value interface{}, opts .
 	return newValue, err
 }
 
-func (a Array) ReduceRight(f func(accumulateur interface{}, value interface{}, opts ...interface{}) interface{}, initialValue interface{}) (interface{}, error) {
+func (a Array) ReduceRight(f func(accumulateur interface{}, value interface{}, opts ...interface{}) interface{}, initialValue ...interface{}) (interface{}, error) {
 	var err error
 	var obj js.Value
 	var newValue interface{}
@@ -531,8 +547,8 @@ func (a Array) ReduceRight(f func(accumulateur interface{}, value interface{}, o
 	})
 
 	argCall = append(argCall, jsfunc)
-	if initialValue != nil {
-		argCall = append(argCall, js.ValueOf(initialValue))
+	if len(initialValue) > 0 {
+		argCall = append(argCall, js.ValueOf(initialValue[0]))
 	}
 	if obj, err = a.JSObject().CallWithErr("reduceRight", argCall...); err == nil {
 		newValue = baseobject.GoValue(obj)
@@ -665,4 +681,24 @@ func (a Array) Values() (iterator.Iterator, error) {
 	}
 
 	return iter, err
+}
+
+func (a Array) SetValue(index int, i interface{}) error {
+
+	var obj interface{}
+	if objGo, ok := i.(baseobject.ObjectFrom); ok {
+
+		obj = objGo.JSObject()
+	} else {
+		obj = i
+	}
+
+	a.JSObject().SetIndex(index, obj)
+	return nil
+}
+
+func (a Array) GetValue(index int) (interface{}, error) {
+
+	obj := a.JSObject().Index(index)
+	return baseobject.GoValue(obj), nil
 }

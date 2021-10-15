@@ -36,7 +36,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if bcinterface, err = js.Global().GetWithErr("BroadcastChannel"); err != nil {
-			bcinterface = js.Null()
+			bcinterface = js.Undefined()
 		}
 
 		messageevent.GetInterface()
@@ -50,7 +50,7 @@ func GetInterface() js.Value {
 func New(channelname string) (BroadcastChannel, error) {
 	var channel BroadcastChannel
 	var err error
-	if bci := GetInterface(); !bci.IsNull() {
+	if bci := GetInterface(); !bci.IsUndefined() {
 		channel.BaseObject = channel.SetObject(bci.New(js.ValueOf(channelname)))
 	} else {
 		err = ErrNotImplemented

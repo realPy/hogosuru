@@ -201,7 +201,7 @@ func (d Document) GetElementsByClassName(classname string) (htmlcollection.HtmlC
 
 	if obj, err = d.JSObject().CallWithErr("getElementsByClassName", js.ValueOf(classname)); err == nil {
 
-		if !obj.IsNull() {
+		if !obj.IsUndefined() {
 			collection, err = htmlcollection.NewFromJSObject(obj)
 		} else {
 			err = ErrElementsNotFound
@@ -220,7 +220,7 @@ func (d Document) GetElementsByTagName(tagname string) (nodelist.NodeList, error
 
 	if obj, err = d.JSObject().CallWithErr("getElementsByTagName", js.ValueOf(tagname)); err == nil {
 
-		if !obj.IsNull() {
+		if !obj.IsUndefined() {
 			nlist, err = nodelist.NewFromJSObject(obj)
 		} else {
 			err = ErrElementsNotFound
@@ -238,7 +238,7 @@ func (d Document) getElementsByTagNameNS(namespace, tagname string) (nodelist.No
 
 	if obj, err = d.JSObject().CallWithErr("getElementsByTagNameNS", js.ValueOf(namespace), js.ValueOf(tagname)); err == nil {
 
-		if !obj.IsNull() {
+		if !obj.IsUndefined() {
 			nlist, err = nodelist.NewFromJSObject(obj)
 		} else {
 			err = ErrElementsNotFound
@@ -272,7 +272,7 @@ func (d Document) GetElementById(id string) (element.Element, error) {
 	var elem element.Element
 
 	if obj, err = d.JSObject().CallWithErr("getElementById", js.ValueOf(id)); err == nil {
-		if !obj.IsNull() {
+		if !obj.IsUndefined() {
 			elem, err = element.NewFromJSObject(obj)
 		} else {
 			err = ErrElementNotFound
@@ -290,7 +290,7 @@ func (d Document) QuerySelector(selector string) (element.Element, error) {
 	var elem element.Element
 
 	if obj, err = d.JSObject().CallWithErr("querySelector", js.ValueOf(selector)); err == nil {
-		if !obj.IsNull() {
+		if !obj.IsUndefined() {
 			elem, err = element.NewFromJSObject(obj)
 		} else {
 			err = ErrElementNotFound
@@ -306,7 +306,7 @@ func (d Document) QuerySelectorAll(selector string) (nodelist.NodeList, error) {
 	var nlist nodelist.NodeList
 
 	if obj, err = d.JSObject().CallWithErr("querySelectorAll", js.ValueOf(selector)); err == nil {
-		if !obj.IsNull() {
+		if !obj.IsUndefined() {
 			nlist, err = nodelist.NewFromJSObject(obj)
 		} else {
 			err = ErrElementsNotFound

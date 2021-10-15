@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if stylesheetinterface, err = js.Global().GetWithErr("StyleSheet"); err != nil {
-			stylesheetinterface = js.Null()
+			stylesheetinterface = js.Undefined()
 		}
 		baseobject.Register(stylesheetinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -44,7 +44,7 @@ func GetInterface() js.Value {
 func NewFromJSObject(obj js.Value) (StyleSheet, error) {
 	var s StyleSheet
 	var err error
-	if dli := GetInterface(); !dli.IsNull() {
+	if dli := GetInterface(); !dli.IsUndefined() {
 		if obj.InstanceOf(dli) {
 			s.BaseObject = s.SetObject(obj)
 
@@ -75,7 +75,7 @@ func (s StyleSheet) OwnerNode() (node.Node, error) {
 	var n node.Node
 	if obj, err = s.JSObject().GetWithErr("ownerNode"); err == nil {
 
-		if obj.IsNull() {
+		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject
 
 		} else {
@@ -91,7 +91,7 @@ func (s StyleSheet) ParentStyleSheet() (StyleSheet, error) {
 	var ps StyleSheet
 	if obj, err = s.JSObject().GetWithErr("parentStyleSheet"); err == nil {
 
-		if obj.IsNull() {
+		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject
 
 		} else {

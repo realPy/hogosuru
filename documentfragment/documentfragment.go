@@ -33,7 +33,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if documentfragementinterface, err = js.Global().GetWithErr("DocumentFragment"); err != nil {
-			documentfragementinterface = js.Null()
+			documentfragementinterface = js.Undefined()
 		}
 		baseobject.Register(documentfragementinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -47,7 +47,7 @@ func New() (DocumentFragment, error) {
 
 	var d DocumentFragment
 	var err error
-	if di := GetInterface(); !di.IsNull() {
+	if di := GetInterface(); !di.IsUndefined() {
 		d.BaseObject = d.SetObject(di.New())
 
 	} else {
@@ -61,7 +61,7 @@ func New() (DocumentFragment, error) {
 func NewFromJSObject(obj js.Value) (DocumentFragment, error) {
 	var d DocumentFragment
 
-	if dci := GetInterface(); !dci.IsNull() {
+	if dci := GetInterface(); !dci.IsUndefined() {
 		if obj.InstanceOf(dci) {
 
 			d.BaseObject = d.SetObject(obj)
@@ -95,7 +95,7 @@ func (e DocumentFragment) getAttributeElement(attribute string) (element.Element
 
 	if nodeObject, err = e.JSObject().GetWithErr(attribute); err == nil {
 
-		if nodeObject.IsNull() {
+		if nodeObject.IsUndefined() {
 			err = element.ErrElementNoChilds
 
 		} else {

@@ -33,7 +33,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if htmlcollectioninterface, err = js.Global().GetWithErr("HTMLCollection"); err != nil {
-			htmlcollectioninterface = js.Null()
+			htmlcollectioninterface = js.Undefined()
 		}
 		baseobject.Register(htmlcollectioninterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -46,7 +46,7 @@ func GetInterface() js.Value {
 func NewFromJSObject(obj js.Value) (HtmlCollection, error) {
 	var h HtmlCollection
 	var err error
-	if fli := GetInterface(); !fli.IsNull() {
+	if fli := GetInterface(); !fli.IsUndefined() {
 		if obj.InstanceOf(fli) {
 			h.BaseObject = h.SetObject(obj)
 		}

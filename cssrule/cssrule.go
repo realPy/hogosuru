@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if cssruleinterface, err = js.Global().GetWithErr("CSSRule"); err != nil {
-			cssruleinterface = js.Null()
+			cssruleinterface = js.Undefined()
 		}
 		baseobject.Register(cssruleinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -44,7 +44,7 @@ func GetInterface() js.Value {
 func NewFromJSObject(obj js.Value) (CSSRule, error) {
 	var c CSSRule
 	var err error
-	if dli := GetInterface(); !dli.IsNull() {
+	if dli := GetInterface(); !dli.IsUndefined() {
 		if obj.InstanceOf(dli) {
 			c.BaseObject = c.SetObject(obj)
 
@@ -72,7 +72,7 @@ func (c CSSRule) ParentRule() (CSSRule, error) {
 	var cr CSSRule
 	if obj, err = c.JSObject().GetWithErr("parentRule"); err == nil {
 
-		if obj.IsNull() {
+		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject
 
 		} else {
@@ -88,7 +88,7 @@ func (c CSSRule) ParentStyleSheet() (stylesheet.StyleSheet, error) {
 	var s stylesheet.StyleSheet
 	if obj, err = c.JSObject().GetWithErr("parentStyleSheet"); err == nil {
 
-		if obj.IsNull() {
+		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject
 
 		} else {

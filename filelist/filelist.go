@@ -34,7 +34,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if filelistinterface, err = js.Global().GetWithErr("FileList"); err != nil {
-			filelistinterface = js.Null()
+			filelistinterface = js.Undefined()
 		}
 		baseobject.Register(filelistinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -47,7 +47,7 @@ func GetInterface() js.Value {
 func NewFromJSObject(obj js.Value) (FileList, error) {
 	var f FileList
 
-	if fli := GetInterface(); !fli.IsNull() {
+	if fli := GetInterface(); !fli.IsUndefined() {
 		if obj.InstanceOf(fli) {
 			f.BaseObject = f.SetObject(obj)
 			return f, nil

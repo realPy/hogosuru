@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if htmldivelementinterface, err = js.Global().GetWithErr("HTMLDivElement"); err != nil {
-			htmldivelementinterface = js.Null()
+			htmldivelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmldivelementinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -58,7 +58,7 @@ func NewFromElement(elem element.Element) (HtmlDivElement, error) {
 	var h HtmlDivElement
 	var err error
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if elem.BaseObject.JSObject().InstanceOf(hci) {
 			h.BaseObject = h.SetObject(elem.BaseObject.JSObject())
 
@@ -75,7 +75,7 @@ func NewFromElement(elem element.Element) (HtmlDivElement, error) {
 func NewFromJSObject(obj js.Value) (HtmlDivElement, error) {
 	var h HtmlDivElement
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if obj.InstanceOf(hci) {
 
 			h.BaseObject = h.SetObject(obj)

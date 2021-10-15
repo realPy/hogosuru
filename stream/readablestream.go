@@ -19,7 +19,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if readablestreaminterface, err = js.Global().GetWithErr("ReadableStream"); err != nil {
-			readablestreaminterface = js.Null()
+			readablestreaminterface = js.Undefined()
 		}
 	})
 
@@ -45,7 +45,7 @@ func (r ReadableStream) Locked() (bool, error) {
 func NewFromJSObject(obj js.Value) (ReadableStream, error) {
 	var r ReadableStream
 
-	if rsi := GetInterface(); !rsi.IsNull() {
+	if rsi := GetInterface(); !rsi.IsUndefined() {
 		if obj.InstanceOf(rsi) {
 			r.BaseObject = r.SetObject(obj)
 			return r, nil

@@ -34,7 +34,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if headersinterface, err = js.Global().GetWithErr("Headers"); err != nil {
-			headersinterface = js.Null()
+			headersinterface = js.Undefined()
 		}
 
 		baseobject.Register(headersinterface, func(v js.Value) (interface{}, error) {
@@ -48,7 +48,7 @@ func GetInterface() js.Value {
 func NewFromJSObject(obj js.Value) (Headers, error) {
 	var h Headers
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if obj.InstanceOf(hci) {
 
 			h.BaseObject = h.SetObject(obj)

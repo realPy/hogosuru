@@ -20,7 +20,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if eventtargetinterface, err = js.Global().GetWithErr("EventTarget"); err != nil {
-			eventtargetinterface = js.Null()
+			eventtargetinterface = js.Undefined()
 		}
 
 		baseobject.Register(eventtargetinterface, func(v js.Value) (interface{}, error) {
@@ -47,7 +47,7 @@ func New() (EventTarget, error) {
 
 	var e EventTarget
 
-	if eti := GetInterface(); !eti.IsNull() {
+	if eti := GetInterface(); !eti.IsUndefined() {
 		e.BaseObject = e.SetObject(eti.New())
 		return e, nil
 	}
@@ -57,7 +57,7 @@ func New() (EventTarget, error) {
 func NewFromJSObject(obj js.Value) (EventTarget, error) {
 	var e EventTarget
 
-	if eti := GetInterface(); !eti.IsNull() {
+	if eti := GetInterface(); !eti.IsUndefined() {
 		if obj.InstanceOf(eti) {
 			e.BaseObject = e.SetObject(obj)
 			return e, nil

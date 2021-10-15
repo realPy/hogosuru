@@ -43,7 +43,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if responseinterface, err = js.Global().GetWithErr("Response"); err != nil {
-			responseinterface = js.Null()
+			responseinterface = js.Undefined()
 		}
 		baseobject.Register(responseinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -58,7 +58,7 @@ func GetInterface() js.Value {
 func New() (Response, error) {
 	var r Response
 
-	if ri := GetInterface(); !ri.IsNull() {
+	if ri := GetInterface(); !ri.IsUndefined() {
 		r.BaseObject = r.SetObject(ri.New())
 		return r, nil
 	}
@@ -68,7 +68,7 @@ func New() (Response, error) {
 func NewFromJSObject(obj js.Value) (Response, error) {
 	var response Response
 
-	if ri := GetInterface(); !ri.IsNull() {
+	if ri := GetInterface(); !ri.IsUndefined() {
 		if obj.InstanceOf(ri) {
 			response.BaseObject = response.SetObject(obj)
 			return response, nil

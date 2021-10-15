@@ -19,7 +19,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if mapinterface, err = js.Global().GetWithErr("Map"); err != nil {
-			mapinterface = js.Null()
+			mapinterface = js.Undefined()
 		}
 		baseobject.Register(mapinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -45,7 +45,7 @@ func (o ObjectMap) ObjectMap_() ObjectMap {
 func NewFromJSObject(obj js.Value) (ObjectMap, error) {
 	var o ObjectMap
 	var err error
-	if ai := GetInterface(); !ai.IsNull() {
+	if ai := GetInterface(); !ai.IsUndefined() {
 		if obj.InstanceOf(ai) {
 			o.BaseObject = o.SetObject(obj)
 
@@ -79,7 +79,7 @@ func New(values ...interface{}) (ObjectMap, error) {
 
 	}
 
-	if omi := GetInterface(); !omi.IsNull() {
+	if omi := GetInterface(); !omi.IsUndefined() {
 
 		o.BaseObject = o.SetObject(omi.New(arrayJS...))
 

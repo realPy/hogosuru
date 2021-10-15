@@ -35,7 +35,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if htmlbuttonelementinterface, err = js.Global().GetWithErr("HTMLButtonElement"); err != nil {
-			htmlbuttonelementinterface = js.Null()
+			htmlbuttonelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlbuttonelementinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -61,7 +61,7 @@ func NewFromElement(elem element.Element) (HtmlButtonElement, error) {
 	var h HtmlButtonElement
 	var err error
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if elem.BaseObject.JSObject().InstanceOf(hci) {
 			h.BaseObject = h.SetObject(elem.BaseObject.JSObject())
 
@@ -78,7 +78,7 @@ func NewFromElement(elem element.Element) (HtmlButtonElement, error) {
 func NewFromJSObject(obj js.Value) (HtmlButtonElement, error) {
 	var h HtmlButtonElement
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if obj.InstanceOf(hci) {
 
 			h.BaseObject = h.SetObject(obj)
@@ -110,7 +110,7 @@ func (h HtmlButtonElement) Form() (htmlformelement.HtmlFormElement, error) {
 	var f htmlformelement.HtmlFormElement
 	if obj, err = h.JSObject().GetWithErr("form"); err == nil {
 
-		if obj.IsNull() {
+		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject
 
 		} else {

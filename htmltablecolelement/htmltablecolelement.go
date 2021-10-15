@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if htmltablecolelementinterface, err = js.Global().GetWithErr("HTMLTableColElement"); err != nil {
-			htmltablecolelementinterface = js.Null()
+			htmltablecolelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmltablecolelementinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -58,7 +58,7 @@ func NewFromElement(elem element.Element) (HtmlTableColElement, error) {
 	var h HtmlTableColElement
 	var err error
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if elem.BaseObject.JSObject().InstanceOf(hci) {
 			h.BaseObject = h.SetObject(elem.BaseObject.JSObject())
 
@@ -75,7 +75,7 @@ func NewFromElement(elem element.Element) (HtmlTableColElement, error) {
 func NewFromJSObject(obj js.Value) (HtmlTableColElement, error) {
 	var h HtmlTableColElement
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if obj.InstanceOf(hci) {
 
 			h.BaseObject = h.SetObject(obj)

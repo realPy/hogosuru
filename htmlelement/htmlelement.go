@@ -35,7 +35,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if htmlelementinterface, err = js.Global().GetWithErr("HTMLElement"); err != nil {
-			htmlelementinterface = js.Null()
+			htmlelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlelementinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -48,7 +48,7 @@ func GetInterface() js.Value {
 func NewFromJSObject(obj js.Value) (HtmlElement, error) {
 	var h HtmlElement
 	var err error
-	if ai := GetInterface(); !ai.IsNull() {
+	if ai := GetInterface(); !ai.IsUndefined() {
 		if obj.InstanceOf(ai) {
 			h.BaseObject = h.SetObject(obj)
 
@@ -67,7 +67,7 @@ func NewFromElement(elem element.Element) (HtmlElement, error) {
 	var h HtmlElement
 	var err error
 
-	if ai := GetInterface(); !ai.IsNull() {
+	if ai := GetInterface(); !ai.IsUndefined() {
 		if elem.BaseObject.JSObject().InstanceOf(ai) {
 			h.BaseObject = h.SetObject(elem.BaseObject.JSObject())
 
@@ -191,7 +191,7 @@ func (h HtmlElement) OffsetParent() (baseobject.BaseObject, error) {
 	var ret baseobject.BaseObject
 
 	if obj, err = h.JSObject().GetWithErr("offsetParent"); err == nil {
-		if !obj.IsNull() {
+		if !obj.IsUndefined() {
 			ret, err = baseobject.NewFromJSObject(obj)
 		} else {
 			err = baseobject.ErrNotAnObject
@@ -247,7 +247,7 @@ func (h HtmlElement) Style() (cssstyledeclaration.CSSStyleDeclaration, error) {
 
 	if obj, err = h.JSObject().GetWithErr("style"); err == nil {
 
-		if !obj.IsNull() {
+		if !obj.IsUndefined() {
 			ret, err = cssstyledeclaration.NewFromJSObject(obj)
 		} else {
 			err = baseobject.ErrNotAnObject

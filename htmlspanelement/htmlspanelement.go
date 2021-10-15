@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if htmlspanelementinterface, err = js.Global().GetWithErr("HTMLSpanElement"); err != nil {
-			htmlspanelementinterface = js.Null()
+			htmlspanelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlspanelementinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -58,7 +58,7 @@ func NewFromElement(elem element.Element) (HtmlSpanElement, error) {
 	var h HtmlSpanElement
 	var err error
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if elem.BaseObject.JSObject().InstanceOf(hci) {
 			h.BaseObject = h.SetObject(elem.BaseObject.JSObject())
 
@@ -75,7 +75,7 @@ func NewFromElement(elem element.Element) (HtmlSpanElement, error) {
 func NewFromJSObject(obj js.Value) (HtmlSpanElement, error) {
 	var h HtmlSpanElement
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if obj.InstanceOf(hci) {
 
 			h.BaseObject = h.SetObject(obj)

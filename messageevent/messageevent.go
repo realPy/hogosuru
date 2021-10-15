@@ -22,7 +22,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if messageeventinterface, err = js.Global().GetWithErr("MessageEvent"); err != nil {
-			messageeventinterface = js.Null()
+			messageeventinterface = js.Undefined()
 		}
 		//instance object for autodiscovery
 		arraybuffer.GetInterface()
@@ -51,7 +51,7 @@ func NewFromJSObject(obj js.Value) (MessageEvent, error) {
 
 	var message MessageEvent
 
-	if mi := GetInterface(); !mi.IsNull() {
+	if mi := GetInterface(); !mi.IsUndefined() {
 		if obj.InstanceOf(mi) {
 			message.BaseObject = message.SetObject(obj)
 			return message, nil

@@ -34,7 +34,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if htmlfieldsetelementinterface, err = js.Global().GetWithErr("HTMLFieldSetElement"); err != nil {
-			htmlfieldsetelementinterface = js.Null()
+			htmlfieldsetelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlfieldsetelementinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -60,7 +60,7 @@ func NewFromElement(elem element.Element) (HtmlFieldSetElement, error) {
 	var h HtmlFieldSetElement
 	var err error
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if elem.BaseObject.JSObject().InstanceOf(hci) {
 			h.BaseObject = h.SetObject(elem.BaseObject.JSObject())
 
@@ -77,7 +77,7 @@ func NewFromElement(elem element.Element) (HtmlFieldSetElement, error) {
 func NewFromJSObject(obj js.Value) (HtmlFieldSetElement, error) {
 	var h HtmlFieldSetElement
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if obj.InstanceOf(hci) {
 
 			h.BaseObject = h.SetObject(obj)

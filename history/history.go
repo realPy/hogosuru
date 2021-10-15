@@ -40,7 +40,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if historyinterface, err = js.Global().GetWithErr("History"); err != nil {
-			historyinterface = js.Null()
+			historyinterface = js.Undefined()
 		}
 		baseobject.Register(historyinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -54,7 +54,7 @@ func GetInterface() js.Value {
 func NewFromJSObject(obj js.Value) (History, error) {
 	var h History
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if obj.InstanceOf(hci) {
 
 			h.BaseObject = h.SetObject(obj)

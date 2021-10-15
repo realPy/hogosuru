@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if htmlpreelementinterface, err = js.Global().GetWithErr("HTMLPreElement"); err != nil {
-			htmlpreelementinterface = js.Null()
+			htmlpreelementinterface = js.Undefined()
 		}
 
 		baseobject.Register(htmlpreelementinterface, func(v js.Value) (interface{}, error) {
@@ -59,7 +59,7 @@ func NewFromElement(elem element.Element) (HtmlPreElement, error) {
 	var h HtmlPreElement
 	var err error
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if elem.BaseObject.JSObject().InstanceOf(hci) {
 			h.BaseObject = h.SetObject(elem.BaseObject.JSObject())
 
@@ -76,7 +76,7 @@ func NewFromElement(elem element.Element) (HtmlPreElement, error) {
 func NewFromJSObject(obj js.Value) (HtmlPreElement, error) {
 	var h HtmlPreElement
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if obj.InstanceOf(hci) {
 
 			h.BaseObject = h.SetObject(obj)

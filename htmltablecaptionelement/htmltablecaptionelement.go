@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if htmltablecaptionelementinterface, err = js.Global().GetWithErr("HTMLTableCaptionElement"); err != nil {
-			htmltablecaptionelementinterface = js.Null()
+			htmltablecaptionelementinterface = js.Undefined()
 		}
 
 		baseobject.Register(htmltablecaptionelementinterface, func(v js.Value) (interface{}, error) {
@@ -59,7 +59,7 @@ func NewFromElement(elem element.Element) (HtmlTableCaptionElement, error) {
 	var h HtmlTableCaptionElement
 	var err error
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if elem.BaseObject.JSObject().InstanceOf(hci) {
 			h.BaseObject = h.SetObject(elem.BaseObject.JSObject())
 
@@ -76,7 +76,7 @@ func NewFromElement(elem element.Element) (HtmlTableCaptionElement, error) {
 func NewFromJSObject(obj js.Value) (HtmlTableCaptionElement, error) {
 	var h HtmlTableCaptionElement
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if obj.InstanceOf(hci) {
 
 			h.BaseObject = h.SetObject(obj)

@@ -45,7 +45,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if xhrinterface, err = js.Global().GetWithErr("XMLHttpRequest"); err != nil {
-			xhrinterface = js.Null()
+			xhrinterface = js.Undefined()
 		}
 		baseobject.Register(xhrinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -58,7 +58,7 @@ func GetInterface() js.Value {
 func NewFromJSObject(obj js.Value) (XMLHTTPRequest, error) {
 	var x XMLHTTPRequest
 	var err error
-	if si := GetInterface(); !si.IsNull() {
+	if si := GetInterface(); !si.IsUndefined() {
 		if obj.InstanceOf(si) {
 			x.BaseObject = x.SetObject(obj)
 
@@ -74,7 +74,7 @@ func NewFromJSObject(obj js.Value) (XMLHTTPRequest, error) {
 func New() (XMLHTTPRequest, error) {
 	var request XMLHTTPRequest
 
-	if xhri := GetInterface(); !xhri.IsNull() {
+	if xhri := GetInterface(); !xhri.IsUndefined() {
 
 		request.BaseObject = request.SetObject(xhri.New())
 		return request, nil
