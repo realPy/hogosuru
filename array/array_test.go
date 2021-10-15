@@ -756,6 +756,248 @@ func TestReverse(t *testing.T) {
 		t.Errorf(err.Error())
 	}
 }
+
+func TestShift(t *testing.T) {
+
+	var a Array
+	var err error
+	var goArray []interface{} = []interface{}{9, 6, 8, 40}
+	if a, err = New(goArray...); err == nil {
+
+		if v, err := a.Shift(); err == nil {
+
+			if v.(int) != 9 {
+				t.Errorf("Mistmatch %d", v.(int))
+			}
+			if str, err := a.ToString(); err == nil {
+				if str != "6,8,40" {
+					t.Errorf("Mistmatch %s", str)
+				}
+			} else {
+				t.Errorf(err.Error())
+			}
+
+		} else {
+			t.Errorf(err.Error())
+		}
+
+	} else {
+		t.Errorf(err.Error())
+	}
+}
+
+func TestSlice(t *testing.T) {
+
+	var a Array
+	var err error
+	var goArray []interface{} = []interface{}{"ant", "bison", "camel", "duck", "elephant"}
+	if a, err = New(goArray...); err == nil {
+
+		if v, err := a.Slice(2); err == nil {
+
+			if str, err := v.ToString(); err == nil {
+				if str != "camel,duck,elephant" {
+					t.Errorf("Mistmatch %s", str)
+				}
+			} else {
+				t.Errorf(err.Error())
+			}
+
+		} else {
+			t.Errorf(err.Error())
+		}
+
+		if v, err := a.Slice(2, 4); err == nil {
+
+			if str, err := v.ToString(); err == nil {
+				if str != "camel,duck" {
+					t.Errorf("Mistmatch %s", str)
+				}
+			} else {
+				t.Errorf(err.Error())
+			}
+
+		} else {
+			t.Errorf(err.Error())
+		}
+
+		if v, err := a.Slice(-2); err == nil {
+
+			if str, err := v.ToString(); err == nil {
+				if str != "duck,elephant" {
+					t.Errorf("Mistmatch %s", str)
+				}
+			} else {
+				t.Errorf(err.Error())
+			}
+
+		} else {
+			t.Errorf(err.Error())
+		}
+
+	} else {
+		t.Errorf(err.Error())
+	}
+}
+
+func TestSome(t *testing.T) {
+
+	var a Array
+	var err error
+	var goArray []interface{} = []interface{}{9, 6, 8, 40}
+	if a, err = New(goArray...); err == nil {
+
+		if ok, err := a.Some(func(i interface{}) bool {
+
+			if i.(int) == 40 {
+				return true
+			}
+
+			return false
+		}); err == nil {
+
+			if !ok {
+				t.Errorf("Must return true")
+			}
+
+		} else {
+			t.Errorf(err.Error())
+		}
+
+		if ok, err := a.Some(func(i interface{}) bool {
+
+			if i.(int) == 42 {
+				return true
+			}
+
+			return false
+		}); err == nil {
+
+			if ok {
+				t.Errorf("Must not return true")
+			}
+
+		} else {
+			t.Errorf(err.Error())
+		}
+
+	} else {
+		t.Errorf(err.Error())
+	}
+}
+
+func TestSort(t *testing.T) {
+
+	var a Array
+	var err error
+	var goArray []interface{} = []interface{}{"March", "Jan", "Feb", "Dec"}
+	if a, err = New(goArray...); err == nil {
+
+		if err := a.Sort(); err == nil {
+			if str, err := a.ToString(); err == nil {
+				if str != "Dec,Feb,Jan,March" {
+					t.Errorf("Mistmatch %s", str)
+				}
+			} else {
+				t.Errorf(err.Error())
+			}
+		} else {
+			t.Errorf(err.Error())
+		}
+	} else {
+		t.Errorf(err.Error())
+	}
+}
+
+func TestSplice(t *testing.T) {
+
+	var a Array
+	var err error
+	var goArray []interface{} = []interface{}{"Jan", "March", "April", "June"}
+	if a, err = New(goArray...); err == nil {
+
+		if err := a.Splice(1, 0, "Feb"); err == nil {
+			if str, err := a.ToString(); err == nil {
+				if str != "Jan,Feb,March,April,June" {
+					t.Errorf("Mistmatch %s", str)
+				}
+			} else {
+				t.Errorf(err.Error())
+			}
+		} else {
+			t.Errorf(err.Error())
+		}
+
+		if err := a.Splice(4, 1, "May"); err == nil {
+			if str, err := a.ToString(); err == nil {
+				if str != "Jan,Feb,March,April,May" {
+					t.Errorf("Mistmatch %s", str)
+				}
+			} else {
+				t.Errorf(err.Error())
+			}
+		} else {
+			t.Errorf(err.Error())
+		}
+	} else {
+		t.Errorf(err.Error())
+	}
+}
+
+func TestUnshift(t *testing.T) {
+
+	var a Array
+	var err error
+	var goArray []interface{} = []interface{}{1, 2, 3}
+	if a, err = New(goArray...); err == nil {
+
+		if l, err := a.Unshift(4, 5); err == nil {
+
+			if str, err := a.ToString(); err == nil {
+				if str != "4,5,1,2,3" {
+					t.Errorf("Mistmatch %s", str)
+				}
+			} else {
+				t.Errorf(err.Error())
+			}
+
+			if l != 5 {
+				t.Errorf("Lenght mismatch %d", l)
+			}
+		} else {
+			t.Errorf(err.Error())
+		}
+
+	} else {
+		t.Errorf(err.Error())
+	}
+}
+
+func TestValues(t *testing.T) {
+	var a Array
+	var err error
+	var goArray []interface{} = []interface{}{"Hello", "World", "elite"}
+	if a, err = New(goArray...); err == nil {
+		var i int = 0
+		if it, err := a.Values(); err == nil {
+			for _, value, err := it.Next(); err == nil; _, value, err = it.Next() {
+
+				if value.(string) != goArray[i] {
+					t.Errorf("not match index %s", value.(string))
+				}
+				i++
+
+			}
+		} else {
+			t.Errorf(err.Error())
+		}
+
+	} else {
+		t.Errorf(err.Error())
+	}
+
+}
+
 func TestMain(m *testing.M) {
 	m.Run()
 }
