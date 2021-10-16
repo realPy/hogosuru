@@ -3,7 +3,6 @@ package fetch
 // https://developer.mozilla.org/fr/docs/Web/API/Fetch_API
 
 import (
-	"net/url"
 	"sync"
 
 	"syscall/js"
@@ -23,7 +22,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if fetchinterface, err = js.Global().GetWithErr("fetch"); err != nil {
-			fetchinterface = js.Null()
+			fetchinterface = js.Undefined()
 		}
 
 		response.GetInterface()
@@ -63,7 +62,7 @@ func New(urlfetch string, opts ...interface{}) (Fetch, error) {
 
 	}
 
-	if fetchi := GetInterface(); !fetchi.IsNull() {
+	if fetchi := GetInterface(); !fetchi.IsUndefined() {
 		promisefetchobj := fetchi.Invoke(urlfetch, arrayJS)
 		f.BaseObject = f.SetObject(promisefetchobj)
 	} else {
@@ -76,7 +75,7 @@ func New(urlfetch string, opts ...interface{}) (Fetch, error) {
 func NewFromJSObject(obj js.Value) (Fetch, error) {
 	var h Fetch
 
-	if fetchi := GetInterface(); !fetchi.IsNull() {
+	if fetchi := GetInterface(); !fetchi.IsUndefined() {
 		if obj.InstanceOf(fetchi) {
 
 			h.BaseObject = h.SetObject(obj)
@@ -86,7 +85,7 @@ func NewFromJSObject(obj js.Value) (Fetch, error) {
 	return h, ErrNotAFetch
 }
 
-func (f Fetch) Then(resolve func(response.Response) *promise.Promise, reject func(error)) error {
+func (f Fetch) Then(resolve func(response.Response) *promise.Promise, reject func(error)) (promise.Promise, error) {
 
 	return f.Promise.Then(func(obj interface{}) *promise.Promise {
 		var resp interface{}
@@ -115,59 +114,4 @@ func (f Fetch) Then(resolve func(response.Response) *promise.Promise, reject fun
 
 	})
 
-}
-
-//deprecated for backward compatibilities
-
-func NewFetch(urlfetch string, method string, headers *map[string]interface{}, data *url.Values, handlerResponse func(response.Response, error)) (Fetch, error) {
-
-	var fetch Fetch
-	var err error
-	var p promise.Promise
-	if fetchi := GetInterface(); !fetchi.IsNull() {
-		var goarg map[string]interface{} = make(map[string]interface{})
-
-		goarg["method"] = method
-		if headers != nil {
-			goarg["headers"] = *headers
-		}
-		if data != nil {
-			goarg["body"] = data.Encode()
-		}
-
-		if headers == nil {
-			headers = &map[string]interface{}{}
-
-		}
-		if data == nil {
-			data = &url.Values{}
-		}
-
-		arg := js.ValueOf(goarg)
-
-		promisefetchobj := fetchi.Invoke(urlfetch, arg)
-		if p, err = promise.NewFromJSObject(promisefetchobj); err == nil {
-
-			if handlerResponse != nil {
-				p.Async(func(obj baseobject.BaseObject) *promise.Promise {
-
-					var r response.Response
-					r, err = response.NewFromJSObject(obj.JSObject())
-					handlerResponse(r, err)
-
-					return nil
-				}, func(e error) {
-					handlerResponse(response.Response{}, err)
-				})
-			}
-
-			fetch.BaseObject = fetch.SetObject(p.JSObject())
-		}
-
-	} else {
-		err = ErrNotImplemented
-	}
-
-	fetch.Debug("❗❗Use of fetch.NewFetch is deprecated❗❗")
-	return fetch, err
 }

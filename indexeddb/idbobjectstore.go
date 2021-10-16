@@ -33,7 +33,7 @@ func IDBObjectStoreGetInterface() js.Value {
 
 		var err error
 		if idbobjectstoreinterface, err = js.Global().GetWithErr("IDBObjectStore"); err != nil {
-			idbobjectstoreinterface = js.Null()
+			idbobjectstoreinterface = js.Undefined()
 		}
 		baseobject.Register(idbobjectstoreinterface, func(v js.Value) (interface{}, error) {
 			return IDBObjectStoreNewFromJSObject(v)
@@ -45,7 +45,7 @@ func IDBObjectStoreGetInterface() js.Value {
 func IDBObjectStoreNewFromJSObject(obj js.Value) (IDBObjectStore, error) {
 	var i IDBObjectStore
 	var err error
-	if ai := IDBObjectStoreGetInterface(); !ai.IsNull() {
+	if ai := IDBObjectStoreGetInterface(); !ai.IsUndefined() {
 		if obj.InstanceOf(ai) {
 			i.BaseObject = i.SetObject(obj)
 		} else {

@@ -30,7 +30,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if consoleinterface, err = js.Global().GetWithErr("console"); err != nil {
-			consoleinterface = js.Null()
+			consoleinterface = js.Undefined()
 		}
 
 		baseobject.Register(consoleinterface, func(v js.Value) (interface{}, error) {
@@ -46,7 +46,7 @@ func New() (Console, error) {
 
 	var c Console
 	var err error
-	if di := GetInterface(); !di.IsNull() {
+	if di := GetInterface(); !di.IsUndefined() {
 		c.BaseObject = c.SetObject(di)
 
 	} else {
@@ -60,7 +60,7 @@ func NewFromJSObject(obj js.Value) (Console, error) {
 	var c Console
 	var err error
 
-	if bi := GetInterface(); !bi.IsNull() {
+	if bi := GetInterface(); !bi.IsUndefined() {
 		if obj.InstanceOf(bi) {
 			c.BaseObject = c.SetObject(obj)
 

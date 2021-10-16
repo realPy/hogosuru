@@ -33,7 +33,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if htmldatalistelementinterface, err = js.Global().GetWithErr("HTMLDataListElement"); err != nil {
-			htmldatalistelementinterface = js.Null()
+			htmldatalistelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmldatalistelementinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -59,7 +59,7 @@ func NewFromElement(elem element.Element) (HtmlDataListElement, error) {
 	var h HtmlDataListElement
 	var err error
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if elem.BaseObject.JSObject().InstanceOf(hci) {
 			h.BaseObject = h.SetObject(elem.BaseObject.JSObject())
 
@@ -76,7 +76,7 @@ func NewFromElement(elem element.Element) (HtmlDataListElement, error) {
 func NewFromJSObject(obj js.Value) (HtmlDataListElement, error) {
 	var h HtmlDataListElement
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if obj.InstanceOf(hci) {
 
 			h.BaseObject = h.SetObject(obj)

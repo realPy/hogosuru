@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if htmltimeelementinterface, err = js.Global().GetWithErr("HTMLTimeElement"); err != nil {
-			htmltimeelementinterface = js.Null()
+			htmltimeelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmltimeelementinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -58,7 +58,7 @@ func NewFromElement(elem element.Element) (HtmlTimeElement, error) {
 	var h HtmlTimeElement
 	var err error
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if elem.BaseObject.JSObject().InstanceOf(hci) {
 			h.BaseObject = h.SetObject(elem.BaseObject.JSObject())
 
@@ -75,7 +75,7 @@ func NewFromElement(elem element.Element) (HtmlTimeElement, error) {
 func NewFromJSObject(obj js.Value) (HtmlTimeElement, error) {
 	var h HtmlTimeElement
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if obj.InstanceOf(hci) {
 
 			h.BaseObject = h.SetObject(obj)

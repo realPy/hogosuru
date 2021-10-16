@@ -34,7 +34,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if htmllinklementinterface, err = js.Global().GetWithErr("HTMLLinkElement"); err != nil {
-			htmllinklementinterface = js.Null()
+			htmllinklementinterface = js.Undefined()
 		}
 		baseobject.Register(htmllinklementinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -60,7 +60,7 @@ func NewFromElement(elem element.Element) (HtmlLinkElement, error) {
 	var h HtmlLinkElement
 	var err error
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if elem.BaseObject.JSObject().InstanceOf(hci) {
 			h.BaseObject = h.SetObject(elem.BaseObject.JSObject())
 
@@ -77,7 +77,7 @@ func NewFromElement(elem element.Element) (HtmlLinkElement, error) {
 func NewFromJSObject(obj js.Value) (HtmlLinkElement, error) {
 	var h HtmlLinkElement
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if obj.InstanceOf(hci) {
 
 			h.BaseObject = h.SetObject(obj)
@@ -162,7 +162,7 @@ func (h HtmlLinkElement) Sheet() (stylesheet.StyleSheet, error) {
 	var s stylesheet.StyleSheet
 	if obj, err = h.JSObject().GetWithErr("sheet"); err == nil {
 
-		if obj.IsNull() {
+		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject
 
 		} else {

@@ -8,6 +8,7 @@ import (
 	"github.com/realPy/hogosuru/array"
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/domexception"
+	"github.com/realPy/hogosuru/jserror"
 )
 
 var singleton sync.Once
@@ -21,7 +22,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if promiseinterface, err = js.Global().GetWithErr("Promise"); err != nil {
-			promiseinterface = js.Null()
+			promiseinterface = js.Undefined()
 		}
 		baseobject.Register(promiseinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -49,7 +50,7 @@ func New(handler func(resolvefunc, errfunc js.Value) (interface{}, error)) (Prom
 	var p Promise
 	var err error
 
-	if pi := GetInterface(); !pi.IsNull() {
+	if pi := GetInterface(); !pi.IsUndefined() {
 		fh := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
 			if result, err := handler(args[0], args[1]); err == nil {
@@ -90,35 +91,10 @@ func SetTimeout(ms int) (Promise, error) {
 	return p, err
 }
 
-/*
-func SetTimeout(handler func() (interface{}, error), ms int) (Promise, error) {
-
-	var c chan bool
-
-	c = make(chan bool)
-
-	return New(func() (interface{}, error) {
-		timeout := js.Global().Get("window").Get("setTimeout")
-		var i interface{}
-		var err error
-		fh := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-
-			i, err = handler()
-			c <- true
-			return nil
-		})
-		timeout.Invoke(fh, js.ValueOf(ms))
-
-		<-c
-		return i, err
-	})
-
-}*/
-
 func NewFromJSObject(obj js.Value) (Promise, error) {
 	var p Promise
 	var err error
-	if pi := GetInterface(); !pi.IsNull() {
+	if pi := GetInterface(); !pi.IsUndefined() {
 		if obj.InstanceOf(pi) {
 			p.BaseObject = p.SetObject(obj)
 
@@ -131,54 +107,15 @@ func NewFromJSObject(obj js.Value) (Promise, error) {
 	return p, err
 }
 
-//will be deprecated
-func (p Promise) Async(resolve func(baseobject.BaseObject) *Promise, reject func(error)) error {
-	var err error
-	var obj baseobject.BaseObject
-	resolveFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-
-		if len(args) > 0 {
-			obj, err = baseobject.NewFromJSObject(args[0])
-
-			if p := resolve(obj); p != nil {
-				return p.JSObject()
-			}
-
-		}
-
-		return nil
-	})
-
-	rejectedFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		var err error
-		var exception domexception.DomException
-		if exception, err = domexception.NewFromJSObject(args[0]); err == nil {
-			message, _ := exception.Message()
-			err = errors.New(message)
-		} else {
-			err = errors.New(args[0].String())
-		}
-
-		if reject != nil {
-			reject(err)
-		}
-
-		return nil
-	})
-
-	p.Debug("❗❗Use of promise.Async is deprecated❗❗")
-	_, err = p.JSObject().CallWithErr("then", resolveFunc, rejectedFunc)
-	return err
-}
-
-func (p Promise) Then(resolve func(interface{}) *Promise, reject func(error)) error {
+func (p Promise) Then(resolve func(interface{}) *Promise, reject func(error)) (Promise, error) {
 
 	var err error
 	var obj interface{}
+	var newp Promise
 	resolveFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
 		if len(args) > 0 {
-			obj, err = baseobject.Discover(args[0])
+			obj = baseobject.GoValue(args[0])
 			if resolve != nil {
 				if retp := resolve(obj); retp != nil {
 					return retp.JSObject()
@@ -192,30 +129,32 @@ func (p Promise) Then(resolve func(interface{}) *Promise, reject func(error)) er
 
 	rejectedFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
-		var err error
+		var errRejected error
 		var exception domexception.DomException
-		if exception, err = domexception.NewFromJSObject(args[0]); err == nil {
+		if exception, errRejected = domexception.NewFromJSObject(args[0]); errRejected == nil {
 			message, _ := exception.Message()
-			err = errors.New(message)
+			errRejected = errors.New(message)
 		} else {
 
 			var strerr string
 
-			if strerr, err = baseobject.ToStringWithErr(args[0]); err == nil {
-				err = errors.New(strerr)
+			if strerr, errRejected = baseobject.ToStringWithErr(args[0]); errRejected == nil {
+				errRejected = errors.New(strerr)
 			}
 
 		}
 
 		if reject != nil {
-			reject(err)
+			reject(errRejected)
 		}
 
 		return nil
 	})
-
-	_, err = p.JSObject().CallWithErr("then", resolveFunc, rejectedFunc)
-	return err
+	var newpromiseobj js.Value
+	if newpromiseobj, err = p.JSObject().CallWithErr("then", resolveFunc, rejectedFunc); err == nil {
+		newp, err = NewFromJSObject(newpromiseobj)
+	}
+	return newp, err
 }
 
 func iterablePromises(method string, values ...interface{}) (Promise, error) {
@@ -225,7 +164,7 @@ func iterablePromises(method string, values ...interface{}) (Promise, error) {
 	var arr array.Array
 
 	var arrayJS []interface{}
-	if pi := GetInterface(); !pi.IsNull() {
+	if pi := GetInterface(); !pi.IsUndefined() {
 		for _, value := range values {
 			if objGo, ok := value.(baseobject.ObjectFrom); ok {
 				arrayJS = append(arrayJS, objGo.JSObject())
@@ -262,8 +201,9 @@ func Race(values ...interface{}) (Promise, error) {
 	return iterablePromises("race", values...)
 }
 
-func (p Promise) Catch(reject func(error)) error {
+func (p Promise) Catch(reject func(error)) (Promise, error) {
 	var err error
+	var newp Promise
 	rejectedFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		var err error
 		var exception domexception.DomException
@@ -279,8 +219,12 @@ func (p Promise) Catch(reject func(error)) error {
 		}
 		return nil
 	})
-	_, err = p.JSObject().CallWithErr("catch", rejectedFunc)
-	return err
+	var newpromiseobj js.Value
+	if newpromiseobj, err = p.JSObject().CallWithErr("catch", rejectedFunc); err == nil {
+		newp, err = NewFromJSObject(newpromiseobj)
+	}
+
+	return newp, err
 }
 
 func (p Promise) Finally(f func()) error {
@@ -293,6 +237,7 @@ func (p Promise) Finally(f func()) error {
 	return err
 }
 
+//avoid used it can deadlocks
 func (p Promise) Await() (interface{}, error) {
 	var obj interface{}
 	var err error
@@ -300,7 +245,7 @@ func (p Promise) Await() (interface{}, error) {
 
 	ch := make(chan interface{})
 
-	err = p.Then(func(i interface{}) *Promise {
+	_, err = p.Then(func(i interface{}) *Promise {
 
 		ch <- i
 		return nil
@@ -317,4 +262,53 @@ func (p Promise) Await() (interface{}, error) {
 	}
 
 	return obj, err
+}
+
+func Reject(reason error) (Promise, error) {
+	var p Promise
+	var obj js.Value
+	var jserr jserror.JSError
+
+	var err error
+	if pi := GetInterface(); !pi.IsUndefined() {
+
+		if jserr, err = jserror.New(reason.Error()); err == nil {
+			if obj, err = pi.CallWithErr("reject", jserr.JSObject()); err == nil {
+
+				p, err = NewFromJSObject(obj)
+			}
+		}
+
+	} else {
+		err = ErrNotImplemented
+	}
+
+	return p, err
+}
+
+func Resolve(result interface{}) (Promise, error) {
+	var p Promise
+	var obj js.Value
+	var objresult js.Value
+
+	var err error
+	if pi := GetInterface(); !pi.IsUndefined() {
+
+		if objGo, ok := result.(baseobject.ObjectFrom); ok {
+
+			objresult = objGo.JSObject()
+		} else {
+			objresult = js.ValueOf(result)
+		}
+
+		if obj, err = pi.CallWithErr("resolve", objresult); err == nil {
+
+			p, err = NewFromJSObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
+	}
+
+	return p, err
 }

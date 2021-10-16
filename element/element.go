@@ -25,7 +25,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if elementinterface, err = js.Global().GetWithErr("Element"); err != nil {
-			elementinterface = js.Null()
+			elementinterface = js.Undefined()
 		}
 		baseobject.Register(elementinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -51,7 +51,7 @@ func (e Element) Element_() Element {
 func New() (Element, error) {
 	var err error
 	var e Element
-	if ei := GetInterface(); !ei.IsNull() {
+	if ei := GetInterface(); !ei.IsUndefined() {
 		e.BaseObject = e.SetObject(ei.New())
 
 	} else {
@@ -64,7 +64,7 @@ func New() (Element, error) {
 func NewFromJSObject(obj js.Value) (Element, error) {
 	var e Element
 	var err error
-	if ei := GetInterface(); !ei.IsNull() {
+	if ei := GetInterface(); !ei.IsUndefined() {
 		if obj.InstanceOf(ei) {
 			e.BaseObject = e.SetObject(obj)
 
@@ -92,7 +92,7 @@ func (e Element) getAttributeElement(attribute string) (Element, error) {
 
 	if nodeObject, err = e.JSObject().GetWithErr(attribute); err == nil {
 
-		if nodeObject.IsNull() {
+		if nodeObject.IsUndefined() {
 			err = ErrElementNoChilds
 
 		} else {
@@ -273,7 +273,7 @@ func OwnerElementForAttr(a attr.Attr) (Element, error) {
 
 	if elemObject, err = a.JSObject().GetWithErr("ownerElement"); err == nil {
 
-		if elemObject.IsNull() {
+		if elemObject.IsUndefined() {
 			err = attr.ErrNoOwnerElement
 		} else {
 

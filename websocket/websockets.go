@@ -45,7 +45,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if wsinterface, err = js.Global().GetWithErr("WebSocket"); err != nil {
-			wsinterface = js.Null()
+			wsinterface = js.Undefined()
 		}
 
 		messageevent.GetInterface()
@@ -60,7 +60,7 @@ func GetInterface() js.Value {
 func NewFromJSObject(obj js.Value) (WebSocket, error) {
 	var w WebSocket
 	var err error
-	if si := GetInterface(); !si.IsNull() {
+	if si := GetInterface(); !si.IsUndefined() {
 		if obj.InstanceOf(si) {
 			w.BaseObject = w.SetObject(obj)
 
@@ -76,7 +76,7 @@ func NewFromJSObject(obj js.Value) (WebSocket, error) {
 func New(url string) (WebSocket, error) {
 	var ws WebSocket
 
-	if wsi := GetInterface(); !wsi.IsNull() {
+	if wsi := GetInterface(); !wsi.IsUndefined() {
 		ws.BaseObject = ws.SetObject(wsi.New(js.ValueOf(url)))
 		return ws, nil
 	}

@@ -33,7 +33,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if htmlmapelementinterface, err = js.Global().GetWithErr("HTMLMapElement"); err != nil {
-			htmlmapelementinterface = js.Null()
+			htmlmapelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlmapelementinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -59,7 +59,7 @@ func NewFromElement(elem element.Element) (HtmlMapElement, error) {
 	var h HtmlMapElement
 	var err error
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if elem.BaseObject.JSObject().InstanceOf(hci) {
 			h.BaseObject = h.SetObject(elem.BaseObject.JSObject())
 
@@ -76,7 +76,7 @@ func NewFromElement(elem element.Element) (HtmlMapElement, error) {
 func NewFromJSObject(obj js.Value) (HtmlMapElement, error) {
 	var h HtmlMapElement
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if obj.InstanceOf(hci) {
 
 			h.BaseObject = h.SetObject(obj)

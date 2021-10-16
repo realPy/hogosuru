@@ -36,7 +36,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if drageventinterface, err = js.Global().GetWithErr("DragEvent"); err != nil {
-			drageventinterface = js.Null()
+			drageventinterface = js.Undefined()
 		}
 		baseobject.Register(drageventinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -49,7 +49,7 @@ func GetInterface() js.Value {
 func NewFromJSObject(obj js.Value) (DragEvent, error) {
 	var e DragEvent
 
-	if di := GetInterface(); !di.IsNull() {
+	if di := GetInterface(); !di.IsUndefined() {
 		if obj.InstanceOf(di) {
 			e.BaseObject = e.SetObject(obj)
 			return e, nil

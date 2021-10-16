@@ -20,7 +20,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if webassemblyinterface, err = js.Global().GetWithErr("WebAssembly"); err != nil {
-			webassemblyinterface = js.Null()
+			webassemblyinterface = js.Undefined()
 		}
 
 		baseobject.Register(webassemblyinterface, func(v js.Value) (interface{}, error) {
@@ -49,7 +49,7 @@ func New() (WebAssembly, error) {
 
 	var w WebAssembly
 
-	if wi := GetInterface(); !wi.IsNull() {
+	if wi := GetInterface(); !wi.IsUndefined() {
 
 		w.BaseObject = w.SetObject(wi)
 		return w, nil
@@ -60,7 +60,7 @@ func New() (WebAssembly, error) {
 func NewFromJSObject(obj js.Value) (WebAssembly, error) {
 	var w WebAssembly
 	var err error
-	if wi := GetInterface(); !wi.IsNull() {
+	if wi := GetInterface(); !wi.IsUndefined() {
 		if obj.InstanceOf(wi) {
 			w.BaseObject = w.SetObject(obj)
 			return w, nil

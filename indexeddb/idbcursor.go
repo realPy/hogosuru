@@ -31,7 +31,7 @@ func IDBCursorGetInterface() js.Value {
 
 		var err error
 		if idbcursorinterface, err = js.Global().GetWithErr("IDBCursor"); err != nil {
-			idbcursorinterface = js.Null()
+			idbcursorinterface = js.Undefined()
 		}
 		baseobject.Register(idbcursorinterface, func(v js.Value) (interface{}, error) {
 			return IDBDatabaseNewFromJSObject(v)
@@ -44,7 +44,7 @@ func IDBCursorGetInterface() js.Value {
 func IDBCursorNewFromJSObject(obj js.Value) (IDBCursor, error) {
 	var i IDBCursor
 	var err error
-	if ai := IDBDatabaseGetInterface(); !ai.IsNull() {
+	if ai := IDBDatabaseGetInterface(); !ai.IsUndefined() {
 		if obj.InstanceOf(ai) {
 			i.BaseObject = i.SetObject(obj)
 		} else {

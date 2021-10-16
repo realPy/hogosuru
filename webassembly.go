@@ -6,6 +6,7 @@ import (
 	"github.com/realPy/hogosuru/arraybuffer"
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/fetch"
+	"github.com/realPy/hogosuru/jserror"
 	"github.com/realPy/hogosuru/promise"
 	"github.com/realPy/hogosuru/response"
 	"github.com/realPy/hogosuru/webassembly"
@@ -73,9 +74,9 @@ func LoadWasm(urlfetch string) (fetch.Fetch, promise.Promise, error) {
 												}
 											}
 											if err != nil {
-												var errjs js.Value
-												if errjs, err = baseobject.ErrorToJS(err); err == nil {
-													errfunc.Invoke(errjs)
+												var errjs jserror.JSError
+												if errjs, err = jserror.New(err); err == nil {
+													errfunc.Invoke(errjs.JSObject())
 												} else {
 													AssertErr(err)
 												}
@@ -83,8 +84,8 @@ func LoadWasm(urlfetch string) (fetch.Fetch, promise.Promise, error) {
 											return nil
 										}, func(e error) {
 
-											if errjs, err := baseobject.ErrorToJS(e); err == nil {
-												errfunc.Invoke(errjs)
+											if errjs, err := jserror.New(e); err == nil {
+												errfunc.Invoke(errjs.JSObject())
 											} else {
 												AssertErr(err)
 											}
@@ -96,9 +97,9 @@ func LoadWasm(urlfetch string) (fetch.Fetch, promise.Promise, error) {
 								}
 
 								if err != nil {
-									var errjs js.Value
-									if errjs, err = baseobject.ErrorToJS(err); err == nil {
-										errfunc.Invoke(errjs)
+									var errjs jserror.JSError
+									if errjs, err = jserror.New(err); err == nil {
+										errfunc.Invoke(errjs.JSObject())
 									} else {
 										AssertErr(err)
 									}

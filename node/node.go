@@ -18,7 +18,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if nodeinterface, err = js.Global().GetWithErr("Node"); err != nil {
-			nodeinterface = js.Null()
+			nodeinterface = js.Undefined()
 		}
 		baseobject.Register(nodeinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -46,7 +46,7 @@ func NewFromJSObject(obj js.Value) (Node, error) {
 	var n Node
 	var err error
 
-	if ni := GetInterface(); !ni.IsNull() {
+	if ni := GetInterface(); !ni.IsUndefined() {
 
 		if obj.InstanceOf(ni) {
 			n.BaseObject = n.SetObject(obj)
@@ -67,7 +67,7 @@ func (n Node) getAttributeNode(attribute string) (Node, error) {
 
 	if nodeObject, err = n.JSObject().GetWithErr(attribute); err == nil {
 
-		if nodeObject.IsNull() {
+		if nodeObject.IsUndefined() {
 			err = ErrNodeNoChilds
 
 		} else {

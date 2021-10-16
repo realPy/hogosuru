@@ -35,7 +35,7 @@ func IDBTransactionGetInterface() js.Value {
 
 		var err error
 		if idbtransactioninterface, err = js.Global().GetWithErr("IDBTransaction"); err != nil {
-			idbtransactioninterface = js.Null()
+			idbtransactioninterface = js.Undefined()
 		}
 		baseobject.Register(idbtransactioninterface, func(v js.Value) (interface{}, error) {
 			return IDBTransactionNewFromJSObject(v)
@@ -48,7 +48,7 @@ func IDBTransactionGetInterface() js.Value {
 func IDBTransactionNewFromJSObject(obj js.Value) (IDBTransaction, error) {
 	var i IDBTransaction
 	var err error
-	if ai := IDBTransactionGetInterface(); !ai.IsNull() {
+	if ai := IDBTransactionGetInterface(); !ai.IsUndefined() {
 		if obj.InstanceOf(ai) {
 			i.BaseObject = i.SetObject(obj)
 		} else {

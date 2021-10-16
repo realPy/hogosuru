@@ -23,7 +23,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if windowinterface, err = js.Global().GetWithErr("Window"); err != nil {
-			windowinterface = js.Null()
+			windowinterface = js.Undefined()
 		}
 		baseobject.Register(windowinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -48,7 +48,7 @@ func (w Window) Window_() Window {
 func NewFromJSObject(obj js.Value) (Window, error) {
 	var w Window
 
-	if wi := GetInterface(); !wi.IsNull() {
+	if wi := GetInterface(); !wi.IsUndefined() {
 		if obj.InstanceOf(wi) {
 			w.BaseObject = w.SetObject(obj)
 			return w, nil

@@ -19,7 +19,7 @@ func GetIDBIndexInterface() js.Value {
 	singletonIDBIndex.Do(func() {
 		var err error
 		if idbindexinterface, err = js.Global().GetWithErr("IDBIndex"); err != nil {
-			idbindexinterface = js.Null()
+			idbindexinterface = js.Undefined()
 		}
 		baseobject.Register(idbindexinterface, func(v js.Value) (interface{}, error) {
 			return IDBDIndexNewFromJSObject(v)
@@ -44,7 +44,7 @@ func (i IDBIndex) IDBIndex_() IDBIndex {
 func IDBDIndexNewFromJSObject(obj js.Value) (IDBIndex, error) {
 	var i IDBIndex
 	var err error
-	if ai := GetIDBIndexInterface(); !ai.IsNull() {
+	if ai := GetIDBIndexInterface(); !ai.IsUndefined() {
 		if obj.InstanceOf(ai) {
 			i.BaseObject = i.SetObject(obj)
 		} else {
@@ -77,7 +77,7 @@ func (i IDBIndex) ObjectStore() (IDBObjectStore, error) {
 
 	if obj, err = i.JSObject().GetWithErr("objectstore"); err == nil {
 
-		if obj.IsNull() {
+		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject
 
 		} else {

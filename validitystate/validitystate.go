@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if validitystateinterface, err = js.Global().GetWithErr("ValidityState"); err != nil {
-			validitystateinterface = js.Null()
+			validitystateinterface = js.Undefined()
 		}
 		baseobject.Register(validitystateinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -44,7 +44,7 @@ func GetInterface() js.Value {
 func NewFromJSObject(obj js.Value) (ValidityState, error) {
 	var v ValidityState
 
-	if hei := GetInterface(); !hei.IsNull() {
+	if hei := GetInterface(); !hei.IsUndefined() {
 		if obj.InstanceOf(hei) {
 
 			v.BaseObject = v.SetObject(obj)

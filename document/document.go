@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if docinterface, err = js.Global().GetWithErr("document"); err != nil {
-			docinterface = js.Null()
+			docinterface = js.Undefined()
 		}
 		baseobject.Register(docinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -49,7 +49,7 @@ func New() (Document, error) {
 
 	var d Document
 	var err error
-	if di := GetInterface(); !di.IsNull() {
+	if di := GetInterface(); !di.IsUndefined() {
 		d.BaseObject = d.SetObject(di)
 
 	} else {
@@ -63,7 +63,7 @@ func New() (Document, error) {
 func NewFromJSObject(obj js.Value) (Document, error) {
 	var d Document
 
-	if dci := GetInterface(); !dci.IsNull() {
+	if dci := GetInterface(); !dci.IsUndefined() {
 		if obj.InstanceOf(dci) {
 
 			d.BaseObject = d.SetObject(obj)

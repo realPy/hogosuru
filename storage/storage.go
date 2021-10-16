@@ -20,7 +20,7 @@ func GetInterface() js.Value {
 
 		var err error
 		if storageinterface, err = js.Global().GetWithErr("Storage"); err != nil {
-			storageinterface = js.Null()
+			storageinterface = js.Undefined()
 		}
 		baseobject.Register(storageinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -45,7 +45,7 @@ func (s Storage) Storage_() Storage {
 func NewFromJSObject(obj js.Value) (Storage, error) {
 	var s Storage
 
-	if si := GetInterface(); !si.IsNull() {
+	if si := GetInterface(); !si.IsUndefined() {
 		if obj.InstanceOf(si) {
 			s.BaseObject = s.SetObject(obj)
 			return s, nil

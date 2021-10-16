@@ -33,7 +33,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if namednodemapinterface, err = js.Global().GetWithErr("NamedNodeMap"); err != nil {
-			namednodemapinterface = js.Null()
+			namednodemapinterface = js.Undefined()
 		}
 		baseobject.Register(namednodemapinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -46,7 +46,7 @@ func GetInterface() js.Value {
 func NewFromJSObject(obj js.Value) (NamedNodeMap, error) {
 	var n NamedNodeMap
 
-	if nli := GetInterface(); !nli.IsNull() {
+	if nli := GetInterface(); !nli.IsUndefined() {
 		if obj.InstanceOf(nli) {
 			n.BaseObject = n.SetObject(obj)
 			return n, nil
@@ -67,7 +67,7 @@ func (n NamedNodeMap) GetNamedItem(name string) (attr.Attr, error) {
 
 	if elemObject, err = n.JSObject().CallWithErr("getNamedItem", js.ValueOf(name)); err == nil {
 
-		if elemObject.IsNull() {
+		if elemObject.IsUndefined() {
 			err = ErrNotNameAttr
 
 		} else {
@@ -99,7 +99,7 @@ func (n NamedNodeMap) GetNamedItemNS(namespace string, name string) (attr.Attr, 
 
 	if elemObject, err = n.JSObject().CallWithErr("getNamedItemNS", js.ValueOf(namespace), js.ValueOf(name)); err == nil {
 
-		if elemObject.IsNull() {
+		if elemObject.IsUndefined() {
 			err = ErrNotNameAttr
 
 		} else {

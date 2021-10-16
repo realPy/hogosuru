@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if htmlquoteelementinterface, err = js.Global().GetWithErr("HTMLQuoteElement"); err != nil {
-			htmlquoteelementinterface = js.Null()
+			htmlquoteelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlquoteelementinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
@@ -70,7 +70,7 @@ func NewFromElement(elem element.Element) (HtmlQuoteElement, error) {
 	var h HtmlQuoteElement
 	var err error
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if elem.BaseObject.JSObject().InstanceOf(hci) {
 			h.BaseObject = h.SetObject(elem.BaseObject.JSObject())
 
@@ -87,7 +87,7 @@ func NewFromElement(elem element.Element) (HtmlQuoteElement, error) {
 func NewFromJSObject(obj js.Value) (HtmlQuoteElement, error) {
 	var h HtmlQuoteElement
 
-	if hci := GetInterface(); !hci.IsNull() {
+	if hci := GetInterface(); !hci.IsUndefined() {
 		if obj.InstanceOf(hci) {
 
 			h.BaseObject = h.SetObject(obj)

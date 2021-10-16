@@ -12,7 +12,12 @@ func New_(values ...interface{}) Array {
 }
 
 func Of_(values ...interface{}) Array {
-	return New_(values...)
+	a, err := Of(values...)
+
+	if err != nil {
+		a.Debug(err.Error())
+	}
+	return a
 }
 
 func NewEmpty_(size int) Array {

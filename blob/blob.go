@@ -25,7 +25,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 		var err error
 		if blobinterface, err = js.Global().GetWithErr("Blob"); err != nil {
-			blobinterface = js.Null()
+			blobinterface = js.Undefined()
 		}
 		//autodiscover
 		arraybuffer.GetInterface()
@@ -52,7 +52,7 @@ func (b Blob) Blob_() Blob {
 func New() (Blob, error) {
 
 	var b Blob
-	if bi := GetInterface(); !bi.IsNull() {
+	if bi := GetInterface(); !bi.IsUndefined() {
 
 		b.BaseObject = b.SetObject(bi.New())
 		return b, nil
@@ -63,7 +63,7 @@ func New() (Blob, error) {
 func NewWithObject(o js.Value) (Blob, error) {
 
 	var b Blob
-	if bi := GetInterface(); !bi.IsNull() {
+	if bi := GetInterface(); !bi.IsUndefined() {
 		b.BaseObject = b.SetObject(bi.New(o))
 		return b, nil
 	}
@@ -73,7 +73,7 @@ func NewWithObject(o js.Value) (Blob, error) {
 func NewWithArrayBuffer(a arraybuffer.ArrayBuffer) (Blob, error) {
 
 	var b Blob
-	if bi := GetInterface(); !bi.IsNull() {
+	if bi := GetInterface(); !bi.IsUndefined() {
 
 		b.BaseObject = b.SetObject(bi.New([]interface{}{a.JSObject()}))
 		return b, nil
@@ -97,7 +97,7 @@ func NewWithUint8Array(u uint8array.Uint8Array) (Blob, error) {
 func NewWithBlob(bl Blob) (Blob, error) {
 
 	var b Blob
-	if bi := GetInterface(); !bi.IsNull() {
+	if bi := GetInterface(); !bi.IsUndefined() {
 		b.BaseObject = b.SetObject(bi.New(bl.JSObject()))
 		return b, nil
 	}
@@ -107,7 +107,7 @@ func NewWithBlob(bl Blob) (Blob, error) {
 func NewFromJSObject(obj js.Value) (Blob, error) {
 	var b Blob
 
-	if bi := GetInterface(); !bi.IsNull() {
+	if bi := GetInterface(); !bi.IsUndefined() {
 		if obj.InstanceOf(bi) {
 			b.BaseObject = b.SetObject(obj)
 			return b, nil
@@ -233,7 +233,7 @@ func (b Blob) Append(append baseobject.BaseObject) (Blob, error) {
 
 	var blobObject js.Value
 	var arrayblob []interface{} = []interface{}{b.JSObject(), append.JSObject()}
-	if bi := GetInterface(); !bi.IsNull() {
+	if bi := GetInterface(); !bi.IsUndefined() {
 		blobObject = bi.New(arrayblob)
 
 		return NewFromJSObject(blobObject)

@@ -10,7 +10,8 @@ func main() {
 
 	arr := array.Of_(1, 2, 3, 4)
 	arr2 := array.New_(5, 6, 7, 8)
-
+	arrx := array.New_(5)
+	arrx.Export("manux")
 	arr = arr.Concat_(arr2)
 
 	it, _ := arr.Entries()
