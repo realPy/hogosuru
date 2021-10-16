@@ -42,7 +42,9 @@ func Discover(obj js.Value) (interface{}, error) {
 				}
 
 			} else {
+
 				bobj, err = NewFromJSObject(obj)
+
 			}
 
 		} else {
