@@ -1,4 +1,4 @@
-Hogosuru
+Hogosuru [![Build Status](https://app.travis-ci.com/realPy/hogosuru.svg?branch=main)](https://app.travis-ci.com/realPy/hogosuru)
 =========
 
 Hogosuru is a framework to easily write a complete single page application in Go or just export some functionnality directly accessible in javascript (functionnality that need speed for example).  
