@@ -140,13 +140,18 @@ func (j Json) Map() interface{} {
 
 }
 
-func (j Json) Stringify() (string, error) {
+func Stringify(opts ...interface{}) (string, error) {
 
-	var stringObject js.Value
+	var arrayJS []interface{}
 	var err error
+	var stringObject js.Value
+
+	for _, opt := range opts {
+		arrayJS = append(arrayJS, js.ValueOf(opt))
+	}
 	if jsoni := GetInterface(); !jsoni.IsUndefined() {
 
-		if stringObject, err = jsoni.CallWithErr("stringify", j.JSObject()); err != nil {
+		if stringObject, err = jsoni.CallWithErr("stringify", arrayJS); err != nil {
 			return "", err
 		} else {
 

@@ -1,24 +1,35 @@
 package baseobject
 
-func (o BaseObject) Class_() string {
+func (b BaseObject) Class_() string {
 
 	var c string
 	var err error
 
-	if c, err = o.Class(); err != nil {
-		o.Debug(err.Error())
+	if c, err = b.Class(); err != nil {
+		b.Debug(err.Error())
 	}
 
 	return c
 }
 
-func (o BaseObject) ToString_() string {
+func (b BaseObject) ToString_() string {
 
 	var c string
 	var err error
 
-	if c, err = o.ToString(); err != nil {
-		o.Debug(err.Error())
+	if c, err = b.ToString(); err != nil {
+		b.Debug(err.Error())
+	}
+
+	return c
+}
+
+func (b BaseObject) GetAttributeString_(attribute string) string {
+	var c string
+	var err error
+
+	if c, err = b.GetAttributeString(attribute); err != nil {
+		b.Debug(err.Error())
 	}
 
 	return c
