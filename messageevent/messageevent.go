@@ -68,7 +68,7 @@ func (m MessageEvent) Data() (interface{}, error) {
 	var globalObj interface{}
 	var err error
 	if jsObject, err = m.JSObject().GetWithErr("data"); err == nil {
-		globalObj, err = baseobject.Discover(jsObject)
+		globalObj = baseobject.GoValue(jsObject)
 	}
 
 	return globalObj, err
