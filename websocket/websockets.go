@@ -190,38 +190,6 @@ func (w WebSocket) OnMessage(handler func(m messageevent.MessageEvent)) (js.Func
 	})
 }
 
-/*
-func (w WebSocket) SetOnMessage(handler func(WebSocket, interface{})) {
-
-	w.setHandler("onmessage", func(ws WebSocket, v []js.Value) {
-
-		if len(v) > 0 {
-
-			if m, err := messageevent.NewFromJSObject(v[0]); err == nil {
-
-				if data, err := m.Data(); err == nil {
-					switch baseobject.String(data) {
-					case "[object Blob]":
-						if b, err := blob.NewFromJSObject(data); err == nil {
-							handler(w, b)
-						}
-					case "[object ArrayBuffer]":
-						if a, err := arraybuffer.NewFromJSObject(data); err == nil {
-							handler(w, a)
-						}
-					default:
-						handler(w, data.String())
-					}
-
-				}
-
-			}
-
-		}
-
-	})
-}*/
-
 func (w WebSocket) Send(data interface{}) error {
 	var object js.Value
 
