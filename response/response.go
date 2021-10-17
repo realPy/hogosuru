@@ -143,7 +143,8 @@ func (r Response) Url() (string, error) {
 	return "", err
 }
 
-func (r Response) Text() (string, error) {
+//deprecated (never use Await)
+func (r Response) _Text() (string, error) {
 
 	var promiseObject js.Value
 	var p promise.Promise
@@ -165,6 +166,28 @@ func (r Response) Text() (string, error) {
 
 	}
 	return "", err
+}
+
+func (r Response) Text() (promise.Promise, error) {
+
+	var promiseObject js.Value
+	var p promise.Promise
+	var err error
+	if promiseObject, err = r.JSObject().CallWithErr("text"); err == nil {
+		p, err = promise.NewFromJSObject(promiseObject)
+	}
+	return p, err
+}
+
+func (r Response) Json() (promise.Promise, error) {
+
+	var promiseObject js.Value
+	var p promise.Promise
+	var err error
+	if promiseObject, err = r.JSObject().CallWithErr("json"); err == nil {
+		p, err = promise.NewFromJSObject(promiseObject)
+	}
+	return p, err
 }
 
 func (r Response) UseFinalURL() (bool, error) {

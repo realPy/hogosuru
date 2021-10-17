@@ -21,3 +21,4 @@ script:
 - GOOS=js GOARCH=wasm go test -v  ./baseobject
 - GOOS=js GOARCH=wasm go test -v  ./json
 - GOOS=js GOARCH=wasm go test -v  ./promise
+- GOOS=js GOARCH=wasm go test -v  ./fetch
