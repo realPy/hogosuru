@@ -23,3 +23,4 @@ script:
 - GOOS=js GOARCH=wasm go test -v  ./promise
 - GOOS=js GOARCH=wasm go test -v  ./fetch
 - GOOS=js GOARCH=wasm go test -v  ./websocket
+- GOOS=js GOARCH=wasm go test -v  ./objectmap
