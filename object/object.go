@@ -43,6 +43,19 @@ func (o Object) Object_() Object {
 	return o
 }
 
+func New() (Object, error) {
+	var o Object
+	var err error
+	if ai := GetInterface(); !ai.IsUndefined() {
+
+		o.BaseObject = o.SetObject(ai.New())
+
+	} else {
+		err = ErrNotImplemented
+	}
+	return o, err
+}
+
 func NewFromJSObject(obj js.Value) (Object, error) {
 	var o Object
 	var err error

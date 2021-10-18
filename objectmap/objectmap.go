@@ -130,7 +130,7 @@ func (o ObjectMap) Entries() (iterator.Iterator, error) {
 	return iter, err
 }
 
-func (o ObjectMap) ForEach(f func(interface{}, interface{})) error {
+func (o ObjectMap) ForEach(f func(value, index interface{})) error {
 	var err error
 
 	jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
@@ -230,4 +230,8 @@ func (o ObjectMap) Values() (iterator.Iterator, error) {
 	}
 
 	return iter, err
+}
+
+func (o ObjectMap) Size() (int, error) {
+	return o.GetAttributeInt("size")
 }

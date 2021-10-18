@@ -216,6 +216,19 @@ func (b BaseObject) SetFunc(attribute string, f func(this js.Value, args []js.Va
 	return b.JSObject().SetWithErr(attribute, js.FuncOf(f))
 }
 
+func (b BaseObject) SetAttribute(attribute string, i interface{}) error {
+	var obj interface{}
+
+	if objGo, ok := i.(ObjectFrom); ok {
+		obj = objGo
+
+	} else {
+		obj = js.ValueOf(i)
+	}
+
+	return b.JSObject().SetWithErr(attribute, obj)
+}
+
 func (b BaseObject) Export(name string) {
 	js.Global().Set(name, b.object)
 }
