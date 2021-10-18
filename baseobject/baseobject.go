@@ -396,6 +396,8 @@ func GoValue(object js.Value) interface{} {
 		return object.String()
 	case js.TypeBoolean:
 		return object.Bool()
+	case js.TypeNull:
+		return nil
 	}
 
 	obj, _ := Discover(object)
