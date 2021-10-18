@@ -5,16 +5,16 @@ import (
 	"github.com/realPy/hogosuru/abortsignal"
 )
 
-//FetchCancellable struct
-type FetchCancellable struct {
+//FetchCancelable struct
+type FetchCancelable struct {
 	Fetch
 	abortctrl abortcontroller.AbortController
 }
 
-func NewCancellable(urlfetch string, opts ...interface{}) (FetchCancellable, error) {
+func NewCancelable(urlfetch string, opts ...interface{}) (FetchCancelable, error) {
 
 	//var arrayJS []interface{}
-	var f FetchCancellable
+	var f FetchCancelable
 	var err error
 	var init interface{}
 	var s abortsignal.AbortSignal
@@ -47,6 +47,6 @@ func NewCancellable(urlfetch string, opts ...interface{}) (FetchCancellable, err
 
 }
 
-func (f FetchCancellable) Abort() error {
+func (f FetchCancelable) Abort() error {
 	return f.abortctrl.Abort()
 }

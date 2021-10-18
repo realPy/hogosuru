@@ -276,7 +276,7 @@ func TestNew(t *testing.T) {
 
 }
 
-func TestNewCancellable(t *testing.T) {
+func TestNewCancelable(t *testing.T) {
 	var io chan bool = make(chan bool)
 
 	var headers map[string]interface{} = map[string]interface{}{"Content-Type": "application/x-www-form-urlencoded",
@@ -284,7 +284,7 @@ func TestNewCancellable(t *testing.T) {
 
 	var fetchOpts map[string]interface{} = map[string]interface{}{"method": "POST", "headers": headers, "body": "data=test", "mode": "no-cors"}
 
-	if f, err := NewCancellable("http://httpbin.org/post", fetchOpts); err == nil {
+	if f, err := NewCancelable("http://httpbin.org/post", fetchOpts); err == nil {
 		f.Then(func(r response.Response) *promise.Promise {
 
 			t.Error("Must not get response")
