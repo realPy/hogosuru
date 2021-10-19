@@ -6,7 +6,7 @@ Hogosuru is a framework to easily write a complete single page application in Go
 ## How it work?
 He use an addon syscall/js (that catch error) and implement a large part of the major features of javascript directly accessible in go.  
 
-For a list of functionnality , the the array compatibility below or check the name of directory that match the API MDN implementation: https://developer.mozilla.org/fr/docs/Web/API  
+For a list of functionnality , see the array of compatibility below or check the name of directory that match the API MDN implementation: https://developer.mozilla.org/fr/docs/Web/API  
    
 Each object is herited from a baseobject.BaseObject. The baseobject keep a true JS object reference.  
    
@@ -426,6 +426,8 @@ All help is welcome. If you are interested by this project, please contact me
 
 |  API/Object |  Implemented Support |  MDN URL |
 |-------------|:--------------------:|----------|
+| AbortController | Full | https://developer.mozilla.org/en-US/docs/Web/API/AbortController | 
+| AbortSignal | Full | https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal | 
 | AnimationEvent | Full | https://developer.mozilla.org/fr/docs/Web/API/AnimationEvent | 
 | Array | Full | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Array | 
 | Arraybuffer |  Partial | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer | 
