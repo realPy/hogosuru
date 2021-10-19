@@ -316,6 +316,24 @@ func (b BaseObject) GetAttributeInt(attribute string) (int, error) {
 
 	return result, err
 }
+
+func (b BaseObject) GetAttributeInt64(attribute string) (int64, error) {
+
+	var err error
+	var obj js.Value
+	var ret int64
+
+	if obj, err = b.JSObject().GetWithErr(attribute); err == nil {
+		if obj.Type() == js.TypeNumber {
+			ret = int64(obj.Float())
+		} else {
+			err = ErrObjectNotNumber
+		}
+	}
+
+	return ret, err
+}
+
 func (b BaseObject) SetAttributeInt(attribute string, value int) error {
 
 	return b.JSObject().SetWithErr(attribute, js.ValueOf(value))
