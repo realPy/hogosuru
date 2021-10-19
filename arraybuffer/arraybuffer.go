@@ -70,7 +70,26 @@ func NewFromJSObject(obj js.Value) (ArrayBuffer, error) {
 	return a, ErrNotAnArrayBuffer
 }
 
-func (a ArrayBuffer) ByteLength() (int, error) {
+func (a ArrayBuffer) ByteLength() (int64, error) {
 
-	return a.GetAttributeInt("byteLength")
+	return a.GetAttributeInt64("byteLength")
+}
+
+func (a ArrayBuffer) Slice(begin int, end ...int) (ArrayBuffer, error) {
+
+	var optjs []interface{}
+	var err error
+	var obj js.Value
+	var ret ArrayBuffer
+
+	optjs = append(optjs, js.ValueOf(begin))
+	if len(end) > 0 {
+		optjs = append(optjs, js.ValueOf(end[0]))
+	}
+
+	if obj, err = a.JSObject().CallWithErr("slice", optjs...); err == nil {
+
+		ret, err = NewFromJSObject(obj)
+	}
+	return ret, err
 }
