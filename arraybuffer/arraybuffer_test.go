@@ -1,6 +1,11 @@
 package arraybuffer
 
-import "testing"
+import (
+	"syscall/js"
+	"testing"
+
+	"github.com/realPy/hogosuru/baseobject"
+)
 
 func TestMain(m *testing.M) {
 	m.Run()
@@ -47,5 +52,39 @@ func TestSlice(t *testing.T) {
 
 	} else {
 		t.Error(err.Error())
+	}
+}
+
+func TestIsView(t *testing.T) {
+
+	baseobject.Eval("customuint16=new Uint16Array()")
+	if obj, err := js.Global().GetWithErr("customuint16"); err == nil {
+		if a, err := baseobject.NewFromJSObject(obj); err == nil {
+			if ok, err := IsView(a); err == nil {
+				if !ok {
+					t.Error("Must be ok")
+				}
+			} else {
+				t.Error(err.Error())
+			}
+		} else {
+			t.Error(err.Error())
+		}
+
+	}
+	baseobject.Eval("customuint16=\"string\"")
+	if obj, err := js.Global().GetWithErr("customuint16"); err == nil {
+		if a, err := baseobject.NewFromJSObject(obj); err == nil {
+			if ok, err := IsView(a); err == nil {
+				if ok {
+					t.Error("Must not be ok")
+				}
+			} else {
+				t.Error(err.Error())
+			}
+		} else {
+			t.Error(err.Error())
+		}
+
 	}
 }

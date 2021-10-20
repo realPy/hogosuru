@@ -13,7 +13,7 @@ import (
 	"github.com/realPy/hogosuru/headers"
 	"github.com/realPy/hogosuru/promise"
 	"github.com/realPy/hogosuru/stream"
-	"github.com/realPy/hogosuru/uint8array"
+	"github.com/realPy/hogosuru/typedarray"
 )
 
 var (
@@ -231,12 +231,12 @@ func (r Response) ArrayBufferBytes() ([]byte, error) {
 
 	var buffer []byte
 	var ab arraybuffer.ArrayBuffer
-	var arr8buf uint8array.Uint8Array
+	var arr8buf typedarray.Uint8Array
 
 	var err error
 
 	if ab, err = r.ArrayBuffer(); err == nil {
-		if arr8buf, err = uint8array.NewFromArrayBuffer(ab); err == nil {
+		if arr8buf, err = typedarray.NewUint8Array(ab); err == nil {
 			buffer, err = arr8buf.Bytes()
 		}
 	}

@@ -8,7 +8,7 @@ import (
 
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/promise"
-	"github.com/realPy/hogosuru/uint8array"
+	"github.com/realPy/hogosuru/typedarray"
 )
 
 var singletonReadableStreamDefault sync.Once
@@ -73,14 +73,14 @@ func (r ReadableStreamDefaultReader) Read(b []byte) (n int, err error) {
 						donechan <- true
 						return nil
 					} else {
-						var u8array uint8array.Uint8Array
+
+						var u8array typedarray.Uint8Array
+
 						uint8arrayObject := obj.JSObject().Get("value")
-						if u8array, err = uint8array.NewFromJSObject(uint8arrayObject); err == nil {
+						if u8array, err = typedarray.NewUint8Array(uint8arrayObject); err == nil {
 							n, err = u8array.CopyBytes(b)
 						}
-
 					}
-
 				}
 
 				donechan <- false
@@ -120,11 +120,11 @@ func (r ReadableStreamDefaultReader) asyncRead(preallocateBytes []byte, dataHand
 						dataHandle(nil, err)
 						return nil
 					} else {
-						var u8array uint8array.Uint8Array
+						var u8array typedarray.Uint8Array
 
 						uint8arrayObject := obj.Get("value")
 
-						if u8array, err = uint8array.NewFromJSObject(uint8arrayObject); err == nil {
+						if u8array, err = typedarray.NewUint8Array(uint8arrayObject); err == nil {
 
 							if _, err = u8array.CopyBytes(preallocateBytes); err == nil {
 								dataHandle(preallocateBytes, err)

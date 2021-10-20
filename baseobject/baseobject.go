@@ -99,7 +99,9 @@ type BaseObject struct {
 //NewFromJSObject Build a BaseObject from a Js Value Object given
 func NewFromJSObject(obj js.Value) (BaseObject, error) {
 	var o BaseObject
-
+	if obj.IsUndefined() {
+		return o, ErrNotAnObject
+	}
 	o.object = &obj
 	return o, nil
 
