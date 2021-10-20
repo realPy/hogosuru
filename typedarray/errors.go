@@ -3,7 +3,7 @@ package typedarray
 import "errors"
 
 var (
-	//ErrNotAUint8Array ErrNotAnBlob error
+	//ErrNotAUint8Array ErrNotAUint8Array error
 	ErrNotAUint8Array                  = errors.New("Object is not a Uint8Array")
 	ErrNotImplementedUint8Array        = errors.New("Browser not implemented Uint8Array")
 	ErrNotAUint8ClampedArray           = errors.New("Object is not a Uint8ClampedArray")
