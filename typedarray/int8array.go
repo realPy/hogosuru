@@ -33,6 +33,9 @@ func GetInt8ArrayInterface() js.Value {
 		if int8arrayinterface, err = js.Global().GetWithErr("Int8Array"); err != nil {
 			int8arrayinterface = js.Undefined()
 		}
+		baseobject.Register(int8arrayinterface, func(v js.Value) (interface{}, error) {
+			return NewInt8FromJSObject(v)
+		})
 
 	})
 

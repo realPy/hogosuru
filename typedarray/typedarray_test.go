@@ -15,6 +15,24 @@ func TestNewUInt8Array(t *testing.T) {
 				t.Errorf("Size must be 10 have %d", l)
 			}
 
+			if b, err := a.Subarray(2, 8); err == nil {
+				if bb, ok := b.(Uint8ArrayFrom); ok {
+					if l1, err := bb.Uint8Array_().ByteLength(); err == nil {
+						if l1 != 6 {
+							t.Error("Must be equal 6")
+						}
+					} else {
+						t.Error("Not a Uint8array")
+					}
+
+				} else {
+					t.Error("Not a Uint8array")
+				}
+
+			} else {
+				t.Error(err.Error())
+			}
+
 		} else {
 			t.Error(err.Error())
 		}
@@ -68,6 +86,14 @@ func TestNewUInt16Array(t *testing.T) {
 
 			if v.(int) != 1000 {
 				t.Error("Must be a egal 1000")
+			}
+		} else {
+			t.Error(err.Error())
+		}
+
+		if n, err := a.BYTES_PER_ELEMENT(); err == nil {
+			if n != 2 {
+				t.Errorf("BYTES_PER_ELEMENT must be 2 have %d", n)
 			}
 		} else {
 			t.Error(err.Error())

@@ -6,6 +6,7 @@ import (
 
 	"github.com/realPy/hogosuru/array"
 	"github.com/realPy/hogosuru/arraybuffer"
+	"github.com/realPy/hogosuru/baseobject"
 )
 
 //TypedArray struct
@@ -85,4 +86,35 @@ func (t TypedArray) Buffer() (arraybuffer.ArrayBuffer, error) {
 func (t TypedArray) ByteLength() (int64, error) {
 
 	return t.GetAttributeInt64("byteLength")
+}
+
+func (t TypedArray) ByteOffset() (int64, error) {
+
+	return t.GetAttributeInt64("byteOffset")
+}
+
+func (t TypedArray) BYTES_PER_ELEMENT() (int, error) {
+
+	return t.GetAttributeInt("BYTES_PER_ELEMENT")
+}
+
+func (t TypedArray) Subarray(opts ...int) (interface{}, error) {
+
+	var err error
+	var arrayJS []interface{}
+	var obj js.Value
+	var newArr interface{}
+
+	if len(opts) < 3 {
+		for _, opt := range opts {
+			arrayJS = append(arrayJS, js.ValueOf(opt))
+		}
+	}
+
+	if obj, err = t.JSObject().CallWithErr("subarray", arrayJS...); err == nil {
+		newArr, err = baseobject.Discover(obj)
+
+	}
+
+	return newArr, err
 }

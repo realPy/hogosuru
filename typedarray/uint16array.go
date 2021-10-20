@@ -11,7 +11,7 @@ var singletonuint16array sync.Once
 
 var uint16arrayinterface js.Value
 
-//Uint8Array struct
+//Uint16Array struct
 type Uint16Array struct {
 	TypedArray
 }
@@ -33,7 +33,9 @@ func GetUint16ArrayInterface() js.Value {
 		if uint16arrayinterface, err = js.Global().GetWithErr("Uint16Array"); err != nil {
 			uint16arrayinterface = js.Undefined()
 		}
-
+		baseobject.Register(uint16arrayinterface, func(v js.Value) (interface{}, error) {
+			return NewUint16FromJSObject(v)
+		})
 	})
 
 	return uint16arrayinterface
@@ -61,7 +63,7 @@ func NewUint16Array(value interface{}) (Uint16Array, error) {
 func NewUint16FromJSObject(obj js.Value) (Uint16Array, error) {
 	var u Uint16Array
 
-	if ui := GetUint8ArrayInterface(); !ui.IsUndefined() {
+	if ui := GetUint16ArrayInterface(); !ui.IsUndefined() {
 		if obj.InstanceOf(ui) {
 			u.BaseObject = u.SetObject(obj)
 			return u, nil
