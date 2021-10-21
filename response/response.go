@@ -13,7 +13,6 @@ import (
 	"github.com/realPy/hogosuru/headers"
 	"github.com/realPy/hogosuru/promise"
 	"github.com/realPy/hogosuru/stream"
-	"github.com/realPy/hogosuru/typedarray"
 )
 
 var (
@@ -200,7 +199,7 @@ func (r Response) SetUseFinalURL(b bool) {
 	r.JSObject().Set("useFinalURL", js.ValueOf(b))
 }
 
-func (r Response) ArrayBuffer() (arraybuffer.ArrayBuffer, error) {
+func (r Response) ArrayBuffer_() (arraybuffer.ArrayBuffer, error) {
 
 	var ab arraybuffer.ArrayBuffer
 	var err error
@@ -226,7 +225,19 @@ func (r Response) ArrayBuffer() (arraybuffer.ArrayBuffer, error) {
 	return ab, err
 
 }
+func (r Response) ArrayBuffer() (promise.Promise, error) {
 
+	var promiseObject js.Value
+	var p promise.Promise
+	var err error
+	if promiseObject, err = r.JSObject().CallWithErr("arrayBuffer"); err == nil {
+		p, err = promise.NewFromJSObject(promiseObject)
+	}
+	return p, err
+
+}
+
+/*
 func (r Response) ArrayBufferBytes() ([]byte, error) {
 
 	var buffer []byte
@@ -243,7 +254,7 @@ func (r Response) ArrayBufferBytes() ([]byte, error) {
 
 	return buffer, err
 }
-
+*/
 func (r Response) Headers() (headers.Headers, error) {
 	var obj js.Value
 	var err error
