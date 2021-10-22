@@ -193,6 +193,11 @@ func (d Document) Title() (string, error) {
 	return d.GetAttributeString("title")
 }
 
+func (d Document) SetTitle(title string) error {
+
+	return d.SetAttributeString("title", title)
+}
+
 func (d Document) URL() (string, error) {
 
 	return d.GetAttributeString("URL")

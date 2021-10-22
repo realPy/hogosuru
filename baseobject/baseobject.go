@@ -1,8 +1,67 @@
 package baseobject
 
 import (
+	"errors"
 	"syscall/js"
 )
+
+var setFunc js.Value
+var getFunc js.Value
+var callFunc js.Value
+var invokeFunc js.Value
+var errorInterface js.Value
+
+func init() {
+	//Set Set and get function
+	Eval(`hSet = (obj, set , value) => { try { Reflect.set(obj,set,value) ; return }catch(err){ return err } }`)
+	Eval(`hGet = (obj, get ) => { try { return Reflect.get(obj,get) }catch(err){ return err } }`)
+	Eval(`hCall = (obj,method,args) => { try { func=Reflect.get(obj,method); return Reflect.apply(func,obj,args) } catch (err) { return err } }`)
+	Eval(`hInvoke = (func,args) => { try { return Reflect.apply(func,undefined,args) } catch (err) { return err } }`)
+
+	setFunc = js.Global().Get("hSet")
+	getFunc = js.Global().Get("hGet")
+	callFunc = js.Global().Get("hCall")
+	invokeFunc = js.Global().Get("hInvoke")
+	errorInterface = js.Global().Get("Error")
+}
+
+func Set(obj js.Value, name string, val interface{}) error {
+
+	var err error
+	ret := setFunc.Invoke(obj, js.ValueOf(name), val)
+
+	if !ret.IsUndefined() {
+		err = errors.New(ret.Get("message").String())
+	}
+	return err
+}
+
+func Get(obj js.Value, name string) (js.Value, error) {
+
+	var err error
+	ret := getFunc.Invoke(obj, js.ValueOf(name))
+
+	if ret.InstanceOf(errorInterface) {
+		err = errors.New(ret.Get("message").String())
+	}
+	return ret, err
+}
+
+func Call(obj js.Value, name string, args ...interface{}) (js.Value, error) {
+
+	var err error
+	var jsargs []interface{}
+
+	for _, arg := range args {
+		jsargs = append(jsargs, js.ValueOf(arg))
+	}
+	ret := callFunc.Invoke(obj, js.ValueOf(name), jsargs)
+
+	if ret.InstanceOf(errorInterface) {
+		err = errors.New(ret.Get("message").String())
+	}
+	return ret, err
+}
 
 var registry map[string]func(js.Value) (interface{}, error)
 
@@ -111,6 +170,21 @@ func NewFromJSObject(obj js.Value) (BaseObject, error) {
 func (b BaseObject) Empty() bool {
 
 	return b.object == nil
+}
+
+//Get Get Value of object and handle err
+func (b BaseObject) Get(name string) (interface{}, error) {
+	return Get(b.JSObject(), name)
+}
+
+//Set Set Value of object and handle err
+func (b BaseObject) Set(name string, value interface{}) error {
+	return Set(b.JSObject(), name, value)
+}
+
+//Call
+func (b BaseObject) Call(name string, args ...interface{}) (js.Value, error) {
+	return Call(b.JSObject(), name, args...)
 }
 
 //Discover Use Discover of this struct
@@ -277,7 +351,8 @@ func (b BaseObject) GetAttributeGlobal(attribute string) (interface{}, error) {
 
 func (b BaseObject) SetAttributeString(attribute string, value string) error {
 
-	return b.JSObject().SetWithErr(attribute, js.ValueOf(value))
+	return b.Set(attribute, js.ValueOf(value))
+	//return b.JSObject().SetWithErr(attribute, js.ValueOf(value))
 }
 
 func (b BaseObject) GetAttributeBool(attribute string) (bool, error) {
