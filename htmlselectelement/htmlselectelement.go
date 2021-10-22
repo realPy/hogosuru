@@ -36,7 +36,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlselectelementinterface, err = js.Global().GetWithErr("HTMLSelectElement"); err != nil {
+		if htmlselectelementinterface, err = baseobject.Get(js.Global(), "HTMLSelectElement"); err != nil {
 			htmlselectelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlselectelementinterface, func(v js.Value) (interface{}, error) {

@@ -22,7 +22,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if windowinterface, err = js.Global().GetWithErr("Window"); err != nil {
+		if windowinterface, err = baseobject.Get(js.Global(), "Window"); err != nil {
 			windowinterface = js.Undefined()
 		}
 		baseobject.Register(windowinterface, func(v js.Value) (interface{}, error) {
@@ -64,7 +64,7 @@ func New() (Window, error) {
 	var err error
 	var w Window
 	var windowObj js.Value
-	if windowObj, err = js.Global().GetWithErr("window"); err == nil {
+	if windowObj, err = baseobject.Get(js.Global(), "window"); err == nil {
 
 		w, err = NewFromJSObject(windowObj)
 

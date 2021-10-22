@@ -35,7 +35,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if drageventinterface, err = js.Global().GetWithErr("DragEvent"); err != nil {
+		if drageventinterface, err = baseobject.Get(js.Global(), "DragEvent"); err != nil {
 			drageventinterface = js.Undefined()
 		}
 		baseobject.Register(drageventinterface, func(v js.Value) (interface{}, error) {

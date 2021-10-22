@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlimageelementinterface, err = js.Global().GetWithErr("HTMLImageElement"); err != nil {
+		if htmlimageelementinterface, err = baseobject.Get(js.Global(), "HTMLImageElement"); err != nil {
 			htmlimageelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlimageelementinterface, func(v js.Value) (interface{}, error) {

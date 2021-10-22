@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmltablerowelementinterface, err = js.Global().GetWithErr("HTMLTableRowElement"); err != nil {
+		if htmltablerowelementinterface, err = baseobject.Get(js.Global(), "HTMLTableRowElement"); err != nil {
 			htmltablerowelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmltablerowelementinterface, func(v js.Value) (interface{}, error) {

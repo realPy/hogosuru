@@ -34,7 +34,7 @@ func IDBTransactionGetInterface() js.Value {
 	singletonIDBTransaction.Do(func() {
 
 		var err error
-		if idbtransactioninterface, err = js.Global().GetWithErr("IDBTransaction"); err != nil {
+		if idbtransactioninterface, err = baseobject.Get(js.Global(), "IDBTransaction"); err != nil {
 			idbtransactioninterface = js.Undefined()
 		}
 		baseobject.Register(idbtransactioninterface, func(v js.Value) (interface{}, error) {

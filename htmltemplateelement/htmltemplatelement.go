@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmltemplateelementinterface, err = js.Global().GetWithErr("HTMLTemplateElement"); err != nil {
+		if htmltemplateelementinterface, err = baseobject.Get(js.Global(), "HTMLTemplateElement"); err != nil {
 			htmltemplateelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmltemplateelementinterface, func(v js.Value) (interface{}, error) {

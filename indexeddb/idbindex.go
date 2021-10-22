@@ -18,7 +18,7 @@ func GetIDBIndexInterface() js.Value {
 
 	singletonIDBIndex.Do(func() {
 		var err error
-		if idbindexinterface, err = js.Global().GetWithErr("IDBIndex"); err != nil {
+		if idbindexinterface, err = baseobject.Get(js.Global(), "IDBIndex"); err != nil {
 			idbindexinterface = js.Undefined()
 		}
 		baseobject.Register(idbindexinterface, func(v js.Value) (interface{}, error) {

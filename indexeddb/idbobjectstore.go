@@ -32,7 +32,7 @@ func IDBObjectStoreGetInterface() js.Value {
 	singletonIDBObjectStore.Do(func() {
 
 		var err error
-		if idbobjectstoreinterface, err = js.Global().GetWithErr("IDBObjectStore"); err != nil {
+		if idbobjectstoreinterface, err = baseobject.Get(js.Global(), "IDBObjectStore"); err != nil {
 			idbobjectstoreinterface = js.Undefined()
 		}
 		baseobject.Register(idbobjectstoreinterface, func(v js.Value) (interface{}, error) {

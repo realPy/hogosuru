@@ -21,7 +21,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if promiseinterface, err = js.Global().GetWithErr("Promise"); err != nil {
+		if promiseinterface, err = baseobject.Get(js.Global(), "Promise"); err != nil {
 			promiseinterface = js.Undefined()
 		}
 		baseobject.Register(promiseinterface, func(v js.Value) (interface{}, error) {

@@ -36,7 +36,7 @@ func IDBRequestGetInterface() js.Value {
 	singletonIDBRequest.Do(func() {
 
 		var err error
-		if idbrequestinterface, err = js.Global().GetWithErr(classIDBRequest); err != nil {
+		if idbrequestinterface, err = baseobject.Get(js.Global(), classIDBRequest); err != nil {
 			idbrequestinterface = js.Undefined()
 		}
 

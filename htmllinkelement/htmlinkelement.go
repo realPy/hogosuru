@@ -33,7 +33,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmllinklementinterface, err = js.Global().GetWithErr("HTMLLinkElement"); err != nil {
+		if htmllinklementinterface, err = baseobject.Get(js.Global(), "HTMLLinkElement"); err != nil {
 			htmllinklementinterface = js.Undefined()
 		}
 		baseobject.Register(htmllinklementinterface, func(v js.Value) (interface{}, error) {

@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmllabelelementinterface, err = js.Global().GetWithErr("HTMLLabelElement"); err != nil {
+		if htmllabelelementinterface, err = baseobject.Get(js.Global(), "HTMLLabelElement"); err != nil {
 			htmllabelelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmllabelelementinterface, func(v js.Value) (interface{}, error) {

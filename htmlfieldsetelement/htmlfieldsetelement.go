@@ -33,7 +33,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlfieldsetelementinterface, err = js.Global().GetWithErr("HTMLFieldSetElement"); err != nil {
+		if htmlfieldsetelementinterface, err = baseobject.Get(js.Global(), "HTMLFieldSetElement"); err != nil {
 			htmlfieldsetelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlfieldsetelementinterface, func(v js.Value) (interface{}, error) {

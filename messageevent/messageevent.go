@@ -21,7 +21,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if messageeventinterface, err = js.Global().GetWithErr("MessageEvent"); err != nil {
+		if messageeventinterface, err = baseobject.Get(js.Global(), "MessageEvent"); err != nil {
 			messageeventinterface = js.Undefined()
 		}
 		//instance object for autodiscovery

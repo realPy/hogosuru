@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlpreelementinterface, err = js.Global().GetWithErr("HTMLPreElement"); err != nil {
+		if htmlpreelementinterface, err = baseobject.Get(js.Global(), "HTMLPreElement"); err != nil {
 			htmlpreelementinterface = js.Undefined()
 		}
 

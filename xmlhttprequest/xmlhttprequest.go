@@ -44,7 +44,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if xhrinterface, err = js.Global().GetWithErr("XMLHttpRequest"); err != nil {
+		if xhrinterface, err = baseobject.Get(js.Global(), "XMLHttpRequest"); err != nil {
 			xhrinterface = js.Undefined()
 		}
 		baseobject.Register(xhrinterface, func(v js.Value) (interface{}, error) {

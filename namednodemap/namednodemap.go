@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if namednodemapinterface, err = js.Global().GetWithErr("NamedNodeMap"); err != nil {
+		if namednodemapinterface, err = baseobject.Get(js.Global(), "NamedNodeMap"); err != nil {
 			namednodemapinterface = js.Undefined()
 		}
 		baseobject.Register(namednodemapinterface, func(v js.Value) (interface{}, error) {

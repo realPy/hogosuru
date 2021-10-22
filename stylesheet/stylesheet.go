@@ -30,7 +30,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if stylesheetinterface, err = js.Global().GetWithErr("StyleSheet"); err != nil {
+		if stylesheetinterface, err = baseobject.Get(js.Global(), "StyleSheet"); err != nil {
 			stylesheetinterface = js.Undefined()
 		}
 		baseobject.Register(stylesheetinterface, func(v js.Value) (interface{}, error) {

@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmldatalistelementinterface, err = js.Global().GetWithErr("HTMLDataListElement"); err != nil {
+		if htmldatalistelementinterface, err = baseobject.Get(js.Global(), "HTMLDataListElement"); err != nil {
 			htmldatalistelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmldatalistelementinterface, func(v js.Value) (interface{}, error) {

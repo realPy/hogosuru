@@ -20,7 +20,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if progresseeventinterface, err = js.Global().GetWithErr("ProgressEvent"); err != nil {
+		if progresseeventinterface, err = baseobject.Get(js.Global(), "ProgressEvent"); err != nil {
 			progresseeventinterface = js.Undefined()
 		}
 		baseobject.Register(progresseeventinterface, func(v js.Value) (interface{}, error) {

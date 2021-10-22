@@ -44,7 +44,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if wsinterface, err = js.Global().GetWithErr("WebSocket"); err != nil {
+		if wsinterface, err = baseobject.Get(js.Global(), "WebSocket"); err != nil {
 			wsinterface = js.Undefined()
 		}
 

@@ -30,7 +30,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if cssruleinterface, err = js.Global().GetWithErr("CSSRule"); err != nil {
+		if cssruleinterface, err = baseobject.Get(js.Global(), "CSSRule"); err != nil {
 			cssruleinterface = js.Undefined()
 		}
 		baseobject.Register(cssruleinterface, func(v js.Value) (interface{}, error) {

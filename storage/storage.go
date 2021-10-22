@@ -19,7 +19,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if storageinterface, err = js.Global().GetWithErr("Storage"); err != nil {
+		if storageinterface, err = baseobject.Get(js.Global(), "Storage"); err != nil {
 			storageinterface = js.Undefined()
 		}
 		baseobject.Register(storageinterface, func(v js.Value) (interface{}, error) {

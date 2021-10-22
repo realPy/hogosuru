@@ -17,7 +17,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if dateinterface, err = js.Global().GetWithErr("Date"); err != nil {
+		if dateinterface, err = baseobject.Get(js.Global(), "Date"); err != nil {
 			dateinterface = js.Undefined()
 		}
 		baseobject.Register(dateinterface, func(v js.Value) (interface{}, error) {

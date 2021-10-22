@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlmeterelementinterface, err = js.Global().GetWithErr("HTMLMeterElement"); err != nil {
+		if htmlmeterelementinterface, err = baseobject.Get(js.Global(), "HTMLMeterElement"); err != nil {
 			htmlmeterelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlmeterelementinterface, func(v js.Value) (interface{}, error) {

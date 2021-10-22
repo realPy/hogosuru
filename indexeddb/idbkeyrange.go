@@ -18,7 +18,7 @@ func GetIDBKeyRangeInterface() js.Value {
 
 	singletonIDBIndex.Do(func() {
 		var err error
-		if idbkeyrangeinterface, err = js.Global().GetWithErr("IDBKeyRange"); err != nil {
+		if idbkeyrangeinterface, err = baseobject.Get(js.Global(), "IDBKeyRange"); err != nil {
 			idbkeyrangeinterface = js.Undefined()
 		}
 		baseobject.Register(idbkeyrangeinterface, func(v js.Value) (interface{}, error) {

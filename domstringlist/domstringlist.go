@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if domstringlistinterface, err = js.Global().GetWithErr("DOMStringList"); err != nil {
+		if domstringlistinterface, err = baseobject.Get(js.Global(), "DOMStringList"); err != nil {
 			domstringlistinterface = js.Undefined()
 		}
 		baseobject.Register(domstringlistinterface, func(v js.Value) (interface{}, error) {

@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlstylelementinterface, err = js.Global().GetWithErr("HTMLStyleElement"); err != nil {
+		if htmlstylelementinterface, err = baseobject.Get(js.Global(), "HTMLStyleElement"); err != nil {
 			htmlstylelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlstylelementinterface, func(v js.Value) (interface{}, error) {

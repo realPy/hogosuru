@@ -58,7 +58,7 @@ func TestSlice(t *testing.T) {
 func TestIsView(t *testing.T) {
 
 	baseobject.Eval("customuint16=new Uint16Array()")
-	if obj, err := js.Global().GetWithErr("customuint16"); err == nil {
+	if obj, err := baseobject.Get(js.Global(), "customuint16"); err == nil {
 		if a, err := baseobject.NewFromJSObject(obj); err == nil {
 			if ok, err := IsView(a); err == nil {
 				if !ok {
@@ -73,7 +73,7 @@ func TestIsView(t *testing.T) {
 
 	}
 	baseobject.Eval("customuint16=\"string\"")
-	if obj, err := js.Global().GetWithErr("customuint16"); err == nil {
+	if obj, err := baseobject.Get(js.Global(), "customuint16"); err == nil {
 		if a, err := baseobject.NewFromJSObject(obj); err == nil {
 			if ok, err := IsView(a); err == nil {
 				if ok {

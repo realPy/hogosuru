@@ -18,7 +18,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if mapinterface, err = js.Global().GetWithErr("Map"); err != nil {
+		if mapinterface, err = baseobject.Get(js.Global(), "Map"); err != nil {
 			mapinterface = js.Undefined()
 		}
 		baseobject.Register(mapinterface, func(v js.Value) (interface{}, error) {

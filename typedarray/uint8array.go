@@ -30,7 +30,7 @@ func GetUint8ArrayInterface() js.Value {
 	singletonuint8array.Do(func() {
 
 		var err error
-		if uint8arrayinterface, err = js.Global().GetWithErr("Uint8Array"); err != nil {
+		if uint8arrayinterface, err = baseobject.Get(js.Global(), "Uint8Array"); err != nil {
 			uint8arrayinterface = js.Undefined()
 		}
 		baseobject.Register(uint8arrayinterface, func(v js.Value) (interface{}, error) {

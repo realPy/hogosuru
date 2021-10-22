@@ -20,7 +20,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if arraybufferinterface, err = js.Global().GetWithErr("ArrayBuffer"); err != nil {
+		if arraybufferinterface, err = baseobject.Get(js.Global(), "ArrayBuffer"); err != nil {
 			arraybufferinterface = js.Undefined()
 		}
 		baseobject.Register(arraybufferinterface, func(v js.Value) (interface{}, error) {

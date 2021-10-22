@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlparagraphelementinterface, err = js.Global().GetWithErr("HTMLParagraphElement"); err != nil {
+		if htmlparagraphelementinterface, err = baseobject.Get(js.Global(), "HTMLParagraphElement"); err != nil {
 			htmlparagraphelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlparagraphelementinterface, func(v js.Value) (interface{}, error) {

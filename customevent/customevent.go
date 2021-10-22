@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if customeventinterface, err = js.Global().GetWithErr("CustomEvent"); err != nil {
+		if customeventinterface, err = baseobject.Get(js.Global(), "CustomEvent"); err != nil {
 			customeventinterface = js.Undefined()
 		}
 

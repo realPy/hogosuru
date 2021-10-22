@@ -35,7 +35,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if bcinterface, err = js.Global().GetWithErr("BroadcastChannel"); err != nil {
+		if bcinterface, err = baseobject.Get(js.Global(), "BroadcastChannel"); err != nil {
 			bcinterface = js.Undefined()
 		}
 

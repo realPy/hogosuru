@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlprogresselementinterface, err = js.Global().GetWithErr("HTMLProgressElement"); err != nil {
+		if htmlprogresselementinterface, err = baseobject.Get(js.Global(), "HTMLProgressElement"); err != nil {
 			htmlprogresselementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlprogresselementinterface, func(v js.Value) (interface{}, error) {

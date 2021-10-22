@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if documentfragementinterface, err = js.Global().GetWithErr("DocumentFragment"); err != nil {
+		if documentfragementinterface, err = baseobject.Get(js.Global(), "DocumentFragment"); err != nil {
 			documentfragementinterface = js.Undefined()
 		}
 		baseobject.Register(documentfragementinterface, func(v js.Value) (interface{}, error) {

@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmliframelementinterface, err = js.Global().GetWithErr("HTMLIFrameElement"); err != nil {
+		if htmliframelementinterface, err = baseobject.Get(js.Global(), "HTMLIFrameElement"); err != nil {
 			htmliframelementinterface = js.Undefined()
 		}
 

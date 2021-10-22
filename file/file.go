@@ -19,7 +19,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if fileinterface, err = js.Global().GetWithErr("File"); err != nil {
+		if fileinterface, err = baseobject.Get(js.Global(), "File"); err != nil {
 			fileinterface = js.Undefined()
 		}
 		blob.GetInterface()

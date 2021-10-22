@@ -30,7 +30,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if dtinterface, err = js.Global().GetWithErr("DataTransfer"); err != nil {
+		if dtinterface, err = baseobject.Get(js.Global(), "DataTransfer"); err != nil {
 			dtinterface = js.Undefined()
 		}
 		baseobject.Register(dtinterface, func(v js.Value) (interface{}, error) {

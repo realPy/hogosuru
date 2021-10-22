@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmllegendelementinterface, err = js.Global().GetWithErr("HTMLLegendElement"); err != nil {
+		if htmllegendelementinterface, err = baseobject.Get(js.Global(), "HTMLLegendElement"); err != nil {
 			htmllegendelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmllegendelementinterface, func(v js.Value) (interface{}, error) {

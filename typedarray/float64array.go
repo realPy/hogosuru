@@ -30,7 +30,7 @@ func GetFloat64ArrayInterface() js.Value {
 	singletonFloat64array.Do(func() {
 
 		var err error
-		if Float64arrayinterface, err = js.Global().GetWithErr("Float64Array"); err != nil {
+		if Float64arrayinterface, err = baseobject.Get(js.Global(), "Float64Array"); err != nil {
 			Float64arrayinterface = js.Undefined()
 		}
 		baseobject.Register(Float64arrayinterface, func(v js.Value) (interface{}, error) {

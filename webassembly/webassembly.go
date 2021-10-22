@@ -19,7 +19,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if webassemblyinterface, err = js.Global().GetWithErr("WebAssembly"); err != nil {
+		if webassemblyinterface, err = baseobject.Get(js.Global(), "WebAssembly"); err != nil {
 			webassemblyinterface = js.Undefined()
 		}
 

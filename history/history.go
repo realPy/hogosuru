@@ -39,7 +39,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if historyinterface, err = js.Global().GetWithErr("History"); err != nil {
+		if historyinterface, err = baseobject.Get(js.Global(), "History"); err != nil {
 			historyinterface = js.Undefined()
 		}
 		baseobject.Register(historyinterface, func(v js.Value) (interface{}, error) {

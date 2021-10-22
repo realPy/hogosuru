@@ -33,7 +33,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if formadatainterface, err = js.Global().GetWithErr("FormData"); err != nil {
+		if formadatainterface, err = baseobject.Get(js.Global(), "FormData"); err != nil {
 			formadatainterface = js.Undefined()
 		}
 

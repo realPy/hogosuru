@@ -18,7 +18,7 @@ func GetIDBFactoryInterface() js.Value {
 
 	singletonIDBFactory.Do(func() {
 		var err error
-		if idbfactoryinterface, err = js.Global().GetWithErr("IDBFactory"); err != nil {
+		if idbfactoryinterface, err = baseobject.Get(js.Global(), "IDBFactory"); err != nil {
 			idbfactoryinterface = js.Undefined()
 		}
 	})

@@ -29,7 +29,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if consoleinterface, err = js.Global().GetWithErr("console"); err != nil {
+		if consoleinterface, err = baseobject.Get(js.Global(), "console"); err != nil {
 			consoleinterface = js.Undefined()
 		}
 

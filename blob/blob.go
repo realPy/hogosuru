@@ -24,7 +24,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if blobinterface, err = js.Global().GetWithErr("Blob"); err != nil {
+		if blobinterface, err = baseobject.Get(js.Global(), "Blob"); err != nil {
 			blobinterface = js.Undefined()
 		}
 		//autodiscover

@@ -18,7 +18,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if domrectinterface, err = js.Global().GetWithErr("DOMRect"); err != nil {
+		if domrectinterface, err = baseobject.Get(js.Global(), "DOMRect"); err != nil {
 			domrectinterface = js.Undefined()
 		}
 		baseobject.Register(domrectinterface, func(v js.Value) (interface{}, error) {

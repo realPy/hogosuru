@@ -30,7 +30,7 @@ func IDBCursorGetInterface() js.Value {
 	singletonIDBDatabase.Do(func() {
 
 		var err error
-		if idbcursorinterface, err = js.Global().GetWithErr("IDBCursor"); err != nil {
+		if idbcursorinterface, err = baseobject.Get(js.Global(), "IDBCursor"); err != nil {
 			idbcursorinterface = js.Undefined()
 		}
 		baseobject.Register(idbcursorinterface, func(v js.Value) (interface{}, error) {

@@ -19,7 +19,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if eventtargetinterface, err = js.Global().GetWithErr("EventTarget"); err != nil {
+		if eventtargetinterface, err = baseobject.Get(js.Global(), "EventTarget"); err != nil {
 			eventtargetinterface = js.Undefined()
 		}
 

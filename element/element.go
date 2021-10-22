@@ -24,7 +24,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if elementinterface, err = js.Global().GetWithErr("Element"); err != nil {
+		if elementinterface, err = baseobject.Get(js.Global(), "Element"); err != nil {
 			elementinterface = js.Undefined()
 		}
 		baseobject.Register(elementinterface, func(v js.Value) (interface{}, error) {

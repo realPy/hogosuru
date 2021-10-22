@@ -39,7 +39,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlinputelementinterface, err = js.Global().GetWithErr("HTMLInputElement"); err != nil {
+		if htmlinputelementinterface, err = baseobject.Get(js.Global(), "HTMLInputElement"); err != nil {
 			htmlinputelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlinputelementinterface, func(v js.Value) (interface{}, error) {

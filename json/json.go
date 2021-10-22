@@ -34,7 +34,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if jsoninterface, err = js.Global().GetWithErr("JSON"); err != nil {
+		if jsoninterface, err = baseobject.Get(js.Global(), "JSON"); err != nil {
 			jsoninterface = js.Undefined()
 		}
 		baseobject.Register(jsoninterface, func(v js.Value) (interface{}, error) {

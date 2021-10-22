@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlmapelementinterface, err = js.Global().GetWithErr("HTMLMapElement"); err != nil {
+		if htmlmapelementinterface, err = baseobject.Get(js.Global(), "HTMLMapElement"); err != nil {
 			htmlmapelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlmapelementinterface, func(v js.Value) (interface{}, error) {

@@ -33,7 +33,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if headersinterface, err = js.Global().GetWithErr("Headers"); err != nil {
+		if headersinterface, err = baseobject.Get(js.Global(), "Headers"); err != nil {
 			headersinterface = js.Undefined()
 		}
 

@@ -18,7 +18,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if readablestreaminterface, err = js.Global().GetWithErr("ReadableStream"); err != nil {
+		if readablestreaminterface, err = baseobject.Get(js.Global(), "ReadableStream"); err != nil {
 			readablestreaminterface = js.Undefined()
 		}
 	})

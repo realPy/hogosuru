@@ -26,7 +26,7 @@ func LoadWasm_(urlfetch string) (fetch.Fetch, promise.Promise, error) {
 
 	if w, err = webassembly.New(); err == nil {
 
-		if gobjinterface, err = js.Global().GetWithErr("Go"); err == nil {
+		if gobjinterface, err = baseobject.Get(js.Global(), "Go"); err == nil {
 			gobj := gobjinterface.New()
 			var importobj js.Value
 			if importobj, err = gobj.GetWithErr("importObject"); err == nil {
@@ -163,7 +163,7 @@ func LoadWasm(urlfetch string) (fetch.Fetch, promise.Promise, error) {
 
 	if w, err = webassembly.New(); err == nil {
 
-		if gobjinterface, err = js.Global().GetWithErr("Go"); err == nil {
+		if gobjinterface, err = baseobject.Get(js.Global(), "Go"); err == nil {
 			gobj := gobjinterface.New()
 			var importobj js.Value
 			if importobj, err = gobj.GetWithErr("importObject"); err == nil {

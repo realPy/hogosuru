@@ -18,7 +18,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if abortcontrollerinterface, err = js.Global().GetWithErr("AbortController"); err != nil {
+		if abortcontrollerinterface, err = baseobject.Get(js.Global(), "AbortController"); err != nil {
 			abortcontrollerinterface = js.Undefined()
 		}
 		baseobject.Register(abortcontrollerinterface, func(v js.Value) (interface{}, error) {

@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlanchorlementinterface, err = js.Global().GetWithErr("HTMLAnchorElement"); err != nil {
+		if htmlanchorlementinterface, err = baseobject.Get(js.Global(), "HTMLAnchorElement"); err != nil {
 			htmlanchorlementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlanchorlementinterface, func(v js.Value) (interface{}, error) {

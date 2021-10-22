@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlspanelementinterface, err = js.Global().GetWithErr("HTMLSpanElement"); err != nil {
+		if htmlspanelementinterface, err = baseobject.Get(js.Global(), "HTMLSpanElement"); err != nil {
 			htmlspanelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlspanelementinterface, func(v js.Value) (interface{}, error) {

@@ -21,7 +21,7 @@ func GetReadStreamInterface() js.Value {
 	singletonReadableStreamDefault.Do(func() {
 
 		var err error
-		if readablestreamdefaultinterface, err = js.Global().GetWithErr("ReadableStreamDefaultReader"); err != nil {
+		if readablestreamdefaultinterface, err = baseobject.Get(js.Global(), "ReadableStreamDefaultReader"); err != nil {
 			readablestreamdefaultinterface = js.Undefined()
 		}
 	})

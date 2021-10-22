@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlareaelementinterface, err = js.Global().GetWithErr("HTMLAreaElement"); err != nil {
+		if htmlareaelementinterface, err = baseobject.Get(js.Global(), "HTMLAreaElement"); err != nil {
 			htmlareaelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlareaelementinterface, func(v js.Value) (interface{}, error) {

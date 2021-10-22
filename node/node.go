@@ -17,7 +17,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if nodeinterface, err = js.Global().GetWithErr("Node"); err != nil {
+		if nodeinterface, err = baseobject.Get(js.Global(), "Node"); err != nil {
 			nodeinterface = js.Undefined()
 		}
 		baseobject.Register(nodeinterface, func(v js.Value) (interface{}, error) {
