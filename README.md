@@ -29,7 +29,22 @@ Use Go compiler for developpement (faster) and tinygo for production
 When your compile your project you must provide the wasm_exec.js corresponding with your current compiler.
 If you upgrade your compiler dont forget to copy the new wasm_exec.js that target your compiler.
 
-### Start with docker and tinygo
+### Live testing thanks to wasmbrowsertest
+
+
+You can live testing your code thanks to https://github.com/agnivade/wasmbrowsertest  
+
+Follow the quick start guide https://github.com/agnivade/wasmbrowsertest#quickstart   
+
+and go run your project or some example
+
+```
+WASM_HEADLESS=off GOOS=js GOARCH=wasm  go run example/hello/main.go
+```
+
+The hello world is open on your browser
+
+### building with tinygo
 
 Start the tinygo container with your source  
 ```
@@ -49,6 +64,18 @@ apt-get update
 apt-get install make
 ```
 
+### building with Go
+
+Just 
+
+```
+GOOS=js GOARCH=wasm go build -o ./example/static/hello.wasm  example/hello/main.go
+```
+
+dont forget to always include the wasm_exec.js from your go compiler
+```
+cp $(go env GOROOT)/misc/wasm/wasm_exec.js example/static/
+```
 
 ## How to load the wasm product with a web application
 
@@ -104,6 +131,7 @@ runWasmAdd();
         </script>
 ```
 Just replace the "example.wasm" with the relative (or absolute) link of you binary wasm
+
 
 ## Why there is so many directory in hogosuru ?
 
