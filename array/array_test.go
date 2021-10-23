@@ -76,7 +76,7 @@ func TestNewFromJSObject(t *testing.T) {
 	var a Array
 
 	baseobject.Eval("customarray=new Array(1,2,5)")
-	if obj, err = js.Global().GetWithErr("customarray"); err == nil {
+	if obj, err = baseobject.Get(js.Global(), "customarray"); err == nil {
 
 		if a, err = NewFromJSObject(obj); err == nil {
 			var str string
@@ -999,5 +999,6 @@ func TestValues(t *testing.T) {
 }
 
 func TestMain(m *testing.M) {
+	baseobject.SetSyscall()
 	m.Run()
 }

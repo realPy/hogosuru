@@ -18,7 +18,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if readablestreaminterface, err = js.Global().GetWithErr("ReadableStream"); err != nil {
+		if readablestreaminterface, err = baseobject.Get(js.Global(), "ReadableStream"); err != nil {
 			readablestreaminterface = js.Undefined()
 		}
 	})
@@ -61,7 +61,7 @@ func (r ReadableStream) Cancel() (promise.Promise, error) {
 	var obj js.Value
 	var p promise.Promise
 
-	if obj, err = r.JSObject().CallWithErr("cancel"); err == nil {
+	if obj, err = r.Call("cancel"); err == nil {
 		p, err = promise.NewFromJSObject(obj)
 
 	}
@@ -73,7 +73,7 @@ func (r ReadableStream) GetReader() (ReadableStreamDefaultReader, error) {
 	var err error
 	var obj js.Value
 
-	if obj, err = r.JSObject().CallWithErr("getReader"); err == nil {
+	if obj, err = r.Call("getReader"); err == nil {
 		return NewReadableStreamDefaultReaderFromJSObject(obj)
 
 	}

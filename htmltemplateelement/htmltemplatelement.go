@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmltemplateelementinterface, err = js.Global().GetWithErr("HTMLTemplateElement"); err != nil {
+		if htmltemplateelementinterface, err = baseobject.Get(js.Global(), "HTMLTemplateElement"); err != nil {
 			htmltemplateelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmltemplateelementinterface, func(v js.Value) (interface{}, error) {
@@ -91,7 +91,7 @@ func (h HtmlTemplateElement) Content() (documentfragment.DocumentFragment, error
 	var obj js.Value
 	var fragment documentfragment.DocumentFragment
 
-	if obj, err = h.JSObject().GetWithErr("content"); err == nil {
+	if obj, err = h.Get("content"); err == nil {
 
 		fragment, err = documentfragment.NewFromJSObject(obj)
 	}

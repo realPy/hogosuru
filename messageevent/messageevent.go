@@ -21,7 +21,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if messageeventinterface, err = js.Global().GetWithErr("MessageEvent"); err != nil {
+		if messageeventinterface, err = baseobject.Get(js.Global(), "MessageEvent"); err != nil {
 			messageeventinterface = js.Undefined()
 		}
 		//instance object for autodiscovery
@@ -67,7 +67,7 @@ func (m MessageEvent) Data() (interface{}, error) {
 	var jsObject js.Value
 	var globalObj interface{}
 	var err error
-	if jsObject, err = m.JSObject().GetWithErr("data"); err == nil {
+	if jsObject, err = m.Get("data"); err == nil {
 		globalObj = baseobject.GoValue(jsObject)
 	}
 
@@ -75,13 +75,13 @@ func (m MessageEvent) Data() (interface{}, error) {
 }
 
 func (m MessageEvent) Source() (js.Value, error) {
-	return m.JSObject().GetWithErr("source")
+	return m.Get("source")
 }
 func (m MessageEvent) Origin() (string, error) {
 	var err error
 	var originObject js.Value
 
-	if originObject, err = m.JSObject().GetWithErr("origin"); err == nil {
+	if originObject, err = m.Get("origin"); err == nil {
 		return originObject.String(), nil
 	}
 	return "", err
@@ -91,7 +91,7 @@ func (m MessageEvent) LastEventId() (string, error) {
 	var err error
 	var originObject js.Value
 
-	if originObject, err = m.JSObject().GetWithErr("lastEventId"); err == nil {
+	if originObject, err = m.Get("lastEventId"); err == nil {
 		return originObject.String(), nil
 	}
 	return "", err
