@@ -5,7 +5,7 @@ import (
 
 	"github.com/realPy/hogosuru/element"
 	"github.com/realPy/hogosuru/htmlcollection"
-	"github.com/realPy/hogosuru/node"
+	"github.com/realPy/hogosuru/htmlelement"
 )
 
 func (d Document) getAttributeElement(attribute string) (element.Element, error) {
@@ -40,14 +40,14 @@ func (d Document) ActiveElement() (element.Element, error) {
 
 }
 
-func (d Document) Body() (node.Node, error) {
-	var body node.Node
+func (d Document) Body() (htmlelement.HtmlElement, error) {
+	var body htmlelement.HtmlElement
 	var bodyObject js.Value
 	var err error
 
 	if bodyObject, err = d.Get("body"); err == nil {
 
-		body, err = node.NewFromJSObject(bodyObject)
+		body, err = htmlelement.NewFromJSObject(bodyObject)
 
 	}
 

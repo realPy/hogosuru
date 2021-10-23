@@ -85,7 +85,7 @@ func (r *RouteMap) DefaultRendering(obj Rendering) {
 func (r *RouteMap) loadDefaultRendering() {
 	if d, err := document.New(); AssertErr(err) {
 		if body, err := d.Body(); AssertErr(err) {
-			r.loadChilds(d, r.defaultRendering, body)
+			r.loadChilds(d, r.defaultRendering, body.Node)
 		}
 	}
 }
@@ -213,7 +213,7 @@ func (r *RouteMap) LoadRendering(obj Rendering) {
 			r.loadChilds(d, obj, r.defaultRendering.Node(r.defaultRendering))
 		} else {
 			if body, err := d.Body(); err == nil {
-				r.loadChilds(d, obj, body)
+				r.loadChilds(d, obj, body.Node)
 
 			}
 		}
