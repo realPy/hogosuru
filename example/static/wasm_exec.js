@@ -324,8 +324,9 @@
 						const v = loadValue(v_addr);
 						const p = loadString(p_ptr, p_len);
 						const x = loadValue(x_addr);
-							Reflect.set(v, p, x);
+						Reflect.set(v, p, x);
 					},
+
 					// func valueDelete(v ref, p string)
 					"syscall/js.valueDelete": (v_addr, p_ptr, p_len) => {
 						const v = loadValue(v_addr);

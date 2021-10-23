@@ -19,7 +19,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if fileinterface, err = baseobject.Get(js.Global(), "File"); err != nil {
+		if fileinterface, err = js.Global().GetWithErr("File"); err != nil {
 			fileinterface = js.Undefined()
 		}
 		blob.GetInterface()
@@ -60,7 +60,7 @@ func (f File) Name() string {
 	var err error
 	var obj js.Value
 
-	if obj, err = f.Get("name"); err == nil {
+	if obj, err = f.JSObject().GetWithErr("name"); err == nil {
 
 		return obj.String()
 	}
@@ -71,7 +71,7 @@ func (f File) Type() string {
 	var err error
 	var obj js.Value
 
-	if obj, err = f.Get("type"); err == nil {
+	if obj, err = f.JSObject().GetWithErr("type"); err == nil {
 
 		return obj.String()
 	}
@@ -82,7 +82,7 @@ func (f File) LastModified() string {
 	var err error
 	var obj js.Value
 
-	if obj, err = f.Get("lastModified"); err == nil {
+	if obj, err = f.JSObject().GetWithErr("lastModified"); err == nil {
 
 		return obj.String()
 	}

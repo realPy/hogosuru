@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/realPy/hogosuru/array"
-	"github.com/realPy/hogosuru/baseobject"
 )
 
 func TestNew(t *testing.T) {
@@ -329,8 +328,4 @@ func TestSet(t *testing.T) {
 		t.Error(err.Error())
 	}
 
-}
-func TestMain(m *testing.M) {
-	baseobject.SetSyscall()
-	m.Run()
 }

@@ -4,12 +4,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/messageevent"
 )
 
 func TestMain(m *testing.M) {
-	baseobject.SetSyscall()
 	m.Run()
 }
 

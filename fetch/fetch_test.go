@@ -4,8 +4,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/realPy/hogosuru/abortcontroller"
-	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/json"
 	"github.com/realPy/hogosuru/object"
 	"github.com/realPy/hogosuru/promise"
@@ -13,7 +11,6 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	baseobject.SetSyscall()
 	m.Run()
 }
 
@@ -265,83 +262,6 @@ func TestNew(t *testing.T) {
 			}, func(e error) {
 				t.Error(e.Error())
 			})
-		} else {
-			t.Error(err.Error())
-		}
-
-		select {
-		case <-io:
-		case <-time.After(time.Duration(2000) * time.Millisecond):
-			t.Errorf("No message channel receive")
-		}
-
-	})
-
-}
-
-func TestNewCancelable(t *testing.T) {
-	var io chan bool = make(chan bool)
-
-	t.Run("Post with custom headers and json response and form data ", func(t *testing.T) {
-
-		var headers map[string]interface{} = map[string]interface{}{"Content-Type": "application/x-www-form-urlencoded",
-			"XCustomValue": "Test"}
-
-		var fetchOpts map[string]interface{} = map[string]interface{}{"method": "POST", "headers": headers, "body": "data=test", "mode": "no-cors"}
-
-		if f, err := NewCancelable("http://httpbin.org/post", fetchOpts); err == nil {
-			f.Then(func(r response.Response) *promise.Promise {
-
-				t.Error("Must not get response")
-				return nil
-			}, func(e error) {
-				if e.Error() != "The user aborted a request." {
-					t.Error("Error mismatch")
-				}
-				io <- true
-			})
-
-			f.Abort()
-		} else {
-			t.Error(err.Error())
-		}
-
-		select {
-		case <-io:
-		case <-time.After(time.Duration(2000) * time.Millisecond):
-			t.Errorf("No message channel receive")
-		}
-
-	})
-
-	t.Run("Post with custom headers and json response and custom signal ", func(t *testing.T) {
-
-		var headers map[string]interface{} = map[string]interface{}{"Content-Type": "application/x-www-form-urlencoded",
-			"XCustomValue": "Test"}
-
-		abortctrl, _ := abortcontroller.New()
-
-		s, _ := abortctrl.Signal()
-
-		var fetchOpts map[string]interface{} = map[string]interface{}{"method": "POST", "headers": headers, "body": "data=test", "mode": "no-cors", "signal": s.JSObject()}
-
-		if f, err := NewCancelable("http://httpbin.org/post", fetchOpts); err == nil {
-			f.Then(func(r response.Response) *promise.Promise {
-
-				t.Error("Must not get response")
-				return nil
-			}, func(e error) {
-				if e.Error() != "The user aborted a request." {
-					t.Error("Error mismatch")
-				}
-				io <- true
-			})
-
-			if err := f.Abort(); err != ErrSignalNotManaged {
-
-				t.Error("Must throw an error")
-			}
-			abortctrl.Abort()
 		} else {
 			t.Error(err.Error())
 		}

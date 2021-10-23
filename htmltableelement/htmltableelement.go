@@ -35,7 +35,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmltableelementinterface, err = baseobject.Get(js.Global(), "HTMLTableElement"); err != nil {
+		if htmltableelementinterface, err = js.Global().GetWithErr("HTMLTableElement"); err != nil {
 			htmltableelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmltableelementinterface, func(v js.Value) (interface{}, error) {
@@ -104,7 +104,7 @@ func (h HtmlTableElement) getCollectionMethod(method string) (htmlcollection.Htm
 	var obj js.Value
 	var collection htmlcollection.HtmlCollection
 
-	if obj, err = h.Get(method); err == nil {
+	if obj, err = h.JSObject().GetWithErr(method); err == nil {
 
 		collection, err = htmlcollection.NewFromJSObject(obj)
 	}
@@ -118,7 +118,7 @@ func (h HtmlTableElement) getElemMethod(method string) (htmltablesectionelement.
 	var obj js.Value
 	var elem htmltablesectionelement.HtmlTableSectionElement
 
-	if obj, err = h.Get(method); err == nil {
+	if obj, err = h.JSObject().GetWithErr(method); err == nil {
 
 		elem, err = htmltablesectionelement.NewFromJSObject(obj)
 	}
@@ -148,7 +148,7 @@ func (h HtmlTableElement) CreateCaption() (htmltablecaptionelement.HtmlTableCapt
 	var err error
 	var elem htmltablecaptionelement.HtmlTableCaptionElement
 
-	if obj, err = h.Call("createCaption"); err == nil {
+	if obj, err = h.JSObject().CallWithErr("createCaption"); err == nil {
 		elem, err = htmltablecaptionelement.NewFromJSObject(obj)
 
 	}
@@ -160,7 +160,7 @@ func (h HtmlTableElement) CreateTHead() (htmltablesectionelement.HtmlTableSectio
 	var err error
 	var elem htmltablesectionelement.HtmlTableSectionElement
 
-	if obj, err = h.Call("createTHead"); err == nil {
+	if obj, err = h.JSObject().CallWithErr("createTHead"); err == nil {
 		elem, err = htmltablesectionelement.NewFromJSObject(obj)
 
 	}
@@ -172,7 +172,7 @@ func (h HtmlTableElement) CreateTFoot() (htmltablesectionelement.HtmlTableSectio
 	var err error
 	var elem htmltablesectionelement.HtmlTableSectionElement
 
-	if obj, err = h.Call("createTFoot"); err == nil {
+	if obj, err = h.JSObject().CallWithErr("createTFoot"); err == nil {
 		elem, err = htmltablesectionelement.NewFromJSObject(obj)
 
 	}
@@ -181,19 +181,19 @@ func (h HtmlTableElement) CreateTFoot() (htmltablesectionelement.HtmlTableSectio
 
 func (h HtmlTableElement) DeleteCaption() error {
 
-	_, err := h.Call("deleteCaption")
+	_, err := h.JSObject().CallWithErr("deleteCaption")
 	return err
 }
 
 func (h HtmlTableElement) DeleteTHead() error {
 
-	_, err := h.Call("deleteTHead")
+	_, err := h.JSObject().CallWithErr("deleteTHead")
 	return err
 }
 
 func (h HtmlTableElement) DeleteTFoot() error {
 
-	_, err := h.Call("deleteTFoot")
+	_, err := h.JSObject().CallWithErr("deleteTFoot")
 	return err
 }
 
@@ -208,7 +208,7 @@ func (h HtmlTableElement) InsertRow(index ...int) (htmltablerowelement.HtmlTable
 		arrayJS = append(arrayJS, js.ValueOf(index[0]))
 	}
 
-	if obj, err = h.Call("insertRow", arrayJS...); err == nil {
+	if obj, err = h.JSObject().CallWithErr("insertRow", arrayJS...); err == nil {
 		elem, err = htmltablerowelement.NewFromJSObject(obj)
 
 	}
@@ -218,6 +218,6 @@ func (h HtmlTableElement) InsertRow(index ...int) (htmltablerowelement.HtmlTable
 func (h HtmlTableElement) DeleteRow(index int) error {
 
 	var err error
-	_, err = h.Call("deleteRow", js.ValueOf(index))
+	_, err = h.JSObject().CallWithErr("deleteRow", js.ValueOf(index))
 	return err
 }

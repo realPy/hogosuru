@@ -19,12 +19,11 @@ func InstallConsoleHandler(typehandler string, handler func(string)) error {
 	if c, err = console.New(); err == nil {
 		var f js.Value
 
-		if f, err = c.Get(typehandler); err == nil {
+		if f, err = c.JSObject().GetWithErr(typehandler); err == nil {
 			var defaultType js.Value
+			if defaultType, err = f.CallWithErr("bind", c.JSObject()); err == nil {
 
-			if defaultType, err = baseobject.Call(f, "bind", c.JSObject()); err == nil {
-
-				if err = c.Set("default"+typehandler, defaultType); err == nil {
+				if err = c.JSObject().SetWithErr("default"+typehandler, defaultType); err == nil {
 
 					handlerFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
@@ -33,7 +32,7 @@ func InstallConsoleHandler(typehandler string, handler func(string)) error {
 						return nil
 					})
 
-					c.Set(typehandler, handlerFunc)
+					c.JSObject().SetWithErr(typehandler, handlerFunc)
 
 				}
 

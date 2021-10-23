@@ -44,7 +44,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if xhrinterface, err = baseobject.Get(js.Global(), "XMLHttpRequest"); err != nil {
+		if xhrinterface, err = js.Global().GetWithErr("XMLHttpRequest"); err != nil {
 			xhrinterface = js.Undefined()
 		}
 		baseobject.Register(xhrinterface, func(v js.Value) (interface{}, error) {
@@ -85,31 +85,31 @@ func New() (XMLHTTPRequest, error) {
 
 func (x XMLHTTPRequest) Open(method string, url *url.URL) error {
 	var err error
-	_, err = x.Call("open", js.ValueOf(method), js.ValueOf(url.String()))
+	_, err = x.JSObject().CallWithErr("open", js.ValueOf(method), js.ValueOf(url.String()))
 	return err
 }
 
 func (x XMLHTTPRequest) SetRequestHeader(header string, value string) error {
 	var err error
-	_, err = x.Call("setRequestHeader", js.ValueOf(header), js.ValueOf(value))
+	_, err = x.JSObject().CallWithErr("setRequestHeader", js.ValueOf(header), js.ValueOf(value))
 	return err
 }
 
 func (x XMLHTTPRequest) Send() error {
 	var err error
-	_, err = x.Call("send")
+	_, err = x.JSObject().CallWithErr("send")
 	return err
 }
 
 func (x XMLHTTPRequest) SendForm(f formdata.FormData) error {
 	var err error
-	_, err = x.Call("send", f.JSObject())
+	_, err = x.JSObject().CallWithErr("send", f.JSObject())
 	return err
 }
 
 func (x XMLHTTPRequest) Abort() error {
 	var err error
-	_, err = x.Call("abort")
+	_, err = x.JSObject().CallWithErr("abort")
 	return err
 }
 
@@ -175,7 +175,7 @@ func (x XMLHTTPRequest) ResponseText() (string, error) {
 func (x XMLHTTPRequest) GetResponseHeader(header string) (string, error) {
 	var responseHeader js.Value
 	var err error
-	if responseHeader, err = x.Call("getResponseHeader", js.ValueOf(header)); err == nil {
+	if responseHeader, err = x.JSObject().CallWithErr("getResponseHeader", js.ValueOf(header)); err == nil {
 
 		if responseHeader.Type() == js.TypeString {
 			return responseHeader.String(), nil
@@ -189,7 +189,7 @@ func (x XMLHTTPRequest) GetResponseHeader(header string) (string, error) {
 
 //Response
 func (x XMLHTTPRequest) Response() (js.Value, error) {
-	return x.Get("response")
+	return x.JSObject().GetWithErr("response")
 }
 
 func (x XMLHTTPRequest) SetResponseType(typeResponse string) {
@@ -212,7 +212,7 @@ func (x XMLHTTPRequest) ResponseURL() (string, error) {
 func (x XMLHTTPRequest) ResponseXML() (js.Value, error) {
 	var responseXML js.Value
 	var err error
-	if responseXML, err = x.Get("responseXML"); err == nil {
+	if responseXML, err = x.JSObject().GetWithErr("responseXML"); err == nil {
 		//return a document object : TO DO IMPLEMENTATION
 		return responseXML, nil
 
@@ -223,7 +223,7 @@ func (x XMLHTTPRequest) ResponseXML() (js.Value, error) {
 func (x XMLHTTPRequest) Status() (int, error) {
 	var readystate js.Value
 	var err error
-	if readystate, err = x.Get("status"); err == nil {
+	if readystate, err = x.JSObject().GetWithErr("status"); err == nil {
 		if readystate.Type() == js.TypeNumber {
 			return readystate.Int(), nil
 		} else {
@@ -237,7 +237,7 @@ func (x XMLHTTPRequest) Status() (int, error) {
 func (x XMLHTTPRequest) StatusText() (string, error) {
 	var responseUrl js.Value
 	var err error
-	if responseUrl, err = x.Get("statusText"); err == nil {
+	if responseUrl, err = x.JSObject().GetWithErr("statusText"); err == nil {
 
 		if responseUrl.Type() == js.TypeString {
 			return responseUrl.String(), nil
@@ -253,7 +253,7 @@ func (x XMLHTTPRequest) uploadSetHandler(jshandlername string, handler func(XMLH
 	var uploadAbstractObject js.Value
 	var err error
 
-	if uploadAbstractObject, err = x.Get("upload"); err == nil {
+	if uploadAbstractObject, err = x.JSObject().GetWithErr("upload"); err == nil {
 
 		jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
@@ -315,7 +315,7 @@ func (x XMLHTTPRequest) UploadSetOnprogress(handler func(XMLHTTPRequest, progres
 	var uploadAbstractObject js.Value
 	var err error
 
-	if uploadAbstractObject, err = x.Get("upload"); err == nil {
+	if uploadAbstractObject, err = x.JSObject().GetWithErr("upload"); err == nil {
 
 		jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 

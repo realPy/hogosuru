@@ -8,7 +8,7 @@ import (
 
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/promise"
-	"github.com/realPy/hogosuru/typedarray"
+	"github.com/realPy/hogosuru/uint8array"
 )
 
 var singletonReadableStreamDefault sync.Once
@@ -21,7 +21,7 @@ func GetReadStreamInterface() js.Value {
 	singletonReadableStreamDefault.Do(func() {
 
 		var err error
-		if readablestreamdefaultinterface, err = baseobject.Get(js.Global(), "ReadableStreamDefaultReader"); err != nil {
+		if readablestreamdefaultinterface, err = js.Global().GetWithErr("ReadableStreamDefaultReader"); err != nil {
 			readablestreamdefaultinterface = js.Undefined()
 		}
 	})
@@ -62,7 +62,7 @@ func (r ReadableStreamDefaultReader) Read(b []byte) (n int, err error) {
 	donechan := make(chan bool)
 	err = nil
 
-	if promiseread, err = r.Call("read"); err == nil {
+	if promiseread, err = r.JSObject().CallWithErr("read"); err == nil {
 
 		if p, err = promise.NewFromJSObject(promiseread); err == nil {
 
@@ -73,14 +73,14 @@ func (r ReadableStreamDefaultReader) Read(b []byte) (n int, err error) {
 						donechan <- true
 						return nil
 					} else {
-
-						var u8array typedarray.Uint8Array
-
+						var u8array uint8array.Uint8Array
 						uint8arrayObject := obj.JSObject().Get("value")
-						if u8array, err = typedarray.NewUint8Array(uint8arrayObject); err == nil {
+						if u8array, err = uint8array.NewFromJSObject(uint8arrayObject); err == nil {
 							n, err = u8array.CopyBytes(b)
 						}
+
 					}
+
 				}
 
 				donechan <- false
@@ -106,7 +106,7 @@ func (r ReadableStreamDefaultReader) asyncRead(preallocateBytes []byte, dataHand
 	var p promise.Promise
 	err = nil
 
-	if promiseread, err = r.Call("read"); err == nil {
+	if promiseread, err = r.JSObject().CallWithErr("read"); err == nil {
 
 		if p, err = promise.NewFromJSObject(promiseread); err == nil {
 
@@ -120,11 +120,11 @@ func (r ReadableStreamDefaultReader) asyncRead(preallocateBytes []byte, dataHand
 						dataHandle(nil, err)
 						return nil
 					} else {
-						var u8array typedarray.Uint8Array
+						var u8array uint8array.Uint8Array
 
 						uint8arrayObject := obj.Get("value")
 
-						if u8array, err = typedarray.NewUint8Array(uint8arrayObject); err == nil {
+						if u8array, err = uint8array.NewFromJSObject(uint8arrayObject); err == nil {
 
 							if _, err = u8array.CopyBytes(preallocateBytes); err == nil {
 								dataHandle(preallocateBytes, err)

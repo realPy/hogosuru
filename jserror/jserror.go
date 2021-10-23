@@ -30,7 +30,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if errorinterface, err = baseobject.Get(js.Global(), "Error"); err != nil {
+		if errorinterface, err = js.Global().GetWithErr("Error"); err != nil {
 			errorinterface = js.Undefined()
 		}
 
