@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/realPy/hogosuru"
 	"github.com/realPy/hogosuru/document"
 	"github.com/realPy/hogosuru/event"
 	"github.com/realPy/hogosuru/htmlanchorelement"
@@ -30,7 +31,7 @@ import (
 )
 
 func main() {
-
+	hogosuru.Init()
 	d := document.New_()
 
 	nod := d.Body_()

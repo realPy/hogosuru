@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-
+	hogosuru.Init()
 	d := document.New_()
 
 	body := d.Body_()

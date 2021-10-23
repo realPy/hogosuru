@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-
+	hogosuru.Init()
 	hogosurudebug.EnableDebug()
 
 	f, p, _ := hogosuru.LoadWasm("console.wasm")
