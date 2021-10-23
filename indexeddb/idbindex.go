@@ -18,7 +18,7 @@ func GetIDBIndexInterface() js.Value {
 
 	singletonIDBIndex.Do(func() {
 		var err error
-		if idbindexinterface, err = js.Global().GetWithErr("IDBIndex"); err != nil {
+		if idbindexinterface, err = baseobject.Get(js.Global(), "IDBIndex"); err != nil {
 			idbindexinterface = js.Undefined()
 		}
 		baseobject.Register(idbindexinterface, func(v js.Value) (interface{}, error) {
@@ -75,7 +75,7 @@ func (i IDBIndex) ObjectStore() (IDBObjectStore, error) {
 	var obj js.Value
 	var store IDBObjectStore
 
-	if obj, err = i.JSObject().GetWithErr("objectstore"); err == nil {
+	if obj, err = i.BaseObject.Get("objectstore"); err == nil {
 
 		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject
@@ -104,7 +104,7 @@ func (i IDBIndex) callMethodKey(method string, key ...IDBKeyRange) (IDBRequest, 
 		arrayJS = append(arrayJS, key[0].JSObject())
 	}
 
-	if obj, err = i.JSObject().CallWithErr(method, arrayJS...); err == nil {
+	if obj, err = i.Call(method, arrayJS...); err == nil {
 		o, err = IDBRequestNewFromJSObject(obj)
 	}
 
@@ -145,7 +145,7 @@ func (i IDBIndex) getAll(method string, option ...interface{}) (IDBRequest, erro
 
 	}
 
-	if obj, err = i.JSObject().CallWithErr(method, arrayJS...); err == nil {
+	if obj, err = i.Call(method, arrayJS...); err == nil {
 		request, err = IDBRequestNewFromJSObject(obj)
 	}
 
@@ -183,7 +183,7 @@ func (i IDBIndex) openCursorWithMethod(method string, options ...interface{}) (I
 
 	}
 
-	if obj, err = i.JSObject().CallWithErr("openCursor", arrayJS...); err == nil {
+	if obj, err = i.Call("openCursor", arrayJS...); err == nil {
 		request, err = IDBRequestNewFromJSObject(obj)
 	}
 

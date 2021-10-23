@@ -5,6 +5,7 @@ import (
 	"sync"
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/objectmap"
 )
 
@@ -29,7 +30,7 @@ func KeyObservable() *Observable {
 	singletonKeyObservable.Do(func() {
 		ko.register = make(map[string]map[*KeyObservableFunc]bool)
 
-		if observablePersist, err := js.Global().GetWithErr("persistObservable"); err == nil && !observablePersist.IsUndefined() {
+		if observablePersist, err := baseobject.Get(js.Global(), "persistObservable"); err == nil && !observablePersist.IsUndefined() {
 			ko.persistData, _ = objectmap.NewFromJSObject(observablePersist)
 		} else {
 			if observablePersist, err := objectmap.New(); err == nil {

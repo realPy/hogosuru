@@ -34,7 +34,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if jsoninterface, err = js.Global().GetWithErr("JSON"); err != nil {
+		if jsoninterface, err = baseobject.Get(js.Global(), "JSON"); err != nil {
 			jsoninterface = js.Undefined()
 		}
 		baseobject.Register(jsoninterface, func(v js.Value) (interface{}, error) {
@@ -51,7 +51,7 @@ func Parse(data string) (Json, error) {
 	var err error
 	if jsoni := GetInterface(); !jsoni.IsUndefined() {
 
-		if jsonObject, err = jsoni.CallWithErr("parse", data); err != nil {
+		if jsonObject, err = baseobject.Call(jsoni, "parse", data); err != nil {
 			return Json{}, err
 		} else {
 			return NewFromJSObject(jsonObject)
@@ -111,7 +111,8 @@ func extractJsonFromObject(jsobj js.Value) interface{} {
 			for _, vkey, err := itkeys.Next(); err == nil; _, vkey, err = itkeys.Next() {
 
 				if key, ok := vkey.(string); ok {
-					if value, err := jsobj.GetWithErr(key); err == nil {
+
+					if value, err := baseobject.Get(jsobj, key); err == nil {
 						i := baseobject.GoValue(value)
 						if obj1, ok := i.(baseobject.ObjectFrom); !ok {
 							json[key] = i
@@ -151,7 +152,7 @@ func Stringify(opts ...interface{}) (string, error) {
 	}
 	if jsoni := GetInterface(); !jsoni.IsUndefined() {
 
-		if stringObject, err = jsoni.CallWithErr("stringify", arrayJS); err != nil {
+		if stringObject, err = baseobject.Call(jsoni, "stringify", arrayJS); err != nil {
 			return "", err
 		} else {
 

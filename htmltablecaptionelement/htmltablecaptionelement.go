@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmltablecaptionelementinterface, err = js.Global().GetWithErr("HTMLTableCaptionElement"); err != nil {
+		if htmltablecaptionelementinterface, err = baseobject.Get(js.Global(), "HTMLTableCaptionElement"); err != nil {
 			htmltablecaptionelementinterface = js.Undefined()
 		}
 

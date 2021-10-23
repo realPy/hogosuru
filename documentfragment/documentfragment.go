@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if documentfragementinterface, err = js.Global().GetWithErr("DocumentFragment"); err != nil {
+		if documentfragementinterface, err = baseobject.Get(js.Global(), "DocumentFragment"); err != nil {
 			documentfragementinterface = js.Undefined()
 		}
 		baseobject.Register(documentfragementinterface, func(v js.Value) (interface{}, error) {
@@ -80,7 +80,7 @@ func (e DocumentFragment) Children() (htmlcollection.HtmlCollection, error) {
 	var obj js.Value
 	var collection htmlcollection.HtmlCollection
 
-	if obj, err = e.JSObject().GetWithErr("children"); err == nil {
+	if obj, err = e.Get("children"); err == nil {
 
 		collection, err = htmlcollection.NewFromJSObject(obj)
 	}
@@ -93,7 +93,7 @@ func (e DocumentFragment) getAttributeElement(attribute string) (element.Element
 	var newElement element.Element
 	var err error
 
-	if nodeObject, err = e.JSObject().GetWithErr(attribute); err == nil {
+	if nodeObject, err = e.Get(attribute); err == nil {
 
 		if nodeObject.IsUndefined() {
 			err = element.ErrElementNoChilds
@@ -128,7 +128,7 @@ func (d DocumentFragment) nodesMethod(method string, elems ...interface{}) error
 			arrayJS = append(arrayJS, js.ValueOf(elem))
 		}
 	}
-	_, err = d.JSObject().CallWithErr(method, arrayJS...)
+	_, err = d.Call(method, arrayJS...)
 	return err
 
 }
@@ -147,7 +147,7 @@ func (d DocumentFragment) QuerySelector(selector string) (node.Node, error) {
 	var obj js.Value
 	var nod node.Node
 
-	if obj, err = d.JSObject().CallWithErr("querySelector", js.ValueOf(selector)); err == nil {
+	if obj, err = d.Call("querySelector", js.ValueOf(selector)); err == nil {
 
 		nod, err = node.NewFromJSObject(obj)
 	}
@@ -160,7 +160,7 @@ func (d DocumentFragment) QuerySelectorAll(selector string) (nodelist.NodeList, 
 	var obj js.Value
 	var nlist nodelist.NodeList
 
-	if obj, err = d.JSObject().CallWithErr("querySelectorAll", js.ValueOf(selector)); err == nil {
+	if obj, err = d.Call("querySelectorAll", js.ValueOf(selector)); err == nil {
 
 		nlist, err = nodelist.NewFromJSObject(obj)
 	}
@@ -170,7 +170,7 @@ func (d DocumentFragment) QuerySelectorAll(selector string) (nodelist.NodeList, 
 func (d DocumentFragment) ReplaceChild(new, old node.Node) (node.Node, error) {
 	var err error
 
-	_, err = d.JSObject().CallWithErr("replaceChild", new.JSObject(), old.JSObject())
+	_, err = d.Call("replaceChild", new.JSObject(), old.JSObject())
 
 	return old, err
 
@@ -182,7 +182,7 @@ func (d DocumentFragment) GetElementById(id string) (element.Element, error) {
 	var obj js.Value
 	var elem element.Element
 
-	if obj, err = d.JSObject().CallWithErr("getElementById", js.ValueOf(id)); err == nil {
+	if obj, err = d.Call("getElementById", js.ValueOf(id)); err == nil {
 
 		elem, err = element.NewFromJSObject(obj)
 	}

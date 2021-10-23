@@ -16,7 +16,6 @@ install:
 
 script:
 
-- cp hogosuru/hogosuru.go $(go env GOROOT)/src/syscall/js/
 - GOOS=js GOARCH=wasm go test -v  ./baseobject
 - GOOS=js GOARCH=wasm go test -v  ./array
 - GOOS=js GOARCH=wasm go test -v  ./arraybuffer

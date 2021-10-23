@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmllabelelementinterface, err = js.Global().GetWithErr("HTMLLabelElement"); err != nil {
+		if htmllabelelementinterface, err = baseobject.Get(js.Global(), "HTMLLabelElement"); err != nil {
 			htmllabelelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmllabelelementinterface, func(v js.Value) (interface{}, error) {
@@ -91,7 +91,7 @@ func (h HtmlLabelElement) Control() (htmlelement.HtmlElement, error) {
 	var obj js.Value
 	var htmlelem htmlelement.HtmlElement
 
-	if obj, err = h.JSObject().GetWithErr("control"); err == nil {
+	if obj, err = h.Get("control"); err == nil {
 
 		htmlelem, err = htmlelement.NewFromJSObject(obj)
 	}
@@ -104,7 +104,7 @@ func (h HtmlLabelElement) Form() (htmlformelement.HtmlFormElement, error) {
 	var obj js.Value
 	var formelem htmlformelement.HtmlFormElement
 
-	if obj, err = h.JSObject().GetWithErr("form"); err == nil {
+	if obj, err = h.Get("form"); err == nil {
 
 		formelem, err = htmlformelement.NewFromJSObject(obj)
 	}

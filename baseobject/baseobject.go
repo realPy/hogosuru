@@ -1,8 +1,91 @@
 package baseobject
 
 import (
+	"errors"
 	"syscall/js"
 )
+
+var setFunc js.Value
+var getFunc js.Value
+var callFunc js.Value
+var invokeFunc js.Value
+var errorInterface js.Value
+
+func SetSyscall() {
+	//Set Set and get function
+	eval_(`hSet = (obj, set , value) => { try { Reflect.set(obj,set,value) ; return }catch(err){ return err } }`)
+	eval_(`hGet = (obj, get ) => { try { return [true,Reflect.get(obj,get)] }catch(err){ return [false,err] } }`)
+	eval_(`hCall = (obj,method,args) => { try { func=Reflect.get(obj,method); return [true,Reflect.apply(func,obj,args)] } catch (err) { return [false,err] } }`)
+	eval_(`hInvoke = (func,args) => { try { return [true,Reflect.apply(func,undefined,args)] } catch (err) { return [false,err] } }`)
+
+	setFunc = js.Global().Get("hSet")
+	getFunc = js.Global().Get("hGet")
+	callFunc = js.Global().Get("hCall")
+	invokeFunc = js.Global().Get("hInvoke")
+	errorInterface = js.Global().Get("Error")
+}
+
+func Set(obj js.Value, name string, val interface{}) error {
+
+	var err error
+	ret := setFunc.Invoke(obj, js.ValueOf(name), val)
+
+	if !ret.IsUndefined() {
+		err = errors.New(ret.Get("message").String())
+	}
+	return err
+}
+
+func Get(obj js.Value, name string) (js.Value, error) {
+
+	ret := getFunc.Invoke(obj, js.ValueOf(name))
+
+	if ret.Index(0).Bool() {
+		return ret.Index(1), nil
+	} else {
+		return ret.Index(1), errors.New(ret.Index(1).Get("message").String())
+	}
+}
+
+func Call(obj js.Value, name string, args ...interface{}) (js.Value, error) {
+
+	var jsargs []interface{}
+
+	for _, arg := range args {
+		jsargs = append(jsargs, js.ValueOf(arg))
+	}
+	ret := callFunc.Invoke(obj, js.ValueOf(name), jsargs)
+
+	if ret.Index(0).Bool() {
+		return ret.Index(1), nil
+	} else {
+		return ret.Index(1), errors.New(ret.Index(1).Get("message").String())
+	}
+}
+
+func Invoke(f js.Value, args ...interface{}) (js.Value, error) {
+
+	var jsargs []interface{}
+
+	for _, arg := range args {
+		jsargs = append(jsargs, js.ValueOf(arg))
+	}
+	ret := invokeFunc.Invoke(f, jsargs)
+
+	if ret.Index(0).Bool() {
+		return ret.Index(1), nil
+	} else {
+		return ret.Index(1), errors.New(ret.Index(1).Get("message").String())
+	}
+}
+
+func CopyBytesToGo(dst []byte, src js.Value) (int, error) {
+	return js.CopyBytesToGo(dst, src), nil
+}
+
+func CopyBytesToJS(dst js.Value, src []byte) (int, error) {
+	return js.CopyBytesToJS(dst, src), nil
+}
 
 var registry map[string]func(js.Value) (interface{}, error)
 
@@ -15,7 +98,8 @@ func Register(inter js.Value, contruct func(js.Value) (interface{}, error)) erro
 	}
 
 	//registry[inter.Get("prototype").Call("toString").String()] = contruct
-	if obj, err = inter.GetWithErr("name"); err == nil {
+
+	if obj, err = Get(inter, "name"); err == nil {
 		registry[obj.String()] = contruct
 	}
 	return err
@@ -28,9 +112,9 @@ func Discover(obj js.Value) (interface{}, error) {
 	var objname js.Value
 	var objconstructor js.Value
 
-	if objconstructor, err = obj.GetWithErr("constructor"); err == nil {
+	if objconstructor, err = Get(obj, "constructor"); err == nil {
 
-		if objname, err = objconstructor.GetWithErr("name"); err == nil {
+		if objname, err = Get(objconstructor, "name"); err == nil {
 			if f, ok := registry[objname.String()]; ok {
 				var obji interface{}
 				var ok bool
@@ -78,7 +162,7 @@ func String(object js.Value) string {
 func ToStringWithErr(object js.Value) (string, error) {
 
 	if object.Type() == js.TypeObject {
-		if value, err := object.CallWithErr("toString"); err == nil {
+		if value, err := Call(object, "toString"); err == nil {
 			return value.String(), nil
 		} else {
 			return "", err
@@ -111,6 +195,21 @@ func NewFromJSObject(obj js.Value) (BaseObject, error) {
 func (b BaseObject) Empty() bool {
 
 	return b.object == nil
+}
+
+//Get Get Value of object and handle err
+func (b BaseObject) Get(name string) (js.Value, error) {
+	return Get(b.JSObject(), name)
+}
+
+//Set Set Value of object and handle err
+func (b BaseObject) Set(name string, value interface{}) error {
+	return Set(b.JSObject(), name, value)
+}
+
+//Call
+func (b BaseObject) Call(name string, args ...interface{}) (js.Value, error) {
+	return Call(b.JSObject(), name, args...)
 }
 
 //Discover Use Discover of this struct
@@ -146,7 +245,7 @@ func (b BaseObject) ToString() (string, error) {
 	var value js.Value
 	var err error
 	if b.JSObject().Type() == js.TypeObject {
-		if value, err = b.JSObject().CallWithErr("toString"); err == nil {
+		if value, err = b.Call("toString"); err == nil {
 			return value.String(), nil
 		} else {
 			return "", err
@@ -173,7 +272,7 @@ func (b BaseObject) Bind(to BaseObject) (interface{}, error) {
 	var bindObj js.Value
 	var gobj interface{}
 
-	if bindObj, err = b.JSObject().CallWithErr("bind", to.JSObject()); err == nil {
+	if bindObj, err = b.Call("bind", to.JSObject()); err == nil {
 
 		gobj, err = Discover(bindObj)
 
@@ -188,7 +287,7 @@ func (b BaseObject) Implement(method string) (bool, error) {
 
 	var err error
 
-	if obj, err = b.JSObject().GetWithErr(method); err == nil {
+	if obj, err = b.Get(method); err == nil {
 
 		if obj.Type() == js.TypeFunction {
 			return true, nil
@@ -204,9 +303,9 @@ func (b BaseObject) Class() (string, error) {
 	var objconstructor, objname js.Value
 	var classname string
 
-	if objconstructor, err = b.JSObject().GetWithErr("constructor"); err == nil {
+	if objconstructor, err = b.Get("constructor"); err == nil {
 
-		if objname, err = objconstructor.GetWithErr("name"); err == nil {
+		if objname, err = Get(objconstructor, "name"); err == nil {
 			classname = objname.String()
 		}
 
@@ -215,7 +314,7 @@ func (b BaseObject) Class() (string, error) {
 }
 
 func (b BaseObject) SetFunc(attribute string, f func(this js.Value, args []js.Value) interface{}) error {
-	return b.JSObject().SetWithErr(attribute, js.FuncOf(f))
+	return b.Set(attribute, js.FuncOf(f))
 }
 
 func (b BaseObject) SetAttribute(attribute string, i interface{}) error {
@@ -228,7 +327,7 @@ func (b BaseObject) SetAttribute(attribute string, i interface{}) error {
 		obj = js.ValueOf(i)
 	}
 
-	return b.JSObject().SetWithErr(attribute, obj)
+	return b.Set(attribute, obj)
 }
 
 func (b BaseObject) Export(name string) {
@@ -241,7 +340,7 @@ func (b BaseObject) GetAttributeString(attribute string) (string, error) {
 	var obj js.Value
 	var ret = ""
 
-	if obj, err = b.JSObject().GetWithErr(attribute); err == nil {
+	if obj, err = b.Get(attribute); err == nil {
 
 		if obj.Type() == js.TypeString {
 			ret = obj.String()
@@ -260,7 +359,7 @@ func (b BaseObject) GetAttributeGlobal(attribute string) (interface{}, error) {
 	var obj js.Value
 	var objGlobal interface{}
 
-	if obj, err = b.JSObject().GetWithErr(attribute); err == nil {
+	if obj, err = b.Get(attribute); err == nil {
 
 		if obj.IsUndefined() {
 			err = ErrNotAnObject
@@ -277,7 +376,8 @@ func (b BaseObject) GetAttributeGlobal(attribute string) (interface{}, error) {
 
 func (b BaseObject) SetAttributeString(attribute string, value string) error {
 
-	return b.JSObject().SetWithErr(attribute, js.ValueOf(value))
+	return b.Set(attribute, js.ValueOf(value))
+	//return b.Set(attribute, js.ValueOf(value))
 }
 
 func (b BaseObject) GetAttributeBool(attribute string) (bool, error) {
@@ -286,7 +386,7 @@ func (b BaseObject) GetAttributeBool(attribute string) (bool, error) {
 	var obj js.Value
 	var ret bool
 
-	if obj, err = b.JSObject().GetWithErr(attribute); err == nil {
+	if obj, err = b.Get(attribute); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			ret = obj.Bool()
 		} else {
@@ -299,7 +399,7 @@ func (b BaseObject) GetAttributeBool(attribute string) (bool, error) {
 
 func (b BaseObject) SetAttributeBool(attribute string, value bool) error {
 
-	return b.JSObject().SetWithErr(attribute, js.ValueOf(value))
+	return b.Set(attribute, js.ValueOf(value))
 }
 
 func (b BaseObject) GetAttributeInt(attribute string) (int, error) {
@@ -308,7 +408,7 @@ func (b BaseObject) GetAttributeInt(attribute string) (int, error) {
 	var obj js.Value
 	var result int
 
-	if obj, err = b.JSObject().GetWithErr(attribute); err == nil {
+	if obj, err = b.Get(attribute); err == nil {
 		if obj.Type() == js.TypeNumber {
 			result = obj.Int()
 		} else {
@@ -325,7 +425,7 @@ func (b BaseObject) GetAttributeInt64(attribute string) (int64, error) {
 	var obj js.Value
 	var ret int64
 
-	if obj, err = b.JSObject().GetWithErr(attribute); err == nil {
+	if obj, err = b.Get(attribute); err == nil {
 		if obj.Type() == js.TypeNumber {
 			ret = int64(obj.Float())
 		} else {
@@ -338,7 +438,7 @@ func (b BaseObject) GetAttributeInt64(attribute string) (int64, error) {
 
 func (b BaseObject) SetAttributeInt(attribute string, value int) error {
 
-	return b.JSObject().SetWithErr(attribute, js.ValueOf(value))
+	return b.Set(attribute, js.ValueOf(value))
 }
 
 func (b BaseObject) GetAttributeDouble(attribute string) (float64, error) {
@@ -347,7 +447,7 @@ func (b BaseObject) GetAttributeDouble(attribute string) (float64, error) {
 	var obj js.Value
 	var result float64
 
-	if obj, err = b.JSObject().GetWithErr(attribute); err == nil {
+	if obj, err = b.Get(attribute); err == nil {
 		if obj.Type() == js.TypeNumber {
 			result = obj.Float()
 		} else {
@@ -360,7 +460,7 @@ func (b BaseObject) GetAttributeDouble(attribute string) (float64, error) {
 
 func (b BaseObject) SetAttributeDouble(attribute string, value float64) error {
 
-	return b.JSObject().SetWithErr(attribute, js.ValueOf(value))
+	return b.Set(attribute, js.ValueOf(value))
 }
 
 //CallInt64 Call method given and return a 64bit int
@@ -370,7 +470,7 @@ func (b BaseObject) CallInt64(method string) (int64, error) {
 	var obj js.Value
 	var ret int64
 
-	if obj, err = b.JSObject().CallWithErr(method); err == nil {
+	if obj, err = b.Call(method); err == nil {
 		if obj.Type() == js.TypeNumber {
 			ret = int64(obj.Float())
 		} else {
@@ -386,7 +486,7 @@ func (b BaseObject) CallBool(method string) (bool, error) {
 	var obj js.Value
 	var result bool
 
-	if obj, err = b.JSObject().CallWithErr(method); err == nil {
+	if obj, err = b.Call(method); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
@@ -396,9 +496,17 @@ func (b BaseObject) CallBool(method string) (bool, error) {
 	return result, err
 }
 
+func eval_(str string) {
+
+	js.Global().Call("eval", str)
+
+}
+
 func Eval(str string) (js.Value, error) {
 
-	return js.Global().CallWithErr("eval", str)
+	f := js.Global().Get("eval")
+
+	return Invoke(f, str)
 
 }
 

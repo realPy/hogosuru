@@ -33,7 +33,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if filelistinterface, err = js.Global().GetWithErr("FileList"); err != nil {
+		if filelistinterface, err = baseobject.Get(js.Global(), "FileList"); err != nil {
 			filelistinterface = js.Undefined()
 		}
 		baseobject.Register(filelistinterface, func(v js.Value) (interface{}, error) {

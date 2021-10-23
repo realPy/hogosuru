@@ -33,7 +33,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlfieldsetelementinterface, err = js.Global().GetWithErr("HTMLFieldSetElement"); err != nil {
+		if htmlfieldsetelementinterface, err = baseobject.Get(js.Global(), "HTMLFieldSetElement"); err != nil {
 			htmlfieldsetelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlfieldsetelementinterface, func(v js.Value) (interface{}, error) {
@@ -101,7 +101,7 @@ func (h HtmlFieldSetElement) Elements() (htmlcollection.HtmlCollection, error) {
 	var obj js.Value
 	var collection htmlcollection.HtmlCollection
 
-	if obj, err = h.JSObject().GetWithErr("elements"); err == nil {
+	if obj, err = h.Get("elements"); err == nil {
 
 		collection, err = htmlcollection.NewFromJSObject(obj)
 	}
@@ -114,7 +114,7 @@ func (h HtmlFieldSetElement) Form() (htmlcollection.HtmlCollection, error) {
 	var obj js.Value
 	var collection htmlcollection.HtmlCollection
 
-	if obj, err = h.JSObject().GetWithErr("form"); err == nil {
+	if obj, err = h.Get("form"); err == nil {
 
 		collection, err = htmlcollection.NewFromJSObject(obj)
 	}
@@ -145,7 +145,7 @@ func (h HtmlFieldSetElement) Validity() (validitystate.ValidityState, error) {
 	var obj js.Value
 	var state validitystate.ValidityState
 
-	if obj, err = h.JSObject().GetWithErr("validity"); err == nil {
+	if obj, err = h.Get("validity"); err == nil {
 
 		state, err = validitystate.NewFromJSObject(obj)
 	}
@@ -169,6 +169,6 @@ func (h HtmlFieldSetElement) ReportValidity() (bool, error) {
 
 func (h HtmlFieldSetElement) SetCustomValidity(message string) error {
 
-	_, err := h.JSObject().CallWithErr("setCustomValidity", js.ValueOf(message))
+	_, err := h.Call("setCustomValidity", js.ValueOf(message))
 	return err
 }

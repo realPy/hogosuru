@@ -7,6 +7,7 @@ import (
 
 	"github.com/realPy/hogosuru"
 	"github.com/realPy/hogosuru/arraybuffer"
+	"github.com/realPy/hogosuru/document"
 	"github.com/realPy/hogosuru/fetch"
 	"github.com/realPy/hogosuru/json"
 	"github.com/realPy/hogosuru/promise"
@@ -15,10 +16,14 @@ import (
 )
 
 func main() {
-
+	hogosuru.Init()
 	//fetch is async so you must use a channel to wait response
 	fetchsync := make(chan bool)
+
 	//dont forget that fetch url need cors
+	d, _ := document.New()
+
+	hogosuru.AssertErr(d.SetDomain("toto.com"))
 
 	endpoint, _ := url.Parse("http://localhost:9090/static.json")
 
@@ -252,7 +257,6 @@ func main() {
 
 	/*
 		fetch.Fetch(endpoint.String(), "GET", nil, nil, func(r response.Response, err error) {
-
 
 				if s, _ := r.Status(); s == 200 {
 
