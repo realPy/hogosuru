@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlbrelementinterface, err = js.Global().GetWithErr("HTMLBRElement"); err != nil {
+		if htmlbrelementinterface, err = baseobject.Get(js.Global(), "HTMLBRElement"); err != nil {
 			htmlbrelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlbrelementinterface, func(v js.Value) (interface{}, error) {

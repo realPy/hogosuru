@@ -30,7 +30,7 @@ func GetUint32ArrayInterface() js.Value {
 	singletonuint32array.Do(func() {
 
 		var err error
-		if uint32arrayinterface, err = js.Global().GetWithErr("Uint32Array"); err != nil {
+		if uint32arrayinterface, err = baseobject.Get(js.Global(), "Uint32Array"); err != nil {
 			uint32arrayinterface = js.Undefined()
 		}
 		baseobject.Register(uint32arrayinterface, func(v js.Value) (interface{}, error) {

@@ -3,10 +3,12 @@ package abortcontroller
 import (
 	"testing"
 
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/event"
 )
 
 func TestMain(m *testing.M) {
+	baseobject.SetSyscall()
 	m.Run()
 }
 

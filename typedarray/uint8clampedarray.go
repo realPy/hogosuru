@@ -30,7 +30,7 @@ func GetUint8ClampedArrayInterface() js.Value {
 	singletonuint8campledarray.Do(func() {
 
 		var err error
-		if uint8clampedarrayinterface, err = js.Global().GetWithErr("Uint8ClampedArray"); err != nil {
+		if uint8clampedarrayinterface, err = baseobject.Get(js.Global(), "Uint8ClampedArray"); err != nil {
 			uint8clampedarrayinterface = js.Undefined()
 		}
 		baseobject.Register(uint8clampedarrayinterface, func(v js.Value) (interface{}, error) {

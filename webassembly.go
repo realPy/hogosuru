@@ -26,10 +26,11 @@ func LoadWasm_(urlfetch string) (fetch.Fetch, promise.Promise, error) {
 
 	if w, err = webassembly.New(); err == nil {
 
-		if gobjinterface, err = js.Global().GetWithErr("Go"); err == nil {
+		if gobjinterface, err = baseobject.Get(js.Global(), "Go"); err == nil {
 			gobj := gobjinterface.New()
 			var importobj js.Value
-			if importobj, err = gobj.GetWithErr("importObject"); err == nil {
+
+			if importobj, err = baseobject.Get(gobj, "importObject"); err == nil {
 
 				if f, err = fetch.New(urlfetch, map[string]interface{}{"method": "GET"}); err == nil {
 
@@ -42,8 +43,9 @@ func LoadWasm_(urlfetch string) (fetch.Fetch, promise.Promise, error) {
 
 								if module, ok := obj.(baseobject.ObjectFrom); ok {
 
-									if instance, err = module.JSObject().GetWithErr("instance"); err == nil {
-										_, err = gobj.JSValue().CallWithErr("run", instance)
+									if instance, err = module.BaseObject_().Get("instance"); err == nil {
+
+										_, err = baseobject.Call(gobj, "run", instance)
 
 									}
 								}
@@ -75,8 +77,8 @@ func LoadWasm_(urlfetch string) (fetch.Fetch, promise.Promise, error) {
 
 													if module, ok := obj.(baseobject.ObjectFrom); ok {
 
-														if instance, err = module.JSObject().GetWithErr("instance"); err == nil {
-															if _, err = gobj.JSValue().CallWithErr("run", instance); err == nil {
+														if instance, err = module.BaseObject_().Get("instance"); err == nil {
+															if _, err = baseobject.Call(gobj, "run", instance); err == nil {
 																resolvefunc.Invoke()
 															}
 
@@ -163,10 +165,11 @@ func LoadWasm(urlfetch string) (fetch.Fetch, promise.Promise, error) {
 
 	if w, err = webassembly.New(); err == nil {
 
-		if gobjinterface, err = js.Global().GetWithErr("Go"); err == nil {
+		if gobjinterface, err = baseobject.Get(js.Global(), "Go"); err == nil {
 			gobj := gobjinterface.New()
 			var importobj js.Value
-			if importobj, err = gobj.GetWithErr("importObject"); err == nil {
+
+			if importobj, err = baseobject.Get(gobj, "importObject"); err == nil {
 
 				if f, err = fetch.New(urlfetch, map[string]interface{}{"method": "GET"}); err == nil {
 
@@ -179,8 +182,8 @@ func LoadWasm(urlfetch string) (fetch.Fetch, promise.Promise, error) {
 
 								if module, ok := obj.(baseobject.ObjectFrom); ok {
 
-									if instance, err = module.JSObject().GetWithErr("instance"); err == nil {
-										_, err = gobj.JSValue().CallWithErr("run", instance)
+									if instance, err = module.BaseObject_().Get("instance"); err == nil {
+										_, err = baseobject.Call(gobj, "run", instance)
 
 									}
 								}
@@ -230,8 +233,8 @@ func LoadWasm(urlfetch string) (fetch.Fetch, promise.Promise, error) {
 
 								if module, ok := obj.(baseobject.ObjectFrom); ok {
 
-									if instance, err = module.JSObject().GetWithErr("instance"); err == nil {
-										if _, err = gobj.JSValue().CallWithErr("run", instance); err == nil {
+									if instance, err = module.BaseObject_().Get("instance"); err == nil {
+										if _, err = baseobject.Call(gobj, "run", instance); err == nil {
 											resolvefunc.Invoke()
 										}
 

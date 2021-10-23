@@ -30,7 +30,7 @@ func GetInt16ArrayInterface() js.Value {
 	singletonint16array.Do(func() {
 
 		var err error
-		if int16arrayinterface, err = js.Global().GetWithErr("Int16Array"); err != nil {
+		if int16arrayinterface, err = baseobject.Get(js.Global(), "Int16Array"); err != nil {
 			int16arrayinterface = js.Undefined()
 		}
 		baseobject.Register(int16arrayinterface, func(v js.Value) (interface{}, error) {

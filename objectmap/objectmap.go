@@ -18,7 +18,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if mapinterface, err = js.Global().GetWithErr("Map"); err != nil {
+		if mapinterface, err = baseobject.Get(js.Global(), "Map"); err != nil {
 			mapinterface = js.Undefined()
 		}
 		baseobject.Register(mapinterface, func(v js.Value) (interface{}, error) {
@@ -91,7 +91,7 @@ func New(values ...interface{}) (ObjectMap, error) {
 
 func (o ObjectMap) Clear() error {
 	var err error
-	_, err = o.JSObject().CallWithErr("clear")
+	_, err = o.Call("clear")
 	return err
 }
 
@@ -107,7 +107,7 @@ func (o ObjectMap) Delete(key interface{}) (bool, error) {
 		globalKeyObj = js.ValueOf(key)
 	}
 
-	if obj, err = o.JSObject().CallWithErr("delete", globalKeyObj); err == nil {
+	if obj, err = o.Call("delete", globalKeyObj); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
@@ -123,7 +123,7 @@ func (o ObjectMap) Entries() (iterator.Iterator, error) {
 	var obj js.Value
 	var iter iterator.Iterator
 
-	if obj, err = o.JSObject().CallWithErr("entries"); err == nil {
+	if obj, err = o.Call("entries"); err == nil {
 		iter = iterator.NewFromJSObject(obj)
 	}
 
@@ -138,7 +138,7 @@ func (o ObjectMap) ForEach(f func(value, index interface{})) error {
 		return nil
 	})
 
-	_, err = o.JSObject().CallWithErr("forEach", jsfunc)
+	_, err = o.Call("forEach", jsfunc)
 	jsfunc.Release()
 	return err
 }
@@ -157,7 +157,7 @@ func (o ObjectMap) Get(key interface{}) (interface{}, error) {
 		globalKeyObj = js.ValueOf(key)
 	}
 
-	if obj, err = o.JSObject().CallWithErr("get", globalKeyObj); err == nil {
+	if obj, err = o.Call("get", globalKeyObj); err == nil {
 		result = baseobject.GoValue(obj)
 	}
 	return result, err
@@ -176,7 +176,7 @@ func (o ObjectMap) Has(key interface{}) (bool, error) {
 		globalKeyObj = js.ValueOf(key)
 	}
 
-	if obj, err = o.JSObject().CallWithErr("has", globalKeyObj); err == nil {
+	if obj, err = o.Call("has", globalKeyObj); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
@@ -192,7 +192,7 @@ func (o ObjectMap) Keys() (iterator.Iterator, error) {
 	var obj js.Value
 	var iter iterator.Iterator
 
-	if obj, err = o.JSObject().CallWithErr("keys"); err == nil {
+	if obj, err = o.Call("keys"); err == nil {
 		iter = iterator.NewFromJSObject(obj)
 	}
 
@@ -216,7 +216,7 @@ func (o ObjectMap) Set(key interface{}, value interface{}) error {
 		globalValueObj = js.ValueOf(value)
 	}
 
-	_, err = o.JSObject().CallWithErr("set", globalKeyObj, globalValueObj)
+	_, err = o.Call("set", globalKeyObj, globalValueObj)
 	return err
 }
 
@@ -225,7 +225,7 @@ func (o ObjectMap) Values() (iterator.Iterator, error) {
 	var obj js.Value
 	var iter iterator.Iterator
 
-	if obj, err = o.JSObject().CallWithErr("values"); err == nil {
+	if obj, err = o.Call("values"); err == nil {
 		iter = iterator.NewFromJSObject(obj)
 	}
 

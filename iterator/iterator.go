@@ -58,9 +58,9 @@ func (i Iterator) Next() (interface{}, interface{}, error) {
 	var index interface{}
 	var value interface{}
 
-	if obj, err = i.JSObject().CallWithErr("next"); err == nil {
+	if obj, err = i.Call("next"); err == nil {
 
-		if doneobj, err = obj.GetWithErr("done"); err == nil {
+		if doneobj, err = baseobject.Get(obj, "done"); err == nil {
 			if doneobj.Type() == js.TypeBoolean {
 				done = doneobj.Bool()
 			} else {
@@ -72,7 +72,7 @@ func (i Iterator) Next() (interface{}, interface{}, error) {
 
 		} else {
 
-			if valueobj, err = obj.GetWithErr("value"); err == nil {
+			if valueobj, err = baseobject.Get(obj, "value"); err == nil {
 				if valueobj.Type() == js.TypeObject {
 					index, value = pairValues(valueobj)
 				} else {

@@ -32,7 +32,7 @@ func IDBOpenDBRequestGetInterface() js.Value {
 	singletonIDBOpenRequest.Do(func() {
 
 		var err error
-		if idbopendbrequestinterface, err = js.Global().GetWithErr("IDBOpenDBRequest"); err != nil {
+		if idbopendbrequestinterface, err = baseobject.Get(js.Global(), "IDBOpenDBRequest"); err != nil {
 			idbopendbrequestinterface = js.Undefined()
 		}
 

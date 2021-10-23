@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlstylelementinterface, err = js.Global().GetWithErr("HTMLStyleElement"); err != nil {
+		if htmlstylelementinterface, err = baseobject.Get(js.Global(), "HTMLStyleElement"); err != nil {
 			htmlstylelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlstylelementinterface, func(v js.Value) (interface{}, error) {
@@ -114,7 +114,7 @@ func (h HtmlStyleElement) Sheet() (stylesheet.StyleSheet, error) {
 	var err error
 	var obj js.Value
 	var s stylesheet.StyleSheet
-	if obj, err = h.JSObject().GetWithErr("sheet"); err == nil {
+	if obj, err = h.Get("sheet"); err == nil {
 
 		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject

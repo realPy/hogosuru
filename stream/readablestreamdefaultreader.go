@@ -21,7 +21,7 @@ func GetReadStreamInterface() js.Value {
 	singletonReadableStreamDefault.Do(func() {
 
 		var err error
-		if readablestreamdefaultinterface, err = js.Global().GetWithErr("ReadableStreamDefaultReader"); err != nil {
+		if readablestreamdefaultinterface, err = baseobject.Get(js.Global(), "ReadableStreamDefaultReader"); err != nil {
 			readablestreamdefaultinterface = js.Undefined()
 		}
 	})
@@ -62,7 +62,7 @@ func (r ReadableStreamDefaultReader) Read(b []byte) (n int, err error) {
 	donechan := make(chan bool)
 	err = nil
 
-	if promiseread, err = r.JSObject().CallWithErr("read"); err == nil {
+	if promiseread, err = r.Call("read"); err == nil {
 
 		if p, err = promise.NewFromJSObject(promiseread); err == nil {
 
@@ -106,7 +106,7 @@ func (r ReadableStreamDefaultReader) asyncRead(preallocateBytes []byte, dataHand
 	var p promise.Promise
 	err = nil
 
-	if promiseread, err = r.JSObject().CallWithErr("read"); err == nil {
+	if promiseread, err = r.Call("read"); err == nil {
 
 		if p, err = promise.NewFromJSObject(promiseread); err == nil {
 

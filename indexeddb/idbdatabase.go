@@ -35,7 +35,7 @@ func IDBDatabaseGetInterface() js.Value {
 	singletonIDBDatabase.Do(func() {
 
 		var err error
-		if idbrequestinterface, err = js.Global().GetWithErr("IDBDatabase"); err != nil {
+		if idbrequestinterface, err = baseobject.Get(js.Global(), "IDBDatabase"); err != nil {
 			idbrequestinterface = js.Undefined()
 		}
 
@@ -70,13 +70,13 @@ func IDBDatabaseNewFromObject(obj baseobject.BaseObject) (IDBDatabase, error) {
 
 func (i IDBDatabase) Close() error {
 	var err error
-	_, err = i.JSObject().CallWithErr("close")
+	_, err = i.Call("close")
 	return err
 }
 
 func (i IDBDatabase) DeleteObjectStore(name string) error {
 	var err error
-	_, err = i.JSObject().CallWithErr("deleteObjectStore", js.ValueOf(name))
+	_, err = i.Call("deleteObjectStore", js.ValueOf(name))
 	return err
 }
 
@@ -90,7 +90,7 @@ func (i IDBDatabase) CreateObjectStore(name string, options ...map[string]interf
 	if len(options) > 0 {
 		arrayJS = append(arrayJS, js.ValueOf(options[0]))
 	}
-	if obj, err = i.JSObject().CallWithErr("createObjectStore", arrayJS...); err == nil {
+	if obj, err = i.Call("createObjectStore", arrayJS...); err == nil {
 		s, err = IDBObjectStoreNewFromJSObject(obj)
 	}
 
@@ -117,7 +117,7 @@ func (i IDBDatabase) Transaction(store interface{}, mode ...string) (IDBTransact
 		arrayJS = append(arrayJS, js.ValueOf(mode[0]))
 	}
 
-	if obj, err = i.JSObject().CallWithErr("transaction", arrayJS...); err == nil {
+	if obj, err = i.Call("transaction", arrayJS...); err == nil {
 		t, err = IDBTransactionNewFromJSObject(obj)
 	}
 	return t, err
@@ -129,7 +129,7 @@ func (i IDBDatabase) getAttributeInt(attribute string) (int64, error) {
 	var obj js.Value
 	var ret int64
 
-	if obj, err = i.JSObject().GetWithErr(attribute); err == nil {
+	if obj, err = i.Get(attribute); err == nil {
 
 		if obj.Type() == js.TypeNumber {
 			ret = int64(obj.Float())
@@ -154,7 +154,7 @@ func (i IDBDatabase) ObjectStoreNames() (domstringlist.DOMStringList, error) {
 	var obj js.Value
 	var d domstringlist.DOMStringList
 
-	if obj, err = i.JSObject().GetWithErr("objectStoreNames"); err == nil {
+	if obj, err = i.Get("objectStoreNames"); err == nil {
 		d, err = domstringlist.NewFromJSObject(obj)
 	}
 	return d, err

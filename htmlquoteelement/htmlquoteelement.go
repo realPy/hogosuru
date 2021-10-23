@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlquoteelementinterface, err = js.Global().GetWithErr("HTMLQuoteElement"); err != nil {
+		if htmlquoteelementinterface, err = baseobject.Get(js.Global(), "HTMLQuoteElement"); err != nil {
 			htmlquoteelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlquoteelementinterface, func(v js.Value) (interface{}, error) {

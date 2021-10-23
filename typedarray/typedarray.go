@@ -28,7 +28,7 @@ func (t TypedArray) Bytes() ([]byte, error) {
 	var l int
 	if l, err = t.Length(); err == nil {
 		buffer = make([]byte, l)
-		if _, err = js.CopyBytesToGoWithErr(buffer, t.JSObject()); err == nil {
+		if _, err = baseobject.CopyBytesToGo(buffer, t.JSObject()); err == nil {
 			return buffer, nil
 		}
 	}
@@ -49,7 +49,7 @@ func (t TypedArray) CopyBytes(buffer []byte) (int, error) {
 		return 0, err
 	}
 
-	return js.CopyBytesToGoWithErr(buffer, t.JSObject())
+	return baseobject.CopyBytesToGo(buffer, t.JSObject())
 
 }
 
@@ -66,7 +66,7 @@ func (t TypedArray) CopyFromBytes(buffer []byte) (int, error) {
 		return 0, err
 	}
 
-	return js.CopyBytesToJSWithErr(t.JSObject(), buffer)
+	return baseobject.CopyBytesToJS(t.JSObject(), buffer)
 }
 
 func (t TypedArray) Buffer() (arraybuffer.ArrayBuffer, error) {
@@ -74,7 +74,7 @@ func (t TypedArray) Buffer() (arraybuffer.ArrayBuffer, error) {
 	var err error
 	var obj js.Value
 
-	if obj, err = t.JSObject().GetWithErr("buffer"); err == nil {
+	if obj, err = t.Get("buffer"); err == nil {
 
 		return arraybuffer.NewFromJSObject(obj)
 
@@ -111,7 +111,7 @@ func (t TypedArray) Subarray(opts ...int) (interface{}, error) {
 		}
 	}
 
-	if obj, err = t.JSObject().CallWithErr("subarray", arrayJS...); err == nil {
+	if obj, err = t.Call("subarray", arrayJS...); err == nil {
 		newArr, err = baseobject.Discover(obj)
 
 	}
