@@ -154,7 +154,7 @@ func (w WebSocket) BinaryType() (string, error) {
 
 	var err error
 	var obj js.Value
-	if obj, err = w.JSObject().GetWithErr("binaryType"); err == nil {
+	if obj, err = w.Get("binaryType"); err == nil {
 
 		return obj.String(), nil
 	}
@@ -205,7 +205,7 @@ func (w WebSocket) Send(data interface{}) error {
 		err = ErrSendUnknownType
 	}
 
-	_, err = w.JSObject().CallWithErr("send", object)
+	_, err = w.Call("send", object)
 
 	return err
 }
@@ -213,7 +213,7 @@ func (w WebSocket) Send(data interface{}) error {
 func (w WebSocket) Close() error {
 
 	var err error
-	_, err = w.JSObject().CallWithErr("close")
+	_, err = w.Call("close")
 	return err
 }
 
@@ -221,7 +221,7 @@ func (w WebSocket) Protocol() (string, error) {
 
 	var err error
 	var obj js.Value
-	if obj, err = w.JSObject().GetWithErr("protocol"); err == nil {
+	if obj, err = w.Get("protocol"); err == nil {
 
 		return obj.String(), nil
 	}
@@ -232,7 +232,7 @@ func (w WebSocket) Protocol() (string, error) {
 func (w WebSocket) BufferedAmount() (int, error) {
 	var err error
 	var obj js.Value
-	if obj, err = w.JSObject().GetWithErr("bufferedAmount"); err == nil {
+	if obj, err = w.Get("bufferedAmount"); err == nil {
 
 		return obj.Int(), nil
 	}
@@ -242,7 +242,7 @@ func (w WebSocket) BufferedAmount() (int, error) {
 func (w WebSocket) ReadyState() (int, error) {
 	var err error
 	var obj js.Value
-	if obj, err = w.JSObject().GetWithErr("readyState"); err == nil {
+	if obj, err = w.Get("readyState"); err == nil {
 
 		return obj.Int(), nil
 	}
@@ -253,7 +253,7 @@ func (w WebSocket) Url() (string, error) {
 
 	var err error
 	var obj js.Value
-	if obj, err = w.JSObject().GetWithErr("url"); err == nil {
+	if obj, err = w.Get("url"); err == nil {
 
 		return obj.String(), nil
 	}

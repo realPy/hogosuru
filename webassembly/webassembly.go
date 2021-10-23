@@ -79,7 +79,7 @@ func (w WebAssembly) InstantiateStreaming(source promise.Promise, imports js.Val
 	var obj js.Value
 	var err error
 	var p promise.Promise
-	if obj, err = w.JSObject().CallWithErr("instantiateStreaming", source.JSObject(), imports); err == nil {
+	if obj, err = w.Call("instantiateStreaming", source.JSObject(), imports); err == nil {
 		p, err = promise.NewFromJSObject(obj)
 
 	}
@@ -91,7 +91,7 @@ func (w WebAssembly) Instantiate(source arraybuffer.ArrayBuffer, imports js.Valu
 	var err error
 	var p promise.Promise
 
-	if obj, err = w.JSObject().CallWithErr("instantiate", source.JSObject(), imports); err == nil {
+	if obj, err = w.Call("instantiate", source.JSObject(), imports); err == nil {
 		p, err = promise.NewFromJSObject(obj)
 
 	}

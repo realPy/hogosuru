@@ -91,7 +91,7 @@ func (h HtmlTemplateElement) Content() (documentfragment.DocumentFragment, error
 	var obj js.Value
 	var fragment documentfragment.DocumentFragment
 
-	if obj, err = h.JSObject().GetWithErr("content"); err == nil {
+	if obj, err = h.Get("content"); err == nil {
 
 		fragment, err = documentfragment.NewFromJSObject(obj)
 	}

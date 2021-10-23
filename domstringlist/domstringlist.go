@@ -70,7 +70,7 @@ func (d DOMStringList) Contains(search string) (bool, error) {
 	var err error
 	var obj js.Value
 	var result bool
-	if obj, err = d.JSObject().CallWithErr("contains", js.ValueOf(search)); err == nil {
+	if obj, err = d.Call("contains", js.ValueOf(search)); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {

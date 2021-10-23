@@ -82,7 +82,7 @@ func (r Response) Ok() (bool, error) {
 	var err error
 	var obj js.Value
 
-	if obj, err = r.JSObject().GetWithErr("ok"); err == nil {
+	if obj, err = r.Get("ok"); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			return obj.Bool(), nil
 		} else {
@@ -111,7 +111,7 @@ func (r Response) StatusText() (string, error) {
 	var err error
 	var obj js.Value
 
-	if obj, err = r.JSObject().GetWithErr("statusText"); err == nil {
+	if obj, err = r.Get("statusText"); err == nil {
 
 		return obj.String(), nil
 	}
@@ -123,7 +123,7 @@ func (r Response) Type() (string, error) {
 	var err error
 	var obj js.Value
 
-	if obj, err = r.JSObject().GetWithErr("type"); err == nil {
+	if obj, err = r.Get("type"); err == nil {
 
 		return obj.String(), nil
 	}
@@ -135,7 +135,7 @@ func (r Response) Url() (string, error) {
 	var err error
 	var obj js.Value
 
-	if obj, err = r.JSObject().GetWithErr("url"); err == nil {
+	if obj, err = r.Get("url"); err == nil {
 
 		return obj.String(), nil
 	}
@@ -149,7 +149,7 @@ func (r Response) _Text() (string, error) {
 	var p promise.Promise
 	var jsTxtObj interface{}
 	var err error
-	if promiseObject, err = r.JSObject().CallWithErr("text"); err == nil {
+	if promiseObject, err = r.Call("text"); err == nil {
 		if p, err = promise.NewFromJSObject(promiseObject); err == nil {
 
 			if jsTxtObj, err = p.Await(); err == nil {
@@ -172,7 +172,7 @@ func (r Response) Text() (promise.Promise, error) {
 	var promiseObject js.Value
 	var p promise.Promise
 	var err error
-	if promiseObject, err = r.JSObject().CallWithErr("text"); err == nil {
+	if promiseObject, err = r.Call("text"); err == nil {
 		p, err = promise.NewFromJSObject(promiseObject)
 	}
 	return p, err
@@ -183,7 +183,7 @@ func (r Response) Json() (promise.Promise, error) {
 	var promiseObject js.Value
 	var p promise.Promise
 	var err error
-	if promiseObject, err = r.JSObject().CallWithErr("json"); err == nil {
+	if promiseObject, err = r.Call("json"); err == nil {
 		p, err = promise.NewFromJSObject(promiseObject)
 	}
 	return p, err
@@ -207,7 +207,7 @@ func (r Response) ArrayBuffer_() (arraybuffer.ArrayBuffer, error) {
 	var p promise.Promise
 	var binaryObj interface{}
 
-	if promiseObject, err = r.JSObject().CallWithErr("arrayBuffer"); err == nil {
+	if promiseObject, err = r.Call("arrayBuffer"); err == nil {
 		if p, err = promise.NewFromJSObject(promiseObject); err == nil {
 
 			if binaryObj, err = p.Await(); err == nil {
@@ -230,7 +230,7 @@ func (r Response) ArrayBuffer() (promise.Promise, error) {
 	var promiseObject js.Value
 	var p promise.Promise
 	var err error
-	if promiseObject, err = r.JSObject().CallWithErr("arrayBuffer"); err == nil {
+	if promiseObject, err = r.Call("arrayBuffer"); err == nil {
 		p, err = promise.NewFromJSObject(promiseObject)
 	}
 	return p, err
@@ -259,7 +259,7 @@ func (r Response) Headers() (headers.Headers, error) {
 	var obj js.Value
 	var err error
 	var h headers.Headers
-	if obj, err = r.JSObject().GetWithErr("headers"); err == nil {
+	if obj, err = r.Get("headers"); err == nil {
 		h, err = headers.NewFromJSObject(obj)
 
 	}
@@ -270,7 +270,7 @@ func (r Response) Body() (stream.ReadableStream, error) {
 	var obj js.Value
 	var err error
 	var s stream.ReadableStream
-	if obj, err = r.JSObject().GetWithErr("body"); err == nil {
+	if obj, err = r.Get("body"); err == nil {
 		s, err = stream.NewFromJSObject(obj)
 
 	}

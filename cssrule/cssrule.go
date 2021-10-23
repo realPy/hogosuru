@@ -70,7 +70,7 @@ func (c CSSRule) ParentRule() (CSSRule, error) {
 	var err error
 	var obj js.Value
 	var cr CSSRule
-	if obj, err = c.JSObject().GetWithErr("parentRule"); err == nil {
+	if obj, err = c.Get("parentRule"); err == nil {
 
 		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject
@@ -86,7 +86,7 @@ func (c CSSRule) ParentStyleSheet() (stylesheet.StyleSheet, error) {
 	var err error
 	var obj js.Value
 	var s stylesheet.StyleSheet
-	if obj, err = c.JSObject().GetWithErr("parentStyleSheet"); err == nil {
+	if obj, err = c.Get("parentStyleSheet"); err == nil {
 
 		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject

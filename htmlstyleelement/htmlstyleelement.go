@@ -114,7 +114,7 @@ func (h HtmlStyleElement) Sheet() (stylesheet.StyleSheet, error) {
 	var err error
 	var obj js.Value
 	var s stylesheet.StyleSheet
-	if obj, err = h.JSObject().GetWithErr("sheet"); err == nil {
+	if obj, err = h.Get("sheet"); err == nil {
 
 		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject

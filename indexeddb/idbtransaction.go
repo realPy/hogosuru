@@ -63,7 +63,7 @@ func IDBTransactionNewFromJSObject(obj js.Value) (IDBTransaction, error) {
 
 func (i IDBTransaction) Abort() error {
 	var err error
-	_, err = i.JSObject().CallWithErr("abort")
+	_, err = i.Call("abort")
 	return err
 }
 
@@ -71,7 +71,7 @@ func (i IDBTransaction) ObjectStore(name string) (IDBObjectStore, error) {
 	var err error
 	var obj js.Value
 	var s IDBObjectStore
-	if obj, err = i.JSObject().CallWithErr("objectStore", js.ValueOf(name)); err == nil {
+	if obj, err = i.Call("objectStore", js.ValueOf(name)); err == nil {
 		s, err = IDBObjectStoreNewFromJSObject(obj)
 	}
 
@@ -82,7 +82,7 @@ func (i IDBTransaction) DB() (IDBDatabase, error) {
 	var err error
 	var obj js.Value
 	var t IDBDatabase
-	if obj, err = i.JSObject().GetWithErr("database"); err == nil {
+	if obj, err = i.Get("database"); err == nil {
 		t, err = IDBDatabaseNewFromJSObject(obj)
 	}
 
@@ -98,7 +98,7 @@ func (i IDBTransaction) ObjectStoreNames() (domstringlist.DOMStringList, error) 
 	var obj js.Value
 	var list domstringlist.DOMStringList
 
-	if obj, err = i.JSObject().GetWithErr("objectStoreNames"); err == nil {
+	if obj, err = i.Get("objectStoreNames"); err == nil {
 		list, err = domstringlist.NewFromJSObject(obj)
 	}
 

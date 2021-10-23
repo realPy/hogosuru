@@ -65,7 +65,7 @@ func (a AbortSignal) Abort() (AbortSignal, error) {
 	var err error
 	var obj js.Value
 	var as AbortSignal
-	if obj, err = a.JSObject().CallWithErr("abort"); err == nil {
+	if obj, err = a.Call("abort"); err == nil {
 
 		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject

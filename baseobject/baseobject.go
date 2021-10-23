@@ -11,7 +11,7 @@ var callFunc js.Value
 var invokeFunc js.Value
 var errorInterface js.Value
 
-func init() {
+func SetSyscall() {
 	//Set Set and get function
 	eval_(`hSet = (obj, set , value) => { try { Reflect.set(obj,set,value) ; return }catch(err){ return err } }`)
 	eval_(`hGet = (obj, get ) => { try { return [true,Reflect.get(obj,get)] }catch(err){ return [false,err] } }`)
@@ -77,6 +77,14 @@ func Invoke(f js.Value, args ...interface{}) (js.Value, error) {
 	} else {
 		return ret.Index(1), errors.New(ret.Index(1).Get("message").String())
 	}
+}
+
+func CopyBytesToGo(dst []byte, src js.Value) (int, error) {
+	return js.CopyBytesToGo(dst, src), nil
+}
+
+func CopyBytesToJS(dst js.Value, src []byte) (int, error) {
+	return js.CopyBytesToJS(dst, src), nil
 }
 
 var registry map[string]func(js.Value) (interface{}, error)

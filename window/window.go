@@ -77,7 +77,7 @@ func (w Window) Document() (document.Document, error) {
 	var obj js.Value
 	var h document.Document
 
-	if obj, err = w.JSObject().GetWithErr("document"); err == nil {
+	if obj, err = w.Get("document"); err == nil {
 		h, err = document.NewFromJSObject(obj)
 	}
 
@@ -89,7 +89,7 @@ func (w Window) History() (history.History, error) {
 	var obj js.Value
 	var h history.History
 
-	if obj, err = w.JSObject().GetWithErr("history"); err == nil {
+	if obj, err = w.Get("history"); err == nil {
 		h, err = history.NewFromJSObject(obj)
 	}
 
@@ -101,7 +101,7 @@ func (w Window) Location() (location.Location, error) {
 	var obj js.Value
 	var l location.Location
 
-	if obj, err = w.JSObject().GetWithErr("location"); err == nil {
+	if obj, err = w.Get("location"); err == nil {
 		l, err = location.NewFromJSObject(obj)
 	}
 
@@ -113,7 +113,7 @@ func (w Window) LocalStorage() (storage.Storage, error) {
 	var obj js.Value
 	var s storage.Storage
 
-	if obj, err = w.JSObject().GetWithErr("localStorage"); err == nil {
+	if obj, err = w.Get("localStorage"); err == nil {
 		s, err = storage.NewFromJSObject(obj)
 	}
 
@@ -125,7 +125,7 @@ func (w Window) SessionStorage() (storage.Storage, error) {
 	var obj js.Value
 	var s storage.Storage
 
-	if obj, err = w.JSObject().GetWithErr("sessionStorage"); err == nil {
+	if obj, err = w.Get("sessionStorage"); err == nil {
 		s, err = storage.NewFromJSObject(obj)
 	}
 
@@ -137,7 +137,7 @@ func (w Window) IndexdedDB() (indexeddb.IDBFactory, error) {
 	var obj js.Value
 	var i indexeddb.IDBFactory
 
-	if obj, err = w.JSObject().GetWithErr("indexedDB"); err == nil {
+	if obj, err = w.Get("indexedDB"); err == nil {
 		i, err = indexeddb.IDBFactoryNewFromJSObject(obj)
 	}
 

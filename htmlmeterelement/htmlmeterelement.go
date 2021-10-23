@@ -138,7 +138,7 @@ func (h HtmlMeterElement) Labels() (nodelist.NodeList, error) {
 	var obj js.Value
 	var err error
 	var arr nodelist.NodeList
-	if obj, err = h.JSObject().GetWithErr("labels"); err == nil {
+	if obj, err = h.Get("labels"); err == nil {
 
 		arr, err = nodelist.NewFromJSObject(obj)
 	}

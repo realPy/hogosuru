@@ -180,16 +180,16 @@ func (h HtmlFormElement) RequestSubmit(elem ...baseobject.BaseObject) error {
 		arrayJS = append(arrayJS, elem[0].JSObject())
 	}
 
-	_, err := h.JSObject().CallWithErr("requestSubmit", arrayJS...)
+	_, err := h.Call("requestSubmit", arrayJS...)
 	return err
 }
 
 func (h HtmlFormElement) Reset() error {
-	_, err := h.JSObject().CallWithErr("reset")
+	_, err := h.Call("reset")
 	return err
 }
 
 func (h HtmlFormElement) Submit() error {
-	_, err := h.JSObject().CallWithErr("submit")
+	_, err := h.Call("submit")
 	return err
 }

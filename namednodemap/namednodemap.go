@@ -65,7 +65,7 @@ func (n NamedNodeMap) GetNamedItem(name string) (attr.Attr, error) {
 	var newAttr attr.Attr
 	var err error
 
-	if elemObject, err = n.JSObject().CallWithErr("getNamedItem", js.ValueOf(name)); err == nil {
+	if elemObject, err = n.Call("getNamedItem", js.ValueOf(name)); err == nil {
 
 		if elemObject.IsUndefined() {
 			err = ErrNotNameAttr
@@ -82,13 +82,13 @@ func (n NamedNodeMap) GetNamedItem(name string) (attr.Attr, error) {
 
 func (n NamedNodeMap) SetNamedItem(a attr.Attr) error {
 	var err error
-	_, err = n.JSObject().CallWithErr("setNamedItem", a.JSObject())
+	_, err = n.Call("setNamedItem", a.JSObject())
 	return err
 }
 
 func (n NamedNodeMap) RemoveNamedItem(name string) error {
 	var err error
-	_, err = n.JSObject().CallWithErr("removeNamedItem", js.ValueOf(name))
+	_, err = n.Call("removeNamedItem", js.ValueOf(name))
 	return err
 }
 
@@ -97,7 +97,7 @@ func (n NamedNodeMap) GetNamedItemNS(namespace string, name string) (attr.Attr, 
 	var elemObject js.Value
 	var newAttr attr.Attr
 
-	if elemObject, err = n.JSObject().CallWithErr("getNamedItemNS", js.ValueOf(namespace), js.ValueOf(name)); err == nil {
+	if elemObject, err = n.Call("getNamedItemNS", js.ValueOf(namespace), js.ValueOf(name)); err == nil {
 
 		if elemObject.IsUndefined() {
 			err = ErrNotNameAttr
@@ -115,12 +115,12 @@ func (n NamedNodeMap) GetNamedItemNS(namespace string, name string) (attr.Attr, 
 
 func (n NamedNodeMap) SetNamedItemNS(namespace string, a attr.Attr) error {
 	var err error
-	_, err = n.JSObject().CallWithErr("setNamedItemNS", js.ValueOf(namespace), a.JSObject())
+	_, err = n.Call("setNamedItemNS", js.ValueOf(namespace), a.JSObject())
 	return err
 }
 
 func (n NamedNodeMap) RemoveNamedItemNS(namespace string, name string) error {
 	var err error
-	_, err = n.JSObject().CallWithErr("removeNamedItemNS", js.ValueOf(namespace), js.ValueOf(name))
+	_, err = n.Call("removeNamedItemNS", js.ValueOf(namespace), js.ValueOf(name))
 	return err
 }

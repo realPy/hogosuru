@@ -70,7 +70,7 @@ func (d DOMTokenList) methodGetValue(method string, value string) (bool, error) 
 	var err error
 	var obj js.Value
 	var result bool
-	if obj, err = d.JSObject().CallWithErr(method, js.ValueOf(value)); err == nil {
+	if obj, err = d.Call(method, js.ValueOf(value)); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
@@ -94,7 +94,7 @@ func (d DOMTokenList) method(method string, tokens ...string) error {
 		arrayJS = append(arrayJS, js.ValueOf(token))
 	}
 
-	_, err = d.JSObject().CallWithErr(method, arrayJS...)
+	_, err = d.Call(method, arrayJS...)
 
 	return err
 
@@ -123,7 +123,7 @@ func (d DOMTokenList) Toggle(token string, force ...bool) (bool, error) {
 		arrayJS = append(arrayJS, js.ValueOf(force[0]))
 	}
 
-	if obj, err = d.JSObject().CallWithErr("toggle", arrayJS...); err == nil {
+	if obj, err = d.Call("toggle", arrayJS...); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
@@ -144,7 +144,7 @@ func (d DOMTokenList) Entries() (iterator.Iterator, error) {
 	var obj js.Value
 	var iter iterator.Iterator
 
-	if obj, err = d.JSObject().CallWithErr("entries"); err == nil {
+	if obj, err = d.Call("entries"); err == nil {
 		iter = iterator.NewFromJSObject(obj)
 	}
 
@@ -159,7 +159,7 @@ func (d DOMTokenList) ForEach(f func(string, string)) error {
 		return nil
 	})
 
-	_, err = d.JSObject().CallWithErr("forEach", jsfunc)
+	_, err = d.Call("forEach", jsfunc)
 	jsfunc.Release()
 	return err
 }
@@ -169,7 +169,7 @@ func (d DOMTokenList) Keys() (iterator.Iterator, error) {
 	var obj js.Value
 	var iter iterator.Iterator
 
-	if obj, err = d.JSObject().CallWithErr("keys"); err == nil {
+	if obj, err = d.Call("keys"); err == nil {
 		iter = iterator.NewFromJSObject(obj)
 	}
 
@@ -181,7 +181,7 @@ func (d DOMTokenList) Values() (iterator.Iterator, error) {
 	var obj js.Value
 	var iter iterator.Iterator
 
-	if obj, err = d.JSObject().CallWithErr("values"); err == nil {
+	if obj, err = d.Call("values"); err == nil {
 		iter = iterator.NewFromJSObject(obj)
 	}
 

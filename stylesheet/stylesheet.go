@@ -73,7 +73,7 @@ func (s StyleSheet) OwnerNode() (node.Node, error) {
 	var err error
 	var obj js.Value
 	var n node.Node
-	if obj, err = s.JSObject().GetWithErr("ownerNode"); err == nil {
+	if obj, err = s.Get("ownerNode"); err == nil {
 
 		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject
@@ -89,7 +89,7 @@ func (s StyleSheet) ParentStyleSheet() (StyleSheet, error) {
 	var err error
 	var obj js.Value
 	var ps StyleSheet
-	if obj, err = s.JSObject().GetWithErr("parentStyleSheet"); err == nil {
+	if obj, err = s.Get("parentStyleSheet"); err == nil {
 
 		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject

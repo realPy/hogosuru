@@ -63,7 +63,7 @@ func (d DragEvent) DataTransfer() (datatransfer.DataTransfer, error) {
 	var err error
 	var obj js.Value
 
-	if obj, err = d.JSObject().GetWithErr("dataTransfer"); err == nil {
+	if obj, err = d.Get("dataTransfer"); err == nil {
 
 		return datatransfer.NewFromJSObject(obj)
 	}

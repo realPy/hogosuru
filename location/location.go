@@ -100,18 +100,18 @@ func (l Location) Search() (string, error) {
 
 func (l Location) Assign(url string) error {
 	var err error
-	_, err = l.JSObject().CallWithErr("assign", js.ValueOf(url))
+	_, err = l.Call("assign", js.ValueOf(url))
 	return err
 }
 
 func (l Location) Reload(value bool) error {
 	var err error
-	_, err = l.JSObject().CallWithErr("reload", js.ValueOf(value))
+	_, err = l.Call("reload", js.ValueOf(value))
 	return err
 }
 
 func (l Location) Replace(url string) error {
 	var err error
-	_, err = l.JSObject().CallWithErr("replace", js.ValueOf(url))
+	_, err = l.Call("replace", js.ValueOf(url))
 	return err
 }

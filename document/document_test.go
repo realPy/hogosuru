@@ -2,6 +2,8 @@ package document
 
 import (
 	"testing"
+
+	"github.com/realPy/hogosuru/baseobject"
 )
 
 func AssertErr(t *testing.T, err error) bool {
@@ -15,6 +17,7 @@ func AssertErr(t *testing.T, err error) bool {
 }
 
 func TestMain(m *testing.M) {
+	baseobject.SetSyscall()
 	/*
 		baseobject.Eval(`go.importObject.env["syscall/js.valueSetErr"] = 	(ret_addr, v_addr, p_ptr, p_len, x_addr) => {
 				const v = loadValue(v_addr);

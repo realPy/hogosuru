@@ -99,7 +99,7 @@ func (h HtmlIFrameElement) ContentDocument() (document.Document, error) {
 	var obj js.Value
 	var doc document.Document
 
-	if obj, err = h.JSObject().GetWithErr("contentDocument"); err == nil {
+	if obj, err = h.Get("contentDocument"); err == nil {
 
 		doc, err = document.NewFromJSObject(obj)
 	}

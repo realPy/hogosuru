@@ -71,7 +71,7 @@ func (dt DataTransfer) Files() (filelist.FileList, error) {
 	var err error
 	var obj js.Value
 
-	if obj, err = dt.JSObject().GetWithErr("files"); err == nil {
+	if obj, err = dt.Get("files"); err == nil {
 
 		return filelist.NewFromJSObject(obj)
 	}

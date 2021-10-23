@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/realPy/hogosuru/abortcontroller"
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/json"
 	"github.com/realPy/hogosuru/object"
 	"github.com/realPy/hogosuru/promise"
@@ -12,6 +13,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
+	baseobject.SetSyscall()
 	m.Run()
 }
 

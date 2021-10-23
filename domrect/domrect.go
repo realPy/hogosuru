@@ -73,37 +73,37 @@ func NewFromJSObject(obj js.Value) (DOMRect, error) {
 
 func (d DOMRect) SetBottom(value float64) error {
 
-	return d.JSObject().SetWithErr("bottom", js.ValueOf(value))
+	return d.Set("bottom", js.ValueOf(value))
 }
 func (d DOMRect) SetHeight(value float64) error {
 
-	return d.JSObject().SetWithErr("height", js.ValueOf(value))
+	return d.Set("height", js.ValueOf(value))
 }
 func (d DOMRect) SetLeft(value float64) error {
 
-	return d.JSObject().SetWithErr("left", js.ValueOf(value))
+	return d.Set("left", js.ValueOf(value))
 }
 func (d DOMRect) SetRight(value float64) error {
 
-	return d.JSObject().SetWithErr("right", js.ValueOf(value))
+	return d.Set("right", js.ValueOf(value))
 }
 
 func (d DOMRect) SetTop(value float64) error {
 
-	return d.JSObject().SetWithErr("top", js.ValueOf(value))
+	return d.Set("top", js.ValueOf(value))
 }
 
 func (d DOMRect) SetWidth(value float64) error {
 
-	return d.JSObject().SetWithErr("width", js.ValueOf(value))
+	return d.Set("width", js.ValueOf(value))
 }
 
 func (d DOMRect) SetX(value float64) error {
 
-	return d.JSObject().SetWithErr("x", js.ValueOf(value))
+	return d.Set("x", js.ValueOf(value))
 }
 
 func (d DOMRect) SetY(value float64) error {
 
-	return d.JSObject().SetWithErr("y", js.ValueOf(value))
+	return d.Set("y", js.ValueOf(value))
 }

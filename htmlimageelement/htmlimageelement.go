@@ -156,7 +156,7 @@ func (h HtmlImageElement) Decode() (promise.Promise, error) {
 	var obj js.Value
 	var p promise.Promise
 
-	if obj, err = h.JSObject().CallWithErr("decode"); err == nil {
+	if obj, err = h.Call("decode"); err == nil {
 
 		p, err = promise.NewFromJSObject(obj)
 	}

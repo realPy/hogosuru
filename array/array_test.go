@@ -999,5 +999,6 @@ func TestValues(t *testing.T) {
 }
 
 func TestMain(m *testing.M) {
+	baseobject.SetSyscall()
 	m.Run()
 }

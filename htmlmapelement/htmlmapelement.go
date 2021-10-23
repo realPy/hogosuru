@@ -99,7 +99,7 @@ func (h HtmlMapElement) Areas() (htmlcollection.HtmlCollection, error) {
 	var obj js.Value
 	var collection htmlcollection.HtmlCollection
 
-	if obj, err = h.JSObject().GetWithErr("areas"); err == nil {
+	if obj, err = h.Get("areas"); err == nil {
 
 		collection, err = htmlcollection.NewFromJSObject(obj)
 	}

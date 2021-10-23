@@ -56,7 +56,7 @@ func New() (FormData, error) {
 
 func (f FormData) AppendString(key string, value string) error {
 	var err error
-	_, err = f.JSObject().CallWithErr("append", js.ValueOf(key), js.ValueOf(value))
+	_, err = f.Call("append", js.ValueOf(key), js.ValueOf(value))
 
 	return err
 
@@ -64,7 +64,7 @@ func (f FormData) AppendString(key string, value string) error {
 
 func (f FormData) AppendJSObject(key string, object js.Value) error {
 	var err error
-	_, err = f.JSObject().CallWithErr("append", js.ValueOf(key), object)
+	_, err = f.Call("append", js.ValueOf(key), object)
 	return err
 
 }

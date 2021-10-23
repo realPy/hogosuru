@@ -1053,5 +1053,6 @@ func TestGoValue(t *testing.T) {
 }
 
 func TestMain(m *testing.M) {
+	SetSyscall()
 	m.Run()
 }

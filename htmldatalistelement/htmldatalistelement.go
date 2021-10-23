@@ -91,7 +91,7 @@ func (h HtmlDataListElement) Options() (htmlcollection.HtmlCollection, error) {
 	var obj js.Value
 	var collection htmlcollection.HtmlCollection
 
-	if obj, err = h.JSObject().CallWithErr("options"); err == nil {
+	if obj, err = h.Call("options"); err == nil {
 
 		collection, err = htmlcollection.NewFromJSObject(obj)
 	}

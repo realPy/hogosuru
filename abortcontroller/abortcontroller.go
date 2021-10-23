@@ -75,7 +75,7 @@ func (a AbortController) Signal() (abortsignal.AbortSignal, error) {
 	var err error
 	var obj js.Value
 	var as abortsignal.AbortSignal
-	if obj, err = a.JSObject().GetWithErr("signal"); err == nil {
+	if obj, err = a.Get("signal"); err == nil {
 
 		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject
@@ -89,6 +89,6 @@ func (a AbortController) Signal() (abortsignal.AbortSignal, error) {
 
 func (a AbortController) Abort() error {
 	var err error
-	_, err = a.JSObject().CallWithErr("abort")
+	_, err = a.Call("abort")
 	return err
 }

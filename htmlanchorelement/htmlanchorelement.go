@@ -191,7 +191,7 @@ func (h HtmlAnchorElement) RelList() (domtokenlist.DOMTokenList, error) {
 	var obj js.Value
 	var dlist domtokenlist.DOMTokenList
 
-	if obj, err = h.JSObject().GetWithErr("relList"); err == nil {
+	if obj, err = h.Get("relList"); err == nil {
 
 		dlist, err = domtokenlist.NewFromJSObject(obj)
 	}

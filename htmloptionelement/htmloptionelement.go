@@ -106,7 +106,7 @@ func (h HtmlOptionElement) Form() (element.Element, error) {
 	var obj js.Value
 	var elem element.Element
 
-	if obj, err = h.JSObject().GetWithErr("form"); err == nil {
+	if obj, err = h.Get("form"); err == nil {
 
 		elem, err = element.NewFromJSObject(obj)
 	}

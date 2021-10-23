@@ -71,7 +71,7 @@ func (c BroadcastChannel) PostMessage(message interface{}) error {
 		data = js.ValueOf(message)
 	}
 
-	_, err = c.JSObject().CallWithErr("postMessage", data)
+	_, err = c.Call("postMessage", data)
 
 	return err
 }
@@ -79,7 +79,7 @@ func (c BroadcastChannel) PostMessage(message interface{}) error {
 //Close Close the channel
 func (c BroadcastChannel) Close() error {
 	var err error
-	_, err = c.JSObject().CallWithErr("close")
+	_, err = c.Call("close")
 
 	return err
 }

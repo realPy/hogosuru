@@ -16,7 +16,7 @@ import (
 )
 
 func main() {
-
+	hogosuru.Init()
 	//fetch is async so you must use a channel to wait response
 	fetchsync := make(chan bool)
 
