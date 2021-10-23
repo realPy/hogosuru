@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"net/url"
 
+	"github.com/realPy/hogosuru"
 	"github.com/realPy/hogosuru/formdata"
 	"github.com/realPy/hogosuru/progressevent"
 	"github.com/realPy/hogosuru/xmlhttprequest"
 )
 
 func main() {
-
+	hogosuru.Init()
 	endpoint, _ := url.Parse("http://localhost:9090/static.json")
 	if xhr, err := xmlhttprequest.New(); err == nil {
 

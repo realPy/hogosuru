@@ -1,13 +1,14 @@
 package main
 
 import (
+	"github.com/realPy/hogosuru"
 	"github.com/realPy/hogosuru/array"
 )
 
 //eval code
 
 func main() {
-
+	hogosuru.Init()
 	arr := array.Of_(1, 2, 3, 4)
 	arr2 := array.New_(5, 6, 7, 8)
 	arrx := array.New_(5)

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/realPy/hogosuru"
 	"github.com/realPy/hogosuru/json"
 )
 
@@ -11,6 +12,7 @@ var str2 = `{
 	}`
 
 func main() {
+	hogosuru.Init()
 	//var str string = "{\"test\":true,\"o\":\"poi\",\"nani\":1.5}"
 	//var str string = "{\"test\":true,\"o\":\"poi\",\"nani\":1.5,\"complex\":{ \"toto\":\"yes\"}}"
 

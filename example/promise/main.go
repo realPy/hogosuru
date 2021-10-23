@@ -4,12 +4,13 @@ import (
 	"syscall/js"
 	"time"
 
+	"github.com/realPy/hogosuru"
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/promise"
 )
 
 func main() {
-
+	hogosuru.Init()
 	p1, _ := promise.New(func(resolvefunc, errfunc js.Value) (interface{}, error) {
 		println("Waiting p1")
 		time.Sleep(8 * time.Second)
