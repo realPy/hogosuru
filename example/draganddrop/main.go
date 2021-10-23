@@ -7,7 +7,6 @@ import (
 	"io"
 	"syscall/js"
 
-	"github.com/realPy/hogosuru"
 	"github.com/realPy/hogosuru/blob"
 	"github.com/realPy/hogosuru/datatransfer"
 	"github.com/realPy/hogosuru/dragevent"
@@ -144,7 +143,7 @@ func dragOverHandler() js.Func {
 }
 
 func main() {
-	hogosuru.Init()
+
 	js.Global().Set("dropHandler", dropHandler())
 
 	js.Global().Set("dragOverHandler", dragOverHandler())

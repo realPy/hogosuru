@@ -24,7 +24,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if elementinterface, err = baseobject.Get(js.Global(), "Element"); err != nil {
+		if elementinterface, err = js.Global().GetWithErr("Element"); err != nil {
 			elementinterface = js.Undefined()
 		}
 		baseobject.Register(elementinterface, func(v js.Value) (interface{}, error) {
@@ -90,7 +90,7 @@ func (e Element) getAttributeElement(attribute string) (Element, error) {
 	var newElement Element
 	var err error
 
-	if nodeObject, err = e.Get(attribute); err == nil {
+	if nodeObject, err = e.JSObject().GetWithErr(attribute); err == nil {
 
 		if nodeObject.IsUndefined() {
 			err = ErrElementNoChilds
@@ -112,7 +112,7 @@ func (e Element) Attributes() (namednodemap.NamedNodeMap, error) {
 	var obj js.Value
 	var namednmap namednodemap.NamedNodeMap
 
-	if obj, err = e.Get("attributes"); err == nil {
+	if obj, err = e.JSObject().GetWithErr("attributes"); err == nil {
 		namednmap, err = namednodemap.NewFromJSObject(obj)
 	}
 	return namednmap, err
@@ -127,7 +127,7 @@ func (e Element) Children() (htmlcollection.HtmlCollection, error) {
 	var obj js.Value
 	var collection htmlcollection.HtmlCollection
 
-	if obj, err = e.Get("children"); err == nil {
+	if obj, err = e.JSObject().GetWithErr("children"); err == nil {
 
 		collection, err = htmlcollection.NewFromJSObject(obj)
 	}
@@ -140,7 +140,7 @@ func (e Element) ClassList() (domtokenlist.DOMTokenList, error) {
 	var obj js.Value
 	var dlist domtokenlist.DOMTokenList
 
-	if obj, err = e.Get("classList"); err == nil {
+	if obj, err = e.JSObject().GetWithErr("classList"); err == nil {
 
 		dlist, err = domtokenlist.NewFromJSObject(obj)
 	}
@@ -271,7 +271,7 @@ func OwnerElementForAttr(a attr.Attr) (Element, error) {
 	var newElement Element
 	var err error
 
-	if elemObject, err = a.Get("ownerElement"); err == nil {
+	if elemObject, err = a.JSObject().GetWithErr("ownerElement"); err == nil {
 
 		if elemObject.IsUndefined() {
 			err = attr.ErrNoOwnerElement

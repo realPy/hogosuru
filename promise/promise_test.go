@@ -7,12 +7,10 @@ import (
 	"time"
 
 	"github.com/realPy/hogosuru/array"
-	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/object"
 )
 
 func TestMain(m *testing.M) {
-	baseobject.SetSyscall()
 	m.Run()
 }
 

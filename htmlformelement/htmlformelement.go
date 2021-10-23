@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlformelementinterface, err = baseobject.Get(js.Global(), "HTMLFormElement"); err != nil {
+		if htmlformelementinterface, err = js.Global().GetWithErr("HTMLFormElement"); err != nil {
 			htmlformelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlformelementinterface, func(v js.Value) (interface{}, error) {
@@ -180,16 +180,16 @@ func (h HtmlFormElement) RequestSubmit(elem ...baseobject.BaseObject) error {
 		arrayJS = append(arrayJS, elem[0].JSObject())
 	}
 
-	_, err := h.Call("requestSubmit", arrayJS...)
+	_, err := h.JSObject().CallWithErr("requestSubmit", arrayJS...)
 	return err
 }
 
 func (h HtmlFormElement) Reset() error {
-	_, err := h.Call("reset")
+	_, err := h.JSObject().CallWithErr("reset")
 	return err
 }
 
 func (h HtmlFormElement) Submit() error {
-	_, err := h.Call("submit")
+	_, err := h.JSObject().CallWithErr("submit")
 	return err
 }

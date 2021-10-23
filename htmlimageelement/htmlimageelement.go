@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlimageelementinterface, err = baseobject.Get(js.Global(), "HTMLImageElement"); err != nil {
+		if htmlimageelementinterface, err = js.Global().GetWithErr("HTMLImageElement"); err != nil {
 			htmlimageelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlimageelementinterface, func(v js.Value) (interface{}, error) {
@@ -156,7 +156,7 @@ func (h HtmlImageElement) Decode() (promise.Promise, error) {
 	var obj js.Value
 	var p promise.Promise
 
-	if obj, err = h.Call("decode"); err == nil {
+	if obj, err = h.JSObject().CallWithErr("decode"); err == nil {
 
 		p, err = promise.NewFromJSObject(obj)
 	}

@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if htmlcollectioninterface, err = baseobject.Get(js.Global(), "HTMLCollection"); err != nil {
+		if htmlcollectioninterface, err = js.Global().GetWithErr("HTMLCollection"); err != nil {
 			htmlcollectioninterface = js.Undefined()
 		}
 		baseobject.Register(htmlcollectioninterface, func(v js.Value) (interface{}, error) {

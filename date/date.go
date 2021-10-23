@@ -17,7 +17,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if dateinterface, err = baseobject.Get(js.Global(), "Date"); err != nil {
+		if dateinterface, err = js.Global().GetWithErr("Date"); err != nil {
 			dateinterface = js.Undefined()
 		}
 		baseobject.Register(dateinterface, func(v js.Value) (interface{}, error) {
@@ -94,7 +94,7 @@ func (d Date) callString(method string, opts ...interface{}) (string, error) {
 		optJSValue = append(optJSValue, js.ValueOf(opt))
 	}
 
-	if obj, err = d.Call(method, optJSValue...); err == nil {
+	if obj, err = d.JSObject().CallWithErr(method, optJSValue...); err == nil {
 		if obj.Type() == js.TypeString {
 			ret = obj.String()
 		} else {
@@ -175,91 +175,91 @@ func (d Date) GetUTCSeconds() (int64, error) {
 func (d Date) SetDate(value int64) error {
 	var err error
 
-	_, err = d.Call("setDate", js.ValueOf(value))
+	_, err = d.JSObject().CallWithErr("setDate", js.ValueOf(value))
 	return err
 }
 
 func (d Date) SetFullYear(value int64) error {
 	var err error
 
-	_, err = d.Call("setFullYear", js.ValueOf(value))
+	_, err = d.JSObject().CallWithErr("setFullYear", js.ValueOf(value))
 	return err
 }
 
 func (d Date) SetHours(value int64) error {
 	var err error
 
-	_, err = d.Call("setHours", js.ValueOf(value))
+	_, err = d.JSObject().CallWithErr("setHours", js.ValueOf(value))
 	return err
 }
 
 func (d Date) SetMilliseconds(value int64) error {
 	var err error
 
-	_, err = d.Call("setMilliseconds", js.ValueOf(value))
+	_, err = d.JSObject().CallWithErr("setMilliseconds", js.ValueOf(value))
 	return err
 }
 
 func (d Date) SetMinutes(value int64) error {
 	var err error
 
-	_, err = d.Call("setMinutes", js.ValueOf(value))
+	_, err = d.JSObject().CallWithErr("setMinutes", js.ValueOf(value))
 	return err
 }
 
 func (d Date) SetSeconds(value int64) error {
 	var err error
 
-	_, err = d.Call("setSeconds", js.ValueOf(value))
+	_, err = d.JSObject().CallWithErr("setSeconds", js.ValueOf(value))
 	return err
 }
 
 func (d Date) SetTime(value int64) error {
 	var err error
 
-	_, err = d.Call("setTime", js.ValueOf(value))
+	_, err = d.JSObject().CallWithErr("setTime", js.ValueOf(value))
 	return err
 }
 
 func (d Date) SetUTCDate(value int64) error {
 	var err error
 
-	_, err = d.Call("setUTCDate", js.ValueOf(value))
+	_, err = d.JSObject().CallWithErr("setUTCDate", js.ValueOf(value))
 	return err
 }
 
 func (d Date) SetUTCFullYear(value int64) error {
 	var err error
 
-	_, err = d.Call("setUTCFullYear", js.ValueOf(value))
+	_, err = d.JSObject().CallWithErr("setUTCFullYear", js.ValueOf(value))
 	return err
 }
 
 func (d Date) SetUTCHours(value int64) error {
 	var err error
 
-	_, err = d.Call("setUTCHours", js.ValueOf(value))
+	_, err = d.JSObject().CallWithErr("setUTCHours", js.ValueOf(value))
 	return err
 }
 
 func (d Date) SetUTCMilliseconds(value int64) error {
 	var err error
 
-	_, err = d.Call("setUTCMilliseconds", js.ValueOf(value))
+	_, err = d.JSObject().CallWithErr("setUTCMilliseconds", js.ValueOf(value))
 	return err
 }
 
 func (d Date) SetUTCMinutes(value int64) error {
 	var err error
 
-	_, err = d.Call("setUTCMinutes", js.ValueOf(value))
+	_, err = d.JSObject().CallWithErr("setUTCMinutes", js.ValueOf(value))
 	return err
 }
 
 func (d Date) SetUTCSeconds(value int64) error {
 	var err error
 
-	_, err = d.Call("setUTCSeconds", js.ValueOf(value))
+	_, err = d.JSObject().CallWithErr("setUTCSeconds", js.ValueOf(value))
 	return err
 }
 
@@ -269,7 +269,7 @@ func Parse(value string) (int64, error) {
 	var ret int64
 	if di := GetInterface(); !di.IsUndefined() {
 
-		if obj, err = baseobject.Call(di, "parse", js.ValueOf(value)); err == nil {
+		if obj, err = di.CallWithErr("parse", js.ValueOf(value)); err == nil {
 			if obj.Type() == js.TypeNumber {
 				ret = int64(obj.Float())
 			} else {
@@ -291,7 +291,7 @@ func Now() (int64, error) {
 	var ret int64
 	if di := GetInterface(); !di.IsUndefined() {
 
-		if obj, err = baseobject.Call(di, "now"); err == nil {
+		if obj, err = di.CallWithErr("now"); err == nil {
 			if obj.Type() == js.TypeNumber {
 				ret = int64(obj.Float())
 			} else {
@@ -367,7 +367,7 @@ func UTC(values ...interface{}) (int64, error) {
 
 	if di := GetInterface(); !di.IsUndefined() {
 
-		if obj, err = baseobject.Call(di, "UTC", arrayJS...); err == nil {
+		if obj, err = di.CallWithErr("UTC", arrayJS...); err == nil {
 			if obj.Type() == js.TypeNumber {
 				ret = int64(obj.Float())
 			} else {

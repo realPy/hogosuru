@@ -34,7 +34,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if eventinterface, err = baseobject.Get(js.Global(), "Event"); err != nil {
+		if eventinterface, err = js.Global().GetWithErr("Event"); err != nil {
 			eventinterface = js.Undefined()
 		}
 		baseobject.Register(eventinterface, func(v js.Value) (interface{}, error) {
@@ -75,7 +75,7 @@ func (e Event) Target() (interface{}, error) {
 	var obj js.Value
 	var bobj interface{}
 
-	if obj, err = e.Get("target"); err == nil {
+	if obj, err = e.JSObject().GetWithErr("target"); err == nil {
 
 		bobj, err = baseobject.Discover(obj)
 	}
@@ -86,7 +86,7 @@ func (e Event) CurrentTarget() (interface{}, error) {
 	var obj js.Value
 	var bobj interface{}
 
-	if obj, err = e.Get("currentTarget"); err == nil {
+	if obj, err = e.JSObject().GetWithErr("currentTarget"); err == nil {
 
 		bobj, err = baseobject.Discover(obj)
 	}
@@ -95,21 +95,21 @@ func (e Event) CurrentTarget() (interface{}, error) {
 
 func (e Event) PreventDefault() error {
 	var err error
-	_, err = e.Call("preventDefault")
+	_, err = e.JSObject().CallWithErr("preventDefault")
 
 	return err
 }
 
 func (e Event) StopImmediatePropagation() error {
 	var err error
-	_, err = e.Call("stopImmediatePropagation")
+	_, err = e.JSObject().CallWithErr("stopImmediatePropagation")
 
 	return err
 }
 
 func (e Event) StopPropagation() error {
 	var err error
-	_, err = e.Call("stopPropagation")
+	_, err = e.JSObject().CallWithErr("stopPropagation")
 
 	return err
 }

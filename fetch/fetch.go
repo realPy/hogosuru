@@ -21,7 +21,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if fetchinterface, err = baseobject.Get(js.Global(), "fetch"); err != nil {
+		if fetchinterface, err = js.Global().GetWithErr("fetch"); err != nil {
 			fetchinterface = js.Undefined()
 		}
 

@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmltablecellelementinterface, err = baseobject.Get(js.Global(), "HTMLTableCellElement"); err != nil {
+		if htmltablecellelementinterface, err = js.Global().GetWithErr("HTMLTableCellElement"); err != nil {
 			htmltablecellelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmltablecellelementinterface, func(v js.Value) (interface{}, error) {
