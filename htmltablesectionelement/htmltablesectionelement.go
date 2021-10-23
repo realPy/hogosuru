@@ -33,7 +33,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmltablesectionelementinterface, err = baseobject.Get(js.Global(), "HTMLTableSectionElement"); err != nil {
+		if htmltablesectionelementinterface, err = js.Global().GetWithErr("HTMLTableSectionElement"); err != nil {
 			htmltablesectionelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmltablesectionelementinterface, func(v js.Value) (interface{}, error) {
@@ -117,7 +117,7 @@ func (h HtmlTableSectionElement) Rows() (htmlcollection.HtmlCollection, error) {
 	var obj js.Value
 	var collection htmlcollection.HtmlCollection
 
-	if obj, err = h.Get("rows"); err == nil {
+	if obj, err = h.JSObject().GetWithErr("rows"); err == nil {
 
 		collection, err = htmlcollection.NewFromJSObject(obj)
 	}
@@ -136,7 +136,7 @@ func (h HtmlTableSectionElement) InsertRow(index ...int) (htmltablerowelement.Ht
 		arrayJS = append(arrayJS, js.ValueOf(index[0]))
 	}
 
-	if obj, err = h.Call("insertRow", arrayJS...); err == nil {
+	if obj, err = h.JSObject().CallWithErr("insertRow", arrayJS...); err == nil {
 		elem, err = htmltablerowelement.NewFromJSObject(obj)
 
 	}
@@ -146,6 +146,6 @@ func (h HtmlTableSectionElement) InsertRow(index ...int) (htmltablerowelement.Ht
 func (h HtmlTableSectionElement) DeleteRow(index int) error {
 
 	var err error
-	_, err = h.Call("deleteRow", js.ValueOf(index))
+	_, err = h.JSObject().CallWithErr("deleteRow", js.ValueOf(index))
 	return err
 }

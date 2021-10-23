@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlembedelementinterface, err = baseobject.Get(js.Global(), "HTMLEmbedElement"); err != nil {
+		if htmlembedelementinterface, err = js.Global().GetWithErr("HTMLEmbedElement"); err != nil {
 			htmlembedelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlembedelementinterface, func(v js.Value) (interface{}, error) {

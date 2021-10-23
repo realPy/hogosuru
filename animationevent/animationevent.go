@@ -33,7 +33,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if animationeventinterface, err = baseobject.Get(js.Global(), "AnimationEvent"); err != nil {
+		if animationeventinterface, err = js.Global().GetWithErr("AnimationEvent"); err != nil {
 			animationeventinterface = js.Undefined()
 
 		}

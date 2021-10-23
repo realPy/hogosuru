@@ -13,12 +13,12 @@ func TestEval(t *testing.T) {
 		if _, err := Eval("mysum=2+2"); err != nil {
 			t.Errorf("Must execute js code :%s", err.Error())
 		} else {
-			if intvalue, err := Get(js.Global(), "mysum"); err == nil {
+			if intvalue, err := js.Global().GetWithErr("mysum"); err == nil {
 
 				if intvalue.Type() == js.TypeNumber {
 
 					if intvalue.Int() != 4 {
-						t.Errorf("Must be equal 4 got %d", intvalue.Int())
+						t.Errorf("Must be equal 4")
 					}
 
 				} else {
@@ -39,7 +39,7 @@ func TestEval(t *testing.T) {
 			t.Errorf("Must return error Syntax")
 		} else {
 			if err.Error() != "Unexpected end of input" {
-				t.Errorf("Must return Unexpected end of input %s", err.Error())
+				t.Errorf("Must return Unexpected end of input")
 			}
 
 		}
@@ -70,7 +70,7 @@ func TestDiscover(t *testing.T) {
 
 	Eval("testerror=new Error('an error')")
 
-	if obj, err = Get(js.Global(), "testerror"); err == nil {
+	if obj, err = js.Global().GetWithErr("testerror"); err == nil {
 
 		_, err = Discover(obj)
 
@@ -88,7 +88,7 @@ func TestString(t *testing.T) {
 
 	Eval("testerror=new Error('an error')")
 
-	if obj, err = Get(js.Global(), "testerror"); err == nil {
+	if obj, err = js.Global().GetWithErr("testerror"); err == nil {
 		if String(obj) != "<object>" {
 			t.Errorf("must Be <object>")
 		}
@@ -105,7 +105,7 @@ func TestToStringWithErr(t *testing.T) {
 
 	Eval("testerror=new Error('an error')")
 
-	if obj, err = Get(js.Global(), "testerror"); err == nil {
+	if obj, err = js.Global().GetWithErr("testerror"); err == nil {
 		var str string
 		if str, err = ToStringWithErr(obj); err == nil {
 			if str != "Error: an error" {
@@ -127,7 +127,7 @@ func TestNewFromJSObject(t *testing.T) {
 
 	Eval("testerror=new Error('an error')")
 
-	if obj, err = Get(js.Global(), "testerror"); err == nil {
+	if obj, err = js.Global().GetWithErr("testerror"); err == nil {
 		var b BaseObject
 
 		if b, err = NewFromJSObject(obj); err == nil {
@@ -150,7 +150,7 @@ func TestSetObject(t *testing.T) {
 
 	Eval("testerror=new Error('an error')")
 
-	if obj, err = Get(js.Global(), "testerror"); err == nil {
+	if obj, err = js.Global().GetWithErr("testerror"); err == nil {
 		var b BaseObject = BaseObject{}
 
 		b = b.SetObject(obj)
@@ -177,7 +177,7 @@ func TestEmpty(t *testing.T) {
 
 	Eval("testerror=new Error('an error')")
 
-	if obj, err = Get(js.Global(), "testerror"); err == nil {
+	if obj, err = js.Global().GetWithErr("testerror"); err == nil {
 
 		b = b.SetObject(obj)
 		if b.Empty() {
@@ -204,7 +204,7 @@ func TestBaseObjectDiscover(t *testing.T) {
 
 	Eval("testerror=new Error('an error')")
 
-	if obj, err = Get(js.Global(), "testerror"); err == nil {
+	if obj, err = js.Global().GetWithErr("testerror"); err == nil {
 
 		if b, err = NewFromJSObject(obj); err == nil {
 			_, err = b.Discover()
@@ -235,7 +235,7 @@ func TestJSObject(t *testing.T) {
 
 	Eval("testerror=new Error('an error')")
 
-	if obj, err = Get(js.Global(), "testerror"); err == nil {
+	if obj, err = js.Global().GetWithErr("testerror"); err == nil {
 
 		if b, err = NewFromJSObject(obj); err == nil {
 
@@ -254,7 +254,7 @@ func TestJSObject(t *testing.T) {
 
 	Eval("teststring=\"hello\"")
 
-	if obj, err = Get(js.Global(), "teststring"); err == nil {
+	if obj, err = js.Global().GetWithErr("teststring"); err == nil {
 
 		if b, err = NewFromJSObject(obj); err == nil {
 
@@ -281,7 +281,7 @@ func TestBaseObjectString(t *testing.T) {
 
 	Eval("testerror=new Error('an error')")
 
-	if obj, err = Get(js.Global(), "testerror"); err == nil {
+	if obj, err = js.Global().GetWithErr("testerror"); err == nil {
 
 		if b, err = NewFromJSObject(obj); err == nil {
 
@@ -305,7 +305,7 @@ func TestBaseObjectToString(t *testing.T) {
 
 	Eval("testerror=new Error('an error')")
 
-	if obj, err = Get(js.Global(), "testerror"); err == nil {
+	if obj, err = js.Global().GetWithErr("testerror"); err == nil {
 
 		if b, err = NewFromJSObject(obj); err == nil {
 			var str string
@@ -332,7 +332,7 @@ func TestValue(t *testing.T) {
 
 	Eval("testerror=new Error('an error')")
 
-	if obj, err = Get(js.Global(), "testerror"); err == nil {
+	if obj, err = js.Global().GetWithErr("testerror"); err == nil {
 
 		if b, err = NewFromJSObject(obj); err == nil {
 			var str string
@@ -358,7 +358,7 @@ func TestLength(t *testing.T) {
 
 	Eval("testerror=new Error('an error')")
 
-	if obj, err = Get(js.Global(), "testerror"); err == nil {
+	if obj, err = js.Global().GetWithErr("testerror"); err == nil {
 
 		if b, err = NewFromJSObject(obj); err == nil {
 			var i int
@@ -378,7 +378,7 @@ func TestLength(t *testing.T) {
 
 	Eval("testarray=new Array(2)")
 
-	if obj, err = Get(js.Global(), "testarray"); err == nil {
+	if obj, err = js.Global().GetWithErr("testarray"); err == nil {
 
 		if b, err = NewFromJSObject(obj); err == nil {
 			var i int
@@ -401,7 +401,7 @@ func TestImplement(t *testing.T) {
 	var err error
 	var b BaseObject
 
-	if obj, err = Get(js.Global(), "window"); err == nil {
+	if obj, err = js.Global().GetWithErr("window"); err == nil {
 
 		if b, err = NewFromJSObject(obj); err == nil {
 			var ok bool
@@ -438,10 +438,9 @@ func TestClass(t *testing.T) {
 	var err error
 	var b BaseObject
 
-	if obj, err = Get(js.Global(), "window"); err == nil {
+	if obj, err = js.Global().GetWithErr("window"); err == nil {
 
 		if b, err = NewFromJSObject(obj); err == nil {
-
 			var classname string
 			if classname, err = b.Class(); err == nil {
 				if classname != "Window" {
@@ -467,7 +466,7 @@ func TestSetFunc(t *testing.T) {
 	var err error
 	var b BaseObject
 
-	if obj, err = Get(js.Global(), "window"); err == nil {
+	if obj, err = js.Global().GetWithErr("window"); err == nil {
 
 		if b, err = NewFromJSObject(obj); err == nil {
 
@@ -489,7 +488,7 @@ func TestSetFunc(t *testing.T) {
 
 			var objstr js.Value
 
-			if objstr, err = b.Call("helloworld"); err == nil {
+			if objstr, err = b.JSObject().CallWithErr("helloworld"); err == nil {
 				if objstr.Type() == js.TypeString {
 					if objstr.String() != "Hello World" {
 						t.Errorf("Must return Hello World")
@@ -520,13 +519,13 @@ func TestExport(t *testing.T) {
 
 	Eval("testarray=new Array(2)")
 
-	if obj, err = Get(js.Global(), "testarray"); err == nil {
+	if obj, err = js.Global().GetWithErr("testarray"); err == nil {
 
 		if b, err = NewFromJSObject(obj); err == nil {
 
 			b.Export("arrayGoExported")
 			var objExported js.Value
-			if objExported, err = Get(js.Global(), "arrayGoExported"); err == nil {
+			if objExported, err = js.Global().GetWithErr("arrayGoExported"); err == nil {
 				if objExported.IsUndefined() {
 					t.Errorf("Base Object is not exported")
 				}
@@ -562,7 +561,7 @@ func TestGetAttributeString(t *testing.T) {
 	Eval("customobject.Value=\"HelloWorld\"")
 	Eval("customobject.Event=New Event()")
 
-	if obj, err = Get(js.Global(), "customobject"); err == nil {
+	if obj, err = js.Global().GetWithErr("customobject"); err == nil {
 
 		if b, err = NewFromJSObject(obj); err == nil {
 			if v, err = b.GetAttributeString("Value"); err == nil {
@@ -605,7 +604,7 @@ func TestGetAttributeGlobal(t *testing.T) {
 	var bf ObjectFrom
 	var ok bool
 
-	if w, err = Get(js.Global(), "window"); err == nil {
+	if w, err = js.Global().GetWithErr("window"); err == nil {
 		if b, err = NewFromJSObject(w); err == nil {
 			if l, err = b.GetAttributeGlobal("location"); err == nil {
 				if bf, ok = l.(ObjectFrom); ok {
@@ -638,7 +637,7 @@ func TestSetAttributeString(t *testing.T) {
 
 	Eval("customobject=new Object()")
 
-	if obj, err = Get(js.Global(), "customobject"); err == nil {
+	if obj, err = js.Global().GetWithErr("customobject"); err == nil {
 
 		if b, err = NewFromJSObject(obj); err == nil {
 			if err = b.SetAttributeString("Value", "custom"); err == nil {
@@ -684,7 +683,7 @@ func TestGetAttributeBool(t *testing.T) {
 	Eval("customobject.Value=true")
 	Eval("customobject.Event=New Event()")
 
-	if obj, err = Get(js.Global(), "customobject"); err == nil {
+	if obj, err = js.Global().GetWithErr("customobject"); err == nil {
 
 		if b, err = NewFromJSObject(obj); err == nil {
 			if v, err = b.GetAttributeBool("Value"); err == nil {
@@ -727,7 +726,7 @@ func TestSetAttributeBool(t *testing.T) {
 
 	Eval("customobject=new Object()")
 
-	if obj, err = Get(js.Global(), "customobject"); err == nil {
+	if obj, err = js.Global().GetWithErr("customobject"); err == nil {
 
 		if b, err = NewFromJSObject(obj); err == nil {
 			if err = b.SetAttributeBool("Value", true); err == nil {
@@ -773,7 +772,7 @@ func TestGetAttributeInt(t *testing.T) {
 	Eval("customobject.Value=69")
 	Eval("customobject.Event=New Event()")
 
-	if obj, err = Get(js.Global(), "customobject"); err == nil {
+	if obj, err = js.Global().GetWithErr("customobject"); err == nil {
 
 		if b, err = NewFromJSObject(obj); err == nil {
 			if v, err = b.GetAttributeInt("Value"); err == nil {
@@ -815,7 +814,7 @@ func TestSetAttributeInt(t *testing.T) {
 
 	Eval("customobject=new Object()")
 
-	if obj, err = Get(js.Global(), "customobject"); err == nil {
+	if obj, err = js.Global().GetWithErr("customobject"); err == nil {
 
 		if b, err = NewFromJSObject(obj); err == nil {
 			if err = b.SetAttributeInt("Value", 69); err == nil {
@@ -860,7 +859,7 @@ func TestGetAttributeDouble(t *testing.T) {
 	Eval("customobject=new Object()")
 	Eval("customobject.Value=3.8")
 	Eval("customobject.Event=New Event()")
-	if obj, err = Get(js.Global(), "customobject"); err == nil {
+	if obj, err = js.Global().GetWithErr("customobject"); err == nil {
 
 		if b, err = NewFromJSObject(obj); err == nil {
 			if v, err = b.GetAttributeDouble("Value"); err == nil {
@@ -903,7 +902,7 @@ func TestCallInt64(t *testing.T) {
 
 	Eval("customobject=new Object()")
 
-	if obj, err = Get(js.Global(), "customobject"); err == nil {
+	if obj, err = js.Global().GetWithErr("customobject"); err == nil {
 
 		if b, err = NewFromJSObject(obj); err == nil {
 
@@ -954,7 +953,7 @@ func TestCallBool(t *testing.T) {
 
 	Eval("customobject=new Object()")
 
-	if obj, err = Get(js.Global(), "customobject"); err == nil {
+	if obj, err = js.Global().GetWithErr("customobject"); err == nil {
 
 		if b, err = NewFromJSObject(obj); err == nil {
 
@@ -982,7 +981,7 @@ func TestGoValue(t *testing.T) {
 
 	Eval("customobject=1")
 
-	if obj, err = Get(js.Global(), "customobject"); err == nil {
+	if obj, err = js.Global().GetWithErr("customobject"); err == nil {
 
 		v := GoValue(obj)
 		if vi, ok := v.(int); ok {
@@ -997,7 +996,7 @@ func TestGoValue(t *testing.T) {
 
 	Eval("customobject=1.6")
 
-	if obj, err = Get(js.Global(), "customobject"); err == nil {
+	if obj, err = js.Global().GetWithErr("customobject"); err == nil {
 
 		v := GoValue(obj)
 		if vi, ok := v.(float64); ok {
@@ -1012,7 +1011,7 @@ func TestGoValue(t *testing.T) {
 
 	Eval("customobject=\"string\"")
 
-	if obj, err = Get(js.Global(), "customobject"); err == nil {
+	if obj, err = js.Global().GetWithErr("customobject"); err == nil {
 
 		v := GoValue(obj)
 		if vi, ok := v.(string); ok {
@@ -1027,7 +1026,7 @@ func TestGoValue(t *testing.T) {
 
 	Eval("customobject=true")
 
-	if obj, err = Get(js.Global(), "customobject"); err == nil {
+	if obj, err = js.Global().GetWithErr("customobject"); err == nil {
 
 		v := GoValue(obj)
 		if vi, ok := v.(bool); ok {
@@ -1042,7 +1041,7 @@ func TestGoValue(t *testing.T) {
 
 	Eval("customobject=new Array(1)")
 
-	if obj, err = Get(js.Global(), "customobject"); err == nil {
+	if obj, err = js.Global().GetWithErr("customobject"); err == nil {
 
 		v := GoValue(obj)
 		if _, ok := v.(ObjectFrom); !ok {
@@ -1053,6 +1052,5 @@ func TestGoValue(t *testing.T) {
 }
 
 func TestMain(m *testing.M) {
-	SetSyscall()
 	m.Run()
 }

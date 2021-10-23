@@ -24,7 +24,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if blobinterface, err = baseobject.Get(js.Global(), "Blob"); err != nil {
+		if blobinterface, err = js.Global().GetWithErr("Blob"); err != nil {
 			blobinterface = js.Undefined()
 		}
 		//autodiscover
@@ -121,7 +121,7 @@ func (b Blob) IsClosed() (bool, error) {
 	var err error
 	var obj js.Value
 
-	if obj, err = b.Get("isClosed"); err == nil {
+	if obj, err = b.JSObject().GetWithErr("isClosed"); err == nil {
 
 		return obj.Bool(), nil
 	}
@@ -131,7 +131,7 @@ func (b Blob) IsClosed() (bool, error) {
 func (b Blob) Size() (int, error) {
 	var err error
 	var obj js.Value
-	if obj, err = b.Get("size"); err == nil {
+	if obj, err = b.JSObject().GetWithErr("size"); err == nil {
 
 		return obj.Int(), nil
 	}
@@ -141,7 +141,7 @@ func (b Blob) Type() (string, error) {
 	var err error
 	var obj js.Value
 
-	if obj, err = b.Get("type"); err == nil {
+	if obj, err = b.JSObject().GetWithErr("type"); err == nil {
 
 		return obj.String(), nil
 	}
@@ -149,14 +149,14 @@ func (b Blob) Type() (string, error) {
 }
 
 func (b Blob) Close() error {
-	_, err := b.Call("close")
+	_, err := b.JSObject().CallWithErr("close")
 	return err
 }
 
 func (b Blob) Slice(begin, end int) (Blob, error) {
 	var blob js.Value
 	var err error
-	if blob, err = b.Call("slice", js.ValueOf(begin), js.ValueOf(end)); err == nil {
+	if blob, err = b.JSObject().CallWithErr("slice", js.ValueOf(begin), js.ValueOf(end)); err == nil {
 		var newblob Blob
 		object := newblob.SetObject(blob)
 		newblob.BaseObject = object
@@ -170,7 +170,7 @@ func (b Blob) Stream() (stream.ReadableStream, error) {
 	var err error
 	var obj js.Value
 
-	if obj, err = b.Call("stream"); err == nil {
+	if obj, err = b.JSObject().CallWithErr("stream"); err == nil {
 		return stream.NewFromJSObject(obj)
 
 	}
@@ -185,7 +185,7 @@ func (b Blob) ArrayBuffer() (arraybuffer.ArrayBuffer, error) {
 	var p promise.Promise
 	var binaryObj interface{}
 
-	if promisebuffer, err = b.Call("arrayBuffer"); err == nil {
+	if promisebuffer, err = b.JSObject().CallWithErr("arrayBuffer"); err == nil {
 
 		if p, err = promise.NewFromJSObject(promisebuffer); err == nil {
 
@@ -210,7 +210,7 @@ func (b Blob) Text() (string, error) {
 	var jsTxtObj interface{}
 	var text string = ""
 
-	if promisetext, err = b.Call("text"); err == nil {
+	if promisetext, err = b.JSObject().CallWithErr("text"); err == nil {
 		if p, err = promise.NewFromJSObject(promisetext); err == nil {
 
 			if jsTxtObj, err = p.Await(); err == nil {

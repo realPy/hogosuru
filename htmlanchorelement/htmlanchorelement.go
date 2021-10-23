@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlanchorlementinterface, err = baseobject.Get(js.Global(), "HTMLAnchorElement"); err != nil {
+		if htmlanchorlementinterface, err = js.Global().GetWithErr("HTMLAnchorElement"); err != nil {
 			htmlanchorlementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlanchorlementinterface, func(v js.Value) (interface{}, error) {
@@ -191,7 +191,7 @@ func (h HtmlAnchorElement) RelList() (domtokenlist.DOMTokenList, error) {
 	var obj js.Value
 	var dlist domtokenlist.DOMTokenList
 
-	if obj, err = h.Get("relList"); err == nil {
+	if obj, err = h.JSObject().GetWithErr("relList"); err == nil {
 
 		dlist, err = domtokenlist.NewFromJSObject(obj)
 	}

@@ -30,7 +30,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if domexceptioninterface, err = baseobject.Get(js.Global(), "DOMException"); err != nil {
+		if domexceptioninterface, err = js.Global().GetWithErr("DOMException"); err != nil {
 			domexceptioninterface = js.Undefined()
 		}
 

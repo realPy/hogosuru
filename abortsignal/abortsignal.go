@@ -18,7 +18,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if abortsignalinterface, err = baseobject.Get(js.Global(), "AbortSignal"); err != nil {
+		if abortsignalinterface, err = js.Global().GetWithErr("AbortSignal"); err != nil {
 			abortsignalinterface = js.Undefined()
 		}
 		baseobject.Register(abortsignalinterface, func(v js.Value) (interface{}, error) {
@@ -65,7 +65,7 @@ func (a AbortSignal) Abort() (AbortSignal, error) {
 	var err error
 	var obj js.Value
 	var as AbortSignal
-	if obj, err = a.Call("abort"); err == nil {
+	if obj, err = a.JSObject().CallWithErr("abort"); err == nil {
 
 		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject

@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlheadingelementinterface, err = baseobject.Get(js.Global(), "HTMLHeadingElement"); err != nil {
+		if htmlheadingelementinterface, err = js.Global().GetWithErr("HTMLHeadingElement"); err != nil {
 			htmlheadingelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlheadingelementinterface, func(v js.Value) (interface{}, error) {

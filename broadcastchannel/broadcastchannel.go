@@ -35,7 +35,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if bcinterface, err = baseobject.Get(js.Global(), "BroadcastChannel"); err != nil {
+		if bcinterface, err = js.Global().GetWithErr("BroadcastChannel"); err != nil {
 			bcinterface = js.Undefined()
 		}
 
@@ -71,7 +71,7 @@ func (c BroadcastChannel) PostMessage(message interface{}) error {
 		data = js.ValueOf(message)
 	}
 
-	_, err = c.Call("postMessage", data)
+	_, err = c.JSObject().CallWithErr("postMessage", data)
 
 	return err
 }
@@ -79,7 +79,7 @@ func (c BroadcastChannel) PostMessage(message interface{}) error {
 //Close Close the channel
 func (c BroadcastChannel) Close() error {
 	var err error
-	_, err = c.Call("close")
+	_, err = c.JSObject().CallWithErr("close")
 
 	return err
 }

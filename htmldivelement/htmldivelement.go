@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmldivelementinterface, err = baseobject.Get(js.Global(), "HTMLDivElement"); err != nil {
+		if htmldivelementinterface, err = js.Global().GetWithErr("HTMLDivElement"); err != nil {
 			htmldivelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmldivelementinterface, func(v js.Value) (interface{}, error) {
