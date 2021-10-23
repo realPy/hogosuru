@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if nodelistinterface, err = js.Global().GetWithErr("NodeList"); err != nil {
+		if nodelistinterface, err = baseobject.Get(js.Global(), "NodeList"); err != nil {
 			nodelistinterface = js.Undefined()
 		}
 		baseobject.Register(nodelistinterface, func(v js.Value) (interface{}, error) {

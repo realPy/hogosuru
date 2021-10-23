@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmltimeelementinterface, err = js.Global().GetWithErr("HTMLTimeElement"); err != nil {
+		if htmltimeelementinterface, err = baseobject.Get(js.Global(), "HTMLTimeElement"); err != nil {
 			htmltimeelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmltimeelementinterface, func(v js.Value) (interface{}, error) {

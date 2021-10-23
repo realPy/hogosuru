@@ -19,7 +19,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if storageinterface, err = js.Global().GetWithErr("Storage"); err != nil {
+		if storageinterface, err = baseobject.Get(js.Global(), "Storage"); err != nil {
 			storageinterface = js.Undefined()
 		}
 		baseobject.Register(storageinterface, func(v js.Value) (interface{}, error) {
@@ -57,14 +57,14 @@ func NewFromJSObject(obj js.Value) (Storage, error) {
 
 func (l Storage) SetItem(key, value string) error {
 	var err error
-	_, err = l.JSObject().CallWithErr("setItem", js.ValueOf(key), js.ValueOf(value))
+	_, err = l.Call("setItem", js.ValueOf(key), js.ValueOf(value))
 	return err
 }
 
 func (l Storage) GetItem(key string) (string, error) {
 	var err error
 	var itemObject js.Value
-	if itemObject, err = l.JSObject().CallWithErr("getItem", js.ValueOf(key)); err == nil {
+	if itemObject, err = l.Call("getItem", js.ValueOf(key)); err == nil {
 		return baseobject.ToStringWithErr(itemObject)
 	}
 	return "", err
@@ -72,19 +72,19 @@ func (l Storage) GetItem(key string) (string, error) {
 
 func (l Storage) RemoveItem(key string) error {
 	var err error
-	_, err = l.JSObject().CallWithErr("removeItem", js.ValueOf(key))
+	_, err = l.Call("removeItem", js.ValueOf(key))
 	return err
 }
 
 func (l Storage) Clear() error {
 	var err error
-	_, err = l.JSObject().CallWithErr("clear")
+	_, err = l.Call("clear")
 	return err
 }
 func (l Storage) Key(index int) (string, error) {
 	var err error
 	var itemObject js.Value
-	if itemObject, err = l.JSObject().CallWithErr("key", js.ValueOf(index)); err == nil {
+	if itemObject, err = l.Call("key", js.ValueOf(index)); err == nil {
 		return baseobject.ToStringWithErr(itemObject)
 	}
 	return "", err

@@ -18,7 +18,7 @@ func GetIDBKeyRangeInterface() js.Value {
 
 	singletonIDBIndex.Do(func() {
 		var err error
-		if idbkeyrangeinterface, err = js.Global().GetWithErr("IDBKeyRange"); err != nil {
+		if idbkeyrangeinterface, err = baseobject.Get(js.Global(), "IDBKeyRange"); err != nil {
 			idbkeyrangeinterface = js.Undefined()
 		}
 		baseobject.Register(idbkeyrangeinterface, func(v js.Value) (interface{}, error) {
@@ -91,7 +91,7 @@ func (i IDBKeyRange) Includes(value interface{}) (bool, error) {
 	var err error
 	var ret bool
 
-	if obj, err = i.JSObject().CallWithErr("includes", value); err == nil {
+	if obj, err = i.Call("includes", value); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			ret = obj.Bool()
 		} else {
@@ -111,9 +111,9 @@ func (i IDBKeyRange) upperOpen() (bool, error) {
 }
 
 func (i IDBKeyRange) Lower() (interface{}, error) {
-	return i.JSObject().GetWithErr("lower")
+	return i.Get("lower")
 }
 
 func (i IDBKeyRange) Upper() (interface{}, error) {
-	return i.JSObject().GetWithErr("upper")
+	return i.Get("upper")
 }

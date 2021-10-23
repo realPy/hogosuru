@@ -17,7 +17,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if domrectreadonlyinterface, err = js.Global().GetWithErr("DOMRectReadOnly"); err != nil {
+		if domrectreadonlyinterface, err = baseobject.Get(js.Global(), "DOMRectReadOnly"); err != nil {
 			domrectreadonlyinterface = js.Undefined()
 		}
 		baseobject.Register(domrectreadonlyinterface, func(v js.Value) (interface{}, error) {

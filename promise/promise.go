@@ -21,7 +21,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if promiseinterface, err = js.Global().GetWithErr("Promise"); err != nil {
+		if promiseinterface, err = baseobject.Get(js.Global(), "Promise"); err != nil {
 			promiseinterface = js.Undefined()
 		}
 		baseobject.Register(promiseinterface, func(v js.Value) (interface{}, error) {
@@ -151,7 +151,7 @@ func (p Promise) Then(resolve func(interface{}) *Promise, reject func(error)) (P
 		return nil
 	})
 	var newpromiseobj js.Value
-	if newpromiseobj, err = p.JSObject().CallWithErr("then", resolveFunc, rejectedFunc); err == nil {
+	if newpromiseobj, err = p.Call("then", resolveFunc, rejectedFunc); err == nil {
 		newp, err = NewFromJSObject(newpromiseobj)
 	}
 	return newp, err
@@ -174,7 +174,8 @@ func iterablePromises(method string, values ...interface{}) (Promise, error) {
 
 		}
 		if arr, err = array.New(arrayJS...); err == nil {
-			if promiseobj, err = pi.CallWithErr(method, arr.JSObject()); err == nil {
+
+			if promiseobj, err = baseobject.Call(pi, method, arr.JSObject()); err == nil {
 				pr, err = NewFromJSObject(promiseobj)
 			}
 		}
@@ -220,7 +221,7 @@ func (p Promise) Catch(reject func(error)) (Promise, error) {
 		return nil
 	})
 	var newpromiseobj js.Value
-	if newpromiseobj, err = p.JSObject().CallWithErr("catch", rejectedFunc); err == nil {
+	if newpromiseobj, err = p.Call("catch", rejectedFunc); err == nil {
 		newp, err = NewFromJSObject(newpromiseobj)
 	}
 
@@ -233,7 +234,7 @@ func (p Promise) Finally(f func()) error {
 		f()
 		return nil
 	})
-	_, err = p.JSObject().CallWithErr("finally", finallyFunc)
+	_, err = p.Call("finally", finallyFunc)
 	return err
 }
 
@@ -273,7 +274,7 @@ func Reject(reason error) (Promise, error) {
 	if pi := GetInterface(); !pi.IsUndefined() {
 
 		if jserr, err = jserror.New(reason.Error()); err == nil {
-			if obj, err = pi.CallWithErr("reject", jserr.JSObject()); err == nil {
+			if obj, err = baseobject.Call(pi, "reject", jserr.JSObject()); err == nil {
 
 				p, err = NewFromJSObject(obj)
 			}
@@ -301,7 +302,7 @@ func Resolve(result interface{}) (Promise, error) {
 			objresult = js.ValueOf(result)
 		}
 
-		if obj, err = pi.CallWithErr("resolve", objresult); err == nil {
+		if obj, err = baseobject.Call(pi, "resolve", objresult); err == nil {
 
 			p, err = NewFromJSObject(obj)
 		}

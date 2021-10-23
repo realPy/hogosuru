@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlsourceelementinterface, err = js.Global().GetWithErr("HTMLSourceElement"); err != nil {
+		if htmlsourceelementinterface, err = baseobject.Get(js.Global(), "HTMLSourceElement"); err != nil {
 			htmlsourceelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlsourceelementinterface, func(v js.Value) (interface{}, error) {

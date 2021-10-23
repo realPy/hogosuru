@@ -13,7 +13,7 @@ func (d Document) getAttributeElement(attribute string) (element.Element, error)
 	var elemObject js.Value
 	var err error
 
-	if elemObject, err = d.JSObject().GetWithErr(attribute); err == nil {
+	if elemObject, err = d.Get(attribute); err == nil {
 
 		elem, err = element.NewFromJSObject(elemObject)
 
@@ -27,7 +27,7 @@ func (d Document) getAttributeHTMLCollection(attribute string) (htmlcollection.H
 	var obj js.Value
 	var collection htmlcollection.HtmlCollection
 
-	if obj, err = d.JSObject().GetWithErr(attribute); err == nil {
+	if obj, err = d.Get(attribute); err == nil {
 		collection, err = htmlcollection.NewFromJSObject(obj)
 	}
 
@@ -45,7 +45,7 @@ func (d Document) Body() (node.Node, error) {
 	var bodyObject js.Value
 	var err error
 
-	if bodyObject, err = d.JSObject().GetWithErr("body"); err == nil {
+	if bodyObject, err = d.Get("body"); err == nil {
 
 		body, err = node.NewFromJSObject(bodyObject)
 
@@ -191,6 +191,11 @@ func (d Document) Referrer() (string, error) {
 func (d Document) Title() (string, error) {
 
 	return d.GetAttributeString("title")
+}
+
+func (d Document) SetTitle(title string) error {
+
+	return d.SetAttributeString("title", title)
 }
 
 func (d Document) URL() (string, error) {

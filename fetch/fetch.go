@@ -21,7 +21,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if fetchinterface, err = js.Global().GetWithErr("fetch"); err != nil {
+		if fetchinterface, err = baseobject.Get(js.Global(), "fetch"); err != nil {
 			fetchinterface = js.Undefined()
 		}
 
@@ -53,6 +53,7 @@ func New(urlfetch string, opts ...interface{}) (Fetch, error) {
 	var f Fetch
 	var err error
 
+	arrayJS = append(arrayJS, urlfetch)
 	for _, value := range opts {
 		if objGo, ok := value.(baseobject.ObjectFrom); ok {
 			arrayJS = append(arrayJS, objGo.JSObject())
@@ -63,7 +64,7 @@ func New(urlfetch string, opts ...interface{}) (Fetch, error) {
 	}
 
 	if fetchi := GetInterface(); !fetchi.IsUndefined() {
-		promisefetchobj := fetchi.Invoke(urlfetch, arrayJS)
+		promisefetchobj := fetchi.Invoke(arrayJS...)
 		f.BaseObject = f.SetObject(promisefetchobj)
 	} else {
 		err = ErrNotImplemented

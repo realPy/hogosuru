@@ -6,7 +6,7 @@ Hogosuru is a framework to easily write a complete single page application in Go
 ## How it work?
 He use an addon syscall/js (that catch error) and implement a large part of the major features of javascript directly accessible in go.  
 
-For a list of functionnality , the the array compatibility below or check the name of directory that match the API MDN implementation: https://developer.mozilla.org/fr/docs/Web/API  
+For a list of functionnality , see the array of compatibility below or check the name of directory that match the API MDN implementation: https://developer.mozilla.org/fr/docs/Web/API  
    
 Each object is herited from a baseobject.BaseObject. The baseobject keep a true JS object reference.  
    
@@ -15,16 +15,14 @@ If an error occur , this error is handle and return by each function.
    
 ## How to use
 
-Hogosuru need some rewrite base functionalities that handle error like the js/Set or js/Call base method.
-These functions make it easy to catch errors without having to use recovers. Recovers is for example not currently managed by tinygo
-  
-You must just copy the hogosuru/hogosuru.go to the native go/src/syscall/js/ directory
+Just import the lib in your project (hogosuru no need use an extended rewrite of base syscall)
 
-``
-cp hogosuru/hogosuru.go /usr/local/go/src/syscall/js/
-``
+```
 
-The project is optimised to work with tinygo but compatible with the go official compiler ( tinygo will produce smaller binaries  )
+GOOS=js GOARCH=wasm go get github.com/realPy/hogosuru
+```
+The project work with Go and Tinygo compiler.
+Use Go compiler for developpement (faster) and tinygo for production
 
 ## Prepare your environment
 
@@ -36,11 +34,6 @@ If you upgrade your compiler dont forget to copy the new wasm_exec.js that targe
 Start the tinygo container with your source  
 ```
 docker run --rm -it -w /go/src/hogosuru -v "$PWD":/go/src/hogosuru tinygo/tinygo bash 
-```
-
-Inside the container dont forget to copy the native syscall 
-```
-cp hogosuru/hogosuru.go /usr/local/go/src/syscall/js/
 ```
 
 If you the compiler is upgraded, Sync the wasm_exec.js loader with your current wasm_exec.js compiler version
@@ -129,7 +122,7 @@ package main
 
 
 func main() {
-
+    
 	ch := make(chan struct{})
 	<-ch
 
@@ -140,7 +133,10 @@ func main() {
 
 Below we create a tiny hello world with dom manipulating  
 We need first a minimal html file that load our wasm with no content just and empty body (see /example/hello.html)
-
+Dont forget to init the lib thanks to 
+```
+hogosuru.Init()
+```
 
 We want to create a h1 element with a text "Hello world"  
 
@@ -155,7 +151,7 @@ import (
 )
 
 func main() {
-
+    hogosuru.Init()    
 	//we get the current document if an error occur the err is draw to the console thank to AssertErr
 	if doc, err := document.New(); hogosuru.AssertErr(err) {
 
@@ -361,7 +357,7 @@ This example below show you how to build a single page application and can be fo
 
 ```
 func main() {
-
+    hogosuru.Init()//install syscall (tinygo dont implement init on package )
 	hogosuru.Router().DefaultRendering(&view.GlobalContainer{})
 	hogosuru.Router().Add("/app/", &view.WebMain{})
 	hogosuru.Router().Add("/app/hello", &view.HelloView{})
@@ -426,6 +422,8 @@ All help is welcome. If you are interested by this project, please contact me
 
 |  API/Object |  Implemented Support |  MDN URL |
 |-------------|:--------------------:|----------|
+| AbortController | Full | https://developer.mozilla.org/en-US/docs/Web/API/AbortController | 
+| AbortSignal | Full | https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal | 
 | AnimationEvent | Full | https://developer.mozilla.org/fr/docs/Web/API/AnimationEvent | 
 | Array | Full | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Array | 
 | Arraybuffer |  Partial | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer | 
