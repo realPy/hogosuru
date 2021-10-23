@@ -8,6 +8,9 @@ import (
 )
 
 func main() {
+
+	hogosuru.Init()
+
 	d := document.New_()
 
 	if w, err := window.New(); hogosuru.AssertErr(err) {

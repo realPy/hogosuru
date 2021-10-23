@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-
+	hogosuru.Init()
 	hogosuru.Router().DefaultRendering(&loadingview.LoadingGlobalContainer{})
 	hogosuru.Router().Add("/app/", &loadingview.RedSquare{})
 	hogosuru.Router().Start(hogosuru.STDROUTE)

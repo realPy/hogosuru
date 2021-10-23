@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-
+	hogosuru.Init()
 	if c, err := broadcastchannel.New("channel1"); hogosuru.AssertErr(err) {
 
 		c.OnMessage(func(m messageevent.MessageEvent) {

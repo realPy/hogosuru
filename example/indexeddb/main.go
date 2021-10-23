@@ -1,13 +1,14 @@
 package main
 
 import (
+	"github.com/realPy/hogosuru"
 	"github.com/realPy/hogosuru/event"
 	indexeddb "github.com/realPy/hogosuru/indexeddb"
 	"github.com/realPy/hogosuru/window"
 )
 
 func main() {
-
+	hogosuru.Init()
 	if w, err := window.New(); err == nil {
 
 		if factory, err := w.IndexdedDB(); err == nil {
