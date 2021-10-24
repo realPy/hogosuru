@@ -57,5 +57,14 @@ func NewFromJSObject(obj js.Value) (NodeList, error) {
 
 func (n NodeList) Item(index int) (node.Node, error) {
 
-	return node.NewFromJSObject(n.JSObject().Index(index))
+	var err error
+	var nd node.Node
+
+	obj := n.JSObject().Index(index)
+
+	if !obj.IsUndefined() {
+		nd, err = node.NewFromJSObject(obj)
+	}
+
+	return nd, err
 }

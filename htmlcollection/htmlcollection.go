@@ -62,7 +62,7 @@ func (h HtmlCollection) Item(index int) (interface{}, error) {
 	var i interface{}
 	var err error
 	obj := h.JSObject().Index(index)
-	if !obj.IsUndefined() {
+	if !obj.IsUndefined() && !obj.IsNull() {
 		i, err = baseobject.Discover(obj)
 	}
 

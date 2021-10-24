@@ -13,11 +13,34 @@ import (
 	"github.com/realPy/hogosuru/nodelist"
 )
 
-func (d Document) AppendString(domstring string) error {
+func (d Document) AdoptNode(externalNode node.Node) (interface{}, error) {
 
 	var err error
+	var obj js.Value
+	var r interface{}
 
-	_, err = d.Call("append", js.ValueOf(domstring))
+	if obj, err = d.Call("adoptNode", externalNode.JSObject()); err == nil {
+		r, err = baseobject.Discover(obj)
+	}
+	return r, err
+
+}
+
+func (d Document) Append(i interface{}) error {
+
+	var err error
+	var obji interface{}
+
+	if objb, ok := i.(baseobject.ObjectFrom); ok {
+
+		obji = objb.JSObject()
+
+	} else {
+		obji = js.ValueOf(i)
+
+	}
+
+	_, err = d.Call("append", obji)
 
 	return err
 }
@@ -201,7 +224,7 @@ func (d Document) GetElementsByClassName(classname string) (htmlcollection.HtmlC
 
 	if obj, err = d.Call("getElementsByClassName", js.ValueOf(classname)); err == nil {
 
-		if !obj.IsUndefined() {
+		if !obj.IsUndefined() && !obj.IsNull() {
 			collection, err = htmlcollection.NewFromJSObject(obj)
 		} else {
 			err = ErrElementsNotFound
@@ -212,41 +235,41 @@ func (d Document) GetElementsByClassName(classname string) (htmlcollection.HtmlC
 	return collection, err
 }
 
-func (d Document) GetElementsByTagName(tagname string) (nodelist.NodeList, error) {
+func (d Document) GetElementsByTagName(tagname string) (htmlcollection.HtmlCollection, error) {
 
 	var err error
 	var obj js.Value
-	var nlist nodelist.NodeList
+	var collection htmlcollection.HtmlCollection
 
 	if obj, err = d.Call("getElementsByTagName", js.ValueOf(tagname)); err == nil {
 
-		if !obj.IsUndefined() {
-			nlist, err = nodelist.NewFromJSObject(obj)
+		if !obj.IsUndefined() && !obj.IsNull() {
+			collection, err = htmlcollection.NewFromJSObject(obj)
 		} else {
 			err = ErrElementsNotFound
 		}
 
 	}
 
-	return nlist, err
+	return collection, err
 }
 
-func (d Document) getElementsByTagNameNS(namespace, tagname string) (nodelist.NodeList, error) {
+func (d Document) GetElementsByTagNameNS(namespace, tagname string) (htmlcollection.HtmlCollection, error) {
 	var err error
 	var obj js.Value
-	var nlist nodelist.NodeList
+	var collection htmlcollection.HtmlCollection
 
 	if obj, err = d.Call("getElementsByTagNameNS", js.ValueOf(namespace), js.ValueOf(tagname)); err == nil {
 
-		if !obj.IsUndefined() {
-			nlist, err = nodelist.NewFromJSObject(obj)
+		if !obj.IsUndefined() && !obj.IsNull() {
+			collection, err = htmlcollection.NewFromJSObject(obj)
 		} else {
 			err = ErrElementsNotFound
 		}
 
 	}
 
-	return nlist, err
+	return collection, err
 }
 
 func (d Document) ImportNode(externalNode node.Node, deep bool) (interface{}, error) {
@@ -272,7 +295,7 @@ func (d Document) GetElementById(id string) (element.Element, error) {
 	var elem element.Element
 
 	if obj, err = d.Call("getElementById", js.ValueOf(id)); err == nil {
-		if !obj.IsUndefined() {
+		if !obj.IsUndefined() && !obj.IsNull() {
 			elem, err = element.NewFromJSObject(obj)
 		} else {
 			err = ErrElementNotFound
@@ -290,7 +313,7 @@ func (d Document) QuerySelector(selector string) (element.Element, error) {
 	var elem element.Element
 
 	if obj, err = d.Call("querySelector", js.ValueOf(selector)); err == nil {
-		if !obj.IsUndefined() {
+		if !obj.IsUndefined() && !obj.IsNull() {
 			elem, err = element.NewFromJSObject(obj)
 		} else {
 			err = ErrElementNotFound
@@ -306,7 +329,7 @@ func (d Document) QuerySelectorAll(selector string) (nodelist.NodeList, error) {
 	var nlist nodelist.NodeList
 
 	if obj, err = d.Call("querySelectorAll", js.ValueOf(selector)); err == nil {
-		if !obj.IsUndefined() {
+		if !obj.IsUndefined() && !obj.IsNull() {
 			nlist, err = nodelist.NewFromJSObject(obj)
 		} else {
 			err = ErrElementsNotFound

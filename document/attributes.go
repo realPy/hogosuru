@@ -15,7 +15,9 @@ func (d Document) getAttributeElement(attribute string) (element.Element, error)
 
 	if elemObject, err = d.Get(attribute); err == nil {
 
-		elem, err = element.NewFromJSObject(elemObject)
+		if !elemObject.IsNull() {
+			elem, err = element.NewFromJSObject(elemObject)
+		}
 
 	}
 
