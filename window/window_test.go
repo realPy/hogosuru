@@ -1,6 +1,7 @@
 package window
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/realPy/hogosuru/baseobject"
@@ -30,6 +31,56 @@ func TestHistory(t *testing.T) {
 
 		if h, err := w.History(); testingutils.AssertErr(t, err) {
 			testingutils.AssertExpect(t, "[object History]", h.ToString_())
+		}
+
+	}
+
+}
+func TestLocation(t *testing.T) {
+
+	if w, err := New(); testingutils.AssertErr(t, err) {
+
+		if l, err := w.Location(); testingutils.AssertErr(t, err) {
+			var expect string = "http://localhost"
+			if !strings.Contains(l.ToString_(), expect) {
+				t.Errorf("Must contain %s have %s", expect, l.ToString_())
+			}
+		}
+
+	}
+
+}
+
+func TestLocalStorage(t *testing.T) {
+
+	if w, err := New(); testingutils.AssertErr(t, err) {
+
+		if l, err := w.LocalStorage(); testingutils.AssertErr(t, err) {
+			testingutils.AssertExpect(t, "[object Storage]", l.ToString_())
+		}
+
+	}
+
+}
+
+func TestSessionStorage(t *testing.T) {
+
+	if w, err := New(); testingutils.AssertErr(t, err) {
+
+		if l, err := w.SessionStorage(); testingutils.AssertErr(t, err) {
+			testingutils.AssertExpect(t, "[object Storage]", l.ToString_())
+		}
+
+	}
+
+}
+
+func TestIndexdedDB(t *testing.T) {
+
+	if w, err := New(); testingutils.AssertErr(t, err) {
+
+		if i, err := w.IndexdedDB(); testingutils.AssertErr(t, err) {
+			testingutils.AssertExpect(t, "[object IDBFactory]", i.ToString_())
 		}
 
 	}
