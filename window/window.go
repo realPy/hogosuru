@@ -49,6 +49,7 @@ func NewFromJSObject(obj js.Value) (Window, error) {
 	var w Window
 
 	if wi := GetInterface(); !wi.IsUndefined() {
+
 		if obj.InstanceOf(wi) {
 			w.BaseObject = w.SetObject(obj)
 			return w, nil
@@ -75,13 +76,13 @@ func New() (Window, error) {
 func (w Window) Document() (document.Document, error) {
 	var err error
 	var obj js.Value
-	var h document.Document
+	var d document.Document
 
 	if obj, err = w.Get("document"); err == nil {
-		h, err = document.NewFromJSObject(obj)
+		d, err = document.NewFromJSObject(obj)
 	}
 
-	return h, err
+	return d, err
 }
 
 func (w Window) History() (history.History, error) {

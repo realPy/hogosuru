@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if docinterface, err = baseobject.Get(js.Global(), "document"); err != nil {
+		if docinterface, err = baseobject.Get(js.Global(), "Document"); err != nil {
 			docinterface = js.Undefined()
 		}
 		baseobject.Register(docinterface, func(v js.Value) (interface{}, error) {
