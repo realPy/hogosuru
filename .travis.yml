@@ -27,3 +27,4 @@ script:
 - GOOS=js GOARCH=wasm go test -v  ./objectmap
 - GOOS=js GOARCH=wasm go test -v  ./abortcontroller
 - GOOS=js GOARCH=wasm go test -v  ./document
+- GOOS=js GOARCH=wasm go test -v  ./domexception

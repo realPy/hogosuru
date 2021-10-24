@@ -42,6 +42,25 @@ func GetInterface() js.Value {
 	return domexceptioninterface
 }
 
+func New(opts ...string) (DomException, error) {
+
+	var e DomException
+	var arrayJS []interface{}
+
+	if len(opts) < 3 {
+		for _, opt := range opts {
+			arrayJS = append(arrayJS, js.ValueOf(opt))
+		}
+	}
+
+	if ei := GetInterface(); !ei.IsUndefined() {
+
+		e.BaseObject = e.SetObject(ei.New(arrayJS...))
+		return e, nil
+	}
+	return e, ErrNotImplemented
+}
+
 func NewFromJSObject(obj js.Value) (DomException, error) {
 	var d DomException
 	var err error
