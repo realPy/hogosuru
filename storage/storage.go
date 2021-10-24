@@ -13,7 +13,7 @@ var singleton sync.Once
 
 var storageinterface js.Value
 
-//GetInterface get teh JS interface of broadcast channel
+//GetInterface get the Storage interface
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
@@ -52,7 +52,7 @@ func NewFromJSObject(obj js.Value) (Storage, error) {
 		}
 	}
 
-	return s, ErrNotAnLocalStorage
+	return s, ErrNotAStorage
 }
 
 func (l Storage) SetItem(key, value string) error {
@@ -61,13 +61,20 @@ func (l Storage) SetItem(key, value string) error {
 	return err
 }
 
-func (l Storage) GetItem(key string) (string, error) {
+func (l Storage) GetItem(key string) (interface{}, error) {
 	var err error
 	var itemObject js.Value
+	var ret interface{}
+
 	if itemObject, err = l.Call("getItem", js.ValueOf(key)); err == nil {
-		return baseobject.ToStringWithErr(itemObject)
+		if !itemObject.IsUndefined() && !itemObject.IsNull() {
+			if itemObject.Type() == js.TypeString {
+				ret = itemObject.String()
+			}
+		}
+
 	}
-	return "", err
+	return ret, err
 }
 
 func (l Storage) RemoveItem(key string) error {
@@ -81,11 +88,17 @@ func (l Storage) Clear() error {
 	_, err = l.Call("clear")
 	return err
 }
-func (l Storage) Key(index int) (string, error) {
+func (l Storage) Key(index int) (interface{}, error) {
 	var err error
 	var itemObject js.Value
+	var ret interface{}
+
 	if itemObject, err = l.Call("key", js.ValueOf(index)); err == nil {
-		return baseobject.ToStringWithErr(itemObject)
+		if !itemObject.IsUndefined() && !itemObject.IsNull() {
+			if itemObject.Type() == js.TypeString {
+				ret = itemObject.String()
+			}
+		}
 	}
-	return "", err
+	return ret, err
 }
