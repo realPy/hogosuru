@@ -10,6 +10,7 @@ import (
 	"github.com/realPy/hogosuru/object"
 	"github.com/realPy/hogosuru/promise"
 	"github.com/realPy/hogosuru/response"
+	"github.com/realPy/hogosuru/testingutils"
 )
 
 func TestMain(m *testing.M) {
@@ -22,24 +23,20 @@ func TestNew(t *testing.T) {
 
 	//Start promise and wait result
 	t.Run("Get ", func(t *testing.T) {
-		if f, err := New("https://httpbin.org/get"); err == nil {
+		if f, err := New("https://httpbin.org/get"); testingutils.AssertErr(t, err) {
 			f.Then(func(r response.Response) *promise.Promise {
 
-				if status, err := r.Status(); err == nil {
+				if status, err := r.Status(); testingutils.AssertErr(t, err) {
 					if status != 200 {
 						t.Errorf("Status must be 200 , give %d", status)
 					}
 					io <- true
-				} else {
-					t.Error(err.Error())
 				}
 				return nil
 			}, func(e error) {
 
 				t.Error(e.Error())
 			})
-		} else {
-			t.Error(err.Error())
 		}
 
 		select {
@@ -56,22 +53,18 @@ func TestNew(t *testing.T) {
 		var fetchOpts map[string]interface{} = map[string]interface{}{"method": "GET", "headers": headers}
 
 		//Start promise and wait result
-		if f, err := New("https://httpbin.org/get", fetchOpts); err == nil {
+		if f, err := New("https://httpbin.org/get", fetchOpts); testingutils.AssertErr(t, err) {
 			textpromise, _ := f.Then(func(r response.Response) *promise.Promise {
-				if status, err := r.Status(); err == nil {
+				if status, err := r.Status(); testingutils.AssertErr(t, err) {
 					if status != 200 {
 						t.Errorf("Status must be 200 , give %d", status)
 					} else {
 
-						if promise, err := r.Text(); err == nil {
+						if promise, err := r.Text(); testingutils.AssertErr(t, err) {
 							return &promise
-						} else {
-							t.Error(err.Error())
 						}
 
 					}
-				} else {
-					t.Error(err.Error())
 				}
 				return nil
 			}, func(e error) {
@@ -81,7 +74,7 @@ func TestNew(t *testing.T) {
 
 			textpromise.Then(func(i interface{}) *promise.Promise {
 
-				if j, err := json.Parse(i.(string)); err == nil {
+				if j, err := json.Parse(i.(string)); testingutils.AssertErr(t, err) {
 					goValue := j.Map()
 
 					headers := goValue.(map[string]interface{})["headers"]
@@ -103,16 +96,12 @@ func TestNew(t *testing.T) {
 						t.Error("No headers present")
 					}
 
-				} else {
-					t.Error(err.Error())
 				}
 
 				return nil
 			}, func(e error) {
 				t.Error(e.Error())
 			})
-		} else {
-			t.Error(err.Error())
 		}
 
 		select {
@@ -131,22 +120,18 @@ func TestNew(t *testing.T) {
 		var fetchOpts map[string]interface{} = map[string]interface{}{"method": "POST", "headers": headers}
 
 		//Start promise and wait result
-		if f, err := New("https://httpbin.org/post", fetchOpts); err == nil {
+		if f, err := New("https://httpbin.org/post", fetchOpts); testingutils.AssertErr(t, err) {
 			textpromise, _ := f.Then(func(r response.Response) *promise.Promise {
-				if status, err := r.Status(); err == nil {
+				if status, err := r.Status(); testingutils.AssertErr(t, err) {
 					if status != 200 {
 						t.Errorf("Status must be 200 , give %d", status)
 					} else {
 
-						if promise, err := r.Text(); err == nil {
+						if promise, err := r.Text(); testingutils.AssertErr(t, err) {
 							return &promise
-						} else {
-							t.Error(err.Error())
 						}
 
 					}
-				} else {
-					t.Error(err.Error())
 				}
 				return nil
 			}, func(e error) {
@@ -156,7 +141,7 @@ func TestNew(t *testing.T) {
 
 			textpromise.Then(func(i interface{}) *promise.Promise {
 
-				if j, err := json.Parse(i.(string)); err == nil {
+				if j, err := json.Parse(i.(string)); testingutils.AssertErr(t, err) {
 					goValue := j.Map()
 
 					headers := goValue.(map[string]interface{})["headers"]
@@ -178,16 +163,12 @@ func TestNew(t *testing.T) {
 						t.Error("No headers present")
 					}
 
-				} else {
-					t.Error(err.Error())
 				}
 
 				return nil
 			}, func(e error) {
 				t.Error(e.Error())
 			})
-		} else {
-			t.Error(err.Error())
 		}
 
 		select {
@@ -208,22 +189,18 @@ func TestNew(t *testing.T) {
 		var fetchOpts map[string]interface{} = map[string]interface{}{"method": "POST", "headers": headers, "body": "data=test"}
 
 		//Start promise and wait result
-		if f, err := New("https://httpbin.org/post", fetchOpts); err == nil {
+		if f, err := New("https://httpbin.org/post", fetchOpts); testingutils.AssertErr(t, err) {
 			jsonpromise, _ := f.Then(func(r response.Response) *promise.Promise {
-				if status, err := r.Status(); err == nil {
+				if status, err := r.Status(); testingutils.AssertErr(t, err) {
 					if status != 200 {
 						t.Errorf("Status must be 200 , give %d", status)
 					} else {
 
-						if promise, err := r.Json(); err == nil {
+						if promise, err := r.Json(); testingutils.AssertErr(t, err) {
 							return &promise
-						} else {
-							t.Error(err.Error())
 						}
 
 					}
-				} else {
-					t.Error(err.Error())
 				}
 				return nil
 			}, func(e error) {
@@ -265,8 +242,6 @@ func TestNew(t *testing.T) {
 			}, func(e error) {
 				t.Error(e.Error())
 			})
-		} else {
-			t.Error(err.Error())
 		}
 
 		select {
@@ -289,7 +264,7 @@ func TestNewCancelable(t *testing.T) {
 
 		var fetchOpts map[string]interface{} = map[string]interface{}{"method": "POST", "headers": headers, "body": "data=test", "mode": "no-cors"}
 
-		if f, err := NewCancelable("http://httpbin.org/post", fetchOpts); err == nil {
+		if f, err := NewCancelable("http://httpbin.org/post", fetchOpts); testingutils.AssertErr(t, err) {
 			f.Then(func(r response.Response) *promise.Promise {
 
 				t.Error("Must not get response")
@@ -302,8 +277,6 @@ func TestNewCancelable(t *testing.T) {
 			})
 
 			f.Abort()
-		} else {
-			t.Error(err.Error())
 		}
 
 		select {
@@ -325,7 +298,7 @@ func TestNewCancelable(t *testing.T) {
 
 		var fetchOpts map[string]interface{} = map[string]interface{}{"method": "POST", "headers": headers, "body": "data=test", "mode": "no-cors", "signal": s.JSObject()}
 
-		if f, err := NewCancelable("http://httpbin.org/post", fetchOpts); err == nil {
+		if f, err := NewCancelable("http://httpbin.org/post", fetchOpts); testingutils.AssertErr(t, err) {
 			f.Then(func(r response.Response) *promise.Promise {
 
 				t.Error("Must not get response")
@@ -342,8 +315,6 @@ func TestNewCancelable(t *testing.T) {
 				t.Error("Must throw an error")
 			}
 			abortctrl.Abort()
-		} else {
-			t.Error(err.Error())
 		}
 
 		select {

@@ -57,8 +57,15 @@ func NewFromJSObject(obj js.Value) (HtmlCollection, error) {
 	return h, err
 }
 
-func (h HtmlCollection) Item(index int) js.Value {
+func (h HtmlCollection) Item(index int) (interface{}, error) {
 
-	return h.JSObject().Index(index)
+	var i interface{}
+	var err error
+	obj := h.JSObject().Index(index)
+	if !obj.IsUndefined() {
+		i, err = baseobject.Discover(obj)
+	}
+
+	return i, err
 
 }
