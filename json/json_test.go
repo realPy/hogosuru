@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/testingutils"
 )
 
 func TestMain(m *testing.M) {
@@ -24,14 +25,11 @@ func TestParse(t *testing.T) {
 			"cars:[ "Ford", "BMW", "Fiat" ]
 			}`
 
-	if j, err := Parse(str); err == nil {
+	if j, err := Parse(str); testingutils.AssertErr(t, err) {
 		goValue := j.Map()
 
-		if goValue.(map[string]interface{})["name"] != "John" {
-			t.Errorf("Name not match")
-		}
-	} else {
-		t.Errorf(err.Error())
+		testingutils.AssertExpect(t, "John", goValue.(map[string]interface{})["name"])
+
 	}
 
 	if _, err := Parse(badstr); err == nil {
@@ -40,13 +38,9 @@ func TestParse(t *testing.T) {
 }
 func TestStringify(t *testing.T) {
 
-	if str, err := Stringify(1, "hello", true); err == nil {
+	if str, err := Stringify(1, "hello", true); testingutils.AssertErr(t, err) {
 
-		if str != "[1,\"hello\",true]" {
-			t.Errorf("Value not match %s", str)
-		}
+		testingutils.AssertExpect(t, "[1,\"hello\",true]", str)
 
-	} else {
-		t.Errorf(err.Error())
 	}
 }

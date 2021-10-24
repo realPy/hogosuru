@@ -5,6 +5,7 @@ import (
 
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/event"
+	"github.com/realPy/hogosuru/testingutils"
 )
 
 func TestMain(m *testing.M) {
@@ -15,23 +16,17 @@ func TestMain(m *testing.M) {
 func TestAbort(t *testing.T) {
 
 	var isAborted bool = false
-	if a, err := New(); err == nil {
+	if a, err := New(); testingutils.AssertErr(t, err) {
 
-		if as, err := a.Signal(); err == nil {
+		if as, err := a.Signal(); testingutils.AssertErr(t, err) {
 
 			as.OnAbort(func(e event.Event) {
 				isAborted = true
 			})
 			a.Abort()
 
-			if isAborted == false {
-				t.Error("Must be aborted")
+			testingutils.AssertExpect(t, true, isAborted)
 
-			}
-		} else {
-			t.Error(err.Error())
 		}
-	} else {
-		t.Error(err.Error())
 	}
 }

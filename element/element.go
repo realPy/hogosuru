@@ -80,8 +80,13 @@ func NewFromJSObject(obj js.Value) (Element, error) {
 }
 
 func ItemFromHTMLCollection(collection htmlcollection.HtmlCollection, index int) (Element, error) {
-
-	return NewFromJSObject(collection.Item(index))
+	var elem Element
+	var err error
+	var item interface{}
+	if item, err = collection.Item(index); err == nil {
+		elem, err = NewFromJSObject(item.(baseobject.ObjectFrom).JSObject())
+	}
+	return elem, err
 
 }
 

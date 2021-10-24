@@ -6,6 +6,7 @@ import (
 
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/messageevent"
+	"github.com/realPy/hogosuru/testingutils"
 )
 
 func TestMain(m *testing.M) {
@@ -16,13 +17,13 @@ func TestMain(m *testing.M) {
 func TestEcho(t *testing.T) {
 	var io chan bool = make(chan bool)
 	var nbmsg int = 0
-	if w, err := New("wss://ws.ifelse.io"); err == nil {
+	if w, err := New("wss://ws.ifelse.io"); testingutils.AssertErr(t, err) {
 
 		w.SetOnMessage(func(e messageevent.MessageEvent) {
 			if nbmsg == 0 {
 				w.Send("hogosuru")
 			} else {
-				if message, err := e.Data(); err == nil {
+				if message, err := e.Data(); testingutils.AssertErr(t, err) {
 					if s, ok := message.(string); ok {
 						if s == "hogosuru" {
 							io <- true
@@ -34,16 +35,12 @@ func TestEcho(t *testing.T) {
 						t.Error("Response must be a string")
 					}
 
-				} else {
-					t.Error(err.Error())
 				}
 			}
 			nbmsg++
 
 		})
 
-	} else {
-		t.Error(err.Error())
 	}
 	select {
 	case <-io:
