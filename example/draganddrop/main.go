@@ -17,7 +17,7 @@ import (
 
 func md5File(f file.File) string {
 
-	var buffersize int = 2 * 1024 * 1024
+	var buffersize int64 = 2 * 1024 * 1024
 	stream := blob.NewBlobStream(f.Blob, buffersize)
 
 	var data []byte = make([]byte, buffersize)
@@ -68,7 +68,7 @@ func sha256FileStream(f file.File) string {
 
 func sha256File(f file.File) string {
 	var sha256result string
-	var buffersize int = 2 * 1024 * 1024
+	var buffersize int64 = 2 * 1024 * 1024
 	stream := blob.NewBlobStream(f.Blob, buffersize)
 
 	var data []byte = make([]byte, buffersize)

@@ -8,13 +8,13 @@ import (
 )
 
 type BlobStream struct {
-	totalsize  int
-	buffersize int
-	cur        int
+	totalsize  int64
+	buffersize int64
+	cur        int64
 	Blob
 }
 
-func NewBlobStream(blob Blob, buffersize int) BlobStream {
+func NewBlobStream(blob Blob, buffersize int64) BlobStream {
 	var b BlobStream
 
 	b.Blob = blob
@@ -30,7 +30,7 @@ func (b *BlobStream) Read(buffer []byte) (n int, err error) {
 	var blob Blob
 	var arr arraybuffer.ArrayBuffer
 	var rawdata typedarray.Uint8Array
-	var bytesneed int
+	var bytesneed int64
 	var done bool = false
 
 	if (b.cur + b.buffersize) > b.totalsize {
@@ -49,7 +49,7 @@ func (b *BlobStream) Read(buffer []byte) (n int, err error) {
 
 				n, err = rawdata.CopyBytes(buffer)
 
-				b.cur = b.cur + n
+				b.cur = b.cur + int64(n)
 				if done {
 					err = io.EOF
 				}

@@ -60,6 +60,23 @@ func NewInt16Array(value interface{}) (Int16Array, error) {
 	return a, ErrNotImplementedInt16Array
 }
 
+func NewInt16ArrayFrom(iterable interface{}) (Int16Array, error) {
+
+	arr, err := newTypedArrayFrom(GetInt16ArrayInterface(), func(v js.Value) (interface{}, error) {
+		return NewInt16FromJSObject(v)
+	}, iterable)
+	return arr.(Int16Array), err
+
+}
+
+func NewInt16ArrayOf(values ...interface{}) (Int16Array, error) {
+
+	arr, err := newTypedArrayOf(GetInt16ArrayInterface(), func(v js.Value) (interface{}, error) {
+		return NewInt16FromJSObject(v)
+	}, values...)
+	return arr.(Int16Array), err
+}
+
 func NewInt16FromJSObject(obj js.Value) (Int16Array, error) {
 	var u Int16Array
 

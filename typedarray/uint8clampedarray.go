@@ -60,6 +60,22 @@ func NewUint8ClampedArray(value interface{}) (Uint8ClampedArray, error) {
 	return a, ErrNotImplementedUint8ClampedArray
 }
 
+func NewUint8ClampedArrayFrom(iterable interface{}) (Uint8ClampedArray, error) {
+
+	arr, err := newTypedArrayFrom(GetUint8ClampedArrayInterface(), func(v js.Value) (interface{}, error) {
+		return NewUint8ClampedFromJSObject(v)
+	}, iterable)
+	return arr.(Uint8ClampedArray), err
+}
+
+func NewUint8ClampedArrayOf(values ...interface{}) (Uint8ClampedArray, error) {
+
+	arr, err := newTypedArrayOf(GetUint8ClampedArrayInterface(), func(v js.Value) (interface{}, error) {
+		return NewUint8ClampedFromJSObject(v)
+	}, values...)
+	return arr.(Uint8ClampedArray), err
+}
+
 func NewUint8ClampedFromJSObject(obj js.Value) (Uint8ClampedArray, error) {
 	var u Uint8ClampedArray
 

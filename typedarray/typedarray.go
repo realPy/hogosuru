@@ -118,3 +118,47 @@ func (t TypedArray) Subarray(opts ...int) (interface{}, error) {
 
 	return newArr, err
 }
+
+func newTypedArrayFrom(interfacejs js.Value, f func(js.Value) (interface{}, error), iterable interface{}) (interface{}, error) {
+
+	var opt interface{}
+	var obj js.Value
+	var err error
+	var newArr interface{}
+
+	if objGo, ok := iterable.(baseobject.ObjectFrom); ok {
+		opt = objGo.JSObject()
+
+	} else {
+		opt = js.ValueOf(iterable)
+	}
+
+	if obj, err = baseobject.Call(interfacejs, "from", opt); err == nil {
+		newArr, err = f(obj)
+	}
+	return newArr, err
+
+}
+
+func newTypedArrayOf(interfacejs js.Value, f func(js.Value) (interface{}, error), values ...interface{}) (interface{}, error) {
+
+	var newArr interface{}
+	var arrayJS []interface{}
+	var obj js.Value
+	var err error
+
+	for _, value := range values {
+		if objGo, ok := value.(baseobject.ObjectFrom); ok {
+			arrayJS = append(arrayJS, objGo.JSObject())
+		} else {
+			arrayJS = append(arrayJS, js.ValueOf(value))
+		}
+
+	}
+
+	if obj, err = baseobject.Call(interfacejs, "of", arrayJS...); err == nil {
+		newArr, err = f(obj)
+	}
+	return newArr, err
+
+}

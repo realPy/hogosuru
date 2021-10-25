@@ -60,6 +60,22 @@ func NewFloat64Array(value interface{}) (Float64Array, error) {
 	return a, ErrNotImplementedFloat64Array
 }
 
+func NewFloat64ArrayFrom(iterable interface{}) (Float64Array, error) {
+
+	arr, err := newTypedArrayFrom(GetFloat64ArrayInterface(), func(v js.Value) (interface{}, error) {
+		return NewFloat64FromJSObject(v)
+	}, iterable)
+	return arr.(Float64Array), err
+}
+
+func NewFloat64ArrayOf(values ...interface{}) (Float64Array, error) {
+
+	arr, err := newTypedArrayOf(GetFloat64ArrayInterface(), func(v js.Value) (interface{}, error) {
+		return NewFloat64FromJSObject(v)
+	}, values...)
+	return arr.(Float64Array), err
+}
+
 func NewFloat64FromJSObject(obj js.Value) (Float64Array, error) {
 	var u Float64Array
 

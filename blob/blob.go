@@ -81,29 +81,6 @@ func NewWithArrayBuffer(a arraybuffer.ArrayBuffer) (Blob, error) {
 	return b, ErrNotImplemented
 }
 
-/*
-func NewWithUint8Array(u uint8array.Uint8Array) (Blob, error) {
-
-	var b Blob
-	if bi := GetJSInterface(); bi != nil {
-
-		b.Object = b.SetObject(bi.objectInterface.New(u.JSObject()))
-		return b, nil
-	}
-	return b, ErrNotImplemented
-}
-*/
-
-func NewWithBlob(bl Blob) (Blob, error) {
-
-	var b Blob
-	if bi := GetInterface(); !bi.IsUndefined() {
-		b.BaseObject = b.SetObject(bi.New(bl.JSObject()))
-		return b, nil
-	}
-	return b, ErrNotImplemented
-}
-
 func NewFromJSObject(obj js.Value) (Blob, error) {
 	var b Blob
 
@@ -120,22 +97,22 @@ func NewFromJSObject(obj js.Value) (Blob, error) {
 func (b Blob) IsClosed() (bool, error) {
 	var err error
 	var obj js.Value
+	var ret bool
 
 	if obj, err = b.Get("isClosed"); err == nil {
+		if !obj.IsUndefined() {
+			ret = obj.Bool()
+		} else {
+			err = baseobject.ErrNotImplementedFunc
+		}
 
-		return obj.Bool(), nil
 	}
-	return true, err
+	return ret, err
 }
 
-func (b Blob) Size() (int, error) {
-	var err error
-	var obj js.Value
-	if obj, err = b.Get("size"); err == nil {
+func (b Blob) Size() (int64, error) {
 
-		return obj.Int(), nil
-	}
-	return 0, err
+	return b.GetAttributeInt64("size")
 }
 func (b Blob) Type() (string, error) {
 	var err error
@@ -153,7 +130,7 @@ func (b Blob) Close() error {
 	return err
 }
 
-func (b Blob) Slice(begin, end int) (Blob, error) {
+func (b Blob) Slice(begin, end int64) (Blob, error) {
 	var blob js.Value
 	var err error
 	if blob, err = b.Call("slice", js.ValueOf(begin), js.ValueOf(end)); err == nil {
