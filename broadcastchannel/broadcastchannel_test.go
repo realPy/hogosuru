@@ -1,6 +1,28 @@
 package broadcastchannel
 
-/*
+import (
+	"testing"
+	"time"
+
+	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/messageevent"
+	"github.com/realPy/hogosuru/testingutils"
+)
+
+func TestMain(m *testing.M) {
+	baseobject.SetSyscall()
+	m.Run()
+}
+
+func TestNew(t *testing.T) {
+
+	if a, err := New("alpha"); testingutils.AssertErr(t, err) {
+
+		testingutils.AssertExpect(t, "[object BroadcastChannel]", a.ToString_())
+
+	}
+}
+
 func TestChannelIO(t *testing.T) {
 
 	var io chan string = make(chan string)
@@ -12,12 +34,10 @@ func TestChannelIO(t *testing.T) {
 		if c2, err = New("alpha"); err == nil {
 
 			c2.OnMessage(func(ev messageevent.MessageEvent) {
-				if dataObject, err := ev.Data(); err == nil {
-					io <- dataObject.(baseobject.ObjectFrom).BaseObject_().String()
-				} else {
-					t.Errorf(err.Error())
-				}
 
+				if dataObject, err := ev.Data(); testingutils.AssertErr(t, err) {
+					io <- dataObject.(string)
+				}
 			})
 		} else {
 			t.Errorf("Channel Alpha not created")
@@ -26,9 +46,7 @@ func TestChannelIO(t *testing.T) {
 
 		select {
 		case r := <-io:
-			if r != "hello" {
-				t.Errorf("Must receive hello")
-			}
+			testingutils.AssertExpect(t, "hello", r)
 
 		case <-time.After(time.Duration(100) * time.Millisecond):
 			t.Errorf("No message channel receive")
@@ -44,4 +62,3 @@ func TestChannelIO(t *testing.T) {
 		t.Errorf(err.Error())
 	}
 }
-*/
