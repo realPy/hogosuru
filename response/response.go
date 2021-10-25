@@ -142,31 +142,6 @@ func (r Response) Url() (string, error) {
 	return "", err
 }
 
-//deprecated (never use Await)
-func (r Response) _Text() (string, error) {
-
-	var promiseObject js.Value
-	var p promise.Promise
-	var jsTxtObj interface{}
-	var err error
-	if promiseObject, err = r.Call("text"); err == nil {
-		if p, err = promise.NewFromJSObject(promiseObject); err == nil {
-
-			if jsTxtObj, err = p.Await(); err == nil {
-
-				if jsTxt, ok := jsTxtObj.(baseobject.ObjectFrom); ok {
-					return jsTxt.JSObject().String(), nil
-				} else {
-					err = baseobject.ErrNotABaseObject
-				}
-
-			}
-		}
-
-	}
-	return "", err
-}
-
 func (r Response) Text() (promise.Promise, error) {
 
 	var promiseObject js.Value
@@ -199,32 +174,6 @@ func (r Response) SetUseFinalURL(b bool) {
 	r.JSObject().Set("useFinalURL", js.ValueOf(b))
 }
 
-func (r Response) ArrayBuffer_() (arraybuffer.ArrayBuffer, error) {
-
-	var ab arraybuffer.ArrayBuffer
-	var err error
-	var promiseObject js.Value
-	var p promise.Promise
-	var binaryObj interface{}
-
-	if promiseObject, err = r.Call("arrayBuffer"); err == nil {
-		if p, err = promise.NewFromJSObject(promiseObject); err == nil {
-
-			if binaryObj, err = p.Await(); err == nil {
-				if binary, ok := binaryObj.(arraybuffer.ArrayBufferFrom); ok {
-					ab = binary.ArrayBuffer_()
-				} else {
-					err = baseobject.ErrNotABaseObject
-				}
-
-			}
-
-		}
-
-	}
-	return ab, err
-
-}
 func (r Response) ArrayBuffer() (promise.Promise, error) {
 
 	var promiseObject js.Value

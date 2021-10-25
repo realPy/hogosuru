@@ -49,12 +49,24 @@ func (b Blob) Blob_() Blob {
 	return b
 }
 
-func New() (Blob, error) {
+func New(values ...interface{}) (Blob, error) {
 
 	var b Blob
+
+	var arrayJS []interface{}
+
+	for _, value := range values {
+		if objGo, ok := value.(baseobject.ObjectFrom); ok {
+			arrayJS = append(arrayJS, objGo.JSObject())
+		} else {
+			arrayJS = append(arrayJS, js.ValueOf(value))
+		}
+
+	}
+
 	if bi := GetInterface(); !bi.IsUndefined() {
 
-		b.BaseObject = b.SetObject(bi.New())
+		b.BaseObject = b.SetObject(bi.New(arrayJS))
 		return b, nil
 	}
 	return b, ErrNotImplemented
@@ -154,66 +166,29 @@ func (b Blob) Stream() (stream.ReadableStream, error) {
 	return readablestream.ReadableStream{}, err
 }
 
-func (b Blob) ArrayBuffer() (arraybuffer.ArrayBuffer, error) {
+func (b Blob) ArrayBuffer() (promise.Promise, error) {
 
 	var err error
 	var promisebuffer js.Value
-	var arrayb arraybuffer.ArrayBuffer
 	var p promise.Promise
-	var binaryObj interface{}
 
 	if promisebuffer, err = b.Call("arrayBuffer"); err == nil {
 
-		if p, err = promise.NewFromJSObject(promisebuffer); err == nil {
+		p, err = promise.NewFromJSObject(promisebuffer)
 
-			if binaryObj, err = p.Await(); err == nil {
-				if binary, ok := binaryObj.(arraybuffer.ArrayBufferFrom); ok {
-					arrayb = binary.ArrayBuffer_()
-				} else {
-					err = arraybuffer.ErrNotAnArrayBuffer
-				}
-
-			}
-		}
 	}
 
-	return arrayb, err
+	return p, err
 }
 
-func (b Blob) Text() (string, error) {
+func (b Blob) Text() (promise.Promise, error) {
 	var err error
 	var promisetext js.Value
 	var p promise.Promise
-	var jsTxtObj interface{}
-	var text string = ""
 
 	if promisetext, err = b.Call("text"); err == nil {
-		if p, err = promise.NewFromJSObject(promisetext); err == nil {
-
-			if jsTxtObj, err = p.Await(); err == nil {
-
-				if jsTxt, ok := jsTxtObj.(baseobject.ObjectFrom); ok {
-					text = jsTxt.JSObject().String()
-				} else {
-					err = baseobject.ErrNotABaseObject
-				}
-
-			}
-
-		}
+		p, err = promise.NewFromJSObject(promisetext)
 	}
 
-	return text, err
-}
-
-func (b Blob) Append(append baseobject.BaseObject) (Blob, error) {
-
-	var blobObject js.Value
-	var arrayblob []interface{} = []interface{}{b.JSObject(), append.JSObject()}
-	if bi := GetInterface(); !bi.IsUndefined() {
-		blobObject = bi.New(arrayblob)
-
-		return NewFromJSObject(blobObject)
-	}
-	return Blob{}, ErrNotImplemented
+	return p, err
 }

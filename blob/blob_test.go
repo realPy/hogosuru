@@ -48,6 +48,32 @@ func TestNewWithArrayBuffer(t *testing.T) {
 
 }
 
+func TestNewWith2ArrayBuffer(t *testing.T) {
+
+	if a, err := arraybuffer.New(8); testingutils.AssertErr(t, err) {
+		if viewuint8, err := typedarray.NewInt8Array(a); testingutils.AssertErr(t, err) {
+			viewuint8.Fill(7)
+
+			astring := array.From_("Hello World")
+			if struint8, err := typedarray.NewUint8ArrayFrom(astring); testingutils.AssertErr(t, err) {
+
+				if appendblob, err := New(viewuint8, struint8); testingutils.AssertErr(t, err) {
+
+					if s, err := appendblob.Size(); testingutils.AssertErr(t, err) {
+
+						testingutils.AssertExpect(t, int64(19), s)
+
+					}
+
+				}
+
+			}
+
+		}
+	}
+
+}
+
 func TestIsClosed(t *testing.T) {
 
 	if a, err := New(); testingutils.AssertErr(t, err) {
@@ -70,14 +96,76 @@ func TestSlice(t *testing.T) {
 	astring := array.From_("Hello World")
 
 	if struint8, err := typedarray.NewUint8ArrayFrom(astring); testingutils.AssertErr(t, err) {
-		if b, err := struint8.(typedarray.Uint8Array).Buffer(); testingutils.AssertErr(t, err) {
+
+		if b, err := struint8.Buffer(); testingutils.AssertErr(t, err) {
 
 			if ab, err := NewWithArrayBuffer(b); testingutils.AssertErr(t, err) {
 
-				if s, err := ab.Size(); testingutils.AssertErr(t, err) {
+				if blob2, err := ab.Slice(0, 6); testingutils.AssertErr(t, err) {
+					if s, err := blob2.Size(); testingutils.AssertErr(t, err) {
 
-					testingutils.AssertExpect(t, int64(11), s)
+						testingutils.AssertExpect(t, int64(6), s)
 
+					}
+				}
+
+			}
+		}
+
+	}
+
+}
+
+func TestStream(t *testing.T) {
+	astring := array.From_("Hello World")
+
+	if struint8, err := typedarray.NewUint8ArrayFrom(astring); testingutils.AssertErr(t, err) {
+
+		if b, err := struint8.Buffer(); testingutils.AssertErr(t, err) {
+
+			if ab, err := NewWithArrayBuffer(b); testingutils.AssertErr(t, err) {
+
+				if stream, err := ab.Stream(); testingutils.AssertErr(t, err) {
+					testingutils.AssertExpect(t, "[object ReadableStream]", stream.ToString_())
+				}
+
+			}
+		}
+
+	}
+
+}
+
+func TestArrayBuffer(t *testing.T) {
+	astring := array.From_("Hello World")
+
+	if struint8, err := typedarray.NewUint8ArrayFrom(astring); testingutils.AssertErr(t, err) {
+
+		if b, err := struint8.Buffer(); testingutils.AssertErr(t, err) {
+
+			if ab, err := NewWithArrayBuffer(b); testingutils.AssertErr(t, err) {
+
+				if blobbuffer, err := ab.ArrayBuffer(); testingutils.AssertErr(t, err) {
+					testingutils.AssertExpect(t, "[object Promise]", blobbuffer.ToString_())
+				}
+
+			}
+		}
+
+	}
+
+}
+func TestText(t *testing.T) {
+	astring := array.From_("Hello World")
+
+	if struint8, err := typedarray.NewUint8ArrayFrom(astring); testingutils.AssertErr(t, err) {
+
+		if b, err := struint8.Buffer(); testingutils.AssertErr(t, err) {
+
+			if ab, err := NewWithArrayBuffer(b); testingutils.AssertErr(t, err) {
+
+				if blobtext, err := ab.Text(); testingutils.AssertErr(t, err) {
+					testingutils.AssertExpect(t, "[object Promise]", blobtext.ToString_())
 				}
 
 			}
