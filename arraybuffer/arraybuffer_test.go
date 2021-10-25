@@ -19,7 +19,7 @@ func TestNew(t *testing.T) {
 
 		if l, err := a.ByteLength(); testingutils.AssertErr(t, err) {
 
-			testingutils.AssertExpect(t, uint64(8), l)
+			testingutils.AssertExpect(t, int64(8), l)
 
 		}
 	}
@@ -33,7 +33,7 @@ func TestSlice(t *testing.T) {
 
 			if l, err := b.ByteLength(); testingutils.AssertErr(t, err) {
 
-				testingutils.AssertExpect(t, uint64(22), l)
+				testingutils.AssertExpect(t, int64(22), l)
 
 			}
 
@@ -43,7 +43,7 @@ func TestSlice(t *testing.T) {
 
 			if l, err := b.ByteLength(); testingutils.AssertErr(t, err) {
 
-				testingutils.AssertExpect(t, uint64(6), l)
+				testingutils.AssertExpect(t, int64(6), l)
 
 			}
 
