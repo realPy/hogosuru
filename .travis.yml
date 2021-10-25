@@ -10,24 +10,9 @@ addons:
   chrome: stable
 
 install:
-- go get github.com/agnivade/wasmbrowsertest
+- go get github.com/agnivade/wasmbrowsertest@v0.3.5
 - mv $GOPATH/bin/wasmbrowsertest $GOPATH/bin/go_js_wasm_exec
 - export PATH=$GOPATH/bin:$PATH
 
 script:
-
-- GOOS=js GOARCH=wasm go test -v  ./baseobject
-- GOOS=js GOARCH=wasm go test -v  ./array
-- GOOS=js GOARCH=wasm go test -v  ./arraybuffer
-- GOOS=js GOARCH=wasm go test -v  ./blob
-- GOOS=js GOARCH=wasm go test -v  ./typedarray
-- GOOS=js GOARCH=wasm go test -v  ./json
-- GOOS=js GOARCH=wasm go test -v  ./promise
-- GOOS=js GOARCH=wasm go test -v  ./fetch
-- GOOS=js GOARCH=wasm go test -v  ./websocket
-- GOOS=js GOARCH=wasm go test -v  ./objectmap
-- GOOS=js GOARCH=wasm go test -v  ./abortcontroller
-- GOOS=js GOARCH=wasm go test -v  ./document
-- GOOS=js GOARCH=wasm go test -v  ./domexception
-- GOOS=js GOARCH=wasm go test -v  ./storage
-- GOOS=js GOARCH=wasm go test -v  ./window
+- GOOS=js GOARCH=wasm go test   ./...

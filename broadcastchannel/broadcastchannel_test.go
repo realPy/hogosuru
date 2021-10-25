@@ -1,13 +1,6 @@
 package broadcastchannel
 
-import (
-	"testing"
-	"time"
-
-	"github.com/realPy/hogosuru/baseobject"
-	"github.com/realPy/hogosuru/messageevent"
-)
-
+/*
 func TestChannelIO(t *testing.T) {
 
 	var io chan string = make(chan string)
@@ -51,3 +44,4 @@ func TestChannelIO(t *testing.T) {
 		t.Errorf(err.Error())
 	}
 }
+*/
