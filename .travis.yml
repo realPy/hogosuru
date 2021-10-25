@@ -10,7 +10,7 @@ addons:
   chrome: stable
 
 install:
-- go get github.com/agnivade/wasmbrowsertest
+- go get github.com/agnivade/wasmbrowsertest@v0.3.5
 - mv $GOPATH/bin/wasmbrowsertest $GOPATH/bin/go_js_wasm_exec
 - export PATH=$GOPATH/bin:$PATH
 
