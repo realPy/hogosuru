@@ -19,7 +19,7 @@ var singleton sync.Once
 
 var blobinterface js.Value
 
-//GetJSInterface get teh JS interface of broadcast channel
+//GetInterface get the JS interface Blob
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

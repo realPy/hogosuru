@@ -38,7 +38,6 @@ func TestDomain(t *testing.T) {
 func TestTitle(t *testing.T) {
 
 	if d, err := New(); testingutils.AssertErr(t, err) {
-
 		if str, err := d.Title(); testingutils.AssertErr(t, err) {
 			testingutils.AssertExpect(t, "Go wasm", str)
 
@@ -282,8 +281,9 @@ func TestPictureInPictureElement(t *testing.T) {
 	if d, err := New(); testingutils.AssertErr(t, err) {
 
 		if elem, err := d.PictureInPictureElement(); testingutils.AssertErr(t, err) {
-
-			testingutils.AssertExpect(t, nil, elem)
+			if !elem.Empty() {
+				t.Error("PictureInPicture must be empty")
+			}
 
 		}
 
@@ -445,6 +445,17 @@ func TestCreateAttribute(t *testing.T) {
 		if attr, err := d.CreateAttribute("myattr"); testingutils.AssertErr(t, err) {
 
 			testingutils.AssertExpect(t, "[object Attr]", attr.ToString_())
+			if n, err := attr.Name(); testingutils.AssertErr(t, err) {
+				testingutils.AssertExpect(t, "myattr", n)
+			}
+
+			if n, err := attr.LocalName(); testingutils.AssertErr(t, err) {
+				testingutils.AssertExpect(t, "myattr", n)
+			}
+
+			if n, err := attr.Value(); testingutils.AssertErr(t, err) {
+				testingutils.AssertExpect(t, "", n)
+			}
 
 		}
 	}

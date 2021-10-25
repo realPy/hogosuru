@@ -27,7 +27,7 @@ func (a AnimationEvent) AnimationEvent_() AnimationEvent {
 	return a
 }
 
-//GetInterface get the JS interface of animationEvent
+//GetInterface get the JS interface animationEvent
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

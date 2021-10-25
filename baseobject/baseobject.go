@@ -341,7 +341,6 @@ func (b BaseObject) GetAttributeString(attribute string) (string, error) {
 	var ret = ""
 
 	if obj, err = b.Get(attribute); err == nil {
-
 		if obj.Type() == js.TypeString {
 			ret = obj.String()
 		} else {

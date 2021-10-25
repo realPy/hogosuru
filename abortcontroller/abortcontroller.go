@@ -12,7 +12,7 @@ var singleton sync.Once
 
 var abortcontrollerinterface js.Value
 
-//GetInterface get teh JS interface of broadcast channel
+//GetInterface get the JS interface abortcontroller
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

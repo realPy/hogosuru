@@ -17,6 +17,10 @@ func AssertErr(t *testing.T, err error) bool {
 func AssertExpect(t *testing.T, exp interface{}, get interface{}) bool {
 
 	switch expval := exp.(type) {
+	case nil:
+		if get != nil {
+			t.Errorf("Expect nil")
+		}
 	case error:
 		if getval, ok := get.(error); ok {
 			if expval.Error() != getval.Error() {
