@@ -2,7 +2,25 @@ package testingutils
 
 import (
 	"testing"
+
+	"github.com/realPy/hogosuru/baseobject"
 )
+
+func ImplementedExpect(t *testing.T, obj baseobject.BaseObject, methodsname []string) {
+
+	for _, methodname := range methodsname {
+
+		if ok, err := obj.Implement(methodname); AssertErr(t, err) {
+
+			if !ok {
+				t.Errorf("%s must implemented %s", obj.ToString_(), methodname)
+			}
+
+		}
+
+	}
+
+}
 
 func AssertErr(t *testing.T, err error) bool {
 
