@@ -1,23 +1,13 @@
 package xmlhttprequest
 
 // https://developer.mozilla.org/fr/docs/Web/API/XMLHttpRequest/XMLHttpRequest
-/*
-
-TODO: Document Class
-
-
-
-
-*/
 
 import (
-	"net/url"
 	"sync"
 
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/baseobject"
-	"github.com/realPy/hogosuru/formdata"
 	"github.com/realPy/hogosuru/progressevent"
 )
 
@@ -83,9 +73,9 @@ func New() (XMLHTTPRequest, error) {
 	return request, ErrNotImplemented
 }
 
-func (x XMLHTTPRequest) Open(method string, url *url.URL) error {
+func (x XMLHTTPRequest) Open(method string, url string) error {
 	var err error
-	_, err = x.Call("open", js.ValueOf(method), js.ValueOf(url.String()))
+	_, err = x.Call("open", js.ValueOf(method), js.ValueOf(url))
 	return err
 }
 
@@ -95,15 +85,21 @@ func (x XMLHTTPRequest) SetRequestHeader(header string, value string) error {
 	return err
 }
 
-func (x XMLHTTPRequest) Send() error {
+//Send the form. Can accept a form data in args
+func (x XMLHTTPRequest) Send(value ...interface{}) error {
 	var err error
-	_, err = x.Call("send")
-	return err
-}
 
-func (x XMLHTTPRequest) SendForm(f formdata.FormData) error {
-	var err error
-	_, err = x.Call("send", f.JSObject())
+	var arrayJS []interface{}
+
+	if len(value) > 0 {
+		if objGo, ok := value[0].(baseobject.ObjectFrom); ok {
+			arrayJS = append(arrayJS, objGo.JSObject())
+		} else {
+			arrayJS = append(arrayJS, js.ValueOf(value[0]))
+		}
+	}
+
+	_, err = x.Call("send", arrayJS...)
 	return err
 }
 
@@ -113,10 +109,14 @@ func (x XMLHTTPRequest) Abort() error {
 	return err
 }
 
-func (x XMLHTTPRequest) setHandler(jshandlername string, handler func(XMLHTTPRequest)) {
+func (x XMLHTTPRequest) setHandler(jshandlername string, handler func(i interface{})) {
 
 	jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		handler(x)
+		var i interface{}
+		if len(args) > 0 {
+			i, _ = baseobject.Discover(args[0])
+		}
+		handler(i)
 
 		return nil
 	})
@@ -125,33 +125,31 @@ func (x XMLHTTPRequest) setHandler(jshandlername string, handler func(XMLHTTPReq
 }
 
 //SetOnload Set OnLoad
-func (x XMLHTTPRequest) SetOnload(handler func(XMLHTTPRequest)) {
+func (x XMLHTTPRequest) SetOnload(handler func(i interface{})) {
 	x.setHandler("onload", handler)
 }
 
 //SetOnAbort Set SetOnAbort
-func (x XMLHTTPRequest) SetOnAbort(handler func(XMLHTTPRequest)) {
+func (x XMLHTTPRequest) SetOnAbort(handler func(i interface{})) {
 	x.setHandler("onabort", handler)
 }
 
 //SetOnError Set SetOnError
-func (x XMLHTTPRequest) SetOnError(handler func(XMLHTTPRequest)) {
+func (x XMLHTTPRequest) SetOnError(handler func(i interface{})) {
 	x.setHandler("onerror", handler)
 }
 
 //SetOnReadyStateChange Set SetOnReadyStateChange
-func (x XMLHTTPRequest) SetOnReadyStateChange(handler func(XMLHTTPRequest)) {
+func (x XMLHTTPRequest) SetOnReadyStateChange(handler func(i interface{})) {
 	x.setHandler("onreadystatechange", handler)
 }
 
 //SetOnProgress Set  OnProgress
-func (x XMLHTTPRequest) SetOnProgress(handler func(XMLHTTPRequest, progressevent.ProgressEvent)) {
+func (x XMLHTTPRequest) SetOnProgress(handler func(progressevent.ProgressEvent)) {
 	onprogress := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
 		if pe, err := progressevent.NewFromJSObject(args[0]); err == nil {
-			handler(x, pe)
-		} else {
-			println("erreur " + err.Error())
+			handler(pe)
 		}
 
 		return nil
