@@ -1,6 +1,10 @@
 package testingutils
 
 import (
+	"fmt"
+	"path/filepath"
+	"reflect"
+	"runtime"
 	"testing"
 
 	"github.com/realPy/hogosuru/baseobject"
@@ -34,74 +38,20 @@ func AssertErr(t *testing.T, err error) bool {
 
 func AssertExpect(t *testing.T, exp interface{}, get interface{}) bool {
 
-	switch expval := exp.(type) {
-	case nil:
-		if get != nil {
-			t.Errorf("Expect nil")
+	if !reflect.DeepEqual(exp, get) {
+		_, file, line, _ := runtime.Caller(1)
+		prefix := fmt.Sprintf("%s:%d >>", filepath.Base(file), line)
+		var aType = "<nil>"
+		var bType = "<nil>"
+		if reflect.ValueOf(exp).IsValid() {
+			aType = reflect.TypeOf(exp).Name()
 		}
-	case error:
-		if getval, ok := get.(error); ok {
-			if expval.Error() != getval.Error() {
-				t.Errorf("Expect %s have %s", expval.Error(), getval.Error())
-			}
-		} else {
-			t.Errorf("Expect type var not match")
+		if reflect.ValueOf(get).IsValid() {
+			bType = reflect.TypeOf(get).Name()
 		}
-	case int:
-		if getval, ok := get.(int); ok {
-			if expval != getval {
-				t.Errorf("Expect %d have %d", expval, getval)
-			} else {
-				return true
-			}
-
-		} else {
-			t.Errorf("Expect type var not match")
-		}
-
+		t.Errorf("%s Expect %v [%s] | %v [%s]", prefix, exp, aType, get, bType)
 		return false
-	case int64:
-		if getval, ok := get.(int64); ok {
-			if expval != getval {
-				t.Errorf("Expect %d have %d", expval, getval)
-			} else {
-				return true
-			}
-
-		} else {
-			t.Errorf("Expect type var not match")
-		}
-
-		return false
-
-	case string:
-		if getval, ok := get.(string); ok {
-			if expval != getval {
-				t.Errorf("Expect %s have %s", expval, getval)
-			} else {
-				return true
-			}
-
-		} else {
-			t.Errorf("Expect type var not match")
-		}
-		return false
-	case bool:
-		if getval, ok := get.(bool); ok {
-			if expval != getval {
-				t.Errorf("Expect %t have %t", expval, getval)
-			} else {
-				return true
-			}
-
-		} else {
-			t.Errorf("Expect type var not match")
-		}
-		return false
-	default:
-
-		t.Errorf("Undefined expect type")
 	}
 
-	return false
+	return true
 }
