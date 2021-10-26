@@ -61,6 +61,22 @@ func NewUint8Array(value interface{}) (Uint8Array, error) {
 	return a, ErrNotImplementedUint8Array
 }
 
+func NewUint8ArrayFrom(iterable interface{}) (Uint8Array, error) {
+
+	arr, err := newTypedArrayFrom(GetUint8ArrayInterface(), func(v js.Value) (interface{}, error) {
+		return NewUint8FromJSObject(v)
+	}, iterable)
+	return arr.(Uint8Array), err
+}
+
+func NewUint8ArrayOf(values ...interface{}) (Uint8Array, error) {
+
+	arr, err := newTypedArrayOf(GetUint8ArrayInterface(), func(v js.Value) (interface{}, error) {
+		return NewUint8FromJSObject(v)
+	}, values...)
+	return arr.(Uint8Array), err
+}
+
 func NewUint8FromJSObject(obj js.Value) (Uint8Array, error) {
 	var u Uint8Array
 

@@ -21,4 +21,6 @@ var (
 	ErrNotImplemented = errors.New("Browser not implemented Object")
 	//ErrNotImplemented ErrNotImplemented error
 	ErrNotABaseObject = errors.New("Not a base object")
+	//ErrNotImplementedFunc ErrNotImplementedFunc error
+	ErrNotImplementedFunc = errors.New("Function.prototype.apply was called on undefined, which is a undefined and not a function")
 )

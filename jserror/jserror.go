@@ -20,11 +20,11 @@ type JSErrorFrom interface {
 	JSError_() JSError
 }
 
-func (e JSError) DomException_() JSError {
+func (e JSError) JSError_() JSError {
 	return e
 }
 
-//GetJSInterface get the Error interface
+//GetInterface get the Error interface
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
@@ -42,19 +42,21 @@ func GetInterface() js.Value {
 	return errorinterface
 }
 
-func New(value interface{}) (JSError, error) {
+func New(values ...interface{}) (JSError, error) {
 	var e JSError
-	var obj interface{}
+	var objs []interface{}
 
-	switch value.(type) {
-	case string:
-		obj = value
-	case error:
-		obj = value.(error).Error()
+	if len(values) == 1 {
+		switch values[0].(type) {
+		case string:
+			objs = append(objs, values[0])
+		case error:
+			objs = append(objs, values[0].(error).Error())
+		}
 	}
 
 	if ei := GetInterface(); !ei.IsUndefined() {
-		e.BaseObject = e.SetObject(ei.New(obj))
+		e.BaseObject = e.SetObject(ei.New(objs...))
 		return e, nil
 	}
 	return e, ErrNotImplemented
@@ -74,4 +76,23 @@ func NewFromJSObject(obj js.Value) (JSError, error) {
 	}
 
 	return e, err
+}
+
+func (j JSError) Message() (string, error) {
+	return j.GetAttributeString("message")
+}
+
+func (j JSError) SetMessage(value string) error {
+	return j.SetAttributeString("message", value)
+}
+
+func (j JSError) Name() (string, error) {
+	return j.GetAttributeString("name")
+}
+func (j JSError) SetName(value string) error {
+	return j.SetAttributeString("name", value)
+}
+
+func (j JSError) Stack() (string, error) {
+	return j.GetAttributeString("stack")
 }

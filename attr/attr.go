@@ -12,7 +12,7 @@ var singleton sync.Once
 
 var attrinterface js.Value
 
-//GetJSInterface get teh JS interface of broadcast channel
+//GetInterface get the JS interface Attr
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
@@ -41,20 +41,6 @@ func (a Attr) Attr_() Attr {
 	return a
 }
 
-func New() (Attr, error) {
-
-	var a Attr
-	var err error
-	if ai := GetInterface(); !ai.IsUndefined() {
-		a.BaseObject = a.SetObject(ai.New())
-
-	} else {
-		err = ErrNotImplemented
-	}
-
-	return a, err
-}
-
 func NewFromJSObject(obj js.Value) (Attr, error) {
 	var a Attr
 	var err error
@@ -80,7 +66,7 @@ func (a Attr) Name() (string, error) {
 
 func (a Attr) NamespaceURI() (string, error) {
 
-	return a.GetAttributeString("localName")
+	return a.GetAttributeString("namespaceURI")
 }
 
 func (a Attr) LocalName() (string, error) {

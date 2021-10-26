@@ -100,7 +100,10 @@ func Register(inter js.Value, contruct func(js.Value) (interface{}, error)) erro
 	//registry[inter.Get("prototype").Call("toString").String()] = contruct
 
 	if obj, err = Get(inter, "name"); err == nil {
-		registry[obj.String()] = contruct
+		if !obj.IsUndefined() {
+			registry[obj.String()] = contruct
+		}
+
 	}
 	return err
 }
@@ -341,7 +344,6 @@ func (b BaseObject) GetAttributeString(attribute string) (string, error) {
 	var ret = ""
 
 	if obj, err = b.Get(attribute); err == nil {
-
 		if obj.Type() == js.TypeString {
 			ret = obj.String()
 		} else {

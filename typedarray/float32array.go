@@ -60,6 +60,22 @@ func NewFloat32Array(value interface{}) (Float32Array, error) {
 	return a, ErrNotImplementedFloat32Array
 }
 
+func NewFloat32ArrayFrom(iterable interface{}) (Float32Array, error) {
+
+	arr, err := newTypedArrayFrom(GetFloat32ArrayInterface(), func(v js.Value) (interface{}, error) {
+		return NewFloat32FromJSObject(v)
+	}, iterable)
+	return arr.(Float32Array), err
+}
+
+func NewFloat32ArrayOf(values ...interface{}) (Float32Array, error) {
+
+	arr, err := newTypedArrayOf(GetFloat32ArrayInterface(), func(v js.Value) (interface{}, error) {
+		return NewFloat32FromJSObject(v)
+	}, values...)
+	return arr.(Float32Array), err
+}
+
 func NewFloat32FromJSObject(obj js.Value) (Float32Array, error) {
 	var u Float32Array
 

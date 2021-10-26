@@ -12,7 +12,7 @@ var singleton sync.Once
 
 var arrayinterface js.Value
 
-//GetInterface get teh JS interface of broadcast channel
+//GetInterface get the JS interface Array
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
@@ -223,6 +223,7 @@ func (a Array) Every(f func(interface{}) bool) (bool, error) {
 	return result, err
 }
 
+//Fill (value, begin, end)
 func (a Array) Fill(i interface{}, opts ...int) error {
 	var err error
 	var arrayJS []interface{}

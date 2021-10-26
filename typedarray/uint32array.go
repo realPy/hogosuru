@@ -60,6 +60,22 @@ func NewUint32Array(value interface{}) (Uint32Array, error) {
 	return a, ErrNotImplementedUint32Array
 }
 
+func NewUint32ArrayFrom(iterable interface{}) (Uint32Array, error) {
+
+	arr, err := newTypedArrayFrom(GetUint32ArrayInterface(), func(v js.Value) (interface{}, error) {
+		return NewUint32FromJSObject(v)
+	}, iterable)
+	return arr.(Uint32Array), err
+}
+
+func NewUint32ArrayOf(values ...interface{}) (Uint32Array, error) {
+
+	arr, err := newTypedArrayOf(GetUint32ArrayInterface(), func(v js.Value) (interface{}, error) {
+		return NewUint32FromJSObject(v)
+	}, values...)
+	return arr.(Uint32Array), err
+}
+
 func NewUint32FromJSObject(obj js.Value) (Uint32Array, error) {
 	var u Uint32Array
 

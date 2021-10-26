@@ -1,4 +1,4 @@
-package domexception
+package jserror
 
 import (
 	"testing"
@@ -12,10 +12,12 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
-func TestException(t *testing.T) {
+func TestNew(t *testing.T) {
 
-	if e, err := New(); testingutils.AssertErr(t, err) {
-		testingutils.AssertExpect(t, "Error", e.ToString_())
+	if e, err := New("throw error"); testingutils.AssertErr(t, err) {
+
+		testingutils.AssertExpect(t, "Error: throw error", e.ToString_())
+
 	}
 
 	var message string = "message error"
@@ -26,17 +28,21 @@ func TestException(t *testing.T) {
 		if str, err := e.Message(); testingutils.AssertErr(t, err) {
 			testingutils.AssertExpect(t, message, str)
 		}
+		message = "message error2"
+		e.SetMessage(message)
+
+		testingutils.AssertExpect(t, "Error: message error2", e.ToString_())
 
 	}
 
 	var customname string = "custom name"
-	if e, err := New(message, customname); testingutils.AssertErr(t, err) {
-		testingutils.AssertExpect(t, "custom name: message error", e.ToString_())
+	if e, err := New(message); testingutils.AssertErr(t, err) {
+		e.SetName(customname)
+		testingutils.AssertExpect(t, "custom name: message error2", e.ToString_())
 
 		if str, err := e.Name(); testingutils.AssertErr(t, err) {
 			testingutils.AssertExpect(t, customname, str)
 		}
-
 	}
 
 }
