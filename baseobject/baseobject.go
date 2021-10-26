@@ -91,21 +91,34 @@ var registry map[string]func(js.Value) (interface{}, error)
 
 //Register Register a construct func for type Object given
 func Register(inter js.Value, contruct func(js.Value) (interface{}, error)) error {
-	var obj js.Value
+
 	var err error
+	var constructname string
 	if registry == nil {
 		registry = make(map[string]func(js.Value) (interface{}, error))
 	}
 
 	//registry[inter.Get("prototype").Call("toString").String()] = contruct
+	if constructname, err = GetFuncName(inter); err == nil {
+		registry[constructname] = contruct
+	}
+	return err
+}
+
+func GetFuncName(inter js.Value) (string, error) {
+	var obj js.Value
+	var err error
+	var name string
 
 	if obj, err = Get(inter, "name"); err == nil {
 		if !obj.IsUndefined() {
-			registry[obj.String()] = contruct
+			name = obj.String()
+		} else {
+			err = ErrUnableGetFunctName
 		}
-
 	}
-	return err
+
+	return name, err
 }
 
 //Discover Discover the Object Given and return a Hogosuru Class if the construct is registered
@@ -218,6 +231,22 @@ func (b BaseObject) Call(name string, args ...interface{}) (js.Value, error) {
 //Discover Use Discover of this struct
 func (b BaseObject) Discover() (interface{}, error) {
 	return Discover(b.JSObject())
+}
+
+//ConstructName Get the construct name
+func (b BaseObject) ConstructName() (string, error) {
+	var construct js.Value
+	var err error
+	var constructname string
+	if construct, err = b.Get("constructor"); err == nil {
+		if !construct.IsUndefined() {
+			constructname, err = GetFuncName(construct)
+		} else {
+			err = ErrUnableGetConstruct
+		}
+
+	}
+	return constructname, err
 }
 
 //SetObject Set the JS value Object to this struct

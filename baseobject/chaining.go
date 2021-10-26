@@ -24,6 +24,18 @@ func (b BaseObject) ToString_() string {
 	return c
 }
 
+func (b BaseObject) ConstructName_() string {
+
+	var c string
+	var err error
+
+	if c, err = b.ConstructName(); err != nil {
+		b.Debug(err.Error())
+	}
+
+	return c
+}
+
 func (b BaseObject) GetAttributeString_(attribute string) string {
 	var c string
 	var err error
