@@ -3,6 +3,6 @@ package file
 import "errors"
 
 var (
-	//ErrNotAnBlob ErrNotAnBlob error
-	ErrNotAFile = errors.New("Object is not a File")
+	ErrNotImplemented = errors.New("Browser not implemented File")
+	ErrNotAFile       = errors.New("Object is not a File")
 )

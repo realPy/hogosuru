@@ -7,13 +7,14 @@ import (
 
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/blob"
+	"github.com/realPy/hogosuru/date"
 )
 
 var singleton sync.Once
 
 var fileinterface js.Value
 
-//GetJSInterface get teh JS interface of broadcast channel
+//GetInterface get the  JS interface File
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
@@ -43,6 +44,31 @@ func (f File) File_() File {
 	return f
 }
 
+func New(bits interface{}, name string, value ...map[string]interface{}) (File, error) {
+
+	var f File
+
+	var arrayJS []interface{}
+
+	if objGo, ok := bits.(baseobject.ObjectFrom); ok {
+		arrayJS = append(arrayJS, objGo.JSObject())
+	} else {
+		arrayJS = append(arrayJS, js.ValueOf(bits))
+	}
+
+	arrayJS = append(arrayJS, js.ValueOf(name))
+	if len(value) > 0 {
+		arrayJS = append(arrayJS, js.ValueOf(value[0]))
+	}
+
+	if fi := GetInterface(); !fi.IsUndefined() {
+
+		f.BaseObject = f.SetObject(fi.New(arrayJS...))
+		return f, nil
+	}
+	return f, ErrNotImplemented
+}
+
 func NewFromJSObject(obj js.Value) (File, error) {
 	var f File
 
@@ -56,35 +82,25 @@ func NewFromJSObject(obj js.Value) (File, error) {
 	return f, ErrNotAFile
 }
 
-func (f File) Name() string {
-	var err error
-	var obj js.Value
+func (f File) Name() (string, error) {
 
-	if obj, err = f.Get("name"); err == nil {
-
-		return obj.String()
-	}
-	return ""
+	return f.GetAttributeString("name")
 }
 
-func (f File) Type() string {
-	var err error
-	var obj js.Value
-
-	if obj, err = f.Get("type"); err == nil {
-
-		return obj.String()
-	}
-	return ""
+func (f File) Type() (string, error) {
+	return f.GetAttributeString("type")
 }
 
-func (f File) LastModified() string {
-	var err error
+func (f File) LastModified() (int64, error) {
+	return f.GetAttributeInt64("lastModified")
+}
+
+func (f File) LastModifiedDate() (date.Date, error) {
 	var obj js.Value
-
-	if obj, err = f.Get("lastModified"); err == nil {
-
-		return obj.String()
+	var d date.Date
+	var err error
+	if obj, err = f.Get("lastModifiedDate"); err == nil {
+		d, err = date.NewFromJSObject(obj)
 	}
-	return ""
+	return d, err
 }
