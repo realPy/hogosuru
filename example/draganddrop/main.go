@@ -54,7 +54,7 @@ func sha256FileStream(f file.File) string {
 			})
 			p.Then(func(i interface{}) *promise.Promise {
 				sha256result = hex.EncodeToString(hashsha256.Sum(nil))
-				println(f.Name() + "  SHA256 Stream: " + sha256result)
+				println(f.Name_() + "  SHA256 Stream: " + sha256result)
 				return nil
 			}, nil)
 
@@ -81,7 +81,7 @@ func sha256File(f file.File) {
 	p.Then(func(i interface{}) *promise.Promise {
 
 		sha256result = hex.EncodeToString(hashsha256.Sum(nil))
-		println(f.Name() + "  SHA256 Blob: " + sha256result)
+		println(f.Name_() + "  SHA256 Blob: " + sha256result)
 		return nil
 	}, nil)
 }
