@@ -462,7 +462,9 @@ All help is welcome. If you are interested by this project, please contact me
 | CSSRule |  Full |  https://developer.mozilla.org/en-US/docs/Web/API/CSSRule | 
 | CSSStyleDeclaration |  Full |  https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration | 
 | CustomEvent |  Full |  https://developer.mozilla.org/fr/docs/Web/API/CustomEvent |
-| DataTransfer | Partial implemented | https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer |
+| DataTransfer | Full | https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer |
+| DataTransferItem | Partial | https://developer.mozilla.org/en-US/docs/Web/API/DataTransferItem |
+| DataTransferItemList | Full | https://developer.mozilla.org/en-US/docs/Web/API/DataTransferItemList |
 | Date| Full | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Date | 
 | Document | Mostly  | https://developer.mozilla.org/fr/docs/Web/API/Document | 
 | DragEvent |  Full |  https://developer.mozilla.org/en-US/docs/Web/API/DragEvent |

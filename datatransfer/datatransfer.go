@@ -4,7 +4,9 @@ import (
 	"sync"
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/array"
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/datatranferitemlist"
 	"github.com/realPy/hogosuru/filelist"
 )
 
@@ -12,7 +14,7 @@ var singleton sync.Once
 
 var dtinterface js.Value
 
-//Channel struct
+//DataTransfer struct
 type DataTransfer struct {
 	baseobject.BaseObject
 }
@@ -79,24 +81,62 @@ func (dt DataTransfer) Files() (filelist.FileList, error) {
 
 	var err error
 	var obj js.Value
+	var f filelist.FileList
 
 	if obj, err = dt.Get("files"); err == nil {
 
-		return filelist.NewFromJSObject(obj)
+		f, err = filelist.NewFromJSObject(obj)
 	}
-	return filelist.FileList{}, err
+	return f, err
+}
+func (dt DataTransfer) SetFiles(files filelist.FileList) error {
 
+	return dt.SetAttribute("files", files)
 }
 
-func (dt DataTransfer) Items() (filelist.FileList, error) {
+func (dt DataTransfer) Items() (datatranferitemlist.DataTransferItemList, error) {
 
 	var err error
 	var obj js.Value
+	var items datatranferitemlist.DataTransferItemList
 
-	if obj, err = dt.Get("files"); err == nil {
+	if obj, err = dt.Get("items"); err == nil {
 
-		return filelist.NewFromJSObject(obj)
+		items, err = datatranferitemlist.NewFromJSObject(obj)
 	}
-	return filelist.FileList{}, err
+	return items, err
 
+}
+
+func (dt DataTransfer) SetItems(list datatranferitemlist.DataTransferItemList) error {
+
+	return dt.SetAttribute("items", list)
+}
+func (dt DataTransfer) Types() (array.Array, error) {
+
+	var err error
+	var obj js.Value
+	var types array.Array
+
+	if obj, err = dt.Get("types"); err == nil {
+
+		types, err = array.NewFromJSObject(obj)
+	}
+	return types, err
+}
+
+func (dt DataTransfer) DropEffect() (string, error) {
+	return dt.GetAttributeString("dropEffect")
+}
+
+func (dt DataTransfer) SetDropEffect(value string) error {
+	return dt.SetAttributeString("dropEffect", value)
+}
+
+func (dt DataTransfer) EffectAllowed() (string, error) {
+	return dt.GetAttributeString("effectAllowed")
+}
+
+func (dt DataTransfer) SetEffectAllowed(value string) error {
+	return dt.SetAttributeString("effectAllowed", value)
 }
