@@ -99,16 +99,18 @@ func dropHandler() js.Func {
 			e.PreventDefault()
 			if dt, err = e.DataTransfer(); err == nil {
 				if files, err = dt.Files(); err == nil {
-					for i := 0; i < files.Length(); i++ {
-						if f, err = files.Item(i); err == nil {
+					if l, err := files.Length(); err == nil {
+						for i := 0; i < l; i++ {
+							if f, err = files.Item(i); err == nil {
 
-							//md5sum := md5File(f)
-							//println(f.Name() + "  MD5: " + md5sum)
-							//sha256sum := sha256File(f)
-							//println(f.Name() + "  SHA256: " + sha256sum)
-							//sha256FileStream(f)
-							sha256File(f)
+								//md5sum := md5File(f)
+								//println(f.Name() + "  MD5: " + md5sum)
+								//sha256sum := sha256File(f)
+								//println(f.Name() + "  SHA256: " + sha256sum)
+								//sha256FileStream(f)
+								sha256File(f)
 
+							}
 						}
 					}
 

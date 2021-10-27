@@ -49,7 +49,7 @@ func AssertExpect(t *testing.T, exp interface{}, get interface{}) bool {
 		if reflect.ValueOf(get).IsValid() {
 			bType = reflect.TypeOf(get).Name()
 		}
-		t.Errorf("%s Expect %v [%s] | %v [%s]", prefix, exp, aType, get, bType)
+		t.Errorf("%s Expect %s:%v Have %s:%v", prefix, aType, exp, bType, get)
 		return false
 	}
 

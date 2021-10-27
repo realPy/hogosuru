@@ -61,3 +61,8 @@ func (f FileList) Item(index int) (file.File, error) {
 	return file.NewFromJSObject(f.JSObject().Index(index))
 
 }
+func (f FileList) Length() (int, error) {
+
+	return f.GetAttributeInt("length")
+
+}
