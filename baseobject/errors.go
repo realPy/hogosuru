@@ -27,4 +27,6 @@ var (
 	ErrUnableGetConstruct = errors.New("Unable to get the constructor")
 	//ErrNotImplementedFunc ErrNotImplementedFunc error
 	ErrNotImplementedFunc = errors.New("Function.prototype.apply was called on undefined, which is a undefined and not a function")
+	//ErrUndefinedValue ErrUndefinedValue error
+	ErrUndefinedValue = errors.New("Undefined value")
 )

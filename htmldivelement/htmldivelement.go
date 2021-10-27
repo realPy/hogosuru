@@ -74,13 +74,22 @@ func NewFromElement(elem element.Element) (HtmlDivElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlDivElement, error) {
 	var h HtmlDivElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmlDivElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHtmlDivElement
+	return h, err
 }

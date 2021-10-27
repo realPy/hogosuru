@@ -51,10 +51,15 @@ func IDBDatabaseNewFromJSObject(obj js.Value) (IDBDatabase, error) {
 	var i IDBDatabase
 	var err error
 	if ai := IDBDatabaseGetInterface(); !ai.IsUndefined() {
-		if obj.InstanceOf(ai) {
-			i.BaseObject = i.SetObject(obj)
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnIDBDatabase
+
+			if obj.InstanceOf(ai) {
+				i.BaseObject = i.SetObject(obj)
+			} else {
+				err = ErrNotAnIDBDatabase
+			}
 		}
 	} else {
 		err = ErrNotImplemented

@@ -29,7 +29,8 @@ func ImplementedExpect(t *testing.T, obj baseobject.BaseObject, methodsname []st
 func AssertErr(t *testing.T, err error) bool {
 
 	if err != nil {
-		t.Errorf(err.Error())
+		_, file, line, _ := runtime.Caller(1)
+		t.Errorf("%s:%d >> %s", filepath.Base(file), line, err.Error())
 		return false
 	}
 
@@ -40,7 +41,7 @@ func AssertExpect(t *testing.T, exp interface{}, get interface{}) bool {
 
 	if !reflect.DeepEqual(exp, get) {
 		_, file, line, _ := runtime.Caller(1)
-		prefix := fmt.Sprintf("%s:%d >>", filepath.Base(file), line)
+		prefix := fmt.Sprintf("%s:%d >> ", filepath.Base(file), line)
 		var aType = "<nil>"
 		var bType = "<nil>"
 		if reflect.ValueOf(exp).IsValid() {

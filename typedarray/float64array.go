@@ -78,13 +78,22 @@ func NewFloat64ArrayOf(values ...interface{}) (Float64Array, error) {
 
 func NewFloat64FromJSObject(obj js.Value) (Float64Array, error) {
 	var u Float64Array
-
+	var err error
 	if ui := GetFloat64ArrayInterface(); !ui.IsUndefined() {
-		if obj.InstanceOf(ui) {
-			u.BaseObject = u.SetObject(obj)
-			return u, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(ui) {
+				u.BaseObject = u.SetObject(obj)
+
+			} else {
+				err = ErrNotAFloat64Array
+			}
 		}
+	} else {
+		err = ErrNotImplementedFloat64Array
 	}
 
-	return u, ErrNotAFloat64Array
+	return u, err
 }

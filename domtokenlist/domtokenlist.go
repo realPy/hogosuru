@@ -14,7 +14,7 @@ var singleton sync.Once
 
 var domtokenlistinterface js.Value
 
-//DOMRectLists struct
+//DOMTokenList struct
 type DOMTokenList struct {
 	baseobject.BaseObject
 }
@@ -27,7 +27,7 @@ func (d DOMTokenList) DOMTokenList_() DOMTokenList {
 	return d
 }
 
-//GetJSInterface get the JS interface of formdata
+//GetInterface get the JS interface DOMTokenList
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
@@ -48,11 +48,16 @@ func NewFromJSObject(obj js.Value) (DOMTokenList, error) {
 	var d DOMTokenList
 	var err error
 	if dli := GetInterface(); !dli.IsUndefined() {
-		if obj.InstanceOf(dli) {
-			d.BaseObject = d.SetObject(obj)
-
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnDOMTokenList
+
+			if obj.InstanceOf(dli) {
+				d.BaseObject = d.SetObject(obj)
+
+			} else {
+				err = ErrNotAnDOMTokenList
+			}
 		}
 	} else {
 		err = ErrNotImplemented

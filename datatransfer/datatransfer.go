@@ -55,18 +55,40 @@ func New() (DataTransfer, error) {
 
 func NewFromJSObject(obj js.Value) (DataTransfer, error) {
 	var dt DataTransfer
-
+	var err error
 	if dti := GetInterface(); !dti.IsUndefined() {
-		if obj.InstanceOf(dti) {
-			dt.BaseObject = dt.SetObject(obj)
-			return dt, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(dti) {
+				dt.BaseObject = dt.SetObject(obj)
+
+			} else {
+				err = ErrNotADataTransfer
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
 
-	return dt, ErrNotADataTransfer
+	return dt, err
 }
 
 func (dt DataTransfer) Files() (filelist.FileList, error) {
+
+	var err error
+	var obj js.Value
+
+	if obj, err = dt.Get("files"); err == nil {
+
+		return filelist.NewFromJSObject(obj)
+	}
+	return filelist.FileList{}, err
+
+}
+
+func (dt DataTransfer) Items() (filelist.FileList, error) {
 
 	var err error
 	var obj js.Value

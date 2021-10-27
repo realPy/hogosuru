@@ -454,9 +454,9 @@ All help is welcome. If you are interested by this project, please contact me
 | AbortSignal | Full | https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal | 
 | AnimationEvent | Full | https://developer.mozilla.org/fr/docs/Web/API/AnimationEvent | 
 | Array | Full | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Array | 
-| Arraybuffer |  Partial | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer | 
+| Arraybuffer |  Full | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer | 
 | Attr | Full | https://developer.mozilla.org/fr/docs/Web/API/Attr |
-| Blob | Full + stream additional support|  https://developer.mozilla.org/fr/docs/Web/API/Blob |
+| Blob | Full |  https://developer.mozilla.org/fr/docs/Web/API/Blob |
 | Broadcast Channel |  Full |  https://developer.mozilla.org/en-US/docs/Web/API/BroadcastChannel  | 
 | Console |  Full |  https://developer.mozilla.org/fr/docs/Web/API/Console  | 
 | CSSRule |  Full |  https://developer.mozilla.org/en-US/docs/Web/API/CSSRule | 

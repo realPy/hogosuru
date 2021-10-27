@@ -75,15 +75,24 @@ func NewFromElement(elem element.Element) (HtmlIFrameElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlIFrameElement, error) {
 	var h HtmlIFrameElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmlIFrameElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHtmlIFrameElement
+	return h, err
 }
 
 func (h HtmlIFrameElement) AllowPaymentRequest() (bool, error) {

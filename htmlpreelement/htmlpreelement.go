@@ -75,13 +75,22 @@ func NewFromElement(elem element.Element) (HtmlPreElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlPreElement, error) {
 	var h HtmlPreElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHTMLPreElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHTMLPreElement
+	return h, err
 }

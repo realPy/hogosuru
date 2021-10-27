@@ -61,12 +61,19 @@ func NewFromJSObject(obj js.Value) (WebSocket, error) {
 	var w WebSocket
 	var err error
 	if si := GetInterface(); !si.IsUndefined() {
-		if obj.InstanceOf(si) {
-			w.BaseObject = w.SetObject(obj)
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
+			if obj.InstanceOf(si) {
+				w.BaseObject = w.SetObject(obj)
+
+			} else {
+				err = ErrNotAWebSocket
+			}
 		}
 	} else {
-		err = ErrNotAWebSocket
+		err = ErrNotImplemented
 	}
 
 	return w, err

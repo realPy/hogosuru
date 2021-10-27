@@ -75,15 +75,24 @@ func NewFromElement(elem element.Element) (HtmlStyleElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlStyleElement, error) {
 	var h HtmlStyleElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHTMLStyleElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHTMLStyleElement
+	return h, err
 }
 
 func (h HtmlStyleElement) Media() (string, error) {

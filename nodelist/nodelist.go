@@ -45,14 +45,23 @@ func GetInterface() js.Value {
 
 func NewFromJSObject(obj js.Value) (NodeList, error) {
 	var n NodeList
-
+	var err error
 	if nli := GetInterface(); !nli.IsUndefined() {
-		if obj.InstanceOf(nli) {
-			n.BaseObject = n.SetObject(obj)
-			return n, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(nli) {
+				n.BaseObject = n.SetObject(obj)
+
+			} else {
+				err = ErrNotAnNodeList
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return n, ErrNotAnNodeList
+	return n, err
 }
 
 func (n NodeList) Item(index int) (node.Node, error) {

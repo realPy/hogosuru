@@ -74,15 +74,24 @@ func NewFromElement(elem element.Element) (HtmlLIElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlLIElement, error) {
 	var h HtmlLIElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHTMLLIElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHTMLLIElement
+	return h, err
 }
 
 func (h HtmlLIElement) Value() (int, error) {

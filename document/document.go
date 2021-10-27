@@ -65,13 +65,22 @@ func New() (Document, error) {
 
 func NewFromJSObject(obj js.Value) (Document, error) {
 	var d Document
-
+	var err error
 	if dci := GetInterface(); !dci.IsUndefined() {
-		if obj.InstanceOf(dci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			d.BaseObject = d.SetObject(obj)
-			return d, nil
+			if obj.InstanceOf(dci) {
+
+				d.BaseObject = d.SetObject(obj)
+
+			} else {
+				err = ErrNotADocument
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return d, ErrNotADocument
+	return d, err
 }

@@ -45,11 +45,16 @@ func NewFromJSObject(obj js.Value) (StyleSheet, error) {
 	var s StyleSheet
 	var err error
 	if dli := GetInterface(); !dli.IsUndefined() {
-		if obj.InstanceOf(dli) {
-			s.BaseObject = s.SetObject(obj)
-
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnStyleSheet
+
+			if obj.InstanceOf(dli) {
+				s.BaseObject = s.SetObject(obj)
+
+			} else {
+				err = ErrNotAnStyleSheet
+			}
 		}
 	} else {
 		err = ErrNotImplemented

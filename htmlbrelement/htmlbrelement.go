@@ -74,13 +74,22 @@ func NewFromElement(elem element.Element) (HtmlBRElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlBRElement, error) {
 	var h HtmlBRElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmlBrElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHtmlBrElement
+	return h, err
 }

@@ -75,15 +75,24 @@ func NewFromElement(elem element.Element) (HtmlMeterElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlMeterElement, error) {
 	var h HtmlMeterElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHTMLMeterElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHTMLMeterElement
+	return h, err
 }
 
 func (h HtmlMeterElement) High() (float64, error) {

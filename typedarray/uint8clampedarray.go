@@ -78,13 +78,22 @@ func NewUint8ClampedArrayOf(values ...interface{}) (Uint8ClampedArray, error) {
 
 func NewUint8ClampedFromJSObject(obj js.Value) (Uint8ClampedArray, error) {
 	var u Uint8ClampedArray
-
+	var err error
 	if ui := GetUint8ClampedArrayInterface(); !ui.IsUndefined() {
-		if obj.InstanceOf(ui) {
-			u.BaseObject = u.SetObject(obj)
-			return u, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(ui) {
+				u.BaseObject = u.SetObject(obj)
+
+			} else {
+				err = ErrNotAUint8ClampedArray
+			}
 		}
+	} else {
+		err = ErrNotImplementedUint8ClampedArray
 	}
 
-	return u, ErrNotAUint8ClampedArray
+	return u, err
 }

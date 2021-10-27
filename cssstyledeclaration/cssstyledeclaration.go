@@ -45,11 +45,16 @@ func NewFromJSObject(obj js.Value) (CSSStyleDeclaration, error) {
 	var c CSSStyleDeclaration
 	var err error
 	if dli := GetInterface(); !dli.IsUndefined() {
-		if obj.InstanceOf(dli) {
-			c.BaseObject = c.SetObject(obj)
-
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnCSSStyleDeclaration
+
+			if obj.InstanceOf(dli) {
+				c.BaseObject = c.SetObject(obj)
+
+			} else {
+				err = ErrNotAnCSSStyleDeclaration
+			}
 		}
 	} else {
 		err = ErrNotImplemented

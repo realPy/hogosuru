@@ -56,15 +56,22 @@ func New() (EventTarget, error) {
 
 func NewFromJSObject(obj js.Value) (EventTarget, error) {
 	var e EventTarget
-
+	var err error
 	if eti := GetInterface(); !eti.IsUndefined() {
-		if obj.InstanceOf(eti) {
-			e.BaseObject = e.SetObject(obj)
-			return e, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(eti) {
+				e.BaseObject = e.SetObject(obj)
+
+			} else {
+				err = ErrNotAnEventTarget
+			}
 		}
 	}
 
-	return e, ErrNotAnEventTarget
+	return e, err
 }
 
 func (e EventTarget) AddEventListener(name string, handler func(e event.Event)) (js.Func, error) {

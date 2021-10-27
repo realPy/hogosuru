@@ -66,15 +66,24 @@ func New() (Response, error) {
 
 func NewFromJSObject(obj js.Value) (Response, error) {
 	var response Response
-
+	var err error
 	if ri := GetInterface(); !ri.IsUndefined() {
-		if obj.InstanceOf(ri) {
-			response.BaseObject = response.SetObject(obj)
-			return response, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(ri) {
+				response.BaseObject = response.SetObject(obj)
+
+			} else {
+				err = ErrNotAnFResp
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
 
-	return response, ErrNotAnFResp
+	return response, err
 }
 
 func (r Response) Ok() (bool, error) {

@@ -48,14 +48,23 @@ func GetInterface() js.Value {
 
 func NewFromJSObject(obj js.Value) (DragEvent, error) {
 	var e DragEvent
-
+	var err error
 	if di := GetInterface(); !di.IsUndefined() {
-		if obj.InstanceOf(di) {
-			e.BaseObject = e.SetObject(obj)
-			return e, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(di) {
+				e.BaseObject = e.SetObject(obj)
+
+			} else {
+				err = ErrNotAnDragEvent
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return e, ErrNotAnDragEvent
+	return e, err
 }
 
 func (d DragEvent) DataTransfer() (datatransfer.DataTransfer, error) {

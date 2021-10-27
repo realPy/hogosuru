@@ -44,15 +44,24 @@ func (s Storage) Storage_() Storage {
 
 func NewFromJSObject(obj js.Value) (Storage, error) {
 	var s Storage
-
+	var err error
 	if si := GetInterface(); !si.IsUndefined() {
-		if obj.InstanceOf(si) {
-			s.BaseObject = s.SetObject(obj)
-			return s, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(si) {
+				s.BaseObject = s.SetObject(obj)
+
+			} else {
+				err = ErrNotAStorage
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
 
-	return s, ErrNotAStorage
+	return s, err
 }
 
 func (l Storage) SetItem(key, value string) error {

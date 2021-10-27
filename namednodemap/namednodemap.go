@@ -45,14 +45,23 @@ func GetInterface() js.Value {
 
 func NewFromJSObject(obj js.Value) (NamedNodeMap, error) {
 	var n NamedNodeMap
-
+	var err error
 	if nli := GetInterface(); !nli.IsUndefined() {
-		if obj.InstanceOf(nli) {
-			n.BaseObject = n.SetObject(obj)
-			return n, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(nli) {
+				n.BaseObject = n.SetObject(obj)
+
+			} else {
+				err = ErrNotANamedNodeMap
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return n, ErrNotANamedNodeMap
+	return n, err
 }
 
 func (n NamedNodeMap) Item(index int) (attr.Attr, error) {

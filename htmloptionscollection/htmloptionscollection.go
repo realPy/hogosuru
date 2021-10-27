@@ -47,11 +47,18 @@ func NewFromJSObject(obj js.Value) (HtmlOptionsCollection, error) {
 	var h HtmlOptionsCollection
 	var err error
 	if fli := GetInterface(); !fli.IsUndefined() {
-		if obj.InstanceOf(fli) {
-			h.BaseObject = h.SetObject(obj)
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(fli) {
+				h.BaseObject = h.SetObject(obj)
+			} else {
+				err = ErrNotAnHTMLOptionsCollection
+			}
 		}
 	} else {
-		err = ErrNotAnHTMLOptionsCollection
+		err = ErrNotImplemented
 	}
 
 	return h, err

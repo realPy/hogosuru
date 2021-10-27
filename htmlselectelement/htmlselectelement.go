@@ -79,15 +79,24 @@ func NewFromElement(elem element.Element) (HtmlSelectElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlSelectElement, error) {
 	var h HtmlSelectElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHTMLSelectElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHTMLSelectElement
+	return h, err
 }
 
 func (h HtmlSelectElement) Autofocus() (bool, error) {

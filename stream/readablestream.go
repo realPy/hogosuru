@@ -44,16 +44,24 @@ func (r ReadableStream) Locked() (bool, error) {
 
 func NewFromJSObject(obj js.Value) (ReadableStream, error) {
 	var r ReadableStream
-
+	var err error
 	if rsi := GetInterface(); !rsi.IsUndefined() {
-		if obj.InstanceOf(rsi) {
-			r.BaseObject = r.SetObject(obj)
-			return r, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
+			if obj.InstanceOf(rsi) {
+				r.BaseObject = r.SetObject(obj)
+
+			} else {
+				err = ErrNotAReadableStream
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
 
-	return r, ErrNotAReadableStream
+	return r, err
 }
 
 func (r ReadableStream) Cancel() (promise.Promise, error) {

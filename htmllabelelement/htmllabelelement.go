@@ -75,15 +75,24 @@ func NewFromElement(elem element.Element) (HtmlLabelElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlLabelElement, error) {
 	var h HtmlLabelElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHTMLLabelElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHTMLLabelElement
+	return h, err
 }
 
 func (h HtmlLabelElement) Control() (htmlelement.HtmlElement, error) {

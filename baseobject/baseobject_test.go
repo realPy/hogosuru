@@ -575,13 +575,13 @@ func TestGetAttributeString(t *testing.T) {
 
 			}
 
-			if _, err := b.GetAttributeString("Event"); !errors.Is(err, ErrObjectNotString) {
-				t.Errorf("Must Return %s", ErrObjectNotString.Error())
+			if _, err := b.GetAttributeString("Event"); !errors.Is(err, ErrUndefinedValue) {
+				t.Errorf("Must Return %s", ErrUndefinedValue.Error())
 
 			}
 
-			if _, err := b.GetAttributeString("Eventp"); !errors.Is(err, ErrObjectNotString) {
-				t.Errorf("Must Return %s", ErrObjectNotString.Error())
+			if _, err := b.GetAttributeString("Eventp"); !errors.Is(err, ErrUndefinedValue) {
+				t.Errorf("Must Return %s", ErrUndefinedValue.Error())
 			}
 		} else {
 
@@ -786,13 +786,13 @@ func TestGetAttributeInt(t *testing.T) {
 
 			}
 
-			if _, err := b.GetAttributeInt("Event"); !errors.Is(err, ErrObjectNotNumber) {
-				t.Errorf("Must Return %s", ErrObjectNotNumber.Error())
+			if _, err := b.GetAttributeInt("Event"); !errors.Is(err, ErrUndefinedValue) {
+				t.Errorf("Must Return %s", ErrUndefinedValue.Error())
 
 			}
 
-			if _, err := b.GetAttributeInt("Eventp"); !errors.Is(err, ErrObjectNotNumber) {
-				t.Errorf("Must Return %s", ErrObjectNotNumber.Error())
+			if _, err := b.GetAttributeInt("Eventp"); !errors.Is(err, ErrUndefinedValue) {
+				t.Errorf("Must Return %s", ErrUndefinedValue.Error())
 			}
 		} else {
 
@@ -873,13 +873,13 @@ func TestGetAttributeDouble(t *testing.T) {
 
 			}
 
-			if _, err := b.GetAttributeDouble("Event"); !errors.Is(err, ErrObjectNotDouble) {
-				t.Errorf("Must Return %s", ErrObjectNotDouble.Error())
+			if _, err := b.GetAttributeDouble("Event"); !errors.Is(err, ErrUndefinedValue) {
+				t.Errorf("Must Return %s", ErrUndefinedValue.Error())
 
 			}
 
-			if _, err := b.GetAttributeDouble("Eventp"); !errors.Is(err, ErrObjectNotDouble) {
-				t.Errorf("Must Return %s", ErrObjectNotDouble.Error())
+			if _, err := b.GetAttributeDouble("Eventp"); !errors.Is(err, ErrUndefinedValue) {
+				t.Errorf("Must Return %s", ErrUndefinedValue.Error())
 			}
 
 		} else {

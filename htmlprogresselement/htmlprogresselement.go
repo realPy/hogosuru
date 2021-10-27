@@ -75,15 +75,24 @@ func NewFromElement(elem element.Element) (HtmlProgressElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlProgressElement, error) {
 	var h HtmlProgressElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmlProgressElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHtmlProgressElement
+	return h, err
 }
 
 func (h HtmlProgressElement) Max() (float64, error) {

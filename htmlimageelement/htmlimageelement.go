@@ -75,15 +75,24 @@ func NewFromElement(elem element.Element) (HtmlImageElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlImageElement, error) {
 	var h HtmlImageElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmImageElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHtmImageElement
+	return h, err
 }
 
 func (h HtmlImageElement) Alt() (string, error) {

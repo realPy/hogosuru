@@ -75,15 +75,24 @@ func NewFromElement(elem element.Element) (HtmlDataListElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlDataListElement, error) {
 	var h HtmlDataListElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmlDataListElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHtmlDataListElement
+	return h, err
 }
 
 func (h HtmlDataListElement) Options() (htmlcollection.HtmlCollection, error) {

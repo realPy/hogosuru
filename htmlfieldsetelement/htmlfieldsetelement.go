@@ -76,15 +76,24 @@ func NewFromElement(elem element.Element) (HtmlFieldSetElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlFieldSetElement, error) {
 	var h HtmlFieldSetElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmlFieldSetElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHtmlFieldSetElement
+	return h, err
 }
 
 func (h HtmlFieldSetElement) Disabled() (bool, error) {

@@ -74,15 +74,24 @@ func NewFromElement(elem element.Element) (HtmlFormElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlFormElement, error) {
 	var h HtmlFormElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmlFormElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHtmlFormElement
+	return h, err
 }
 
 func (h HtmlFormElement) Name() (string, error) {

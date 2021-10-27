@@ -75,15 +75,24 @@ func NewFromElement(elem element.Element) (HtmlDetailsElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlDetailsElement, error) {
 	var h HtmlDetailsElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmlDetailsElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHtmlDetailsElement
+	return h, err
 }
 
 func (h HtmlDetailsElement) Open() (bool, error) {

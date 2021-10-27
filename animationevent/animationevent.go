@@ -47,15 +47,23 @@ func GetInterface() js.Value {
 }
 
 func NewFromJSObject(obj js.Value) (AnimationEvent, error) {
-	var e AnimationEvent
-
+	var a AnimationEvent
+	var err error
 	if di := GetInterface(); !di.IsUndefined() {
-		if obj.InstanceOf(di) {
-			e.BaseObject = e.SetObject(obj)
-			return e, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+			if obj.InstanceOf(di) {
+				a.BaseObject = a.SetObject(obj)
+
+			} else {
+				err = ErrNotAnAnimationEvent
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return e, ErrNotAnAnimationEvent
+	return a, err
 }
 
 func (a AnimationEvent) AnimationName() (string, error) {

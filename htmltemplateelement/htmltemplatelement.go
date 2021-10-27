@@ -75,15 +75,24 @@ func NewFromElement(elem element.Element) (HtmlTemplateElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlTemplateElement, error) {
 	var h HtmlTemplateElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHTMLTemplateElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHTMLTemplateElement
+	return h, err
 }
 
 func (h HtmlTemplateElement) Content() (documentfragment.DocumentFragment, error) {

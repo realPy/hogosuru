@@ -77,15 +77,24 @@ func NewFromElement(elem element.Element) (HtmlButtonElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlButtonElement, error) {
 	var h HtmlButtonElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmlButtonElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHtmlButtonElement
+	return h, err
 }
 
 func (h HtmlButtonElement) Autofocus() (bool, error) {

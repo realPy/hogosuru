@@ -75,15 +75,23 @@ func New(urlfetch string, opts ...interface{}) (Fetch, error) {
 
 func NewFromJSObject(obj js.Value) (Fetch, error) {
 	var h Fetch
-
+	var err error
 	if fetchi := GetInterface(); !fetchi.IsUndefined() {
-		if obj.InstanceOf(fetchi) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(fetchi) {
+
+				h.BaseObject = h.SetObject(obj)
+			} else {
+				err = ErrNotAFetch
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAFetch
+	return h, err
 }
 
 func (f Fetch) Then(resolve func(response.Response) *promise.Promise, reject func(error)) (promise.Promise, error) {

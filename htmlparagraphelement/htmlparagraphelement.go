@@ -74,13 +74,22 @@ func NewFromElement(elem element.Element) (HtmlParagraphElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlParagraphElement, error) {
 	var h HtmlParagraphElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHTMLParagraphElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHTMLParagraphElement
+	return h, err
 }

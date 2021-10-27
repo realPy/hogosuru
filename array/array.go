@@ -134,11 +134,16 @@ func NewFromJSObject(obj js.Value) (Array, error) {
 	var a Array
 	var err error
 	if ai := GetInterface(); !ai.IsUndefined() {
-		if obj.InstanceOf(ai) {
-			a.BaseObject = a.SetObject(obj)
-			return a, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnArray
+
+			if obj.InstanceOf(ai) {
+				a.BaseObject = a.SetObject(obj)
+
+			} else {
+				err = ErrNotAnArray
+			}
 		}
 	} else {
 		err = ErrNotImplemented

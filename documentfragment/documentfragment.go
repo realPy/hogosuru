@@ -60,15 +60,24 @@ func New() (DocumentFragment, error) {
 
 func NewFromJSObject(obj js.Value) (DocumentFragment, error) {
 	var d DocumentFragment
-
+	var err error
 	if dci := GetInterface(); !dci.IsUndefined() {
-		if obj.InstanceOf(dci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			d.BaseObject = d.SetObject(obj)
-			return d, nil
+			if obj.InstanceOf(dci) {
+
+				d.BaseObject = d.SetObject(obj)
+
+			} else {
+				err = ErrNotADocumentFragment
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return d, ErrNotADocumentFragment
+	return d, err
 }
 
 func (d DocumentFragment) ChildElementCount() (int, error) {

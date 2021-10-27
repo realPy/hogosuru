@@ -134,13 +134,22 @@ func NewFromElement(elem element.Element) (HtmlHeadingElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlHeadingElement, error) {
 	var h HtmlHeadingElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmlHeadingElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHtmlHeadingElement
+	return h, err
 }
