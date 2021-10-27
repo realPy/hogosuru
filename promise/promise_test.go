@@ -355,7 +355,7 @@ func TestRace(t *testing.T) {
 
 	select {
 	case <-io:
-	case <-time.After(time.Duration(200) * time.Millisecond):
+	case <-time.After(time.Duration(2000) * time.Millisecond):
 		t.Errorf("No message channel receive")
 	}
 
@@ -379,7 +379,7 @@ func TestFinally(t *testing.T) {
 
 	select {
 	case <-io:
-	case <-time.After(time.Duration(500) * time.Millisecond):
+	case <-time.After(time.Duration(2000) * time.Millisecond):
 		t.Errorf("No message channel receive")
 	}
 
@@ -402,7 +402,7 @@ func TestReject(t *testing.T) {
 
 	select {
 	case <-io:
-	case <-time.After(time.Duration(100) * time.Millisecond):
+	case <-time.After(time.Duration(1000) * time.Millisecond):
 		t.Errorf("No message channel receive")
 	}
 
@@ -426,7 +426,7 @@ func TestResolve(t *testing.T) {
 
 	select {
 	case <-io:
-	case <-time.After(time.Duration(100) * time.Millisecond):
+	case <-time.After(time.Duration(1000) * time.Millisecond):
 		t.Errorf("No message channel receive")
 	}
 
