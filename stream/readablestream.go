@@ -1,9 +1,12 @@
 package stream
 
+// https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream
+
 import (
 	"sync"
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/array"
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/promise"
 )
@@ -12,7 +15,7 @@ var singleton sync.Once
 
 var readablestreaminterface js.Value
 
-//GetInterface get teh JS interface of broadcast channel
+//GetInterface get the JS interface ReadableStream
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
@@ -21,6 +24,9 @@ func GetInterface() js.Value {
 		if readablestreaminterface, err = baseobject.Get(js.Global(), "ReadableStream"); err != nil {
 			readablestreaminterface = js.Undefined()
 		}
+		baseobject.Register(readablestreaminterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+		})
 	})
 
 	return readablestreaminterface
@@ -30,7 +36,7 @@ type ReadableStream struct {
 	baseobject.BaseObject
 }
 
-type ReadableStreameFrom interface {
+type ReadableStreamFrom interface {
 	ReadableStream_() ReadableStream
 }
 
@@ -40,6 +46,17 @@ func (r ReadableStream) ReadableStream_() ReadableStream {
 
 func (r ReadableStream) Locked() (bool, error) {
 	return r.GetAttributeBool("locked")
+}
+
+//New Create a new ReadableStream
+func New() (ReadableStream, error) {
+	var r ReadableStream
+
+	if ri := GetInterface(); !ri.IsUndefined() {
+		r.BaseObject = r.SetObject(ri.New())
+		return r, nil
+	}
+	return r, ErrNotImplemented
 }
 
 func NewFromJSObject(obj js.Value) (ReadableStream, error) {
@@ -86,5 +103,29 @@ func (r ReadableStream) GetReader() (ReadableStreamDefaultReader, error) {
 
 	}
 	return ReadableStreamDefaultReader{}, err
+
+}
+
+func (r ReadableStream) Tee() ([]ReadableStream, error) {
+	var err error
+	var obj js.Value
+	var ret []ReadableStream
+	var a array.Array
+
+	if obj, err = r.Call("tee"); err == nil {
+
+		if a, err = array.NewFromJSObject(obj); err == nil {
+
+			a.ForEach(func(i interface{}) {
+
+				if r, ok := i.(ReadableStreamFrom); ok {
+					ret = append(ret, r.ReadableStream_())
+				}
+
+			})
+		}
+
+	}
+	return ret, err
 
 }

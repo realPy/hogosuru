@@ -538,7 +538,9 @@ All help is welcome. If you are interested by this project, please contact me
 | Map | Full | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Map |
 | ProgressEvent | Full | https://developer.mozilla.org/en-US/docs/Web/API/ProgressEvent |
 | Promise | Full | https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise |
-| Response | Full (not the experimental method) | https://developer.mozilla.org/fr/docs/Web/API/Response |
+| ReadableStream | Full | https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream |
+
+| Response | Full | https://developer.mozilla.org/fr/docs/Web/API/Response |
 | Storage | Full | https://developer.mozilla.org/fr/docs/Mozilla/Add-ons/WebExtensions/API/storage |
 | Stream | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/Streams_API |
 | StyleSheet | Full | https://developer.mozilla.org/en-US/docs/Web/API/StyleSheet |
