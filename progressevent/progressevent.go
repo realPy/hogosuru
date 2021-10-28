@@ -57,16 +57,24 @@ func New() (ProgressEvent, error) {
 
 func NewFromJSObject(obj js.Value) (ProgressEvent, error) {
 	var p ProgressEvent
-
+	var err error
 	if pei := GetInterface(); !pei.IsUndefined() {
-		if obj.InstanceOf(pei) {
-			p.BaseObject = p.SetObject(obj)
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			return p, nil
+			if obj.InstanceOf(pei) {
+				p.BaseObject = p.SetObject(obj)
+
+			} else {
+				err = ErrNotAnProgressEvent
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
 
-	return p, ErrNotAnProgressEvent
+	return p, err
 }
 
 func (p ProgressEvent) LengthComputable() (bool, error) {

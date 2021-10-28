@@ -45,11 +45,16 @@ func NewFromJSObject(obj js.Value) (CSSRule, error) {
 	var c CSSRule
 	var err error
 	if dli := GetInterface(); !dli.IsUndefined() {
-		if obj.InstanceOf(dli) {
-			c.BaseObject = c.SetObject(obj)
-
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnCSSRule
+
+			if obj.InstanceOf(dli) {
+				c.BaseObject = c.SetObject(obj)
+
+			} else {
+				err = ErrNotAnCSSRule
+			}
 		}
 	} else {
 		err = ErrNotImplemented

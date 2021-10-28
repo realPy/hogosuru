@@ -66,10 +66,15 @@ func NewFromJSObject(obj js.Value) (JSError, error) {
 	var e JSError
 	var err error
 	if ei := GetInterface(); !ei.IsUndefined() {
-		if obj.InstanceOf(ei) {
-			e.BaseObject = e.SetObject(obj)
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnError
+
+			if obj.InstanceOf(ei) {
+				e.BaseObject = e.SetObject(obj)
+			} else {
+				err = ErrNotAnError
+			}
 		}
 	} else {
 		err = ErrNotImplemented

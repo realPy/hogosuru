@@ -79,13 +79,22 @@ func NewUint8ArrayOf(values ...interface{}) (Uint8Array, error) {
 
 func NewUint8FromJSObject(obj js.Value) (Uint8Array, error) {
 	var u Uint8Array
-
+	var err error
 	if ui := GetUint8ArrayInterface(); !ui.IsUndefined() {
-		if obj.InstanceOf(ui) {
-			u.BaseObject = u.SetObject(obj)
-			return u, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(ui) {
+				u.BaseObject = u.SetObject(obj)
+
+			} else {
+				err = ErrNotAUint8Array
+			}
 		}
+	} else {
+		err = ErrNotImplementedUint8Array
 	}
 
-	return u, ErrNotAUint8Array
+	return u, err
 }

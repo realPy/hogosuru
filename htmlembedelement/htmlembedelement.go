@@ -74,15 +74,24 @@ func NewFromElement(elem element.Element) (HtmlEmbedElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlEmbedElement, error) {
 	var h HtmlEmbedElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmlEmbedElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHtmlEmbedElement
+	return h, err
 }
 
 func (h HtmlEmbedElement) Height() (string, error) {

@@ -64,17 +64,49 @@ func New() (Response, error) {
 	return r, ErrNotImplemented
 }
 
-func NewFromJSObject(obj js.Value) (Response, error) {
+func Error() (Response, error) {
+
 	var response Response
+	var err error
+	var obj js.Value
 
 	if ri := GetInterface(); !ri.IsUndefined() {
-		if obj.InstanceOf(ri) {
+
+		if obj, err = baseobject.Call(ri, "error"); err == nil {
 			response.BaseObject = response.SetObject(obj)
-			return response, nil
+
+		} else {
+			err = ErrNotAnFResp
 		}
+
+	} else {
+		err = ErrNotImplemented
 	}
 
-	return response, ErrNotAnFResp
+	return response, err
+
+}
+
+func NewFromJSObject(obj js.Value) (Response, error) {
+	var response Response
+	var err error
+	if ri := GetInterface(); !ri.IsUndefined() {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(ri) {
+				response.BaseObject = response.SetObject(obj)
+
+			} else {
+				err = ErrNotAnFResp
+			}
+		}
+	} else {
+		err = ErrNotImplemented
+	}
+
+	return response, err
 }
 
 func (r Response) Ok() (bool, error) {
@@ -94,7 +126,7 @@ func (r Response) Ok() (bool, error) {
 }
 
 func (r Response) Redirected() (bool, error) {
-	return r.CallBool("redirected")
+	return r.GetAttributeBool("redirected")
 }
 
 func (r Response) Status() (int, error) {
@@ -142,6 +174,11 @@ func (r Response) Url() (string, error) {
 	return "", err
 }
 
+func (r Response) BodyUsed() (bool, error) {
+
+	return r.GetAttributeBool("bodyUsed")
+}
+
 func (r Response) Text() (promise.Promise, error) {
 
 	var promiseObject js.Value
@@ -164,15 +201,16 @@ func (r Response) Json() (promise.Promise, error) {
 	return p, err
 }
 
+/* not exist on chrome
 func (r Response) UseFinalURL() (bool, error) {
 
-	return r.CallBool("useFinalURL")
+	return r.GetAttributeBool("useFinalURL")
 }
 
 func (r Response) SetUseFinalURL(b bool) {
 
 	r.JSObject().Set("useFinalURL", js.ValueOf(b))
-}
+}*/
 
 func (r Response) ArrayBuffer() (promise.Promise, error) {
 
@@ -186,24 +224,18 @@ func (r Response) ArrayBuffer() (promise.Promise, error) {
 
 }
 
-/*
-func (r Response) ArrayBufferBytes() ([]byte, error) {
+func (r Response) Blob() (promise.Promise, error) {
 
-	var buffer []byte
-	var ab arraybuffer.ArrayBuffer
-	var arr8buf typedarray.Uint8Array
-
+	var promiseObject js.Value
+	var p promise.Promise
 	var err error
-
-	if ab, err = r.ArrayBuffer(); err == nil {
-		if arr8buf, err = typedarray.NewUint8Array(ab); err == nil {
-			buffer, err = arr8buf.Bytes()
-		}
+	if promiseObject, err = r.Call("blob"); err == nil {
+		p, err = promise.NewFromJSObject(promiseObject)
 	}
+	return p, err
 
-	return buffer, err
 }
-*/
+
 func (r Response) Headers() (headers.Headers, error) {
 	var obj js.Value
 	var err error
@@ -224,4 +256,15 @@ func (r Response) Body() (stream.ReadableStream, error) {
 
 	}
 	return s, err
+}
+
+func (r Response) Clone() (Response, error) {
+
+	var cloneObject js.Value
+	var clone Response
+	var err error
+	if cloneObject, err = r.Call("clone"); err == nil {
+		clone, err = NewFromJSObject(cloneObject)
+	}
+	return clone, err
 }

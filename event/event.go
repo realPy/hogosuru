@@ -59,15 +59,24 @@ func New(message string) (Event, error) {
 
 func NewFromJSObject(obj js.Value) (Event, error) {
 	var e Event
-
+	var err error
 	if eventi := GetInterface(); !eventi.IsUndefined() {
-		if obj.InstanceOf(eventi) {
-			e.BaseObject = e.SetObject(obj)
-			return e, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(eventi) {
+				e.BaseObject = e.SetObject(obj)
+
+			} else {
+				err = ErrNotAnEvent
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
 
-	return e, ErrNotAnEvent
+	return e, err
 }
 
 func (e Event) Target() (interface{}, error) {

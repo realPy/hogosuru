@@ -45,10 +45,14 @@ func IDBCursorNewFromJSObject(obj js.Value) (IDBCursor, error) {
 	var i IDBCursor
 	var err error
 	if ai := IDBDatabaseGetInterface(); !ai.IsUndefined() {
-		if obj.InstanceOf(ai) {
-			i.BaseObject = i.SetObject(obj)
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnIDBCursor
+			if obj.InstanceOf(ai) {
+				i.BaseObject = i.SetObject(obj)
+			} else {
+				err = ErrNotAnIDBCursor
+			}
 		}
 	} else {
 		err = ErrNotImplemented

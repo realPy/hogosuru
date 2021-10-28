@@ -71,15 +71,24 @@ func New(bits interface{}, name string, value ...map[string]interface{}) (File, 
 
 func NewFromJSObject(obj js.Value) (File, error) {
 	var f File
-
+	var err error
 	if fi := GetInterface(); !fi.IsUndefined() {
-		if obj.InstanceOf(fi) {
-			f.BaseObject = f.SetObject(obj)
-			return f, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(fi) {
+				f.BaseObject = f.SetObject(obj)
+
+			} else {
+				err = ErrNotAFile
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
 
-	return f, ErrNotAFile
+	return f, err
 }
 
 func (f File) Name() (string, error) {

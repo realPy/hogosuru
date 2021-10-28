@@ -74,13 +74,22 @@ func NewFromElement(elem element.Element) (HtmlSpanElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlSpanElement, error) {
 	var h HtmlSpanElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHTMLSpanElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHTMLSpanElement
+	return h, err
 }

@@ -81,7 +81,7 @@ func TestLastModified(t *testing.T) {
 
 		if lastmodified, err := f.LastModified(); testingutils.AssertErr(t, err) {
 
-			testingutils.AssertExpect(t, true, lastmodified == 0)
+			testingutils.AssertExpect(t, true, lastmodified > 0)
 		}
 
 	}

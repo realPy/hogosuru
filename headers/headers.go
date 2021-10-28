@@ -47,15 +47,24 @@ func GetInterface() js.Value {
 
 func NewFromJSObject(obj js.Value) (Headers, error) {
 	var h Headers
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHeaders
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHeaders
+	return h, err
 }
 
 func (h Headers) Append(name, value string) error {

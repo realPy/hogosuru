@@ -95,15 +95,24 @@ func NewWithArrayBuffer(a arraybuffer.ArrayBuffer) (Blob, error) {
 
 func NewFromJSObject(obj js.Value) (Blob, error) {
 	var b Blob
-
+	var err error
 	if bi := GetInterface(); !bi.IsUndefined() {
-		if obj.InstanceOf(bi) {
-			b.BaseObject = b.SetObject(obj)
-			return b, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(bi) {
+				b.BaseObject = b.SetObject(obj)
+
+			} else {
+				err = ErrNotABlob
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
 
-	return b, ErrNotABlob
+	return b, err
 }
 
 func (b Blob) IsClosed() (bool, error) {

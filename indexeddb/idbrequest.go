@@ -51,10 +51,15 @@ func IDBRequestNewFromJSObject(obj js.Value) (IDBRequest, error) {
 	var i IDBRequest
 	var err error
 	if ai := IDBRequestGetInterface(); !ai.IsUndefined() {
-		if obj.InstanceOf(ai) {
-			i.BaseObject = i.SetObject(obj)
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnIDBRequest
+
+			if obj.InstanceOf(ai) {
+				i.BaseObject = i.SetObject(obj)
+			} else {
+				err = ErrNotAnIDBRequest
+			}
 		}
 	} else {
 		err = ErrNotImplemented

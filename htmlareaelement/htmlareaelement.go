@@ -60,6 +60,7 @@ func NewFromElement(elem element.Element) (HtmlAreaElement, error) {
 	var err error
 
 	if hci := GetInterface(); !hci.IsUndefined() {
+
 		if elem.BaseObject.JSObject().InstanceOf(hci) {
 			h.BaseObject = h.SetObject(elem.BaseObject.JSObject())
 
@@ -75,15 +76,24 @@ func NewFromElement(elem element.Element) (HtmlAreaElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlAreaElement, error) {
 	var h HtmlAreaElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmlAreaElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHtmlAreaElement
+	return h, err
 }
 
 func (h HtmlAreaElement) Alt() (string, error) {

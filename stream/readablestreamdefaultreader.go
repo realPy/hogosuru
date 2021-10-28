@@ -1,7 +1,6 @@
 package stream
 
 import (
-	"io"
 	"sync"
 
 	"syscall/js"
@@ -54,52 +53,6 @@ func NewReadableStreamDefaultReaderFromJSObject(obj js.Value) (ReadableStreamDef
 	}
 
 	return r, ErrNotAReadableStream
-}
-
-func (r ReadableStreamDefaultReader) Read(b []byte) (n int, err error) {
-
-	var promiseread js.Value
-	var p promise.Promise
-	donechan := make(chan bool)
-	err = nil
-
-	if promiseread, err = r.Call("read"); err == nil {
-
-		if p, err = promise.NewFromJSObject(promiseread); err == nil {
-
-			p.Then(func(i interface{}) *promise.Promise {
-				if obj, ok := i.(baseobject.ObjectFrom); ok {
-					if obj.JSObject().Get("done").Bool() == true {
-						err = io.EOF
-						donechan <- true
-						return nil
-					} else {
-
-						var u8array typedarray.Uint8Array
-
-						uint8arrayObject := obj.JSObject().Get("value")
-						if u8array, err = typedarray.NewUint8Array(uint8arrayObject); err == nil {
-							n, err = u8array.CopyBytes(b)
-						}
-					}
-				}
-
-				donechan <- false
-				return nil
-
-			}, func(e error) {
-				err = e
-				donechan <- false
-			})
-
-		}
-		<-donechan
-
-	} else {
-		err = io.ErrUnexpectedEOF
-	}
-
-	return
 }
 
 func (r ReadableStreamDefaultReader) newRead(data []byte, dataHandle func([]byte, int)) *promise.Promise {

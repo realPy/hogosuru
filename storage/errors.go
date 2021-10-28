@@ -3,5 +3,6 @@ package storage
 import "errors"
 
 var (
-	ErrNotAStorage = errors.New("Object is not a Storage object")
+	ErrNotImplemented = errors.New("Browser not implemented Storage")
+	ErrNotAStorage    = errors.New("Object is not a Storage object")
 )

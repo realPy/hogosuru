@@ -101,15 +101,24 @@ func NewFromElement(elem element.Element) (HtmlTableSectionElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlTableSectionElement, error) {
 	var h HtmlTableSectionElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHTMLTableSectionElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHTMLTableSectionElement
+	return h, err
 }
 
 func (h HtmlTableSectionElement) Rows() (htmlcollection.HtmlCollection, error) {

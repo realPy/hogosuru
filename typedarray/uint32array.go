@@ -78,13 +78,22 @@ func NewUint32ArrayOf(values ...interface{}) (Uint32Array, error) {
 
 func NewUint32FromJSObject(obj js.Value) (Uint32Array, error) {
 	var u Uint32Array
-
+	var err error
 	if ui := GetUint32ArrayInterface(); !ui.IsUndefined() {
-		if obj.InstanceOf(ui) {
-			u.BaseObject = u.SetObject(obj)
-			return u, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(ui) {
+				u.BaseObject = u.SetObject(obj)
+
+			} else {
+				err = ErrNotAUint32Array
+			}
 		}
+	} else {
+		err = ErrNotImplementedUint32Array
 	}
 
-	return u, ErrNotAUint32Array
+	return u, err
 }

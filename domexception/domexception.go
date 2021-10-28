@@ -65,10 +65,15 @@ func NewFromJSObject(obj js.Value) (DomException, error) {
 	var d DomException
 	var err error
 	if di := GetInterface(); !di.IsUndefined() {
-		if obj.InstanceOf(di) {
-			d.BaseObject = d.SetObject(obj)
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotADOMException
+
+			if obj.InstanceOf(di) {
+				d.BaseObject = d.SetObject(obj)
+			} else {
+				err = ErrNotADOMException
+			}
 		}
 	} else {
 		err = ErrNotImplemented

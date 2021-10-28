@@ -74,13 +74,23 @@ func NewFromElement(elem element.Element) (HtmlDListElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlDListElement, error) {
 	var h HtmlDListElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmlDListElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
+
 	}
-	return h, ErrNotAnHtmlDListElement
+	return h, err
 }

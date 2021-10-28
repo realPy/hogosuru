@@ -46,18 +46,32 @@ func GetInterface() js.Value {
 
 func NewFromJSObject(obj js.Value) (FileList, error) {
 	var f FileList
-
+	var err error
 	if fli := GetInterface(); !fli.IsUndefined() {
-		if obj.InstanceOf(fli) {
-			f.BaseObject = f.SetObject(obj)
-			return f, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(fli) {
+				f.BaseObject = f.SetObject(obj)
+
+			} else {
+				err = ErrNotAnFileList
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return f, ErrNotAnFileList
+	return f, err
 }
 
 func (f FileList) Item(index int) (file.File, error) {
 
 	return file.NewFromJSObject(f.JSObject().Index(index))
+
+}
+func (f FileList) Length() (int, error) {
+
+	return f.GetAttributeInt("length")
 
 }

@@ -49,12 +49,19 @@ func NewFromJSObject(obj js.Value) (XMLHTTPRequest, error) {
 	var x XMLHTTPRequest
 	var err error
 	if si := GetInterface(); !si.IsUndefined() {
-		if obj.InstanceOf(si) {
-			x.BaseObject = x.SetObject(obj)
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
+			if obj.InstanceOf(si) {
+				x.BaseObject = x.SetObject(obj)
+
+			} else {
+				err = ErrNotAXMLHTTPRequest
+			}
 		}
 	} else {
-		err = ErrNotAXMLHTTPRequest
+		err = ErrNotImplemented
 	}
 
 	return x, err

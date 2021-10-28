@@ -78,13 +78,22 @@ func NewFloat32ArrayOf(values ...interface{}) (Float32Array, error) {
 
 func NewFloat32FromJSObject(obj js.Value) (Float32Array, error) {
 	var u Float32Array
-
+	var err error
 	if ui := GetFloat32ArrayInterface(); !ui.IsUndefined() {
-		if obj.InstanceOf(ui) {
-			u.BaseObject = u.SetObject(obj)
-			return u, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(ui) {
+				u.BaseObject = u.SetObject(obj)
+
+			} else {
+				err = ErrNotAFloat32Array
+			}
 		}
+	} else {
+		err = ErrNotImplementedFloat32Array
 	}
 
-	return u, ErrNotAFloat32Array
+	return u, err
 }

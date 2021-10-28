@@ -45,10 +45,14 @@ func IDBDIndexNewFromJSObject(obj js.Value) (IDBIndex, error) {
 	var i IDBIndex
 	var err error
 	if ai := GetIDBIndexInterface(); !ai.IsUndefined() {
-		if obj.InstanceOf(ai) {
-			i.BaseObject = i.SetObject(obj)
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnIDBIndex
+			if obj.InstanceOf(ai) {
+				i.BaseObject = i.SetObject(obj)
+			} else {
+				err = ErrNotAnIDBIndex
+			}
 		}
 	} else {
 		err = ErrNotImplemented

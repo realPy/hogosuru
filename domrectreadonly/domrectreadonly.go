@@ -57,11 +57,16 @@ func NewFromJSObject(obj js.Value) (DOMRectReadOnly, error) {
 	var d DOMRectReadOnly
 	var err error
 	if di := GetInterface(); !di.IsUndefined() {
-		if obj.InstanceOf(di) {
-			d.BaseObject = d.SetObject(obj)
-
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnDOMRectReadOnly
+
+			if obj.InstanceOf(di) {
+				d.BaseObject = d.SetObject(obj)
+
+			} else {
+				err = ErrNotAnDOMRectReadOnly
+			}
 		}
 	} else {
 		err = ErrNotImplemented

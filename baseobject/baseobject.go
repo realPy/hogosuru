@@ -47,6 +47,17 @@ func Get(obj js.Value, name string) (js.Value, error) {
 	}
 }
 
+func GetIndex(obj js.Value, index int) (js.Value, error) {
+
+	ret := getFunc.Invoke(obj, js.ValueOf(index))
+
+	if ret.Index(0).Bool() {
+		return ret.Index(1), nil
+	} else {
+		return ret.Index(1), errors.New(ret.Index(1).Get("message").String())
+	}
+}
+
 func Call(obj js.Value, name string, args ...interface{}) (js.Value, error) {
 
 	var jsargs []interface{}
@@ -200,7 +211,7 @@ type BaseObject struct {
 func NewFromJSObject(obj js.Value) (BaseObject, error) {
 	var o BaseObject
 	if obj.IsUndefined() {
-		return o, ErrNotAnObject
+		return o, ErrUndefinedValue
 	}
 	o.object = &obj
 	return o, nil
@@ -216,6 +227,11 @@ func (b BaseObject) Empty() bool {
 //Get Get Value of object and handle err
 func (b BaseObject) Get(name string) (js.Value, error) {
 	return Get(b.JSObject(), name)
+}
+
+//Get Get Value of object and handle err
+func (b BaseObject) GetIndex(index int) (js.Value, error) {
+	return GetIndex(b.JSObject(), index)
 }
 
 //Set Set Value of object and handle err
@@ -373,10 +389,14 @@ func (b BaseObject) GetAttributeString(attribute string) (string, error) {
 	var ret = ""
 
 	if obj, err = b.Get(attribute); err == nil {
-		if obj.Type() == js.TypeString {
-			ret = obj.String()
+		if obj.IsUndefined() {
+			err = ErrUndefinedValue
 		} else {
-			err = ErrObjectNotString
+			if obj.Type() == js.TypeString {
+				ret = obj.String()
+			} else {
+				err = ErrObjectNotString
+			}
 		}
 
 	}
@@ -393,7 +413,7 @@ func (b BaseObject) GetAttributeGlobal(attribute string) (interface{}, error) {
 	if obj, err = b.Get(attribute); err == nil {
 
 		if obj.IsUndefined() {
-			err = ErrNotAnObject
+			err = ErrUndefinedValue
 
 		} else {
 
@@ -440,10 +460,16 @@ func (b BaseObject) GetAttributeInt(attribute string) (int, error) {
 	var result int
 
 	if obj, err = b.Get(attribute); err == nil {
-		if obj.Type() == js.TypeNumber {
-			result = obj.Int()
+
+		if obj.IsUndefined() {
+			err = ErrUndefinedValue
 		} else {
-			err = ErrObjectNotNumber
+
+			if obj.Type() == js.TypeNumber {
+				result = obj.Int()
+			} else {
+				err = ErrObjectNotNumber
+			}
 		}
 	}
 
@@ -457,10 +483,16 @@ func (b BaseObject) GetAttributeInt64(attribute string) (int64, error) {
 	var ret int64
 
 	if obj, err = b.Get(attribute); err == nil {
-		if obj.Type() == js.TypeNumber {
-			ret = int64(obj.Float())
+
+		if obj.IsUndefined() {
+			err = ErrUndefinedValue
 		} else {
-			err = ErrObjectNotNumber
+
+			if obj.Type() == js.TypeNumber {
+				ret = int64(obj.Float())
+			} else {
+				err = ErrObjectNotNumber
+			}
 		}
 	}
 
@@ -479,10 +511,15 @@ func (b BaseObject) GetAttributeDouble(attribute string) (float64, error) {
 	var result float64
 
 	if obj, err = b.Get(attribute); err == nil {
-		if obj.Type() == js.TypeNumber {
-			result = obj.Float()
+		if obj.IsUndefined() {
+			err = ErrUndefinedValue
 		} else {
-			err = ErrObjectNotDouble
+
+			if obj.Type() == js.TypeNumber {
+				result = obj.Float()
+			} else {
+				err = ErrObjectNotDouble
+			}
 		}
 	}
 

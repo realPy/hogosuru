@@ -83,15 +83,24 @@ func NewFromElement(elem element.Element) (HtmlInputElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlInputElement, error) {
 	var h HtmlInputElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmlInputElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHtmlInputElement
+	return h, err
 }
 
 //Properties related to the parent form

@@ -46,11 +46,16 @@ func NewFromJSObject(obj js.Value) (AbortController, error) {
 	var a AbortController
 	var err error
 	if ai := GetInterface(); !ai.IsUndefined() {
-		if obj.InstanceOf(ai) {
-			a.BaseObject = a.SetObject(obj)
-			return a, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnAbortController
+
+			if obj.InstanceOf(ai) {
+				a.BaseObject = a.SetObject(obj)
+
+			} else {
+				err = ErrNotAnAbortController
+			}
 		}
 	} else {
 		err = ErrNotImplemented

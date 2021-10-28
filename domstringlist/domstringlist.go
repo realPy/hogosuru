@@ -47,11 +47,16 @@ func NewFromJSObject(obj js.Value) (DOMStringList, error) {
 	var d DOMStringList
 	var err error
 	if dli := GetInterface(); !dli.IsUndefined() {
-		if obj.InstanceOf(dli) {
-			d.BaseObject = d.SetObject(obj)
-
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnDOMStringList
+
+			if obj.InstanceOf(dli) {
+				d.BaseObject = d.SetObject(obj)
+
+			} else {
+				err = ErrNotAnDOMStringList
+			}
 		}
 	} else {
 		err = ErrNotImplemented

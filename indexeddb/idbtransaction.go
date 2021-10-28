@@ -49,10 +49,15 @@ func IDBTransactionNewFromJSObject(obj js.Value) (IDBTransaction, error) {
 	var i IDBTransaction
 	var err error
 	if ai := IDBTransactionGetInterface(); !ai.IsUndefined() {
-		if obj.InstanceOf(ai) {
-			i.BaseObject = i.SetObject(obj)
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnIDBTransaction
+
+			if obj.InstanceOf(ai) {
+				i.BaseObject = i.SetObject(obj)
+			} else {
+				err = ErrNotAnIDBTransaction
+			}
 		}
 	} else {
 		err = ErrNotImplemented

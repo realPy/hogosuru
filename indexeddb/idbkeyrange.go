@@ -45,10 +45,15 @@ func IDBDKeyRangeNewFromJSObject(obj js.Value) (IDBKeyRange, error) {
 	var i IDBKeyRange
 	var err error
 	if ai := GetIDBKeyRangeInterface(); !ai.IsUndefined() {
-		if obj.InstanceOf(ai) {
-			i.BaseObject = i.SetObject(obj)
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnIDBKeyRange
+
+			if obj.InstanceOf(ai) {
+				i.BaseObject = i.SetObject(obj)
+			} else {
+				err = ErrNotAnIDBKeyRange
+			}
 		}
 	} else {
 		err = ErrNotImplemented
