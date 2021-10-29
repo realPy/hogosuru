@@ -70,14 +70,18 @@ func NewFromJSObject(obj js.Value) (XMLHTTPRequest, error) {
 //New Get an XML HTTP Request
 func New() (XMLHTTPRequest, error) {
 	var request XMLHTTPRequest
-
+	var objnew js.Value
+	var err error
 	if xhri := GetInterface(); !xhri.IsUndefined() {
 
-		request.BaseObject = request.SetObject(xhri.New())
-		return request, nil
+		if objnew, err = baseobject.New(xhri); err == nil {
+			request.BaseObject = request.SetObject(objnew)
+		}
 
+	} else {
+		err = ErrNotImplemented
 	}
-	return request, ErrNotImplemented
+	return request, err
 }
 
 func (x XMLHTTPRequest) Open(method string, url string) error {

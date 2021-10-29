@@ -14,6 +14,14 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
+func TestNew(t *testing.T) {
+
+	if ws, err := New("wss://ws.ifelse.io"); testingutils.AssertErr(t, err) {
+
+		testingutils.AssertExpect(t, "[object WebSocket]", ws.ToString_())
+	}
+}
+
 func TestEcho(t *testing.T) {
 	var io chan bool = make(chan bool)
 	var nbmsg int = 0

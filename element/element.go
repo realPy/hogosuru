@@ -51,8 +51,12 @@ func (e Element) Element_() Element {
 func New() (Element, error) {
 	var err error
 	var e Element
+	var obj js.Value
 	if ei := GetInterface(); !ei.IsUndefined() {
-		e.BaseObject = e.SetObject(ei.New())
+
+		if obj, err = baseobject.New(ei); err == nil {
+			e.BaseObject = e.SetObject(obj)
+		}
 
 	} else {
 		err = ErrNotImplemented

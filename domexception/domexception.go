@@ -46,7 +46,8 @@ func New(opts ...string) (DomException, error) {
 
 	var e DomException
 	var arrayJS []interface{}
-
+	var obj js.Value
+	var err error
 	if len(opts) < 3 {
 		for _, opt := range opts {
 			arrayJS = append(arrayJS, js.ValueOf(opt))
@@ -55,10 +56,14 @@ func New(opts ...string) (DomException, error) {
 
 	if ei := GetInterface(); !ei.IsUndefined() {
 
-		e.BaseObject = e.SetObject(ei.New(arrayJS...))
-		return e, nil
+		if obj, err = baseobject.New(ei, arrayJS...); err == nil {
+			e.BaseObject = e.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return e, ErrNotImplemented
+	return e, err
 }
 
 func NewFromJSObject(obj js.Value) (DomException, error) {

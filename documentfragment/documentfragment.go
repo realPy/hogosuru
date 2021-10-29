@@ -47,8 +47,12 @@ func New() (DocumentFragment, error) {
 
 	var d DocumentFragment
 	var err error
+	var obj js.Value
 	if di := GetInterface(); !di.IsUndefined() {
-		d.BaseObject = d.SetObject(di.New())
+
+		if obj, err = baseobject.New(di); err == nil {
+			d.BaseObject = d.SetObject(obj)
+		}
 
 	} else {
 

@@ -45,13 +45,18 @@ func GetInterface() js.Value {
 func New() (FormData, error) {
 
 	var formdata FormData
-
+	var obj js.Value
+	var err error
 	if fci := GetInterface(); !fci.IsUndefined() {
-		formdata.BaseObject = formdata.SetObject(fci.New())
 
-		return formdata, nil
+		if obj, err = baseobject.New(fci); err == nil {
+			formdata.BaseObject = formdata.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return formdata, ErrNotImplemented
+	return formdata, err
 }
 
 func (f FormData) AppendString(key string, value string) error {

@@ -46,13 +46,18 @@ func (p ProgressEvent) ProgressEvent_() ProgressEvent {
 func New() (ProgressEvent, error) {
 
 	var p ProgressEvent
-
+	var obj js.Value
+	var err error
 	if pei := GetInterface(); !pei.IsUndefined() {
-		p.BaseObject = p.SetObject(pei.New())
 
-		return p, nil
+		if obj, err = baseobject.New(pei); err == nil {
+			p.BaseObject = p.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return p, ErrNotImplemented
+	return p, err
 }
 
 func NewFromJSObject(obj js.Value) (ProgressEvent, error) {

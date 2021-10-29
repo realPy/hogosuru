@@ -45,7 +45,8 @@ func NewUint32Array(value interface{}) (Uint32Array, error) {
 
 	var a Uint32Array
 	var obj interface{}
-
+	var objnew js.Value
+	var err error
 	if ai := GetUint32ArrayInterface(); !ai.IsUndefined() {
 		if objGo, ok := value.(baseobject.ObjectFrom); ok {
 			obj = objGo.JSObject()
@@ -53,11 +54,15 @@ func NewUint32Array(value interface{}) (Uint32Array, error) {
 			obj = js.ValueOf(value)
 		}
 
-		a.BaseObject = a.SetObject(ai.New(obj))
-		return a, nil
+		if objnew, err = baseobject.New(ai, obj); err == nil {
+			a.BaseObject = a.SetObject(objnew)
+		}
+
+	} else {
+		err = ErrNotImplementedUint32Array
 	}
 
-	return a, ErrNotImplementedUint32Array
+	return a, err
 }
 
 func NewUint32ArrayFrom(iterable interface{}) (Uint32Array, error) {

@@ -45,7 +45,8 @@ func GetInterface() js.Value {
 func New(values ...interface{}) (JSError, error) {
 	var e JSError
 	var objs []interface{}
-
+	var obj js.Value
+	var err error
 	if len(values) == 1 {
 		switch values[0].(type) {
 		case string:
@@ -56,10 +57,14 @@ func New(values ...interface{}) (JSError, error) {
 	}
 
 	if ei := GetInterface(); !ei.IsUndefined() {
-		e.BaseObject = e.SetObject(ei.New(objs...))
-		return e, nil
+
+		if obj, err = baseobject.New(ei, objs...); err == nil {
+			e.BaseObject = e.SetObject(obj)
+		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return e, ErrNotImplemented
+	return e, err
 }
 
 func NewFromJSObject(obj js.Value) (JSError, error) {

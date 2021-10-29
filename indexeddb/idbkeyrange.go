@@ -65,9 +65,12 @@ func IDBDKeyRangeNewFromJSObject(obj js.Value) (IDBKeyRange, error) {
 func newKeyRange(method string, values ...interface{}) (IDBKeyRange, error) {
 	var i IDBKeyRange
 	var err error
-
+	var obj js.Value
 	if ii := GetIDBKeyRangeInterface(); !ii.IsUndefined() {
-		i.BaseObject = i.SetObject(ii.New(values...))
+
+		if obj, err = baseobject.New(ii, values...); err == nil {
+			i.BaseObject = i.SetObject(obj)
+		}
 	} else {
 		err = ErrNotImplemented
 	}

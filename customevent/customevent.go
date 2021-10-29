@@ -49,7 +49,8 @@ func GetInterface() js.Value {
 func New(message, detail interface{}) (CustomEvent, error) {
 	var event CustomEvent
 	var jsObj js.Value
-
+	var obj js.Value
+	var err error
 	if objGo, ok := detail.(baseobject.ObjectFrom); ok {
 		jsObj = objGo.JSObject()
 	} else {
@@ -57,10 +58,15 @@ func New(message, detail interface{}) (CustomEvent, error) {
 	}
 
 	if eventi := GetInterface(); !eventi.IsUndefined() {
-		event.BaseObject = event.SetObject(eventi.New(js.ValueOf(message), js.ValueOf(map[string]interface{}{"detail": jsObj})))
-		return event, nil
+
+		if obj, err = baseobject.New(eventi, js.ValueOf(message), js.ValueOf(map[string]interface{}{"detail": jsObj})); err == nil {
+			event.BaseObject = event.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return event, ErrNotImplemented
+	return event, err
 }
 
 func NewFromJSObject(obj js.Value) (CustomEvent, error) {

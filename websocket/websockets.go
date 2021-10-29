@@ -82,12 +82,17 @@ func NewFromJSObject(obj js.Value) (WebSocket, error) {
 //New Get a new channel broadcast
 func New(url string) (WebSocket, error) {
 	var ws WebSocket
+	var err error
+	var obj js.Value
 
 	if wsi := GetInterface(); !wsi.IsUndefined() {
-		ws.BaseObject = ws.SetObject(wsi.New(js.ValueOf(url)))
-		return ws, nil
+		if obj, err = baseobject.New(wsi, js.ValueOf(url)); err == nil {
+			ws.BaseObject = ws.SetObject(obj)
+		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return ws, ErrNotImplemented
+	return ws, err
 }
 
 func (w WebSocket) setHandler(jshandlername string, handler func(e event.Event)) {

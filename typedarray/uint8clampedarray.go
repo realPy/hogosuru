@@ -45,6 +45,8 @@ func NewUint8ClampedArray(value interface{}) (Uint8ClampedArray, error) {
 
 	var a Uint8ClampedArray
 	var obj interface{}
+	var objnew js.Value
+	var err error
 
 	if ai := GetUint8ClampedArrayInterface(); !ai.IsUndefined() {
 		if objGo, ok := value.(baseobject.ObjectFrom); ok {
@@ -53,11 +55,15 @@ func NewUint8ClampedArray(value interface{}) (Uint8ClampedArray, error) {
 			obj = js.ValueOf(value)
 		}
 
-		a.BaseObject = a.SetObject(ai.New(obj))
-		return a, nil
+		if objnew, err = baseobject.New(ai, obj); err == nil {
+			a.BaseObject = a.SetObject(objnew)
+		}
+
+	} else {
+		err = ErrNotImplementedUint8ClampedArray
 	}
 
-	return a, ErrNotImplementedUint8ClampedArray
+	return a, err
 }
 
 func NewUint8ClampedArrayFrom(iterable interface{}) (Uint8ClampedArray, error) {
