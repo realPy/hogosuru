@@ -548,6 +548,23 @@ func (b BaseObject) CallInt64(method string) (int64, error) {
 	return ret, err
 }
 
+//CallInt Call method given and return int
+func (b BaseObject) CallInt(method string) (int, error) {
+
+	var err error
+	var obj js.Value
+	var ret int
+
+	if obj, err = b.Call(method); err == nil {
+		if obj.Type() == js.TypeNumber {
+			ret = obj.Int()
+		} else {
+			err = ErrObjectNotNumber
+		}
+	}
+	return ret, err
+}
+
 //CallInt64 Call method given and return a bool int
 func (b BaseObject) CallBool(method string) (bool, error) {
 	var err error

@@ -1,6 +1,7 @@
 package typedarray
 
 import (
+	"syscall/js"
 	"testing"
 
 	"github.com/realPy/hogosuru/array"
@@ -11,6 +12,94 @@ import (
 func TestMain(m *testing.M) {
 	baseobject.SetSyscall()
 	m.Run()
+}
+
+func TestNewFromJSObject(t *testing.T) {
+
+	baseobject.Eval(`
+aint8 = new Int8Array();
+auint8 = new Uint8Array();
+auint8clamped = new Uint8ClampedArray();
+aint16 = new Int16Array();
+auint16 = new Uint16Array();
+aint32 = new Int32Array();
+auint32 = new Uint32Array();
+afloat32 = new Float32Array();
+afloat64 = new Float64Array();
+`)
+
+	if obj, err := baseobject.Get(js.Global(), "aint8"); testingutils.AssertErr(t, err) {
+		if d, err := NewInt8FromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "Int8Array", d.ConstructName_())
+
+		}
+	}
+
+	if obj, err := baseobject.Get(js.Global(), "auint8"); testingutils.AssertErr(t, err) {
+		if d, err := NewUint8FromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "Uint8Array", d.ConstructName_())
+
+		}
+	}
+
+	if obj, err := baseobject.Get(js.Global(), "auint8clamped"); testingutils.AssertErr(t, err) {
+		if d, err := NewUint8ClampedFromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "Uint8ClampedArray", d.ConstructName_())
+
+		}
+	}
+
+	if obj, err := baseobject.Get(js.Global(), "aint16"); testingutils.AssertErr(t, err) {
+		if d, err := NewInt16FromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "Int16Array", d.ConstructName_())
+
+		}
+	}
+
+	if obj, err := baseobject.Get(js.Global(), "auint16"); testingutils.AssertErr(t, err) {
+		if d, err := NewUint16FromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "Uint16Array", d.ConstructName_())
+
+		}
+	}
+
+	if obj, err := baseobject.Get(js.Global(), "aint32"); testingutils.AssertErr(t, err) {
+		if d, err := NewInt32FromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "Int32Array", d.ConstructName_())
+
+		}
+	}
+
+	if obj, err := baseobject.Get(js.Global(), "auint32"); testingutils.AssertErr(t, err) {
+		if d, err := NewUint32FromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "Uint32Array", d.ConstructName_())
+
+		}
+	}
+
+	if obj, err := baseobject.Get(js.Global(), "afloat32"); testingutils.AssertErr(t, err) {
+		if d, err := NewFloat32FromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "Float32Array", d.ConstructName_())
+
+		}
+	}
+
+	if obj, err := baseobject.Get(js.Global(), "afloat64"); testingutils.AssertErr(t, err) {
+		if d, err := NewFloat64FromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "Float64Array", d.ConstructName_())
+
+		}
+	}
+
 }
 
 func TestNewUint8Array(t *testing.T) {

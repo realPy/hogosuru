@@ -1,6 +1,7 @@
 package xmlhttprequest
 
 import (
+	"syscall/js"
 	"testing"
 	"time"
 
@@ -23,6 +24,20 @@ func TestNew(t *testing.T) {
 		testingutils.AssertExpect(t, "[object XMLHttpRequest]", xhr.ToString_())
 
 	}
+}
+
+func TestNewFromJSObject(t *testing.T) {
+
+	baseobject.Eval("xhr=new XMLHttpRequest()")
+
+	if obj, err := baseobject.Get(js.Global(), "xhr"); testingutils.AssertErr(t, err) {
+		if d, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "[object XMLHttpRequest]", d.ToString_())
+
+		}
+	}
+
 }
 
 func TestGetRequest(t *testing.T) {

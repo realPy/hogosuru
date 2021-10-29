@@ -1,6 +1,7 @@
 package abortcontroller
 
 import (
+	"syscall/js"
 	"testing"
 
 	"github.com/realPy/hogosuru/baseobject"
@@ -11,6 +12,28 @@ import (
 func TestMain(m *testing.M) {
 	baseobject.SetSyscall()
 	m.Run()
+}
+
+func TestNew(t *testing.T) {
+
+	if a, err := New(); testingutils.AssertErr(t, err) {
+
+		testingutils.AssertExpect(t, "[object AbortController]", a.ToString_())
+
+	}
+}
+func TestNewFromJSObject(t *testing.T) {
+
+	baseobject.Eval("abortctrl=new AbortController()")
+
+	if obj, err := baseobject.Get(js.Global(), "abortctrl"); testingutils.AssertErr(t, err) {
+		if d, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "[object AbortController]", d.ToString_())
+
+		}
+	}
+
 }
 
 func TestAbort(t *testing.T) {

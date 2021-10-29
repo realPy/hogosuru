@@ -1,6 +1,7 @@
 package jserror
 
 import (
+	"syscall/js"
 	"testing"
 
 	"github.com/realPy/hogosuru/baseobject"
@@ -42,6 +43,20 @@ func TestNew(t *testing.T) {
 
 		if str, err := e.Name(); testingutils.AssertErr(t, err) {
 			testingutils.AssertExpect(t, customname, str)
+		}
+	}
+
+}
+
+func TestNewFromJSObject(t *testing.T) {
+
+	baseobject.Eval("err=new Error()")
+
+	if obj, err := baseobject.Get(js.Global(), "err"); testingutils.AssertErr(t, err) {
+		if d, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "Error", d.ToString_())
+
 		}
 	}
 

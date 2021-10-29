@@ -38,6 +38,20 @@ func TestNew(t *testing.T) {
 	}
 }
 
+func TestNewFromJSObject(t *testing.T) {
+
+	baseobject.Eval("r=new Response()")
+
+	if obj, err := baseobject.Get(js.Global(), "r"); testingutils.AssertErr(t, err) {
+		if d, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "[object Response]", d.ToString_())
+
+		}
+	}
+
+}
+
 func TestStatus(t *testing.T) {
 
 	if obj, err := baseobject.Get(js.Global(), "resp"); testingutils.AssertErr(t, err) {

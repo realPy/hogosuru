@@ -1,6 +1,7 @@
 package stream
 
 import (
+	"syscall/js"
 	"testing"
 
 	"github.com/realPy/hogosuru/baseobject"
@@ -20,6 +21,20 @@ func TestNew(t *testing.T) {
 		testingutils.AssertExpect(t, "[object ReadableStream]", s.ToString_())
 
 	}
+}
+
+func TestNewFromJSObject(t *testing.T) {
+
+	baseobject.Eval("r=new ReadableStream()")
+
+	if obj, err := baseobject.Get(js.Global(), "r"); testingutils.AssertErr(t, err) {
+		if d, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "[object ReadableStream]", d.ToString_())
+
+		}
+	}
+
 }
 
 func TestLocked(t *testing.T) {

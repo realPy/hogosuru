@@ -1,6 +1,7 @@
 package blob
 
 import (
+	"syscall/js"
 	"testing"
 
 	"github.com/realPy/hogosuru/array"
@@ -25,6 +26,20 @@ func TestNew(t *testing.T) {
 
 		}
 	}
+}
+
+func TestNewFromJSObject(t *testing.T) {
+
+	baseobject.Eval("blob1=new Blob()")
+
+	if obj, err := baseobject.Get(js.Global(), "blob1"); testingutils.AssertErr(t, err) {
+		if d, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "[object Blob]", d.ToString_())
+
+		}
+	}
+
 }
 
 func TestNewWithArrayBuffer(t *testing.T) {

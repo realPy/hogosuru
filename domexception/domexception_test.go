@@ -1,6 +1,7 @@
 package domexception
 
 import (
+	"syscall/js"
 	"testing"
 
 	"github.com/realPy/hogosuru/baseobject"
@@ -10,6 +11,20 @@ import (
 func TestMain(m *testing.M) {
 	baseobject.SetSyscall()
 	m.Run()
+}
+
+func TestNewFromJSObject(t *testing.T) {
+
+	baseobject.Eval("err= new DOMException()")
+
+	if obj, err := baseobject.Get(js.Global(), "err"); testingutils.AssertErr(t, err) {
+		if d, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "DOMException", d.ConstructName_())
+
+		}
+	}
+
 }
 
 func TestException(t *testing.T) {
