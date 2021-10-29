@@ -17,6 +17,20 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
+func TestNewFromJSObject(t *testing.T) {
+
+	baseobject.Eval("p=new Promise((resolve, reject) => {})")
+
+	if obj, err := baseobject.Get(js.Global(), "p"); testingutils.AssertErr(t, err) {
+		if d, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "[object Promise]", d.ToString_())
+
+		}
+	}
+
+}
+
 func TestNew(t *testing.T) {
 	var io chan bool = make(chan bool)
 

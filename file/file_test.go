@@ -1,6 +1,7 @@
 package file
 
 import (
+	"syscall/js"
 	"testing"
 
 	"github.com/realPy/hogosuru/array"
@@ -23,6 +24,20 @@ func TestNew(t *testing.T) {
 
 		testingutils.AssertExpect(t, "[object File]", f.ToString_())
 
+	}
+
+}
+
+func TestNewFromJSObject(t *testing.T) {
+
+	baseobject.Eval("file = new File(['(⌐□_□)'], 'chucknorris.png', { type: 'image/png' })")
+
+	if obj, err := baseobject.Get(js.Global(), "file"); testingutils.AssertErr(t, err) {
+		if d, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "[object File]", d.ToString_())
+
+		}
 	}
 
 }

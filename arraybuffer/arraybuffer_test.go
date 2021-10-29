@@ -25,6 +25,20 @@ func TestNew(t *testing.T) {
 	}
 }
 
+func TestNewFromJSObject(t *testing.T) {
+
+	baseobject.Eval("ab = new ArrayBuffer()")
+
+	if obj, err := baseobject.Get(js.Global(), "ab"); testingutils.AssertErr(t, err) {
+		if d, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "[object ArrayBuffer]", d.ToString_())
+
+		}
+	}
+
+}
+
 func TestSlice(t *testing.T) {
 
 	if a, err := New(32); testingutils.AssertErr(t, err) {

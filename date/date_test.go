@@ -1,6 +1,7 @@
 package date
 
 import (
+	"syscall/js"
 	"testing"
 
 	"github.com/realPy/hogosuru/baseobject"
@@ -25,6 +26,20 @@ func TestNew(t *testing.T) {
 
 		testingutils.AssertExpect(t, "Date", d.ConstructName_())
 
+	}
+
+}
+
+func TestNewFromJSObject(t *testing.T) {
+
+	baseobject.Eval("date=new Date")
+
+	if obj, err := baseobject.Get(js.Global(), "date"); testingutils.AssertErr(t, err) {
+		if d, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "Date", d.ConstructName_())
+
+		}
 	}
 
 }
