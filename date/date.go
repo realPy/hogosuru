@@ -109,32 +109,32 @@ func (d Date) callString(method string, opts ...interface{}) (string, error) {
 	return ret, err
 }
 
-func (d Date) GetDate() (int64, error) {
-	return d.CallInt64("getDate")
+func (d Date) GetDate() (int, error) {
+	return d.CallInt("getDate")
 }
 
-func (d Date) GetDay() (int64, error) {
-	return d.CallInt64("getDay")
+func (d Date) GetDay() (int, error) {
+	return d.CallInt("getDay")
 }
 
-func (d Date) GetFullYear() (int64, error) {
-	return d.CallInt64("getFullYear")
+func (d Date) GetFullYear() (int, error) {
+	return d.CallInt("getFullYear")
 }
 
-func (d Date) GetHours() (int64, error) {
-	return d.CallInt64("getHours")
+func (d Date) GetHours() (int, error) {
+	return d.CallInt("getHours")
 }
 
-func (d Date) GetMilliseconds() (int64, error) {
-	return d.CallInt64("getMilliseconds")
+func (d Date) GetMilliseconds() (int, error) {
+	return d.CallInt("getMilliseconds")
 }
 
-func (d Date) GetMinutes() (int64, error) {
-	return d.CallInt64("getMinutes")
+func (d Date) GetMinutes() (int, error) {
+	return d.CallInt("getMinutes")
 }
 
-func (d Date) GetSeconds() (int64, error) {
-	return d.CallInt64("getSeconds")
+func (d Date) GetSeconds() (int, error) {
+	return d.CallInt("getSeconds")
 }
 
 func (d Date) GetTime() (int64, error) {
@@ -145,74 +145,74 @@ func (d Date) GetTimezoneOffset() (int64, error) {
 	return d.CallInt64("getTimezoneOffset")
 }
 
-func (d Date) GetUTCDate() (int64, error) {
-	return d.CallInt64("getUTCDate")
+func (d Date) GetUTCDate() (int, error) {
+	return d.CallInt("getUTCDate")
 }
 
-func (d Date) GetUTCDay() (int64, error) {
-	return d.CallInt64("getUTCDay")
+func (d Date) GetUTCDay() (int, error) {
+	return d.CallInt("getUTCDay")
 }
 
-func (d Date) GetUTCFullYear() (int64, error) {
-	return d.CallInt64("getUTCFullYear")
+func (d Date) GetUTCFullYear() (int, error) {
+	return d.CallInt("getUTCFullYear")
 }
 
-func (d Date) GetUTCHours() (int64, error) {
-	return d.CallInt64("getUTCHours")
+func (d Date) GetUTCHours() (int, error) {
+	return d.CallInt("getUTCHours")
 }
 
-func (d Date) GetUTCMilliseconds() (int64, error) {
-	return d.CallInt64("getUTCMilliseconds")
+func (d Date) GetUTCMilliseconds() (int, error) {
+	return d.CallInt("getUTCMilliseconds")
 }
 
-func (d Date) GetUTCMinutes() (int64, error) {
-	return d.CallInt64("getUTCMinutes")
+func (d Date) GetUTCMinutes() (int, error) {
+	return d.CallInt("getUTCMinutes")
 }
 
-func (d Date) GetUTCMonth() (int64, error) {
-	return d.CallInt64("getUTCMonth")
+func (d Date) GetUTCMonth() (int, error) {
+	return d.CallInt("getUTCMonth")
 }
 
-func (d Date) GetUTCSeconds() (int64, error) {
-	return d.CallInt64("getUTCSeconds")
+func (d Date) GetUTCSeconds() (int, error) {
+	return d.CallInt("getUTCSeconds")
 }
 
-func (d Date) SetDate(value int64) error {
+func (d Date) SetDate(value int) error {
 	var err error
 
 	_, err = d.Call("setDate", js.ValueOf(value))
 	return err
 }
 
-func (d Date) SetFullYear(value int64) error {
+func (d Date) SetFullYear(value int) error {
 	var err error
 
 	_, err = d.Call("setFullYear", js.ValueOf(value))
 	return err
 }
 
-func (d Date) SetHours(value int64) error {
+func (d Date) SetHours(value int) error {
 	var err error
 
 	_, err = d.Call("setHours", js.ValueOf(value))
 	return err
 }
 
-func (d Date) SetMilliseconds(value int64) error {
+func (d Date) SetMilliseconds(value int) error {
 	var err error
 
 	_, err = d.Call("setMilliseconds", js.ValueOf(value))
 	return err
 }
 
-func (d Date) SetMinutes(value int64) error {
+func (d Date) SetMinutes(value int) error {
 	var err error
 
 	_, err = d.Call("setMinutes", js.ValueOf(value))
 	return err
 }
 
-func (d Date) SetSeconds(value int64) error {
+func (d Date) SetSeconds(value int) error {
 	var err error
 
 	_, err = d.Call("setSeconds", js.ValueOf(value))
@@ -226,42 +226,49 @@ func (d Date) SetTime(value int64) error {
 	return err
 }
 
-func (d Date) SetUTCDate(value int64) error {
+func (d Date) SetUTCDate(value int) error {
 	var err error
 
 	_, err = d.Call("setUTCDate", js.ValueOf(value))
 	return err
 }
 
-func (d Date) SetUTCFullYear(value int64) error {
+func (d Date) SetUTCFullYear(value int) error {
 	var err error
 
 	_, err = d.Call("setUTCFullYear", js.ValueOf(value))
 	return err
 }
 
-func (d Date) SetUTCHours(value int64) error {
+func (d Date) SetUTCHours(value int) error {
 	var err error
 
 	_, err = d.Call("setUTCHours", js.ValueOf(value))
 	return err
 }
 
-func (d Date) SetUTCMilliseconds(value int64) error {
+func (d Date) SetUTCMilliseconds(value int) error {
 	var err error
 
 	_, err = d.Call("setUTCMilliseconds", js.ValueOf(value))
 	return err
 }
 
-func (d Date) SetUTCMinutes(value int64) error {
+func (d Date) SetUTCMinutes(value int) error {
 	var err error
 
 	_, err = d.Call("setUTCMinutes", js.ValueOf(value))
 	return err
 }
 
-func (d Date) SetUTCSeconds(value int64) error {
+func (d Date) SetUTCMonth(value int) error {
+	var err error
+
+	_, err = d.Call("setUTCMonth", js.ValueOf(value))
+	return err
+}
+
+func (d Date) SetUTCSeconds(value int) error {
 	var err error
 
 	_, err = d.Call("setUTCSeconds", js.ValueOf(value))
@@ -324,23 +331,43 @@ func (d Date) ToJSON() (string, error) {
 	return d.callString("toJSON")
 }
 
-func (d Date) ToLocaleDateString(locale string, options map[string]interface{}) (string, error) {
+func (d Date) ToLocaleDateString(opts ...interface{}) (string, error) {
+	var arrayopts []interface{}
+	if len(opts) > 0 {
+		arrayopts = append(arrayopts, js.ValueOf(opts[0]))
+	}
 
-	return d.callString("toLocaleDateString", locale, options)
+	if len(opts) > 1 {
+		arrayopts = append(arrayopts, js.ValueOf(opts[1]))
+	}
+	return d.callString("toLocaleDateString", arrayopts...)
 }
 
-func (d Date) ToLocaleString(locale string, options map[string]interface{}) (string, error) {
+func (d Date) ToLocaleString(opts ...interface{}) (string, error) {
 
-	return d.callString("toLocaleString", locale, options)
+	var arrayopts []interface{}
+	if len(opts) > 0 {
+		arrayopts = append(arrayopts, js.ValueOf(opts[0]))
+	}
+
+	if len(opts) > 1 {
+		arrayopts = append(arrayopts, js.ValueOf(opts[1]))
+	}
+
+	return d.callString("toLocaleString", arrayopts...)
 }
 
-func (d Date) ToLocaleTimeString(locale string, options map[string]interface{}) (string, error) {
+func (d Date) ToLocaleTimeString(opts ...interface{}) (string, error) {
 
-	return d.callString("toLocaleTimeString", locale, options)
-}
+	var arrayopts []interface{}
+	if len(opts) > 0 {
+		arrayopts = append(arrayopts, js.ValueOf(opts[0]))
+	}
 
-func (d Date) ToString() (string, error) {
-	return d.callString("toString")
+	if len(opts) > 1 {
+		arrayopts = append(arrayopts, js.ValueOf(opts[1]))
+	}
+	return d.callString("toLocaleTimeString", arrayopts...)
 }
 
 func (d Date) ToTimeString() (string, error) {
