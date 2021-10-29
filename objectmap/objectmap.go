@@ -72,7 +72,7 @@ func New(values ...interface{}) (ObjectMap, error) {
 
 	var o ObjectMap
 	var err error
-
+	var obj js.Value
 	var arrayJS []interface{}
 
 	for _, value := range values {
@@ -86,7 +86,9 @@ func New(values ...interface{}) (ObjectMap, error) {
 
 	if omi := GetInterface(); !omi.IsUndefined() {
 
-		o.BaseObject = o.SetObject(omi.New(arrayJS...))
+		if obj, err = baseobject.New(omi, arrayJS...); err == nil {
+			o.BaseObject = o.SetObject(obj)
+		}
 
 	} else {
 		err = ErrNotImplemented

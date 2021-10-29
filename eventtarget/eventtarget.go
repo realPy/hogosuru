@@ -46,12 +46,18 @@ func (e EventTarget) EventTarget_() EventTarget {
 func New() (EventTarget, error) {
 
 	var e EventTarget
-
+	var obj js.Value
+	var err error
 	if eti := GetInterface(); !eti.IsUndefined() {
-		e.BaseObject = e.SetObject(eti.New())
-		return e, nil
+
+		if obj, err = baseobject.New(eti); err == nil {
+			e.BaseObject = e.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return e, ErrNotImplemented
+	return e, err
 }
 
 func NewFromJSObject(obj js.Value) (EventTarget, error) {

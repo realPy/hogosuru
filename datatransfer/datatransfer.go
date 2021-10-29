@@ -47,12 +47,18 @@ func GetInterface() js.Value {
 //New Get a new channel broadcast
 func New() (DataTransfer, error) {
 	var dt DataTransfer
-
+	var obj js.Value
+	var err error
 	if dti := GetInterface(); !dti.IsUndefined() {
-		dt.BaseObject = dt.SetObject(dti.New())
-		return dt, nil
+
+		if obj, err = baseobject.New(dti); err == nil {
+			dt.BaseObject = dt.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return DataTransfer{}, ErrNotImplemented
+	return dt, err
 }
 
 func NewFromJSObject(obj js.Value) (DataTransfer, error) {

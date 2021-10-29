@@ -47,7 +47,8 @@ func (f File) File_() File {
 func New(bits interface{}, name string, value ...map[string]interface{}) (File, error) {
 
 	var f File
-
+	var obj js.Value
+	var err error
 	var arrayJS []interface{}
 
 	if objGo, ok := bits.(baseobject.ObjectFrom); ok {
@@ -63,10 +64,15 @@ func New(bits interface{}, name string, value ...map[string]interface{}) (File, 
 
 	if fi := GetInterface(); !fi.IsUndefined() {
 
-		f.BaseObject = f.SetObject(fi.New(arrayJS...))
-		return f, nil
+		if obj, err = baseobject.New(fi, arrayJS...); err == nil {
+			f.BaseObject = f.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
+
 	}
-	return f, ErrNotImplemented
+	return f, err
 }
 
 func NewFromJSObject(obj js.Value) (File, error) {

@@ -9,6 +9,7 @@ var setFunc js.Value
 var getFunc js.Value
 var callFunc js.Value
 var invokeFunc js.Value
+var newFunc js.Value
 var errorInterface js.Value
 
 func SetSyscall() {
@@ -17,11 +18,13 @@ func SetSyscall() {
 	eval_(`hGet = (obj, get ) => { try { return [true,Reflect.get(obj,get)] }catch(err){ return [false,err] } }`)
 	eval_(`hCall = (obj,method,args) => { try { func=Reflect.get(obj,method); return [true,Reflect.apply(func,obj,args)] } catch (err) { return [false,err] } }`)
 	eval_(`hInvoke = (func,args) => { try { return [true,Reflect.apply(func,undefined,args)] } catch (err) { return [false,err] } }`)
+	eval_(`hNew= (func,args) => { try { return [true,Reflect.construct(func,args)] } catch (err) { return [false,err] } }`)
 
 	setFunc = js.Global().Get("hSet")
 	getFunc = js.Global().Get("hGet")
 	callFunc = js.Global().Get("hCall")
 	invokeFunc = js.Global().Get("hInvoke")
+	newFunc = js.Global().Get("hNew")
 	errorInterface = js.Global().Get("Error")
 }
 
@@ -50,6 +53,21 @@ func Get(obj js.Value, name string) (js.Value, error) {
 func GetIndex(obj js.Value, index int) (js.Value, error) {
 
 	ret := getFunc.Invoke(obj, js.ValueOf(index))
+
+	if ret.Index(0).Bool() {
+		return ret.Index(1), nil
+	} else {
+		return ret.Index(1), errors.New(ret.Index(1).Get("message").String())
+	}
+}
+
+func New(obj js.Value, args ...interface{}) (js.Value, error) {
+	var jsargs []interface{}
+
+	for _, arg := range args {
+		jsargs = append(jsargs, js.ValueOf(arg))
+	}
+	ret := newFunc.Invoke(obj, jsargs)
 
 	if ret.Index(0).Bool() {
 		return ret.Index(1), nil

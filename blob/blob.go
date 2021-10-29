@@ -52,7 +52,8 @@ func (b Blob) Blob_() Blob {
 func New(values ...interface{}) (Blob, error) {
 
 	var b Blob
-
+	var obj js.Value
+	var err error
 	var arrayJS []interface{}
 
 	for _, value := range values {
@@ -66,31 +67,48 @@ func New(values ...interface{}) (Blob, error) {
 
 	if bi := GetInterface(); !bi.IsUndefined() {
 
-		b.BaseObject = b.SetObject(bi.New(arrayJS))
-		return b, nil
+		if obj, err = baseobject.New(bi, arrayJS); err == nil {
+			b.BaseObject = b.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return b, ErrNotImplemented
+	return b, err
 }
 
 func NewWithObject(o js.Value) (Blob, error) {
 
 	var b Blob
+	var obj js.Value
+	var err error
 	if bi := GetInterface(); !bi.IsUndefined() {
-		b.BaseObject = b.SetObject(bi.New(o))
-		return b, nil
+
+		if obj, err = baseobject.New(bi, o); err == nil {
+			b.BaseObject = b.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return b, ErrNotImplemented
+	return b, err
 }
 
 func NewWithArrayBuffer(a arraybuffer.ArrayBuffer) (Blob, error) {
 
 	var b Blob
+	var obj js.Value
+	var err error
 	if bi := GetInterface(); !bi.IsUndefined() {
 
-		b.BaseObject = b.SetObject(bi.New([]interface{}{a.JSObject()}))
-		return b, nil
+		if obj, err = baseobject.New(bi, []interface{}{a.JSObject()}); err == nil {
+			b.BaseObject = b.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return b, ErrNotImplemented
+	return b, err
 }
 
 func NewFromJSObject(obj js.Value) (Blob, error) {

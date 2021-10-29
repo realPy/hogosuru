@@ -67,13 +67,17 @@ func NewFromJSObject(obj js.Value) (AbortController, error) {
 func New() (AbortController, error) {
 
 	var a AbortController
-
+	var obj js.Value
+	var err error
 	if ai := GetInterface(); !ai.IsUndefined() {
 
-		a.BaseObject = a.SetObject(ai.New())
-		return a, nil
+		if obj, err = baseobject.New(ai); err == nil {
+			a.BaseObject = a.SetObject(obj)
+		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return a, ErrNotImplemented
+	return a, err
 }
 
 func (a AbortController) Signal() (abortsignal.AbortSignal, error) {

@@ -49,7 +49,7 @@ func New(handler func(resolvefunc, errfunc js.Value) (interface{}, error)) (Prom
 
 	var p Promise
 	var err error
-
+	var obj js.Value
 	if pi := GetInterface(); !pi.IsUndefined() {
 		fh := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
@@ -65,7 +65,9 @@ func New(handler func(resolvefunc, errfunc js.Value) (interface{}, error)) (Prom
 			return nil
 		})
 
-		p.BaseObject = p.SetObject(pi.New(fh))
+		if obj, err = baseobject.New(pi, fh); err == nil {
+			p.BaseObject = p.SetObject(obj)
+		}
 
 	} else {
 		err = ErrNotImplemented

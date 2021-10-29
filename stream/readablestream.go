@@ -51,12 +51,18 @@ func (r ReadableStream) Locked() (bool, error) {
 //New Create a new ReadableStream
 func New() (ReadableStream, error) {
 	var r ReadableStream
-
+	var obj js.Value
+	var err error
 	if ri := GetInterface(); !ri.IsUndefined() {
-		r.BaseObject = r.SetObject(ri.New())
-		return r, nil
+
+		if obj, err = baseobject.New(ri); err == nil {
+			r.BaseObject = r.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return r, ErrNotImplemented
+	return r, err
 }
 
 func NewFromJSObject(obj js.Value) (ReadableStream, error) {

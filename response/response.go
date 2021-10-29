@@ -56,12 +56,18 @@ func GetInterface() js.Value {
 //New Create a response
 func New() (Response, error) {
 	var r Response
-
+	var obj js.Value
+	var err error
 	if ri := GetInterface(); !ri.IsUndefined() {
-		r.BaseObject = r.SetObject(ri.New())
-		return r, nil
+
+		if obj, err = baseobject.New(ri); err == nil {
+			r.BaseObject = r.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return r, ErrNotImplemented
+	return r, err
 }
 
 func Error() (Response, error) {

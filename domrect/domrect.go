@@ -45,13 +45,18 @@ func (d DOMRect) DOMRect_() DOMRect {
 func New() (DOMRect, error) {
 
 	var d DOMRect
-
+	var obj js.Value
+	var err error
 	if di := GetInterface(); !di.IsUndefined() {
 
-		d.BaseObject = d.SetObject(di.New())
-		return d, nil
+		if obj, err = baseobject.New(di); err == nil {
+			d.BaseObject = d.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return d, ErrNotImplemented
+	return d, err
 }
 
 func NewFromJSObject(obj js.Value) (DOMRect, error) {

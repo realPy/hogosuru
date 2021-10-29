@@ -45,13 +45,18 @@ func (a Array) Array_() Array {
 func NewEmpty(size int) (Array, error) {
 
 	var a Array
-
+	var obj js.Value
+	var err error
 	if ai := GetInterface(); !ai.IsUndefined() {
 
-		a.BaseObject = a.SetObject(ai.New(js.ValueOf(size)))
-		return a, nil
+		if obj, err = baseobject.New(ai, js.ValueOf(size)); err == nil {
+			a.BaseObject = a.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return a, ErrNotImplemented
+	return a, err
 }
 
 func From(iterable interface{}, f ...func(interface{}) interface{}) (Array, error) {
@@ -113,7 +118,8 @@ func Of(values ...interface{}) (Array, error) {
 func New(values ...interface{}) (Array, error) {
 	var a Array
 	var arrayJS []interface{}
-
+	var obj js.Value
+	var err error
 	for _, value := range values {
 		if objGo, ok := value.(baseobject.ObjectFrom); ok {
 			arrayJS = append(arrayJS, objGo.JSObject())
@@ -123,10 +129,15 @@ func New(values ...interface{}) (Array, error) {
 
 	}
 	if ai := GetInterface(); !ai.IsUndefined() {
-		a.BaseObject = a.SetObject(ai.New(arrayJS...))
-		return a, nil
+
+		if obj, err = baseobject.New(ai, arrayJS...); err == nil {
+			a.BaseObject = a.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return a, ErrNotImplemented
+	return a, err
 
 }
 

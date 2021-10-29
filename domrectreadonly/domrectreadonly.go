@@ -44,13 +44,18 @@ func (d DOMRectReadOnly) DOMRectReadOnly_() DOMRectReadOnly {
 func New() (DOMRectReadOnly, error) {
 
 	var d DOMRectReadOnly
-
+	var obj js.Value
+	var err error
 	if di := GetInterface(); !di.IsUndefined() {
 
-		d.BaseObject = d.SetObject(di.New())
-		return d, nil
+		if obj, err = baseobject.New(di); err == nil {
+			d.BaseObject = d.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return d, ErrNotImplemented
+	return d, err
 }
 
 func NewFromJSObject(obj js.Value) (DOMRectReadOnly, error) {

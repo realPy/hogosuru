@@ -47,14 +47,19 @@ func (a ArrayBuffer) ArrayBuffer_() ArrayBuffer {
 func New(size int) (ArrayBuffer, error) {
 
 	var a ArrayBuffer
-
+	var obj js.Value
+	var err error
 	if ai := GetInterface(); !ai.IsUndefined() {
 
-		a.BaseObject = a.SetObject(ai.New(js.ValueOf(size)))
-		return a, nil
+		if obj, err = baseobject.New(ai, js.ValueOf(size)); err == nil {
+			a.BaseObject = a.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
 
-	return a, ErrNotImplemented
+	return a, err
 }
 
 func NewFromJSObject(obj js.Value) (ArrayBuffer, error) {

@@ -52,6 +52,7 @@ func New() (Document, error) {
 	if di := GetInterface(); !di.IsUndefined() {
 
 		if dobj, err := baseobject.Get(js.Global(), "document"); err == nil {
+
 			d.BaseObject = d.SetObject(dobj)
 		}
 

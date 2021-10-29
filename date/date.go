@@ -45,6 +45,7 @@ func New(values ...interface{}) (Date, error) {
 	var d Date
 	var err error
 	var arrayJS []interface{}
+	var obj js.Value
 
 	for _, value := range values {
 		if objGo, ok := value.(baseobject.ObjectFrom); ok {
@@ -56,7 +57,9 @@ func New(values ...interface{}) (Date, error) {
 	}
 	if di := GetInterface(); !di.IsUndefined() {
 
-		d.BaseObject = d.SetObject(di.New(arrayJS...))
+		if obj, err = baseobject.New(di, arrayJS...); err == nil {
+			d.BaseObject = d.SetObject(obj)
+		}
 
 	} else {
 		err = ErrNotImplemented

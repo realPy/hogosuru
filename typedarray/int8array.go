@@ -46,6 +46,8 @@ func NewInt8Array(value interface{}) (Int8Array, error) {
 
 	var a Int8Array
 	var obj interface{}
+	var objnew js.Value
+	var err error
 	if ai := GetInt8ArrayInterface(); !ai.IsUndefined() {
 
 		if objGo, ok := value.(baseobject.ObjectFrom); ok {
@@ -54,11 +56,15 @@ func NewInt8Array(value interface{}) (Int8Array, error) {
 			obj = js.ValueOf(value)
 		}
 
-		a.BaseObject = a.SetObject(ai.New(obj))
-		return a, nil
+		if objnew, err = baseobject.New(ai, obj); err == nil {
+			a.BaseObject = a.SetObject(objnew)
+		}
+
+	} else {
+		err = ErrNotImplementedInt8Array
 	}
 
-	return a, ErrNotImplementedInt8Array
+	return a, err
 }
 
 func NewInt8ArrayFrom(iterable interface{}) (Int8Array, error) {
