@@ -260,9 +260,21 @@ func (e Element) ScrollHeight() (int, error) {
 	return e.GetAttributeInt("scrollHeight")
 }
 
+func (e Element) SetScrollHeight(value int) error {
+
+	return e.SetAttributeInt("scrollHeight", value)
+
+}
+
 func (e Element) ScrollLeft() (int, error) {
 
 	return e.GetAttributeInt("scrollLeft")
+}
+
+func (e Element) SetScrollLeft(value int) error {
+
+	return e.SetAttributeInt("scrollLeft", value)
+
 }
 
 func (e Element) ScrollTop() (int, error) {
@@ -270,9 +282,21 @@ func (e Element) ScrollTop() (int, error) {
 	return e.GetAttributeInt("scrollTop")
 }
 
+func (e Element) SetScrollTop(value int) error {
+
+	return e.SetAttributeInt("scrollTop", value)
+
+}
+
 func (e Element) ScrollWidth() (int, error) {
 
 	return e.GetAttributeInt("scrollWidth")
+}
+
+func (e Element) SetScrollWidth(value int) error {
+
+	return e.SetAttributeInt("scrollWidth", value)
+
 }
 
 func (e Element) TagName() (string, error) {
