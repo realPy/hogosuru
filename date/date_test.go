@@ -121,7 +121,7 @@ func TestSetHours(t *testing.T) {
 	if d, err := New("2015-10-21T09:24:00"); testingutils.AssertErr(t, err) {
 
 		if err := d.SetHours(12); testingutils.AssertErr(t, err) {
-			testingutils.AssertExpect(t, "2015-10-21T09:24:00.000Z", d.ToISOString_())
+			testingutils.AssertExpect(t, "2015-10-21T12:24:00.000Z", d.ToISOString_())
 		}
 
 	}
