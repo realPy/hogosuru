@@ -1,4 +1,4 @@
-Hogosuru [![Unit Test](https://github.com/realPy/hogosuru/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/realPy/hogosuru/actions/workflows/ci.yml)
+Hogosuru [![Unit Test](https://github.com/realPy/hogosuru/actions/workflows/ci.yml/badge.svg)](https://github.com/realPy/hogosuru/actions/workflows/ci.yml)
 =========
 
 Hogosuru is a framework to easily write a complete single page application in Go or just export some functionnality directly accessible in javascript (functionnality that need speed for example).  
