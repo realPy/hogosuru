@@ -1,6 +1,9 @@
 package hogosurudebug
 
 import (
+	"fmt"
+	"path/filepath"
+	"runtime"
 	"sync"
 	"syscall/js"
 
@@ -46,6 +49,7 @@ func InstallConsoleHandler(typehandler string, handler func(string)) error {
 
 var singletonConsole sync.Once
 var globalconsole console.Console
+var AssertErr func(err error) bool = assertErr_wstrace
 
 func Console() console.Console {
 
@@ -61,11 +65,23 @@ func Console() console.Console {
 
 func EnableDebug() {
 	baseobject.SetConsoleDebug(Console())
+	AssertErr = assertErr_strace
 }
 
-func AssertErr(err error) bool {
+func assertErr_wstrace(err error) bool {
 	if err != nil {
 		Console().Assert(err == nil, err.Error())
+	}
+
+	return err == nil
+}
+
+func assertErr_strace(err error) bool {
+
+	if err != nil {
+		_, file, line, _ := runtime.Caller(2)
+		strerr := fmt.Sprintf("%s:%d >> %s", filepath.Base(file), line, err.Error())
+		Console().Assert(err == nil, strerr)
 	}
 
 	return err == nil
