@@ -61,7 +61,9 @@ func TestSetDate(t *testing.T) {
 	if d, err := New("2015-10-21T09:24:00"); testingutils.AssertErr(t, err) {
 
 		if err := d.SetDate(23); testingutils.AssertErr(t, err) {
-			testingutils.AssertExpect(t, "2015-10-23T09:24:00.000Z", d.ToISOString_())
+
+			gd, _ := d.GetDate()
+			testingutils.AssertExpect(t, 23, gd)
 		}
 
 	}
@@ -98,7 +100,9 @@ func TestSetFullYear(t *testing.T) {
 	if d, err := New("2015-10-21T09:24:00"); testingutils.AssertErr(t, err) {
 
 		if err := d.SetFullYear(2021); testingutils.AssertErr(t, err) {
-			testingutils.AssertExpect(t, "2021-10-21T09:24:00.000Z", d.ToISOString_())
+
+			gf, _ := d.GetFullYear()
+			testingutils.AssertExpect(t, 2021, gf)
 		}
 
 	}
@@ -121,7 +125,9 @@ func TestSetHours(t *testing.T) {
 	if d, err := New("2015-10-21T09:24:00"); testingutils.AssertErr(t, err) {
 
 		if err := d.SetHours(12); testingutils.AssertErr(t, err) {
-			testingutils.AssertExpect(t, "2015-10-21T12:24:00.000Z", d.ToISOString_())
+
+			gh, _ := d.GetHours()
+			testingutils.AssertExpect(t, 12, gh)
 		}
 
 	}
@@ -144,7 +150,9 @@ func TestSetMilliseconds(t *testing.T) {
 	if d, err := New("2015-10-21T09:24:00.100"); testingutils.AssertErr(t, err) {
 
 		if err := d.SetMilliseconds(200); testingutils.AssertErr(t, err) {
-			testingutils.AssertExpect(t, "2015-10-21T09:24:00.200Z", d.ToISOString_())
+
+			gm, _ := d.GetMilliseconds()
+			testingutils.AssertExpect(t, 200, gm)
 		}
 
 	}
@@ -167,7 +175,9 @@ func TestSetMinutes(t *testing.T) {
 	if d, err := New("2015-10-21T09:24:33.100"); testingutils.AssertErr(t, err) {
 
 		if err := d.SetMinutes(48); testingutils.AssertErr(t, err) {
-			testingutils.AssertExpect(t, "2015-10-21T09:48:33.100Z", d.ToISOString_())
+
+			gm, _ := d.GetMinutes()
+			testingutils.AssertExpect(t, 48, gm)
 		}
 
 	}
@@ -191,7 +201,9 @@ func TestSetSeconds(t *testing.T) {
 	if d, err := New("2015-10-21T09:24:33.100"); testingutils.AssertErr(t, err) {
 
 		if err := d.SetSeconds(48); testingutils.AssertErr(t, err) {
-			testingutils.AssertExpect(t, "2015-10-21T09:24:48.100Z", d.ToISOString_())
+
+			gs, _ := d.GetSeconds()
+			testingutils.AssertExpect(t, 48, gs)
 		}
 
 	}
@@ -509,55 +521,65 @@ func TestToDateString(t *testing.T) {
 
 func TestISOString(t *testing.T) {
 
-	if d, err := New(1993, 6, 28, 14, 39, 7); testingutils.AssertErr(t, err) {
+	if timestamp, err := UTC(1993, 6, 28, 14, 39, 7); testingutils.AssertErr(t, err) {
 
-		if s, err := d.ToISOString(); testingutils.AssertErr(t, err) {
-			testingutils.AssertExpect(t, "1993-07-28T14:39:07.000Z", s)
+		if d, err := New(timestamp); testingutils.AssertErr(t, err) {
+
+			if s, err := d.ToISOString(); testingutils.AssertErr(t, err) {
+				testingutils.AssertExpect(t, "1993-07-28T14:39:07.000Z", s)
+			}
+
 		}
-
 	}
 
 }
 
 func TestToJSON(t *testing.T) {
 
-	if d, err := New(1993, 6, 28, 14, 39, 7); testingutils.AssertErr(t, err) {
+	if timestamp, err := UTC(1993, 6, 28, 14, 39, 7); testingutils.AssertErr(t, err) {
 
-		if s, err := d.ToJSON(); testingutils.AssertErr(t, err) {
-			testingutils.AssertExpect(t, "1993-07-28T14:39:07.000Z", s)
+		if d, err := New(timestamp); testingutils.AssertErr(t, err) {
+
+			if s, err := d.ToJSON(); testingutils.AssertErr(t, err) {
+				testingutils.AssertExpect(t, "1993-07-28T14:39:07.000Z", s)
+			}
+
 		}
-
 	}
 
 }
 
 func TestToLocaleDateString(t *testing.T) {
 
-	if d, err := New(1993, 6, 28, 14, 39, 7); testingutils.AssertErr(t, err) {
+	if timestamp, err := UTC(1993, 6, 28, 14, 39, 7); testingutils.AssertErr(t, err) {
 
-		if s, err := d.ToLocaleDateString("fr-FR", map[string]interface{}{"weekday": "long", "year": "numeric", "month": "long", "day": "numeric"}); testingutils.AssertErr(t, err) {
-			testingutils.AssertExpect(t, "mercredi 28 juillet 1993", s)
+		if d, err := New(timestamp); testingutils.AssertErr(t, err) {
+
+			if s, err := d.ToLocaleDateString("fr-FR", map[string]interface{}{"weekday": "long", "year": "numeric", "month": "long", "day": "numeric"}); testingutils.AssertErr(t, err) {
+				testingutils.AssertExpect(t, "mercredi 28 juillet 1993", s)
+			}
+
 		}
+	}
 
+}
+
+func TestToLocaleString(t *testing.T) {
+
+	if timestamp, err := UTC(1993, 6, 28, 14, 39, 7); testingutils.AssertErr(t, err) {
+
+		if d, err := New(timestamp); testingutils.AssertErr(t, err) {
+
+			if s, err := d.ToLocaleString("fr-FR", map[string]interface{}{"timeZone": "UTC"}); testingutils.AssertErr(t, err) {
+				testingutils.AssertExpect(t, "28/07/1993, 14:39:07", s)
+			}
+
+		}
 	}
 
 }
 
 /*
-//depends on local
-
-func TestToLocaleString(t *testing.T) {
-
-	if d, err := New(1993, 6, 28, 14, 39, 7); testingutils.AssertErr(t, err) {
-
-		if s, err := d.ToLocaleString("fr-FR", map[string]interface{}{"timeZone": "UTC"}); testingutils.AssertErr(t, err) {
-			testingutils.AssertExpect(t, "28/07/1993, 12:39:07", s)
-		}
-
-	}
-
-}
-
 func TestToLocaleTimeString(t *testing.T) {
 
 	if d, err := New("August 19, 1975 23:15:30 GMT+00:00"); testingutils.AssertErr(t, err) {
@@ -580,5 +602,4 @@ func TestToUTCString(t *testing.T) {
 
 	}
 
-}
-*/
+}*/
