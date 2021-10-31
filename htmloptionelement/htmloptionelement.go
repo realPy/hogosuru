@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmloptionelementinterface, err = js.Global().GetWithErr("HTMLOptionElement"); err != nil {
+		if htmloptionelementinterface, err = baseobject.Get(js.Global(), "HTMLOptionElement"); err != nil {
 			htmloptionelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmloptionelementinterface, func(v js.Value) (interface{}, error) {
@@ -74,15 +74,24 @@ func NewFromElement(elem element.Element) (HtmlOptionElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlOptionElement, error) {
 	var h HtmlOptionElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHTMLOptionElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHTMLOptionElement
+	return h, err
 }
 
 func (h HtmlOptionElement) DefaultSelected() (bool, error) {
@@ -106,7 +115,7 @@ func (h HtmlOptionElement) Form() (element.Element, error) {
 	var obj js.Value
 	var elem element.Element
 
-	if obj, err = h.JSObject().GetWithErr("form"); err == nil {
+	if obj, err = h.Get("form"); err == nil {
 
 		elem, err = element.NewFromJSObject(obj)
 	}

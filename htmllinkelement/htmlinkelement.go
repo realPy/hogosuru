@@ -33,7 +33,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmllinklementinterface, err = js.Global().GetWithErr("HTMLLinkElement"); err != nil {
+		if htmllinklementinterface, err = baseobject.Get(js.Global(), "HTMLLinkElement"); err != nil {
 			htmllinklementinterface = js.Undefined()
 		}
 		baseobject.Register(htmllinklementinterface, func(v js.Value) (interface{}, error) {
@@ -76,15 +76,24 @@ func NewFromElement(elem element.Element) (HtmlLinkElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlLinkElement, error) {
 	var h HtmlLinkElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmlLinkElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHtmlLinkElement
+	return h, err
 }
 
 func (h HtmlLinkElement) As() (string, error) {
@@ -148,7 +157,7 @@ func (h HtmlLinkElement) RelList() (domtokenlist.DOMTokenList, error) {
 	var obj js.Value
 	var dlist domtokenlist.DOMTokenList
 
-	if obj, err = h.JSObject().GetWithErr("relList"); err == nil {
+	if obj, err = h.Get("relList"); err == nil {
 
 		dlist, err = domtokenlist.NewFromJSObject(obj)
 	}
@@ -160,7 +169,7 @@ func (h HtmlLinkElement) Sheet() (stylesheet.StyleSheet, error) {
 	var err error
 	var obj js.Value
 	var s stylesheet.StyleSheet
-	if obj, err = h.JSObject().GetWithErr("sheet"); err == nil {
+	if obj, err = h.Get("sheet"); err == nil {
 
 		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject

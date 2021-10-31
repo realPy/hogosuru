@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmltablerowelementinterface, err = js.Global().GetWithErr("HTMLTableRowElement"); err != nil {
+		if htmltablerowelementinterface, err = baseobject.Get(js.Global(), "HTMLTableRowElement"); err != nil {
 			htmltablerowelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmltablerowelementinterface, func(v js.Value) (interface{}, error) {
@@ -75,15 +75,24 @@ func NewFromElement(elem element.Element) (HtmlTableRowElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlTableRowElement, error) {
 	var h HtmlTableRowElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHTMLTableRowElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHTMLTableRowElement
+	return h, err
 }
 
 func (h HtmlTableRowElement) Cells(method string) (htmlelement.HtmlElement, error) {
@@ -92,7 +101,7 @@ func (h HtmlTableRowElement) Cells(method string) (htmlelement.HtmlElement, erro
 	var obj js.Value
 	var elem htmlelement.HtmlElement
 
-	if obj, err = h.JSObject().GetWithErr("cells"); err == nil {
+	if obj, err = h.Get("cells"); err == nil {
 
 		elem, err = htmlelement.NewFromJSObject(obj)
 	}
@@ -118,7 +127,7 @@ func (h HtmlTableRowElement) InsertCell(index ...int) (htmltablecellelement.Html
 		arrayJS = append(arrayJS, js.ValueOf(index[0]))
 	}
 
-	if obj, err = h.JSObject().CallWithErr("insertCell", arrayJS...); err == nil {
+	if obj, err = h.Call("insertCell", arrayJS...); err == nil {
 		elem, err = htmltablecellelement.NewFromJSObject(obj)
 
 	}
@@ -128,7 +137,7 @@ func (h HtmlTableRowElement) InsertCell(index ...int) (htmltablecellelement.Html
 func (h HtmlTableRowElement) DeleteCell(index int) error {
 
 	var err error
-	_, err = h.JSObject().CallWithErr("deleteCell", js.ValueOf(index))
+	_, err = h.Call("deleteCell", js.ValueOf(index))
 
 	return err
 }

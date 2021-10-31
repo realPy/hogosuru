@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlbaseelementinterface, err = js.Global().GetWithErr("HTMLBaseElement"); err != nil {
+		if htmlbaseelementinterface, err = baseobject.Get(js.Global(), "HTMLBaseElement"); err != nil {
 			htmlbaseelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlbaseelementinterface, func(v js.Value) (interface{}, error) {
@@ -59,6 +59,7 @@ func NewFromElement(elem element.Element) (HtmlBaseElement, error) {
 	var err error
 
 	if hci := GetInterface(); !hci.IsUndefined() {
+
 		if elem.BaseObject.JSObject().InstanceOf(hci) {
 			h.BaseObject = h.SetObject(elem.BaseObject.JSObject())
 
@@ -74,15 +75,24 @@ func NewFromElement(elem element.Element) (HtmlBaseElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlBaseElement, error) {
 	var h HtmlBaseElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmlBaseElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHtmlBaseElement
+	return h, err
 }
 
 func (h HtmlBaseElement) Href() (string, error) {

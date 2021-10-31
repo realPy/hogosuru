@@ -18,7 +18,7 @@ func GetIDBKeyRangeInterface() js.Value {
 
 	singletonIDBIndex.Do(func() {
 		var err error
-		if idbkeyrangeinterface, err = js.Global().GetWithErr("IDBKeyRange"); err != nil {
+		if idbkeyrangeinterface, err = baseobject.Get(js.Global(), "IDBKeyRange"); err != nil {
 			idbkeyrangeinterface = js.Undefined()
 		}
 		baseobject.Register(idbkeyrangeinterface, func(v js.Value) (interface{}, error) {
@@ -45,10 +45,15 @@ func IDBDKeyRangeNewFromJSObject(obj js.Value) (IDBKeyRange, error) {
 	var i IDBKeyRange
 	var err error
 	if ai := GetIDBKeyRangeInterface(); !ai.IsUndefined() {
-		if obj.InstanceOf(ai) {
-			i.BaseObject = i.SetObject(obj)
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnIDBKeyRange
+
+			if obj.InstanceOf(ai) {
+				i.BaseObject = i.SetObject(obj)
+			} else {
+				err = ErrNotAnIDBKeyRange
+			}
 		}
 	} else {
 		err = ErrNotImplemented
@@ -60,9 +65,12 @@ func IDBDKeyRangeNewFromJSObject(obj js.Value) (IDBKeyRange, error) {
 func newKeyRange(method string, values ...interface{}) (IDBKeyRange, error) {
 	var i IDBKeyRange
 	var err error
-
+	var obj js.Value
 	if ii := GetIDBKeyRangeInterface(); !ii.IsUndefined() {
-		i.BaseObject = i.SetObject(ii.New(values...))
+
+		if obj, err = baseobject.New(ii, values...); err == nil {
+			i.BaseObject = i.SetObject(obj)
+		}
 	} else {
 		err = ErrNotImplemented
 	}
@@ -91,7 +99,7 @@ func (i IDBKeyRange) Includes(value interface{}) (bool, error) {
 	var err error
 	var ret bool
 
-	if obj, err = i.JSObject().CallWithErr("includes", value); err == nil {
+	if obj, err = i.Call("includes", value); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			ret = obj.Bool()
 		} else {
@@ -111,9 +119,9 @@ func (i IDBKeyRange) upperOpen() (bool, error) {
 }
 
 func (i IDBKeyRange) Lower() (interface{}, error) {
-	return i.JSObject().GetWithErr("lower")
+	return i.Get("lower")
 }
 
 func (i IDBKeyRange) Upper() (interface{}, error) {
-	return i.JSObject().GetWithErr("upper")
+	return i.Get("upper")
 }

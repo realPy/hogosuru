@@ -8,3 +8,15 @@ func New_(values ...interface{}) Date {
 	}
 	return d
 }
+
+func (d Date) ToISOString_() string {
+
+	var s string
+	var err error
+
+	if s, err = d.ToISOString(); err != nil {
+		d.Debug(err.Error())
+	}
+
+	return s
+}

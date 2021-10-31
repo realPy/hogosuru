@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmltablecellelementinterface, err = js.Global().GetWithErr("HTMLTableCellElement"); err != nil {
+		if htmltablecellelementinterface, err = baseobject.Get(js.Global(), "HTMLTableCellElement"); err != nil {
 			htmltablecellelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmltablecellelementinterface, func(v js.Value) (interface{}, error) {
@@ -86,13 +86,22 @@ func NewFromElement(elem element.Element) (HtmlTableCellElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlTableCellElement, error) {
 	var h HtmlTableCellElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHTMLTableCellElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHTMLTableCellElement
+	return h, err
 }

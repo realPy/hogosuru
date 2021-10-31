@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmltemplateelementinterface, err = js.Global().GetWithErr("HTMLTemplateElement"); err != nil {
+		if htmltemplateelementinterface, err = baseobject.Get(js.Global(), "HTMLTemplateElement"); err != nil {
 			htmltemplateelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmltemplateelementinterface, func(v js.Value) (interface{}, error) {
@@ -75,15 +75,24 @@ func NewFromElement(elem element.Element) (HtmlTemplateElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlTemplateElement, error) {
 	var h HtmlTemplateElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHTMLTemplateElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHTMLTemplateElement
+	return h, err
 }
 
 func (h HtmlTemplateElement) Content() (documentfragment.DocumentFragment, error) {
@@ -91,7 +100,7 @@ func (h HtmlTemplateElement) Content() (documentfragment.DocumentFragment, error
 	var obj js.Value
 	var fragment documentfragment.DocumentFragment
 
-	if obj, err = h.JSObject().GetWithErr("content"); err == nil {
+	if obj, err = h.Get("content"); err == nil {
 
 		fragment, err = documentfragment.NewFromJSObject(obj)
 	}

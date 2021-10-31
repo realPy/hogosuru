@@ -34,7 +34,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmltextareaelementinterface, err = js.Global().GetWithErr("HTMLTextAreaElement"); err != nil {
+		if htmltextareaelementinterface, err = baseobject.Get(js.Global(), "HTMLTextAreaElement"); err != nil {
 			htmltextareaelementinterface = js.Undefined()
 		}
 
@@ -78,15 +78,24 @@ func NewFromElement(elem element.Element) (HtmlTextAreaElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlTextAreaElement, error) {
 	var h HtmlTextAreaElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHTMLTextAreaElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHTMLTextAreaElement
+	return h, err
 }
 
 func (h HtmlTextAreaElement) AccessKey() (string, error) {
@@ -149,7 +158,7 @@ func (h HtmlTextAreaElement) Form() (htmlformelement.HtmlFormElement, error) {
 	var err error
 	var obj js.Value
 	var f htmlformelement.HtmlFormElement
-	if obj, err = h.JSObject().GetWithErr("form"); err == nil {
+	if obj, err = h.Get("form"); err == nil {
 
 		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject
@@ -262,7 +271,7 @@ func (h HtmlTextAreaElement) Validity() (validitystate.ValidityState, error) {
 	var obj js.Value
 	var state validitystate.ValidityState
 
-	if obj, err = h.JSObject().GetWithErr("validity"); err == nil {
+	if obj, err = h.Get("validity"); err == nil {
 
 		state, err = validitystate.NewFromJSObject(obj)
 	}
@@ -299,7 +308,7 @@ func (h HtmlTextAreaElement) Labels() (nodelist.NodeList, error) {
 	var obj js.Value
 	var nlist nodelist.NodeList
 
-	if obj, err = h.JSObject().GetWithErr("labels"); err == nil {
+	if obj, err = h.Get("labels"); err == nil {
 
 		nlist, err = nodelist.NewFromJSObject(obj)
 	}
@@ -308,17 +317,17 @@ func (h HtmlTextAreaElement) Labels() (nodelist.NodeList, error) {
 }
 
 func (h HtmlTextAreaElement) Blur() error {
-	_, err := h.JSObject().CallWithErr("blur")
+	_, err := h.Call("blur")
 	return err
 }
 
 func (h HtmlTextAreaElement) Focus() error {
-	_, err := h.JSObject().CallWithErr("focus")
+	_, err := h.Call("focus")
 	return err
 }
 
 func (h HtmlTextAreaElement) Select() error {
-	_, err := h.JSObject().CallWithErr("select")
+	_, err := h.Call("select")
 	return err
 }
 
@@ -336,7 +345,7 @@ func (h HtmlTextAreaElement) SetRangeText(replacement string, options ...interfa
 			arrayJS = append(arrayJS, js.ValueOf(option))
 		}
 	}
-	_, err = h.JSObject().CallWithErr("setRangeText", arrayJS...)
+	_, err = h.Call("setRangeText", arrayJS...)
 	return err
 }
 
@@ -351,7 +360,7 @@ func (h HtmlTextAreaElement) SetSelectionRange(selectionStart, selectionEnd stri
 	if len(selectionDirection) > 0 {
 		arrayJS = append(arrayJS, js.ValueOf(selectionDirection[0]))
 	}
-	_, err = h.JSObject().CallWithErr("setSelectionRange", arrayJS...)
+	_, err = h.Call("setSelectionRange", arrayJS...)
 	return err
 }
 
@@ -367,6 +376,6 @@ func (h HtmlTextAreaElement) ReportValidity() (bool, error) {
 
 func (h HtmlTextAreaElement) SetCustomValidity(message string) error {
 
-	_, err := h.JSObject().CallWithErr("setCustomValidity", js.ValueOf(message))
+	_, err := h.Call("setCustomValidity", js.ValueOf(message))
 	return err
 }

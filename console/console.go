@@ -29,7 +29,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if consoleinterface, err = js.Global().GetWithErr("console"); err != nil {
+		if consoleinterface, err = baseobject.Get(js.Global(), "console"); err != nil {
 			consoleinterface = js.Undefined()
 		}
 
@@ -61,12 +61,19 @@ func NewFromJSObject(obj js.Value) (Console, error) {
 	var err error
 
 	if bi := GetInterface(); !bi.IsUndefined() {
-		if obj.InstanceOf(bi) {
-			c.BaseObject = c.SetObject(obj)
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
+			if obj.InstanceOf(bi) {
+				c.BaseObject = c.SetObject(obj)
+
+			} else {
+				err = ErrNotAConsole
+			}
 		}
 	} else {
-		err = ErrNotAConsole
+		err = ErrNotImplemented
 	}
 
 	return c, err
@@ -83,13 +90,13 @@ func (c Console) Assert(assertion bool, opts ...interface{}) error {
 		arrayJS = append(arrayJS, js.ValueOf(opt))
 	}
 
-	_, err = c.JSObject().CallWithErr("assert", arrayJS...)
+	_, err = c.Call("assert", arrayJS...)
 	return err
 }
 
 func (c Console) Clear() error {
 	var err error
-	_, err = c.JSObject().CallWithErr("clear")
+	_, err = c.Call("clear")
 	return err
 }
 
@@ -102,7 +109,7 @@ func (c Console) Count(label ...string) error {
 		arrayJS = append(arrayJS, label[0])
 	}
 
-	_, err = c.JSObject().CallWithErr("count", arrayJS...)
+	_, err = c.Call("count", arrayJS...)
 	return err
 }
 
@@ -115,7 +122,7 @@ func (c Console) CountReset(label ...string) error {
 		arrayJS = append(arrayJS, label[0])
 	}
 
-	_, err = c.JSObject().CallWithErr("countReset", arrayJS...)
+	_, err = c.Call("countReset", arrayJS...)
 	return err
 }
 
@@ -128,21 +135,21 @@ func (c Console) Debug(opts ...interface{}) error {
 		arrayJS = append(arrayJS, js.ValueOf(opt))
 	}
 
-	_, err = c.JSObject().CallWithErr("debug", arrayJS...)
+	_, err = c.Call("debug", arrayJS...)
 	return err
 }
 
 func (c Console) Dir(obj baseobject.BaseObject) error {
 
 	var err error
-	_, err = c.JSObject().CallWithErr("dir", obj.JSObject())
+	_, err = c.Call("dir", obj.JSObject())
 	return err
 }
 
 func (c Console) DirXml(obj baseobject.BaseObject) error {
 
 	var err error
-	_, err = c.JSObject().CallWithErr("dirxml", obj.JSObject())
+	_, err = c.Call("dirxml", obj.JSObject())
 	return err
 }
 
@@ -155,7 +162,7 @@ func (c Console) Error(opts ...interface{}) error {
 		arrayJS = append(arrayJS, js.ValueOf(opt))
 	}
 
-	_, err = c.JSObject().CallWithErr("error", arrayJS...)
+	_, err = c.Call("error", arrayJS...)
 	return err
 }
 
@@ -173,7 +180,7 @@ func (c Console) Group(label ...string) error {
 		arrayJS = append(arrayJS, label[0])
 	}
 
-	_, err = c.JSObject().CallWithErr("group", arrayJS...)
+	_, err = c.Call("group", arrayJS...)
 	return err
 }
 
@@ -186,14 +193,14 @@ func (c Console) GroupCollapsed(label ...string) error {
 		arrayJS = append(arrayJS, label[0])
 	}
 
-	_, err = c.JSObject().CallWithErr("groupCollapsed", arrayJS...)
+	_, err = c.Call("groupCollapsed", arrayJS...)
 	return err
 }
 
 func (c Console) GroupEnd() error {
 
 	var err error
-	_, err = c.JSObject().CallWithErr("groupEnd")
+	_, err = c.Call("groupEnd")
 	return err
 }
 
@@ -206,7 +213,7 @@ func (c Console) Info(opts ...interface{}) error {
 		arrayJS = append(arrayJS, js.ValueOf(opt))
 	}
 
-	_, err = c.JSObject().CallWithErr("info", arrayJS...)
+	_, err = c.Call("info", arrayJS...)
 	return err
 }
 
@@ -219,35 +226,35 @@ func (c Console) Log(opts ...interface{}) error {
 		arrayJS = append(arrayJS, js.ValueOf(opt))
 	}
 
-	_, err = c.JSObject().CallWithErr("log", arrayJS...)
+	_, err = c.Call("log", arrayJS...)
 	return err
 }
 
 func (c Console) Time(label string) error {
 
 	var err error
-	_, err = c.JSObject().CallWithErr("time", js.ValueOf(label))
+	_, err = c.Call("time", js.ValueOf(label))
 	return err
 }
 
 func (c Console) TimeEnd(label string) error {
 
 	var err error
-	_, err = c.JSObject().CallWithErr("timeEnd", js.ValueOf(label))
+	_, err = c.Call("timeEnd", js.ValueOf(label))
 	return err
 }
 
 func (c Console) TimeLog(label string) error {
 
 	var err error
-	_, err = c.JSObject().CallWithErr("timeLog", js.ValueOf(label))
+	_, err = c.Call("timeLog", js.ValueOf(label))
 	return err
 }
 
 func (c Console) Trace() error {
 
 	var err error
-	_, err = c.JSObject().CallWithErr("trace")
+	_, err = c.Call("trace")
 	return err
 }
 
@@ -260,6 +267,6 @@ func (c Console) Warn(opts ...interface{}) error {
 		arrayJS = append(arrayJS, js.ValueOf(opt))
 	}
 
-	_, err = c.JSObject().CallWithErr("warn", arrayJS...)
+	_, err = c.Call("warn", arrayJS...)
 	return err
 }

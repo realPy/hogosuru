@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmllegendelementinterface, err = js.Global().GetWithErr("HTMLLegendElement"); err != nil {
+		if htmllegendelementinterface, err = baseobject.Get(js.Global(), "HTMLLegendElement"); err != nil {
 			htmllegendelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmllegendelementinterface, func(v js.Value) (interface{}, error) {
@@ -75,15 +75,24 @@ func NewFromElement(elem element.Element) (HtmlLegendElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlLegendElement, error) {
 	var h HtmlLegendElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHTMLLegendElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHTMLLegendElement
+	return h, err
 }
 
 func (h HtmlLegendElement) Form() (htmlformelement.HtmlFormElement, error) {
@@ -91,7 +100,7 @@ func (h HtmlLegendElement) Form() (htmlformelement.HtmlFormElement, error) {
 	var obj js.Value
 	var formelem htmlformelement.HtmlFormElement
 
-	if obj, err = h.JSObject().GetWithErr("form"); err == nil {
+	if obj, err = h.Get("form"); err == nil {
 
 		formelem, err = htmlformelement.NewFromJSObject(obj)
 	}

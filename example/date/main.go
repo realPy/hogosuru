@@ -11,6 +11,7 @@ import (
 )
 
 func main() {
+	hogosuru.Init()
 	if d, err := date.New(); hogosuru.AssertErr(err) {
 		value, _ := d.GetMilliseconds()
 		println("-->", value)

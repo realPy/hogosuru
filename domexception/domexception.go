@@ -30,7 +30,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if domexceptioninterface, err = js.Global().GetWithErr("DOMException"); err != nil {
+		if domexceptioninterface, err = baseobject.Get(js.Global(), "DOMException"); err != nil {
 			domexceptioninterface = js.Undefined()
 		}
 
@@ -42,14 +42,43 @@ func GetInterface() js.Value {
 	return domexceptioninterface
 }
 
+func New(opts ...string) (DomException, error) {
+
+	var e DomException
+	var arrayJS []interface{}
+	var obj js.Value
+	var err error
+	if len(opts) < 3 {
+		for _, opt := range opts {
+			arrayJS = append(arrayJS, js.ValueOf(opt))
+		}
+	}
+
+	if ei := GetInterface(); !ei.IsUndefined() {
+
+		if obj, err = baseobject.New(ei, arrayJS...); err == nil {
+			e.BaseObject = e.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
+	}
+	return e, err
+}
+
 func NewFromJSObject(obj js.Value) (DomException, error) {
 	var d DomException
 	var err error
 	if di := GetInterface(); !di.IsUndefined() {
-		if obj.InstanceOf(di) {
-			d.BaseObject = d.SetObject(obj)
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotADOMException
+
+			if obj.InstanceOf(di) {
+				d.BaseObject = d.SetObject(obj)
+			} else {
+				err = ErrNotADOMException
+			}
 		}
 	} else {
 		err = ErrNotImplemented

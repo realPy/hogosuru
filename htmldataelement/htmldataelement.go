@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmldataelementinterface, err = js.Global().GetWithErr("HTMLDataElement"); err != nil {
+		if htmldataelementinterface, err = baseobject.Get(js.Global(), "HTMLDataElement"); err != nil {
 			htmldataelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmldataelementinterface, func(v js.Value) (interface{}, error) {
@@ -59,6 +59,7 @@ func NewFromElement(elem element.Element) (HtmlDataElement, error) {
 	var err error
 
 	if hci := GetInterface(); !hci.IsUndefined() {
+
 		if elem.BaseObject.JSObject().InstanceOf(hci) {
 			h.BaseObject = h.SetObject(elem.BaseObject.JSObject())
 
@@ -74,15 +75,24 @@ func NewFromElement(elem element.Element) (HtmlDataElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlDataElement, error) {
 	var h HtmlDataElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmlDataElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHtmlDataElement
+	return h, err
 }
 
 func (h HtmlDataElement) Value() (string, error) {

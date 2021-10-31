@@ -17,7 +17,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if domrectreadonlyinterface, err = js.Global().GetWithErr("DOMRectReadOnly"); err != nil {
+		if domrectreadonlyinterface, err = baseobject.Get(js.Global(), "DOMRectReadOnly"); err != nil {
 			domrectreadonlyinterface = js.Undefined()
 		}
 		baseobject.Register(domrectreadonlyinterface, func(v js.Value) (interface{}, error) {
@@ -44,24 +44,34 @@ func (d DOMRectReadOnly) DOMRectReadOnly_() DOMRectReadOnly {
 func New() (DOMRectReadOnly, error) {
 
 	var d DOMRectReadOnly
-
+	var obj js.Value
+	var err error
 	if di := GetInterface(); !di.IsUndefined() {
 
-		d.BaseObject = d.SetObject(di.New())
-		return d, nil
+		if obj, err = baseobject.New(di); err == nil {
+			d.BaseObject = d.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return d, ErrNotImplemented
+	return d, err
 }
 
 func NewFromJSObject(obj js.Value) (DOMRectReadOnly, error) {
 	var d DOMRectReadOnly
 	var err error
 	if di := GetInterface(); !di.IsUndefined() {
-		if obj.InstanceOf(di) {
-			d.BaseObject = d.SetObject(obj)
-
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnDOMRectReadOnly
+
+			if obj.InstanceOf(di) {
+				d.BaseObject = d.SetObject(obj)
+
+			} else {
+				err = ErrNotAnDOMRectReadOnly
+			}
 		}
 	} else {
 		err = ErrNotImplemented

@@ -14,7 +14,7 @@ var singleton sync.Once
 
 var domtokenlistinterface js.Value
 
-//DOMRectLists struct
+//DOMTokenList struct
 type DOMTokenList struct {
 	baseobject.BaseObject
 }
@@ -27,13 +27,13 @@ func (d DOMTokenList) DOMTokenList_() DOMTokenList {
 	return d
 }
 
-//GetJSInterface get the JS interface of formdata
+//GetInterface get the JS interface DOMTokenList
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
 
 		var err error
-		if domtokenlistinterface, err = js.Global().GetWithErr("DOMTokenList"); err != nil {
+		if domtokenlistinterface, err = baseobject.Get(js.Global(), "DOMTokenList"); err != nil {
 			domtokenlistinterface = js.Undefined()
 		}
 		baseobject.Register(domtokenlistinterface, func(v js.Value) (interface{}, error) {
@@ -48,11 +48,16 @@ func NewFromJSObject(obj js.Value) (DOMTokenList, error) {
 	var d DOMTokenList
 	var err error
 	if dli := GetInterface(); !dli.IsUndefined() {
-		if obj.InstanceOf(dli) {
-			d.BaseObject = d.SetObject(obj)
-
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnDOMTokenList
+
+			if obj.InstanceOf(dli) {
+				d.BaseObject = d.SetObject(obj)
+
+			} else {
+				err = ErrNotAnDOMTokenList
+			}
 		}
 	} else {
 		err = ErrNotImplemented
@@ -70,7 +75,7 @@ func (d DOMTokenList) methodGetValue(method string, value string) (bool, error) 
 	var err error
 	var obj js.Value
 	var result bool
-	if obj, err = d.JSObject().CallWithErr(method, js.ValueOf(value)); err == nil {
+	if obj, err = d.Call(method, js.ValueOf(value)); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
@@ -94,7 +99,7 @@ func (d DOMTokenList) method(method string, tokens ...string) error {
 		arrayJS = append(arrayJS, js.ValueOf(token))
 	}
 
-	_, err = d.JSObject().CallWithErr(method, arrayJS...)
+	_, err = d.Call(method, arrayJS...)
 
 	return err
 
@@ -123,7 +128,7 @@ func (d DOMTokenList) Toggle(token string, force ...bool) (bool, error) {
 		arrayJS = append(arrayJS, js.ValueOf(force[0]))
 	}
 
-	if obj, err = d.JSObject().CallWithErr("toggle", arrayJS...); err == nil {
+	if obj, err = d.Call("toggle", arrayJS...); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
@@ -144,7 +149,7 @@ func (d DOMTokenList) Entries() (iterator.Iterator, error) {
 	var obj js.Value
 	var iter iterator.Iterator
 
-	if obj, err = d.JSObject().CallWithErr("entries"); err == nil {
+	if obj, err = d.Call("entries"); err == nil {
 		iter = iterator.NewFromJSObject(obj)
 	}
 
@@ -159,7 +164,7 @@ func (d DOMTokenList) ForEach(f func(string, string)) error {
 		return nil
 	})
 
-	_, err = d.JSObject().CallWithErr("forEach", jsfunc)
+	_, err = d.Call("forEach", jsfunc)
 	jsfunc.Release()
 	return err
 }
@@ -169,7 +174,7 @@ func (d DOMTokenList) Keys() (iterator.Iterator, error) {
 	var obj js.Value
 	var iter iterator.Iterator
 
-	if obj, err = d.JSObject().CallWithErr("keys"); err == nil {
+	if obj, err = d.Call("keys"); err == nil {
 		iter = iterator.NewFromJSObject(obj)
 	}
 
@@ -181,7 +186,7 @@ func (d DOMTokenList) Values() (iterator.Iterator, error) {
 	var obj js.Value
 	var iter iterator.Iterator
 
-	if obj, err = d.JSObject().CallWithErr("values"); err == nil {
+	if obj, err = d.Call("values"); err == nil {
 		iter = iterator.NewFromJSObject(obj)
 	}
 

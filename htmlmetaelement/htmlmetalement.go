@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlmetaelementinterface, err = js.Global().GetWithErr("HTMLMetaElement"); err != nil {
+		if htmlmetaelementinterface, err = baseobject.Get(js.Global(), "HTMLMetaElement"); err != nil {
 			htmlmetaelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlmetaelementinterface, func(v js.Value) (interface{}, error) {
@@ -74,15 +74,24 @@ func NewFromElement(elem element.Element) (HtmlMetaElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlMetaElement, error) {
 	var h HtmlMetaElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHTMLMetaElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHTMLMetaElement
+	return h, err
 }
 
 func (h HtmlMetaElement) Content() (string, error) {

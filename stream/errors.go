@@ -3,6 +3,6 @@ package stream
 import "errors"
 
 var (
-	//ErrNotAReadableStream ErrNotAnBlob error
+	ErrNotImplemented     = errors.New("Browser not implemented ReadableStream")
 	ErrNotAReadableStream = errors.New("Object is not a ReadableStream")
 )

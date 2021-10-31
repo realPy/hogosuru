@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlmeterelementinterface, err = js.Global().GetWithErr("HTMLMeterElement"); err != nil {
+		if htmlmeterelementinterface, err = baseobject.Get(js.Global(), "HTMLMeterElement"); err != nil {
 			htmlmeterelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlmeterelementinterface, func(v js.Value) (interface{}, error) {
@@ -75,15 +75,24 @@ func NewFromElement(elem element.Element) (HtmlMeterElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlMeterElement, error) {
 	var h HtmlMeterElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHTMLMeterElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHTMLMeterElement
+	return h, err
 }
 
 func (h HtmlMeterElement) High() (float64, error) {
@@ -138,7 +147,7 @@ func (h HtmlMeterElement) Labels() (nodelist.NodeList, error) {
 	var obj js.Value
 	var err error
 	var arr nodelist.NodeList
-	if obj, err = h.JSObject().GetWithErr("labels"); err == nil {
+	if obj, err = h.Get("labels"); err == nil {
 
 		arr, err = nodelist.NewFromJSObject(obj)
 	}

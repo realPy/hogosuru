@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if htmloptionscollectioninterface, err = js.Global().GetWithErr("HTMLOptionsCollection"); err != nil {
+		if htmloptionscollectioninterface, err = baseobject.Get(js.Global(), "HTMLOptionsCollection"); err != nil {
 			htmloptionscollectioninterface = js.Undefined()
 		}
 		baseobject.Register(htmloptionscollectioninterface, func(v js.Value) (interface{}, error) {
@@ -47,11 +47,18 @@ func NewFromJSObject(obj js.Value) (HtmlOptionsCollection, error) {
 	var h HtmlOptionsCollection
 	var err error
 	if fli := GetInterface(); !fli.IsUndefined() {
-		if obj.InstanceOf(fli) {
-			h.BaseObject = h.SetObject(obj)
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(fli) {
+				h.BaseObject = h.SetObject(obj)
+			} else {
+				err = ErrNotAnHTMLOptionsCollection
+			}
 		}
 	} else {
-		err = ErrNotAnHTMLOptionsCollection
+		err = ErrNotImplemented
 	}
 
 	return h, err

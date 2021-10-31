@@ -27,13 +27,13 @@ func (a AnimationEvent) AnimationEvent_() AnimationEvent {
 	return a
 }
 
-//GetInterface get the JS interface of animationEvent
+//GetInterface get the JS interface animationEvent
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
 
 		var err error
-		if animationeventinterface, err = js.Global().GetWithErr("AnimationEvent"); err != nil {
+		if animationeventinterface, err = baseobject.Get(js.Global(), "AnimationEvent"); err != nil {
 			animationeventinterface = js.Undefined()
 
 		}
@@ -47,15 +47,23 @@ func GetInterface() js.Value {
 }
 
 func NewFromJSObject(obj js.Value) (AnimationEvent, error) {
-	var e AnimationEvent
-
+	var a AnimationEvent
+	var err error
 	if di := GetInterface(); !di.IsUndefined() {
-		if obj.InstanceOf(di) {
-			e.BaseObject = e.SetObject(obj)
-			return e, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+			if obj.InstanceOf(di) {
+				a.BaseObject = a.SetObject(obj)
+
+			} else {
+				err = ErrNotAnAnimationEvent
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return e, ErrNotAnAnimationEvent
+	return a, err
 }
 
 func (a AnimationEvent) AnimationName() (string, error) {

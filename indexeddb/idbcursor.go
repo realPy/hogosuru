@@ -30,7 +30,7 @@ func IDBCursorGetInterface() js.Value {
 	singletonIDBDatabase.Do(func() {
 
 		var err error
-		if idbcursorinterface, err = js.Global().GetWithErr("IDBCursor"); err != nil {
+		if idbcursorinterface, err = baseobject.Get(js.Global(), "IDBCursor"); err != nil {
 			idbcursorinterface = js.Undefined()
 		}
 		baseobject.Register(idbcursorinterface, func(v js.Value) (interface{}, error) {
@@ -45,10 +45,14 @@ func IDBCursorNewFromJSObject(obj js.Value) (IDBCursor, error) {
 	var i IDBCursor
 	var err error
 	if ai := IDBDatabaseGetInterface(); !ai.IsUndefined() {
-		if obj.InstanceOf(ai) {
-			i.BaseObject = i.SetObject(obj)
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnIDBCursor
+			if obj.InstanceOf(ai) {
+				i.BaseObject = i.SetObject(obj)
+			} else {
+				err = ErrNotAnIDBCursor
+			}
 		}
 	} else {
 		err = ErrNotImplemented
@@ -71,7 +75,7 @@ func (i IDBCursor) PrimaryKey() (interface{}, error) {
 
 func (i IDBCursor) Advance(count int) error {
 	var err error
-	_, err = i.JSObject().CallWithErr("advance", js.ValueOf(count))
+	_, err = i.Call("advance", js.ValueOf(count))
 	return err
 }
 
@@ -80,7 +84,7 @@ func (i IDBCursor) Request() (IDBRequest, error) {
 	var obj js.Value
 	var request IDBRequest
 
-	if obj, err = i.JSObject().CallWithErr("request"); err == nil {
+	if obj, err = i.Call("request"); err == nil {
 		request, err = IDBRequestNewFromJSObject(obj)
 	}
 	return request, err
@@ -91,7 +95,7 @@ func (i IDBCursor) Source() (interface{}, error) {
 	var obj js.Value
 	var bobj interface{}
 
-	if obj, err = i.JSObject().CallWithErr("source"); err == nil {
+	if obj, err = i.Call("source"); err == nil {
 
 		bobj, err = baseobject.Discover(obj)
 	}
@@ -110,7 +114,7 @@ func (i IDBCursor) Continue(option ...interface{}) error {
 		}
 	}
 
-	_, err = i.JSObject().CallWithErr("continue", arrayJS...)
+	_, err = i.Call("continue", arrayJS...)
 	return err
 }
 
@@ -119,7 +123,7 @@ func (i IDBCursor) Delete(count int) (IDBRequest, error) {
 	var obj js.Value
 	var request IDBRequest
 
-	if obj, err = i.JSObject().CallWithErr("delete"); err == nil {
+	if obj, err = i.Call("delete"); err == nil {
 		request, err = IDBRequestNewFromJSObject(obj)
 	}
 	return request, err
@@ -137,7 +141,7 @@ func (i IDBCursor) Update(value interface{}) (IDBRequest, error) {
 		arrayJS = append(arrayJS, js.ValueOf(value))
 	}
 
-	if obj, err = i.JSObject().CallWithErr("update", arrayJS...); err == nil {
+	if obj, err = i.Call("update", arrayJS...); err == nil {
 		request, err = IDBRequestNewFromJSObject(obj)
 	}
 	return request, err

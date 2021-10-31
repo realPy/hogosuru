@@ -33,7 +33,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmltablesectionelementinterface, err = js.Global().GetWithErr("HTMLTableSectionElement"); err != nil {
+		if htmltablesectionelementinterface, err = baseobject.Get(js.Global(), "HTMLTableSectionElement"); err != nil {
 			htmltablesectionelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmltablesectionelementinterface, func(v js.Value) (interface{}, error) {
@@ -101,15 +101,24 @@ func NewFromElement(elem element.Element) (HtmlTableSectionElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlTableSectionElement, error) {
 	var h HtmlTableSectionElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHTMLTableSectionElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHTMLTableSectionElement
+	return h, err
 }
 
 func (h HtmlTableSectionElement) Rows() (htmlcollection.HtmlCollection, error) {
@@ -117,7 +126,7 @@ func (h HtmlTableSectionElement) Rows() (htmlcollection.HtmlCollection, error) {
 	var obj js.Value
 	var collection htmlcollection.HtmlCollection
 
-	if obj, err = h.JSObject().GetWithErr("rows"); err == nil {
+	if obj, err = h.Get("rows"); err == nil {
 
 		collection, err = htmlcollection.NewFromJSObject(obj)
 	}
@@ -136,7 +145,7 @@ func (h HtmlTableSectionElement) InsertRow(index ...int) (htmltablerowelement.Ht
 		arrayJS = append(arrayJS, js.ValueOf(index[0]))
 	}
 
-	if obj, err = h.JSObject().CallWithErr("insertRow", arrayJS...); err == nil {
+	if obj, err = h.Call("insertRow", arrayJS...); err == nil {
 		elem, err = htmltablerowelement.NewFromJSObject(obj)
 
 	}
@@ -146,6 +155,6 @@ func (h HtmlTableSectionElement) InsertRow(index ...int) (htmltablerowelement.Ht
 func (h HtmlTableSectionElement) DeleteRow(index int) error {
 
 	var err error
-	_, err = h.JSObject().CallWithErr("deleteRow", js.ValueOf(index))
+	_, err = h.Call("deleteRow", js.ValueOf(index))
 	return err
 }

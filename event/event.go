@@ -34,7 +34,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if eventinterface, err = js.Global().GetWithErr("Event"); err != nil {
+		if eventinterface, err = baseobject.Get(js.Global(), "Event"); err != nil {
 			eventinterface = js.Undefined()
 		}
 		baseobject.Register(eventinterface, func(v js.Value) (interface{}, error) {
@@ -59,15 +59,24 @@ func New(message string) (Event, error) {
 
 func NewFromJSObject(obj js.Value) (Event, error) {
 	var e Event
-
+	var err error
 	if eventi := GetInterface(); !eventi.IsUndefined() {
-		if obj.InstanceOf(eventi) {
-			e.BaseObject = e.SetObject(obj)
-			return e, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(eventi) {
+				e.BaseObject = e.SetObject(obj)
+
+			} else {
+				err = ErrNotAnEvent
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
 
-	return e, ErrNotAnEvent
+	return e, err
 }
 
 func (e Event) Target() (interface{}, error) {
@@ -75,7 +84,7 @@ func (e Event) Target() (interface{}, error) {
 	var obj js.Value
 	var bobj interface{}
 
-	if obj, err = e.JSObject().GetWithErr("target"); err == nil {
+	if obj, err = e.Get("target"); err == nil {
 
 		bobj, err = baseobject.Discover(obj)
 	}
@@ -86,7 +95,7 @@ func (e Event) CurrentTarget() (interface{}, error) {
 	var obj js.Value
 	var bobj interface{}
 
-	if obj, err = e.JSObject().GetWithErr("currentTarget"); err == nil {
+	if obj, err = e.Get("currentTarget"); err == nil {
 
 		bobj, err = baseobject.Discover(obj)
 	}
@@ -95,21 +104,21 @@ func (e Event) CurrentTarget() (interface{}, error) {
 
 func (e Event) PreventDefault() error {
 	var err error
-	_, err = e.JSObject().CallWithErr("preventDefault")
+	_, err = e.Call("preventDefault")
 
 	return err
 }
 
 func (e Event) StopImmediatePropagation() error {
 	var err error
-	_, err = e.JSObject().CallWithErr("stopImmediatePropagation")
+	_, err = e.Call("stopImmediatePropagation")
 
 	return err
 }
 
 func (e Event) StopPropagation() error {
 	var err error
-	_, err = e.JSObject().CallWithErr("stopPropagation")
+	_, err = e.Call("stopPropagation")
 
 	return err
 }

@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlimageelementinterface, err = js.Global().GetWithErr("HTMLImageElement"); err != nil {
+		if htmlimageelementinterface, err = baseobject.Get(js.Global(), "HTMLImageElement"); err != nil {
 			htmlimageelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlimageelementinterface, func(v js.Value) (interface{}, error) {
@@ -75,15 +75,24 @@ func NewFromElement(elem element.Element) (HtmlImageElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlImageElement, error) {
 	var h HtmlImageElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmImageElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHtmImageElement
+	return h, err
 }
 
 func (h HtmlImageElement) Alt() (string, error) {
@@ -156,7 +165,7 @@ func (h HtmlImageElement) Decode() (promise.Promise, error) {
 	var obj js.Value
 	var p promise.Promise
 
-	if obj, err = h.JSObject().CallWithErr("decode"); err == nil {
+	if obj, err = h.Call("decode"); err == nil {
 
 		p, err = promise.NewFromJSObject(obj)
 	}

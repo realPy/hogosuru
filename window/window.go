@@ -22,7 +22,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if windowinterface, err = js.Global().GetWithErr("Window"); err != nil {
+		if windowinterface, err = baseobject.Get(js.Global(), "Window"); err != nil {
 			windowinterface = js.Undefined()
 		}
 		baseobject.Register(windowinterface, func(v js.Value) (interface{}, error) {
@@ -49,6 +49,7 @@ func NewFromJSObject(obj js.Value) (Window, error) {
 	var w Window
 
 	if wi := GetInterface(); !wi.IsUndefined() {
+
 		if obj.InstanceOf(wi) {
 			w.BaseObject = w.SetObject(obj)
 			return w, nil
@@ -64,7 +65,7 @@ func New() (Window, error) {
 	var err error
 	var w Window
 	var windowObj js.Value
-	if windowObj, err = js.Global().GetWithErr("window"); err == nil {
+	if windowObj, err = baseobject.Get(js.Global(), "window"); err == nil {
 
 		w, err = NewFromJSObject(windowObj)
 
@@ -75,13 +76,13 @@ func New() (Window, error) {
 func (w Window) Document() (document.Document, error) {
 	var err error
 	var obj js.Value
-	var h document.Document
+	var d document.Document
 
-	if obj, err = w.JSObject().GetWithErr("document"); err == nil {
-		h, err = document.NewFromJSObject(obj)
+	if obj, err = w.Get("document"); err == nil {
+		d, err = document.NewFromJSObject(obj)
 	}
 
-	return h, err
+	return d, err
 }
 
 func (w Window) History() (history.History, error) {
@@ -89,7 +90,7 @@ func (w Window) History() (history.History, error) {
 	var obj js.Value
 	var h history.History
 
-	if obj, err = w.JSObject().GetWithErr("history"); err == nil {
+	if obj, err = w.Get("history"); err == nil {
 		h, err = history.NewFromJSObject(obj)
 	}
 
@@ -101,7 +102,7 @@ func (w Window) Location() (location.Location, error) {
 	var obj js.Value
 	var l location.Location
 
-	if obj, err = w.JSObject().GetWithErr("location"); err == nil {
+	if obj, err = w.Get("location"); err == nil {
 		l, err = location.NewFromJSObject(obj)
 	}
 
@@ -113,7 +114,7 @@ func (w Window) LocalStorage() (storage.Storage, error) {
 	var obj js.Value
 	var s storage.Storage
 
-	if obj, err = w.JSObject().GetWithErr("localStorage"); err == nil {
+	if obj, err = w.Get("localStorage"); err == nil {
 		s, err = storage.NewFromJSObject(obj)
 	}
 
@@ -125,7 +126,7 @@ func (w Window) SessionStorage() (storage.Storage, error) {
 	var obj js.Value
 	var s storage.Storage
 
-	if obj, err = w.JSObject().GetWithErr("sessionStorage"); err == nil {
+	if obj, err = w.Get("sessionStorage"); err == nil {
 		s, err = storage.NewFromJSObject(obj)
 	}
 
@@ -137,7 +138,7 @@ func (w Window) IndexdedDB() (indexeddb.IDBFactory, error) {
 	var obj js.Value
 	var i indexeddb.IDBFactory
 
-	if obj, err = w.JSObject().GetWithErr("indexedDB"); err == nil {
+	if obj, err = w.Get("indexedDB"); err == nil {
 		i, err = indexeddb.IDBFactoryNewFromJSObject(obj)
 	}
 

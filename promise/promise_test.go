@@ -7,11 +7,28 @@ import (
 	"time"
 
 	"github.com/realPy/hogosuru/array"
+	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/object"
+	"github.com/realPy/hogosuru/testingutils"
 )
 
 func TestMain(m *testing.M) {
+	baseobject.SetSyscall()
 	m.Run()
+}
+
+func TestNewFromJSObject(t *testing.T) {
+
+	baseobject.Eval("p=new Promise((resolve, reject) => {})")
+
+	if obj, err := baseobject.Get(js.Global(), "p"); testingutils.AssertErr(t, err) {
+		if d, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "[object Promise]", d.ToString_())
+
+		}
+	}
+
 }
 
 func TestNew(t *testing.T) {
@@ -22,7 +39,7 @@ func TestNew(t *testing.T) {
 	if p, err := New(func(resolvefunc, errfunc js.Value) (interface{}, error) {
 
 		return "finished", nil
-	}); err == nil {
+	}); testingutils.AssertErr(t, err) {
 
 		p.Then(func(i interface{}) *Promise {
 
@@ -35,8 +52,6 @@ func TestNew(t *testing.T) {
 
 			t.Errorf(e.Error())
 		})
-	} else {
-		t.Error(err.Error())
 	}
 
 	select {
@@ -50,7 +65,7 @@ func TestNew(t *testing.T) {
 	if p, err := New(func(resolvefunc, errfunc js.Value) (interface{}, error) {
 
 		return "finished", nil
-	}); err == nil {
+	}); testingutils.AssertErr(t, err) {
 
 		p1, _ := p.Then(func(i interface{}) *Promise {
 
@@ -79,8 +94,6 @@ func TestNew(t *testing.T) {
 		}, func(e error) {
 			t.Errorf(e.Error())
 		})
-	} else {
-		t.Error(err.Error())
 	}
 
 	select {
@@ -92,7 +105,7 @@ func TestNew(t *testing.T) {
 	if p, err := New(func(resolvefunc, errfunc js.Value) (interface{}, error) {
 
 		return nil, errors.New("Problem")
-	}); err == nil {
+	}); testingutils.AssertErr(t, err) {
 
 		p.Then(func(i interface{}) *Promise {
 			t.Errorf("Must not enter here ")
@@ -100,8 +113,6 @@ func TestNew(t *testing.T) {
 		}, func(e error) {
 			io <- true
 		})
-	} else {
-		t.Error(err.Error())
 	}
 
 	select {
@@ -120,7 +131,7 @@ func TestCatch(t *testing.T) {
 	if p, err := New(func(resolvefunc, errfunc js.Value) (interface{}, error) {
 
 		return nil, errors.New("Problem")
-	}); err == nil {
+	}); testingutils.AssertErr(t, err) {
 
 		p.Catch(func(e error) {
 			io <- true
@@ -151,19 +162,17 @@ func TestAll(t *testing.T) {
 		return "World", nil
 	})
 
-	if allp, err := All(p1, p2); err == nil {
+	if allp, err := All(p1, p2); testingutils.AssertErr(t, err) {
 
 		allp.Then(func(i interface{}) *Promise {
 
 			if a, ok := i.(array.ArrayFrom); ok {
-				if str, err := a.Array_().ToString(); err == nil {
+				if str, err := a.Array_().ToString(); testingutils.AssertErr(t, err) {
 					if str == "Hello,World" {
 						io <- true
 					} else {
 						t.Errorf("Mistmatch %s", str)
 					}
-				} else {
-					t.Errorf(err.Error())
 				}
 			} else {
 				t.Error("Must be an array")
@@ -174,8 +183,6 @@ func TestAll(t *testing.T) {
 
 			t.Error(err.Error())
 		})
-	} else {
-		t.Error(err.Error())
 	}
 
 	select {
@@ -194,7 +201,7 @@ func TestAll(t *testing.T) {
 		return nil, errors.New("error")
 	})
 
-	if allp, err := All(p3, p4); err == nil {
+	if allp, err := All(p3, p4); testingutils.AssertErr(t, err) {
 
 		allp.Then(func(i interface{}) *Promise {
 
@@ -204,8 +211,6 @@ func TestAll(t *testing.T) {
 		}, func(e error) {
 			io <- true
 		})
-	} else {
-		t.Error(err.Error())
 	}
 
 	select {
@@ -230,13 +235,13 @@ func TestAllSettled(t *testing.T) {
 		return nil, errors.New("unknown error")
 	})
 
-	if allp, err := AllSettled(p1, p2); err == nil {
+	if allp, err := AllSettled(p1, p2); testingutils.AssertErr(t, err) {
 
 		allp.Then(func(i interface{}) *Promise {
 
 			if a, ok := i.(array.ArrayFrom); ok {
 
-				if it, err := a.Array_().Entries(); err == nil {
+				if it, err := a.Array_().Entries(); testingutils.AssertErr(t, err) {
 
 					for index, value, err := it.Next(); err == nil; index, value, err = it.Next() {
 
@@ -264,8 +269,6 @@ func TestAllSettled(t *testing.T) {
 					}
 
 					io <- true
-				} else {
-					t.Error(err.Error())
 				}
 
 			} else {
@@ -276,8 +279,6 @@ func TestAllSettled(t *testing.T) {
 		}, func(e error) {
 			io <- true
 		})
-	} else {
-		t.Error(err.Error())
 	}
 
 	select {
@@ -306,7 +307,7 @@ func TestAny(t *testing.T) {
 		return "World", nil
 	})
 
-	if anyp, err := Any(p1w, p2); err == nil {
+	if anyp, err := Any(p1w, p2); testingutils.AssertErr(t, err) {
 
 		anyp.Then(func(i interface{}) *Promise {
 
@@ -318,8 +319,6 @@ func TestAny(t *testing.T) {
 		}, func(e error) {
 			t.Error(err.Error())
 		})
-	} else {
-		t.Error(err.Error())
 	}
 
 	select {
@@ -354,7 +353,7 @@ func TestRace(t *testing.T) {
 		return &p2
 	}, nil)
 
-	if anyp, err := Race(p1w, p2w); err == nil {
+	if anyp, err := Race(p1w, p2w); testingutils.AssertErr(t, err) {
 
 		anyp.Then(func(i interface{}) *Promise {
 
@@ -366,13 +365,11 @@ func TestRace(t *testing.T) {
 		}, func(e error) {
 			t.Error(err.Error())
 		})
-	} else {
-		t.Error(err.Error())
 	}
 
 	select {
 	case <-io:
-	case <-time.After(time.Duration(200) * time.Millisecond):
+	case <-time.After(time.Duration(2000) * time.Millisecond):
 		t.Errorf("No message channel receive")
 	}
 
@@ -385,20 +382,18 @@ func TestFinally(t *testing.T) {
 	wait500, _ := SetTimeout(500)
 	wait100, _ := SetTimeout(100)
 
-	if fin, err := All(wait100, wait500); err == nil {
+	if fin, err := All(wait100, wait500); testingutils.AssertErr(t, err) {
 
 		fin.Finally(func() {
 
 			io <- true
 		})
 
-	} else {
-		t.Error(err.Error())
 	}
 
 	select {
 	case <-io:
-	case <-time.After(time.Duration(500) * time.Millisecond):
+	case <-time.After(time.Duration(2000) * time.Millisecond):
 		t.Errorf("No message channel receive")
 	}
 
@@ -408,7 +403,7 @@ func TestReject(t *testing.T) {
 
 	var io chan bool = make(chan bool)
 
-	if p, err := Reject(errors.New("Failed")); err == nil {
+	if p, err := Reject(errors.New("Failed")); testingutils.AssertErr(t, err) {
 
 		p.Then(nil, func(e error) {
 
@@ -417,13 +412,11 @@ func TestReject(t *testing.T) {
 			}
 			io <- true
 		})
-	} else {
-		t.Error(err.Error())
 	}
 
 	select {
 	case <-io:
-	case <-time.After(time.Duration(100) * time.Millisecond):
+	case <-time.After(time.Duration(1000) * time.Millisecond):
 		t.Errorf("No message channel receive")
 	}
 
@@ -432,7 +425,7 @@ func TestResolve(t *testing.T) {
 
 	var io chan bool = make(chan bool)
 
-	if p, err := Resolve(100); err == nil {
+	if p, err := Resolve(100); testingutils.AssertErr(t, err) {
 
 		p.Then(func(i interface{}) *Promise {
 
@@ -443,13 +436,11 @@ func TestResolve(t *testing.T) {
 			return nil
 
 		}, nil)
-	} else {
-		t.Error(err.Error())
 	}
 
 	select {
 	case <-io:
-	case <-time.After(time.Duration(100) * time.Millisecond):
+	case <-time.After(time.Duration(1000) * time.Millisecond):
 		t.Errorf("No message channel receive")
 	}
 

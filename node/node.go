@@ -17,7 +17,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if nodeinterface, err = js.Global().GetWithErr("Node"); err != nil {
+		if nodeinterface, err = baseobject.Get(js.Global(), "Node"); err != nil {
 			nodeinterface = js.Undefined()
 		}
 		baseobject.Register(nodeinterface, func(v js.Value) (interface{}, error) {
@@ -47,14 +47,19 @@ func NewFromJSObject(obj js.Value) (Node, error) {
 	var err error
 
 	if ni := GetInterface(); !ni.IsUndefined() {
-
-		if obj.InstanceOf(ni) {
-			n.BaseObject = n.SetObject(obj)
-
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotANode
+			if obj.InstanceOf(ni) {
+				n.BaseObject = n.SetObject(obj)
+
+			} else {
+				err = ErrNotANode
+			}
 		}
 
+	} else {
+		err = ErrNotImplemented
 	}
 
 	return n, err
@@ -65,7 +70,7 @@ func (n Node) getAttributeNode(attribute string) (Node, error) {
 	var newNode Node
 	var err error
 
-	if nodeObject, err = n.JSObject().GetWithErr(attribute); err == nil {
+	if nodeObject, err = n.Get(attribute); err == nil {
 
 		if nodeObject.IsUndefined() {
 			err = ErrNodeNoChilds
@@ -120,7 +125,7 @@ func (n Node) NodeValue() (Node, error) {
 
 func (n Node) SetNodeValue(nset Node) error {
 
-	return n.JSObject().SetWithErr("nodeValue", nset.JSObject())
+	return n.Set("nodeValue", nset.JSObject())
 }
 
 func (n Node) OwnerDocument() (Node, error) {
@@ -148,12 +153,12 @@ func (n Node) TextContent() (string, error) {
 
 func (n Node) SetTextContent(content string) error {
 
-	return n.JSObject().SetWithErr("textContent", js.ValueOf(content))
+	return n.Set("textContent", js.ValueOf(content))
 }
 
 func (n Node) AppendChild(add Node) error {
 
-	_, err := n.JSObject().CallWithErr("appendChild", add.JSObject())
+	_, err := n.Call("appendChild", add.JSObject())
 	return err
 }
 
@@ -162,7 +167,7 @@ func (n Node) CloneNode(deep bool) (Node, error) {
 	var obj js.Value
 	var newNode Node
 
-	if obj, err = n.JSObject().CallWithErr("cloneNode", js.ValueOf(deep)); err == nil {
+	if obj, err = n.Call("cloneNode", js.ValueOf(deep)); err == nil {
 		return NewFromJSObject(obj)
 	}
 
@@ -174,7 +179,7 @@ func (n Node) CompareDocumentPosition(node Node) (int, error) {
 	var obj js.Value
 	var result int
 
-	if obj, err = n.JSObject().CallWithErr("compareDocumentPosition", node.JSObject()); err == nil {
+	if obj, err = n.Call("compareDocumentPosition", node.JSObject()); err == nil {
 		if obj.Type() == js.TypeNumber {
 			result = obj.Int()
 		} else {
@@ -189,7 +194,7 @@ func (n Node) Contains(node Node) (bool, error) {
 	var err error
 	var obj js.Value
 	var result bool
-	if obj, err = n.JSObject().CallWithErr("contains", node.JSObject()); err == nil {
+	if obj, err = n.Call("contains", node.JSObject()); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
@@ -205,7 +210,7 @@ func (n Node) GetRootNode() (Node, error) {
 	var obj js.Value
 	var newNode Node
 
-	if obj, err = n.JSObject().CallWithErr("getRootNode"); err == nil {
+	if obj, err = n.Call("getRootNode"); err == nil {
 		newNode, err = NewFromJSObject(obj)
 	}
 	return newNode, err
@@ -218,7 +223,7 @@ func (n Node) HasChildNodes() (bool, error) {
 func (n Node) InsertBefore(elem, before Node) (Node, error) {
 	var err error
 
-	_, err = n.JSObject().CallWithErr("insertBefore", elem.JSObject(), before.JSObject())
+	_, err = n.Call("insertBefore", elem.JSObject(), before.JSObject())
 
 	return elem, err
 
@@ -229,7 +234,7 @@ func (n *Node) IsDefaultNamespace() (bool, error) {
 	var obj js.Value
 	var result bool
 
-	if obj, err = n.JSObject().CallWithErr("isDefaultNamespace"); err == nil {
+	if obj, err = n.Call("isDefaultNamespace"); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
@@ -247,7 +252,7 @@ func (n *Node) IsEqualNode(n1 Node) (bool, error) {
 	var obj js.Value
 	var result bool
 
-	if obj, err = n.JSObject().CallWithErr("isEqualNode", n1.JSObject()); err == nil {
+	if obj, err = n.Call("isEqualNode", n1.JSObject()); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
@@ -264,7 +269,7 @@ func (n *Node) IsSameNode(n1 Node) (bool, error) {
 	var obj js.Value
 	var result bool
 
-	if obj, err = n.JSObject().CallWithErr("isSameNode", n1.JSObject()); err == nil {
+	if obj, err = n.Call("isSameNode", n1.JSObject()); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
@@ -281,7 +286,7 @@ func (n *Node) LookupPrefix() (string, error) {
 	var obj js.Value
 	var result string
 
-	if obj, err = n.JSObject().CallWithErr("lookupPrefix"); err == nil {
+	if obj, err = n.Call("lookupPrefix"); err == nil {
 		if obj.Type() == js.TypeString {
 			result = obj.String()
 		}
@@ -293,19 +298,19 @@ func (n *Node) LookupPrefix() (string, error) {
 
 func (n *Node) LookupNamespaceURI(prefix string) error {
 	var err error
-	_, err = n.JSObject().CallWithErr("lookupNamespaceURI", js.ValueOf(prefix))
+	_, err = n.Call("lookupNamespaceURI", js.ValueOf(prefix))
 	return err
 }
 
 func (n *Node) Normalize() error {
 	var err error
-	_, err = n.JSObject().CallWithErr("normalize")
+	_, err = n.Call("normalize")
 	return err
 }
 
 func (n Node) RemoveChild(node Node) (Node, error) {
 	var err error
-	_, err = n.JSObject().CallWithErr("removeChild", node.JSObject())
+	_, err = n.Call("removeChild", node.JSObject())
 	return node, err
 
 }
@@ -313,7 +318,7 @@ func (n Node) RemoveChild(node Node) (Node, error) {
 func (n Node) ReplaceChild(new, old Node) (Node, error) {
 	var err error
 
-	_, err = n.JSObject().CallWithErr("replaceChild", new.JSObject(), old.JSObject())
+	_, err = n.Call("replaceChild", new.JSObject(), old.JSObject())
 
 	return old, err
 

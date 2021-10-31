@@ -30,7 +30,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if cssruleinterface, err = js.Global().GetWithErr("CSSRule"); err != nil {
+		if cssruleinterface, err = baseobject.Get(js.Global(), "CSSRule"); err != nil {
 			cssruleinterface = js.Undefined()
 		}
 		baseobject.Register(cssruleinterface, func(v js.Value) (interface{}, error) {
@@ -45,11 +45,16 @@ func NewFromJSObject(obj js.Value) (CSSRule, error) {
 	var c CSSRule
 	var err error
 	if dli := GetInterface(); !dli.IsUndefined() {
-		if obj.InstanceOf(dli) {
-			c.BaseObject = c.SetObject(obj)
-
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnCSSRule
+
+			if obj.InstanceOf(dli) {
+				c.BaseObject = c.SetObject(obj)
+
+			} else {
+				err = ErrNotAnCSSRule
+			}
 		}
 	} else {
 		err = ErrNotImplemented
@@ -70,7 +75,7 @@ func (c CSSRule) ParentRule() (CSSRule, error) {
 	var err error
 	var obj js.Value
 	var cr CSSRule
-	if obj, err = c.JSObject().GetWithErr("parentRule"); err == nil {
+	if obj, err = c.Get("parentRule"); err == nil {
 
 		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject
@@ -86,7 +91,7 @@ func (c CSSRule) ParentStyleSheet() (stylesheet.StyleSheet, error) {
 	var err error
 	var obj js.Value
 	var s stylesheet.StyleSheet
-	if obj, err = c.JSObject().GetWithErr("parentStyleSheet"); err == nil {
+	if obj, err = c.Get("parentStyleSheet"); err == nil {
 
 		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject

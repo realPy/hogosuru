@@ -32,7 +32,7 @@ func IDBOpenDBRequestGetInterface() js.Value {
 	singletonIDBOpenRequest.Do(func() {
 
 		var err error
-		if idbopendbrequestinterface, err = js.Global().GetWithErr("IDBOpenDBRequest"); err != nil {
+		if idbopendbrequestinterface, err = baseobject.Get(js.Global(), "IDBOpenDBRequest"); err != nil {
 			idbopendbrequestinterface = js.Undefined()
 		}
 
@@ -47,10 +47,15 @@ func IDBOpenDBRequestNewFromJSObject(obj js.Value) (IDBOpenDBRequest, error) {
 	var i IDBOpenDBRequest
 	var err error
 	if ai := IDBOpenDBRequestGetInterface(); !ai.IsUndefined() {
-		if obj.InstanceOf(ai) {
-			i.BaseObject = i.SetObject(obj)
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnIDBOpenDBRequest
+
+			if obj.InstanceOf(ai) {
+				i.BaseObject = i.SetObject(obj)
+			} else {
+				err = ErrNotAnIDBOpenDBRequest
+			}
 		}
 	} else {
 		err = ErrNotImplemented

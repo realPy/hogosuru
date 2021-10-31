@@ -34,7 +34,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlelementinterface, err = js.Global().GetWithErr("HTMLElement"); err != nil {
+		if htmlelementinterface, err = baseobject.Get(js.Global(), "HTMLElement"); err != nil {
 			htmlelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlelementinterface, func(v js.Value) (interface{}, error) {
@@ -49,11 +49,16 @@ func NewFromJSObject(obj js.Value) (HtmlElement, error) {
 	var h HtmlElement
 	var err error
 	if ai := GetInterface(); !ai.IsUndefined() {
-		if obj.InstanceOf(ai) {
-			h.BaseObject = h.SetObject(obj)
-
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnHtmlElement
+
+			if obj.InstanceOf(ai) {
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmlElement
+			}
 		}
 
 	} else {
@@ -122,8 +127,9 @@ func (h HtmlElement) Dataset(name string) (interface{}, error) {
 	var obj, objv js.Value
 	var ret interface{}
 
-	if obj, err = h.JSObject().GetWithErr("dataset"); err == nil {
-		if objv, err = obj.GetWithErr(name); err == nil {
+	if obj, err = h.Get("dataset"); err == nil {
+
+		if objv, err = baseobject.Get(obj, name); err == nil {
 			ret = baseobject.GoValue(objv)
 		}
 
@@ -138,8 +144,8 @@ func (h HtmlElement) SetDataset(name string, value interface{}) error {
 	var err error
 	var obj js.Value
 
-	if obj, err = h.JSObject().GetWithErr("dataset"); err == nil {
-		err = obj.SetWithErr(name, js.ValueOf(value))
+	if obj, err = h.Get("dataset"); err == nil {
+		err = baseobject.Set(obj, name, js.ValueOf(value))
 
 	}
 	return err
@@ -190,7 +196,7 @@ func (h HtmlElement) OffsetParent() (baseobject.BaseObject, error) {
 	var obj js.Value
 	var ret baseobject.BaseObject
 
-	if obj, err = h.JSObject().GetWithErr("offsetParent"); err == nil {
+	if obj, err = h.Get("offsetParent"); err == nil {
 		if !obj.IsUndefined() {
 			ret, err = baseobject.NewFromJSObject(obj)
 		} else {
@@ -226,17 +232,17 @@ func (h HtmlElement) SetTitle(value string) error {
 }
 
 func (h HtmlElement) Blur() error {
-	_, err := h.JSObject().CallWithErr("blur")
+	_, err := h.Call("blur")
 	return err
 }
 
 func (h HtmlElement) Click() error {
-	_, err := h.JSObject().CallWithErr("click")
+	_, err := h.Call("click")
 	return err
 }
 
 func (h HtmlElement) Focus() error {
-	_, err := h.JSObject().CallWithErr("focus")
+	_, err := h.Call("focus")
 	return err
 }
 
@@ -245,7 +251,7 @@ func (h HtmlElement) Style() (cssstyledeclaration.CSSStyleDeclaration, error) {
 	var obj js.Value
 	var ret cssstyledeclaration.CSSStyleDeclaration
 
-	if obj, err = h.JSObject().GetWithErr("style"); err == nil {
+	if obj, err = h.Get("style"); err == nil {
 
 		if !obj.IsUndefined() {
 			ret, err = cssstyledeclaration.NewFromJSObject(obj)

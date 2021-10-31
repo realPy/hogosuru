@@ -1,7 +1,7 @@
 package document
 
 import (
-	"github.com/realPy/hogosuru/node"
+	"github.com/realPy/hogosuru/htmlelement"
 	"github.com/realPy/hogosuru/nodelist"
 )
 
@@ -10,7 +10,7 @@ func New_() Document {
 	return d
 }
 
-func (d Document) Body_() node.Node {
+func (d Document) Body_() htmlelement.HtmlElement {
 	body, _ := d.Body()
 	return body
 }

@@ -1,25 +1,25 @@
 package main
 
 import (
-	"crypto/md5"
 	"crypto/sha256"
 	"encoding/hex"
-	"io"
 	"syscall/js"
 
+	"github.com/realPy/hogosuru"
 	"github.com/realPy/hogosuru/blob"
 	"github.com/realPy/hogosuru/datatransfer"
 	"github.com/realPy/hogosuru/dragevent"
 	"github.com/realPy/hogosuru/file"
 	"github.com/realPy/hogosuru/filelist"
+	"github.com/realPy/hogosuru/promise"
 )
 
+/*
 func md5File(f file.File) string {
 
-	var buffersize int = 2 * 1024 * 1024
-	stream := blob.NewBlobStream(f.Blob, buffersize)
+	var buffersize int64 = 2 * 1024 * 1024
+	stream := blob.NewBlobStream(f.Blob)
 
-	var data []byte = make([]byte, buffersize)
 	var n int
 	var err error
 	hashmd5 := md5.New()
@@ -37,7 +37,7 @@ func md5File(f file.File) string {
 	}
 
 	return ""
-}
+}*/
 
 func sha256FileStream(f file.File) string {
 
@@ -48,15 +48,15 @@ func sha256FileStream(f file.File) string {
 
 			hashsha256 := sha256.New()
 
-			read.AsyncRead(func(b []byte, err error) {
-				if err == nil {
-					hashsha256.Write(b)
-				} else {
-					sha256result = hex.EncodeToString(hashsha256.Sum(nil))
-					println(f.Name() + "  SHA256 Stream: " + sha256result)
-				}
+			p, _ := read.AsyncRead(2*1024*1024, func(b []byte, i int) {
 
+				hashsha256.Write(b[:i])
 			})
+			p.Then(func(i interface{}) *promise.Promise {
+				sha256result = hex.EncodeToString(hashsha256.Sum(nil))
+				println(f.Name_() + "  SHA256 Stream: " + sha256result)
+				return nil
+			}, nil)
 
 		} else {
 			println(err.Error())
@@ -65,32 +65,25 @@ func sha256FileStream(f file.File) string {
 	return ""
 }
 
-func sha256File(f file.File) string {
+func sha256File(f file.File) {
 	var sha256result string
-	var buffersize int = 2 * 1024 * 1024
-	stream := blob.NewBlobStream(f.Blob, buffersize)
 
-	var data []byte = make([]byte, buffersize)
-	var n int
-	var err error
+	//allocate memory in handler is not recommend
+	var buffer []byte = make([]byte, 128*1024)
 	hashsha256 := sha256.New()
 
-	for {
-		n, err = stream.Read(data)
+	stream := blob.NewBlobStream(f.Blob)
 
-		hashsha256.Write(data[:n])
-		if err != nil {
-			break
-		}
-	}
-	if err == io.EOF {
+	p, _ := stream.AsyncRead(buffer, func(b []byte, i int) {
+		hashsha256.Write(b[:i])
+	})
+
+	p.Then(func(i interface{}) *promise.Promise {
+
 		sha256result = hex.EncodeToString(hashsha256.Sum(nil))
-		println(f.Name() + "  SHA256 Blob: " + sha256result)
-	} else {
-		println(err.Error())
-	}
-
-	return sha256result
+		println(f.Name_() + "  SHA256 Blob: " + sha256result)
+		return nil
+	}, nil)
 }
 
 func dropHandler() js.Func {
@@ -106,16 +99,18 @@ func dropHandler() js.Func {
 			e.PreventDefault()
 			if dt, err = e.DataTransfer(); err == nil {
 				if files, err = dt.Files(); err == nil {
-					for i := 0; i < files.Length(); i++ {
-						if f, err = files.Item(i); err == nil {
+					if l, err := files.Length(); err == nil {
+						for i := 0; i < l; i++ {
+							if f, err = files.Item(i); err == nil {
 
-							//md5sum := md5File(f)
-							//println(f.Name() + "  MD5: " + md5sum)
-							//sha256sum := sha256File(f)
-							//println(f.Name() + "  SHA256: " + sha256sum)
-							//sha256FileStream(f)
-							sha256File(f)
+								//md5sum := md5File(f)
+								//println(f.Name() + "  MD5: " + md5sum)
+								//sha256sum := sha256File(f)
+								//println(f.Name() + "  SHA256: " + sha256sum)
+								//sha256FileStream(f)
+								sha256File(f)
 
+							}
 						}
 					}
 
@@ -143,7 +138,7 @@ func dragOverHandler() js.Func {
 }
 
 func main() {
-
+	hogosuru.Init()
 	js.Global().Set("dropHandler", dropHandler())
 
 	js.Global().Set("dragOverHandler", dragOverHandler())

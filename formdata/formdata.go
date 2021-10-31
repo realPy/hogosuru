@@ -33,7 +33,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if formadatainterface, err = js.Global().GetWithErr("FormData"); err != nil {
+		if formadatainterface, err = baseobject.Get(js.Global(), "FormData"); err != nil {
 			formadatainterface = js.Undefined()
 		}
 
@@ -45,18 +45,23 @@ func GetInterface() js.Value {
 func New() (FormData, error) {
 
 	var formdata FormData
-
+	var obj js.Value
+	var err error
 	if fci := GetInterface(); !fci.IsUndefined() {
-		formdata.BaseObject = formdata.SetObject(fci.New())
 
-		return formdata, nil
+		if obj, err = baseobject.New(fci); err == nil {
+			formdata.BaseObject = formdata.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return formdata, ErrNotImplemented
+	return formdata, err
 }
 
 func (f FormData) AppendString(key string, value string) error {
 	var err error
-	_, err = f.JSObject().CallWithErr("append", js.ValueOf(key), js.ValueOf(value))
+	_, err = f.Call("append", js.ValueOf(key), js.ValueOf(value))
 
 	return err
 
@@ -64,7 +69,7 @@ func (f FormData) AppendString(key string, value string) error {
 
 func (f FormData) AppendJSObject(key string, object js.Value) error {
 	var err error
-	_, err = f.JSObject().CallWithErr("append", js.ValueOf(key), object)
+	_, err = f.Call("append", js.ValueOf(key), object)
 	return err
 
 }

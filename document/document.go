@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if docinterface, err = js.Global().GetWithErr("document"); err != nil {
+		if docinterface, err = baseobject.Get(js.Global(), "Document"); err != nil {
 			docinterface = js.Undefined()
 		}
 		baseobject.Register(docinterface, func(v js.Value) (interface{}, error) {
@@ -50,7 +50,11 @@ func New() (Document, error) {
 	var d Document
 	var err error
 	if di := GetInterface(); !di.IsUndefined() {
-		d.BaseObject = d.SetObject(di)
+
+		if dobj, err := baseobject.Get(js.Global(), "document"); err == nil {
+
+			d.BaseObject = d.SetObject(dobj)
+		}
 
 	} else {
 
@@ -62,13 +66,22 @@ func New() (Document, error) {
 
 func NewFromJSObject(obj js.Value) (Document, error) {
 	var d Document
-
+	var err error
 	if dci := GetInterface(); !dci.IsUndefined() {
-		if obj.InstanceOf(dci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			d.BaseObject = d.SetObject(obj)
-			return d, nil
+			if obj.InstanceOf(dci) {
+
+				d.BaseObject = d.SetObject(obj)
+
+			} else {
+				err = ErrNotADocument
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return d, ErrNotADocument
+	return d, err
 }

@@ -30,7 +30,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if validitystateinterface, err = js.Global().GetWithErr("ValidityState"); err != nil {
+		if validitystateinterface, err = baseobject.Get(js.Global(), "ValidityState"); err != nil {
 			validitystateinterface = js.Undefined()
 		}
 		baseobject.Register(validitystateinterface, func(v js.Value) (interface{}, error) {
@@ -43,15 +43,24 @@ func GetInterface() js.Value {
 
 func NewFromJSObject(obj js.Value) (ValidityState, error) {
 	var v ValidityState
-
+	var err error
 	if hei := GetInterface(); !hei.IsUndefined() {
-		if obj.InstanceOf(hei) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			v.BaseObject = v.SetObject(obj)
-			return v, nil
+			if obj.InstanceOf(hei) {
+
+				v.BaseObject = v.SetObject(obj)
+
+			} else {
+				err = ErrNotAnValidityState
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return v, ErrNotAnValidityState
+	return v, err
 }
 
 func (v ValidityState) BadInput() (bool, error) {

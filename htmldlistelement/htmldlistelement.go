@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmldlistinterface, err = js.Global().GetWithErr("HTMLDListElement"); err != nil {
+		if htmldlistinterface, err = baseobject.Get(js.Global(), "HTMLDListElement"); err != nil {
 			htmldlistinterface = js.Undefined()
 		}
 		baseobject.Register(htmldlistinterface, func(v js.Value) (interface{}, error) {
@@ -74,13 +74,23 @@ func NewFromElement(elem element.Element) (HtmlDListElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlDListElement, error) {
 	var h HtmlDListElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmlDListElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
+
 	}
-	return h, ErrNotAnHtmlDListElement
+	return h, err
 }

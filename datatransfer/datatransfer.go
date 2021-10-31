@@ -4,7 +4,9 @@ import (
 	"sync"
 	"syscall/js"
 
+	"github.com/realPy/hogosuru/array"
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/datatranferitemlist"
 	"github.com/realPy/hogosuru/filelist"
 )
 
@@ -12,7 +14,7 @@ var singleton sync.Once
 
 var dtinterface js.Value
 
-//Channel struct
+//DataTransfer struct
 type DataTransfer struct {
 	baseobject.BaseObject
 }
@@ -30,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if dtinterface, err = js.Global().GetWithErr("DataTransfer"); err != nil {
+		if dtinterface, err = baseobject.Get(js.Global(), "DataTransfer"); err != nil {
 			dtinterface = js.Undefined()
 		}
 		baseobject.Register(dtinterface, func(v js.Value) (interface{}, error) {
@@ -45,36 +47,102 @@ func GetInterface() js.Value {
 //New Get a new channel broadcast
 func New() (DataTransfer, error) {
 	var dt DataTransfer
-
+	var obj js.Value
+	var err error
 	if dti := GetInterface(); !dti.IsUndefined() {
-		dt.BaseObject = dt.SetObject(dti.New())
-		return dt, nil
+
+		if obj, err = baseobject.New(dti); err == nil {
+			dt.BaseObject = dt.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return DataTransfer{}, ErrNotImplemented
+	return dt, err
 }
 
 func NewFromJSObject(obj js.Value) (DataTransfer, error) {
 	var dt DataTransfer
-
+	var err error
 	if dti := GetInterface(); !dti.IsUndefined() {
-		if obj.InstanceOf(dti) {
-			dt.BaseObject = dt.SetObject(obj)
-			return dt, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(dti) {
+				dt.BaseObject = dt.SetObject(obj)
+
+			} else {
+				err = ErrNotADataTransfer
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
 
-	return dt, ErrNotADataTransfer
+	return dt, err
 }
 
 func (dt DataTransfer) Files() (filelist.FileList, error) {
 
 	var err error
 	var obj js.Value
+	var f filelist.FileList
 
-	if obj, err = dt.JSObject().GetWithErr("files"); err == nil {
+	if obj, err = dt.Get("files"); err == nil {
 
-		return filelist.NewFromJSObject(obj)
+		f, err = filelist.NewFromJSObject(obj)
 	}
-	return filelist.FileList{}, err
+	return f, err
+}
+func (dt DataTransfer) SetFiles(files filelist.FileList) error {
 
+	return dt.SetAttribute("files", files)
+}
+
+func (dt DataTransfer) Items() (datatranferitemlist.DataTransferItemList, error) {
+
+	var err error
+	var obj js.Value
+	var items datatranferitemlist.DataTransferItemList
+
+	if obj, err = dt.Get("items"); err == nil {
+
+		items, err = datatranferitemlist.NewFromJSObject(obj)
+	}
+	return items, err
+
+}
+
+func (dt DataTransfer) SetItems(list datatranferitemlist.DataTransferItemList) error {
+
+	return dt.SetAttribute("items", list)
+}
+func (dt DataTransfer) Types() (array.Array, error) {
+
+	var err error
+	var obj js.Value
+	var types array.Array
+
+	if obj, err = dt.Get("types"); err == nil {
+
+		types, err = array.NewFromJSObject(obj)
+	}
+	return types, err
+}
+
+func (dt DataTransfer) DropEffect() (string, error) {
+	return dt.GetAttributeString("dropEffect")
+}
+
+func (dt DataTransfer) SetDropEffect(value string) error {
+	return dt.SetAttributeString("dropEffect", value)
+}
+
+func (dt DataTransfer) EffectAllowed() (string, error) {
+	return dt.GetAttributeString("effectAllowed")
+}
+
+func (dt DataTransfer) SetEffectAllowed(value string) error {
+	return dt.SetAttributeString("effectAllowed", value)
 }

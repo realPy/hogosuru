@@ -18,7 +18,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if domrectinterface, err = js.Global().GetWithErr("DOMRect"); err != nil {
+		if domrectinterface, err = baseobject.Get(js.Global(), "DOMRect"); err != nil {
 			domrectinterface = js.Undefined()
 		}
 		baseobject.Register(domrectinterface, func(v js.Value) (interface{}, error) {
@@ -45,24 +45,34 @@ func (d DOMRect) DOMRect_() DOMRect {
 func New() (DOMRect, error) {
 
 	var d DOMRect
-
+	var obj js.Value
+	var err error
 	if di := GetInterface(); !di.IsUndefined() {
 
-		d.BaseObject = d.SetObject(di.New())
-		return d, nil
+		if obj, err = baseobject.New(di); err == nil {
+			d.BaseObject = d.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return d, ErrNotImplemented
+	return d, err
 }
 
 func NewFromJSObject(obj js.Value) (DOMRect, error) {
 	var d DOMRect
 	var err error
 	if di := GetInterface(); !di.IsUndefined() {
-		if obj.InstanceOf(di) {
-			d.BaseObject = d.SetObject(obj)
-
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnDOMRect
+
+			if obj.InstanceOf(di) {
+				d.BaseObject = d.SetObject(obj)
+
+			} else {
+				err = ErrNotAnDOMRect
+			}
 		}
 	} else {
 		err = ErrNotImplemented
@@ -73,37 +83,37 @@ func NewFromJSObject(obj js.Value) (DOMRect, error) {
 
 func (d DOMRect) SetBottom(value float64) error {
 
-	return d.JSObject().SetWithErr("bottom", js.ValueOf(value))
+	return d.Set("bottom", js.ValueOf(value))
 }
 func (d DOMRect) SetHeight(value float64) error {
 
-	return d.JSObject().SetWithErr("height", js.ValueOf(value))
+	return d.Set("height", js.ValueOf(value))
 }
 func (d DOMRect) SetLeft(value float64) error {
 
-	return d.JSObject().SetWithErr("left", js.ValueOf(value))
+	return d.Set("left", js.ValueOf(value))
 }
 func (d DOMRect) SetRight(value float64) error {
 
-	return d.JSObject().SetWithErr("right", js.ValueOf(value))
+	return d.Set("right", js.ValueOf(value))
 }
 
 func (d DOMRect) SetTop(value float64) error {
 
-	return d.JSObject().SetWithErr("top", js.ValueOf(value))
+	return d.Set("top", js.ValueOf(value))
 }
 
 func (d DOMRect) SetWidth(value float64) error {
 
-	return d.JSObject().SetWithErr("width", js.ValueOf(value))
+	return d.Set("width", js.ValueOf(value))
 }
 
 func (d DOMRect) SetX(value float64) error {
 
-	return d.JSObject().SetWithErr("x", js.ValueOf(value))
+	return d.Set("x", js.ValueOf(value))
 }
 
 func (d DOMRect) SetY(value float64) error {
 
-	return d.JSObject().SetWithErr("y", js.ValueOf(value))
+	return d.Set("y", js.ValueOf(value))
 }

@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlanchorlementinterface, err = js.Global().GetWithErr("HTMLAnchorElement"); err != nil {
+		if htmlanchorlementinterface, err = baseobject.Get(js.Global(), "HTMLAnchorElement"); err != nil {
 			htmlanchorlementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlanchorlementinterface, func(v js.Value) (interface{}, error) {
@@ -75,15 +75,24 @@ func NewFromElement(elem element.Element) (HtmlAnchorElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlAnchorElement, error) {
 	var h HtmlAnchorElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmlAnchorElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHtmlAnchorElement
+	return h, err
 }
 
 func (h HtmlAnchorElement) Download() (string, error) {
@@ -191,7 +200,7 @@ func (h HtmlAnchorElement) RelList() (domtokenlist.DOMTokenList, error) {
 	var obj js.Value
 	var dlist domtokenlist.DOMTokenList
 
-	if obj, err = h.JSObject().GetWithErr("relList"); err == nil {
+	if obj, err = h.Get("relList"); err == nil {
 
 		dlist, err = domtokenlist.NewFromJSObject(obj)
 	}

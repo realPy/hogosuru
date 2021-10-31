@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlsourceelementinterface, err = js.Global().GetWithErr("HTMLSourceElement"); err != nil {
+		if htmlsourceelementinterface, err = baseobject.Get(js.Global(), "HTMLSourceElement"); err != nil {
 			htmlsourceelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlsourceelementinterface, func(v js.Value) (interface{}, error) {
@@ -74,15 +74,24 @@ func NewFromElement(elem element.Element) (HtmlSourceElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlSourceElement, error) {
 	var h HtmlSourceElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHTMLSourceElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHTMLSourceElement
+	return h, err
 }
 
 func (h HtmlSourceElement) Media() (string, error) {

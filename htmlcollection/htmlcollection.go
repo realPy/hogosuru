@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if htmlcollectioninterface, err = js.Global().GetWithErr("HTMLCollection"); err != nil {
+		if htmlcollectioninterface, err = baseobject.Get(js.Global(), "HTMLCollection"); err != nil {
 			htmlcollectioninterface = js.Undefined()
 		}
 		baseobject.Register(htmlcollectioninterface, func(v js.Value) (interface{}, error) {
@@ -47,18 +47,31 @@ func NewFromJSObject(obj js.Value) (HtmlCollection, error) {
 	var h HtmlCollection
 	var err error
 	if fli := GetInterface(); !fli.IsUndefined() {
-		if obj.InstanceOf(fli) {
-			h.BaseObject = h.SetObject(obj)
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+			if obj.InstanceOf(fli) {
+				h.BaseObject = h.SetObject(obj)
+			} else {
+				err = ErrNotAnHTMLCollection
+			}
 		}
 	} else {
-		err = ErrNotAnHTMLCollection
+		err = ErrNotImplemented
 	}
 
 	return h, err
 }
 
-func (h HtmlCollection) Item(index int) js.Value {
+func (h HtmlCollection) Item(index int) (interface{}, error) {
 
-	return h.JSObject().Index(index)
+	var i interface{}
+	var err error
+	obj := h.JSObject().Index(index)
+	if !obj.IsUndefined() && !obj.IsNull() {
+		i, err = baseobject.Discover(obj)
+	}
+
+	return i, err
 
 }

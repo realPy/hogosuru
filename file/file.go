@@ -7,19 +7,20 @@ import (
 
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/blob"
+	"github.com/realPy/hogosuru/date"
 )
 
 var singleton sync.Once
 
 var fileinterface js.Value
 
-//GetJSInterface get teh JS interface of broadcast channel
+//GetInterface get the  JS interface File
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
 
 		var err error
-		if fileinterface, err = js.Global().GetWithErr("File"); err != nil {
+		if fileinterface, err = baseobject.Get(js.Global(), "File"); err != nil {
 			fileinterface = js.Undefined()
 		}
 		blob.GetInterface()
@@ -43,48 +44,78 @@ func (f File) File_() File {
 	return f
 }
 
-func NewFromJSObject(obj js.Value) (File, error) {
+func New(bits interface{}, name string, value ...map[string]interface{}) (File, error) {
+
 	var f File
+	var obj js.Value
+	var err error
+	var arrayJS []interface{}
+
+	if objGo, ok := bits.(baseobject.ObjectFrom); ok {
+		arrayJS = append(arrayJS, objGo.JSObject())
+	} else {
+		arrayJS = append(arrayJS, js.ValueOf(bits))
+	}
+
+	arrayJS = append(arrayJS, js.ValueOf(name))
+	if len(value) > 0 {
+		arrayJS = append(arrayJS, js.ValueOf(value[0]))
+	}
 
 	if fi := GetInterface(); !fi.IsUndefined() {
-		if obj.InstanceOf(fi) {
+
+		if obj, err = baseobject.New(fi, arrayJS...); err == nil {
 			f.BaseObject = f.SetObject(obj)
-			return f, nil
 		}
-	}
 
-	return f, ErrNotAFile
+	} else {
+		err = ErrNotImplemented
+
+	}
+	return f, err
 }
 
-func (f File) Name() string {
+func NewFromJSObject(obj js.Value) (File, error) {
+	var f File
 	var err error
-	var obj js.Value
+	if fi := GetInterface(); !fi.IsUndefined() {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-	if obj, err = f.JSObject().GetWithErr("name"); err == nil {
+			if obj.InstanceOf(fi) {
+				f.BaseObject = f.SetObject(obj)
 
-		return obj.String()
+			} else {
+				err = ErrNotAFile
+			}
+		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return ""
+
+	return f, err
 }
 
-func (f File) Type() string {
-	var err error
-	var obj js.Value
+func (f File) Name() (string, error) {
 
-	if obj, err = f.JSObject().GetWithErr("type"); err == nil {
-
-		return obj.String()
-	}
-	return ""
+	return f.GetAttributeString("name")
 }
 
-func (f File) LastModified() string {
-	var err error
+func (f File) Type() (string, error) {
+	return f.GetAttributeString("type")
+}
+
+func (f File) LastModified() (int64, error) {
+	return f.GetAttributeInt64("lastModified")
+}
+
+func (f File) LastModifiedDate() (date.Date, error) {
 	var obj js.Value
-
-	if obj, err = f.JSObject().GetWithErr("lastModified"); err == nil {
-
-		return obj.String()
+	var d date.Date
+	var err error
+	if obj, err = f.Get("lastModifiedDate"); err == nil {
+		d, err = date.NewFromJSObject(obj)
 	}
-	return ""
+	return d, err
 }

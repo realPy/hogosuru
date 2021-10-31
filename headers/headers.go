@@ -33,7 +33,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if headersinterface, err = js.Global().GetWithErr("Headers"); err != nil {
+		if headersinterface, err = baseobject.Get(js.Global(), "Headers"); err != nil {
 			headersinterface = js.Undefined()
 		}
 
@@ -47,26 +47,35 @@ func GetInterface() js.Value {
 
 func NewFromJSObject(obj js.Value) (Headers, error) {
 	var h Headers
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHeaders
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHeaders
+	return h, err
 }
 
 func (h Headers) Append(name, value string) error {
 	var err error
-	_, err = h.JSObject().CallWithErr("append", js.ValueOf(name), js.ValueOf(value))
+	_, err = h.Call("append", js.ValueOf(name), js.ValueOf(value))
 	return err
 }
 
 func (h Headers) Delete(name string) error {
 	var err error
-	_, err = h.JSObject().CallWithErr("delete", js.ValueOf(name))
+	_, err = h.Call("delete", js.ValueOf(name))
 	return err
 }
 
@@ -75,7 +84,7 @@ func (h Headers) Entries() (iterator.Iterator, error) {
 	var obj js.Value
 	var iter iterator.Iterator
 
-	if obj, err = h.JSObject().CallWithErr("entries"); err == nil {
+	if obj, err = h.Call("entries"); err == nil {
 		iter = iterator.NewFromJSObject(obj)
 	}
 
@@ -88,7 +97,7 @@ func (h Headers) Get(name string) (string, error) {
 	var obj js.Value
 	var result string
 
-	if obj, err = h.JSObject().CallWithErr("get", js.ValueOf(name)); err == nil {
+	if obj, err = h.Call("get", js.ValueOf(name)); err == nil {
 
 		if obj.Type() == js.TypeString {
 			result = obj.String()
@@ -105,7 +114,7 @@ func (h Headers) Has(name string) (bool, error) {
 	var err error
 	var obj js.Value
 	var result bool
-	if obj, err = h.JSObject().CallWithErr("has", js.ValueOf(name)); err == nil {
+	if obj, err = h.Call("has", js.ValueOf(name)); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
@@ -121,7 +130,7 @@ func (h Headers) Keys() (iterator.Iterator, error) {
 	var obj js.Value
 	var iter iterator.Iterator
 
-	if obj, err = h.JSObject().CallWithErr("keys"); err == nil {
+	if obj, err = h.Call("keys"); err == nil {
 		iter = iterator.NewFromJSObject(obj)
 	}
 
@@ -130,7 +139,7 @@ func (h Headers) Keys() (iterator.Iterator, error) {
 
 func (h Headers) Set(name, value string) error {
 	var err error
-	_, err = h.JSObject().CallWithErr("set", js.ValueOf(name), js.ValueOf(value))
+	_, err = h.Call("set", js.ValueOf(name), js.ValueOf(value))
 	return err
 }
 
@@ -139,7 +148,7 @@ func (h Headers) Values() (iterator.Iterator, error) {
 	var obj js.Value
 	var iter iterator.Iterator
 
-	if obj, err = h.JSObject().CallWithErr("values"); err == nil {
+	if obj, err = h.Call("values"); err == nil {
 		iter = iterator.NewFromJSObject(obj)
 	}
 

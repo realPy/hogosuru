@@ -13,7 +13,6 @@ import (
 	"github.com/realPy/hogosuru/headers"
 	"github.com/realPy/hogosuru/promise"
 	"github.com/realPy/hogosuru/stream"
-	"github.com/realPy/hogosuru/uint8array"
 )
 
 var (
@@ -42,7 +41,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if responseinterface, err = js.Global().GetWithErr("Response"); err != nil {
+		if responseinterface, err = baseobject.Get(js.Global(), "Response"); err != nil {
 			responseinterface = js.Undefined()
 		}
 		baseobject.Register(responseinterface, func(v js.Value) (interface{}, error) {
@@ -57,25 +56,63 @@ func GetInterface() js.Value {
 //New Create a response
 func New() (Response, error) {
 	var r Response
+	var obj js.Value
+	var err error
+	if ri := GetInterface(); !ri.IsUndefined() {
+
+		if obj, err = baseobject.New(ri); err == nil {
+			r.BaseObject = r.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
+	}
+	return r, err
+}
+
+func Error() (Response, error) {
+
+	var response Response
+	var err error
+	var obj js.Value
 
 	if ri := GetInterface(); !ri.IsUndefined() {
-		r.BaseObject = r.SetObject(ri.New())
-		return r, nil
+
+		if obj, err = baseobject.Call(ri, "error"); err == nil {
+			response.BaseObject = response.SetObject(obj)
+
+		} else {
+			err = ErrNotAnFResp
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return r, ErrNotImplemented
+
+	return response, err
+
 }
 
 func NewFromJSObject(obj js.Value) (Response, error) {
 	var response Response
-
+	var err error
 	if ri := GetInterface(); !ri.IsUndefined() {
-		if obj.InstanceOf(ri) {
-			response.BaseObject = response.SetObject(obj)
-			return response, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(ri) {
+				response.BaseObject = response.SetObject(obj)
+
+			} else {
+				err = ErrNotAnFResp
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
 
-	return response, ErrNotAnFResp
+	return response, err
 }
 
 func (r Response) Ok() (bool, error) {
@@ -83,7 +120,7 @@ func (r Response) Ok() (bool, error) {
 	var err error
 	var obj js.Value
 
-	if obj, err = r.JSObject().GetWithErr("ok"); err == nil {
+	if obj, err = r.Get("ok"); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			return obj.Bool(), nil
 		} else {
@@ -95,7 +132,7 @@ func (r Response) Ok() (bool, error) {
 }
 
 func (r Response) Redirected() (bool, error) {
-	return r.CallBool("redirected")
+	return r.GetAttributeBool("redirected")
 }
 
 func (r Response) Status() (int, error) {
@@ -112,7 +149,7 @@ func (r Response) StatusText() (string, error) {
 	var err error
 	var obj js.Value
 
-	if obj, err = r.JSObject().GetWithErr("statusText"); err == nil {
+	if obj, err = r.Get("statusText"); err == nil {
 
 		return obj.String(), nil
 	}
@@ -124,7 +161,7 @@ func (r Response) Type() (string, error) {
 	var err error
 	var obj js.Value
 
-	if obj, err = r.JSObject().GetWithErr("type"); err == nil {
+	if obj, err = r.Get("type"); err == nil {
 
 		return obj.String(), nil
 	}
@@ -136,96 +173,80 @@ func (r Response) Url() (string, error) {
 	var err error
 	var obj js.Value
 
-	if obj, err = r.JSObject().GetWithErr("url"); err == nil {
+	if obj, err = r.Get("url"); err == nil {
 
 		return obj.String(), nil
 	}
 	return "", err
 }
 
-func (r Response) Text() (string, error) {
+func (r Response) BodyUsed() (bool, error) {
+
+	return r.GetAttributeBool("bodyUsed")
+}
+
+func (r Response) Text() (promise.Promise, error) {
 
 	var promiseObject js.Value
 	var p promise.Promise
-	var jsTxtObj interface{}
 	var err error
-	if promiseObject, err = r.JSObject().CallWithErr("text"); err == nil {
-		if p, err = promise.NewFromJSObject(promiseObject); err == nil {
-
-			if jsTxtObj, err = p.Await(); err == nil {
-
-				if jsTxt, ok := jsTxtObj.(baseobject.ObjectFrom); ok {
-					return jsTxt.JSObject().String(), nil
-				} else {
-					err = baseobject.ErrNotABaseObject
-				}
-
-			}
-		}
-
+	if promiseObject, err = r.Call("text"); err == nil {
+		p, err = promise.NewFromJSObject(promiseObject)
 	}
-	return "", err
+	return p, err
 }
 
+func (r Response) Json() (promise.Promise, error) {
+
+	var promiseObject js.Value
+	var p promise.Promise
+	var err error
+	if promiseObject, err = r.Call("json"); err == nil {
+		p, err = promise.NewFromJSObject(promiseObject)
+	}
+	return p, err
+}
+
+/* not exist on chrome
 func (r Response) UseFinalURL() (bool, error) {
 
-	return r.CallBool("useFinalURL")
+	return r.GetAttributeBool("useFinalURL")
 }
 
 func (r Response) SetUseFinalURL(b bool) {
 
 	r.JSObject().Set("useFinalURL", js.ValueOf(b))
-}
+}*/
 
-func (r Response) ArrayBuffer() (arraybuffer.ArrayBuffer, error) {
+func (r Response) ArrayBuffer() (promise.Promise, error) {
 
-	var ab arraybuffer.ArrayBuffer
-	var err error
 	var promiseObject js.Value
 	var p promise.Promise
-	var binaryObj interface{}
-
-	if promiseObject, err = r.JSObject().CallWithErr("arrayBuffer"); err == nil {
-		if p, err = promise.NewFromJSObject(promiseObject); err == nil {
-
-			if binaryObj, err = p.Await(); err == nil {
-				if binary, ok := binaryObj.(arraybuffer.ArrayBufferFrom); ok {
-					ab = binary.ArrayBuffer_()
-				} else {
-					err = baseobject.ErrNotABaseObject
-				}
-
-			}
-
-		}
-
+	var err error
+	if promiseObject, err = r.Call("arrayBuffer"); err == nil {
+		p, err = promise.NewFromJSObject(promiseObject)
 	}
-	return ab, err
+	return p, err
 
 }
 
-func (r Response) ArrayBufferBytes() ([]byte, error) {
+func (r Response) Blob() (promise.Promise, error) {
 
-	var buffer []byte
-	var ab arraybuffer.ArrayBuffer
-	var arr8buf uint8array.Uint8Array
-
+	var promiseObject js.Value
+	var p promise.Promise
 	var err error
-
-	if ab, err = r.ArrayBuffer(); err == nil {
-		if arr8buf, err = uint8array.NewFromArrayBuffer(ab); err == nil {
-			buffer, err = arr8buf.Bytes()
-		}
+	if promiseObject, err = r.Call("blob"); err == nil {
+		p, err = promise.NewFromJSObject(promiseObject)
 	}
+	return p, err
 
-	return buffer, err
 }
 
 func (r Response) Headers() (headers.Headers, error) {
 	var obj js.Value
 	var err error
 	var h headers.Headers
-	if obj, err = r.JSObject().GetWithErr("headers"); err == nil {
+	if obj, err = r.Get("headers"); err == nil {
 		h, err = headers.NewFromJSObject(obj)
 
 	}
@@ -236,9 +257,20 @@ func (r Response) Body() (stream.ReadableStream, error) {
 	var obj js.Value
 	var err error
 	var s stream.ReadableStream
-	if obj, err = r.JSObject().GetWithErr("body"); err == nil {
+	if obj, err = r.Get("body"); err == nil {
 		s, err = stream.NewFromJSObject(obj)
 
 	}
 	return s, err
+}
+
+func (r Response) Clone() (Response, error) {
+
+	var cloneObject js.Value
+	var clone Response
+	var err error
+	if cloneObject, err = r.Call("clone"); err == nil {
+		clone, err = NewFromJSObject(cloneObject)
+	}
+	return clone, err
 }

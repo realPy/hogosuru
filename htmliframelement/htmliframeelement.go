@@ -31,7 +31,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmliframelementinterface, err = js.Global().GetWithErr("HTMLIFrameElement"); err != nil {
+		if htmliframelementinterface, err = baseobject.Get(js.Global(), "HTMLIFrameElement"); err != nil {
 			htmliframelementinterface = js.Undefined()
 		}
 
@@ -75,15 +75,24 @@ func NewFromElement(elem element.Element) (HtmlIFrameElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlIFrameElement, error) {
 	var h HtmlIFrameElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmlIFrameElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHtmlIFrameElement
+	return h, err
 }
 
 func (h HtmlIFrameElement) AllowPaymentRequest() (bool, error) {
@@ -99,7 +108,7 @@ func (h HtmlIFrameElement) ContentDocument() (document.Document, error) {
 	var obj js.Value
 	var doc document.Document
 
-	if obj, err = h.JSObject().GetWithErr("contentDocument"); err == nil {
+	if obj, err = h.Get("contentDocument"); err == nil {
 
 		doc, err = document.NewFromJSObject(obj)
 	}

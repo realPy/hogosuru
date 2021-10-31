@@ -35,7 +35,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if drageventinterface, err = js.Global().GetWithErr("DragEvent"); err != nil {
+		if drageventinterface, err = baseobject.Get(js.Global(), "DragEvent"); err != nil {
 			drageventinterface = js.Undefined()
 		}
 		baseobject.Register(drageventinterface, func(v js.Value) (interface{}, error) {
@@ -48,14 +48,23 @@ func GetInterface() js.Value {
 
 func NewFromJSObject(obj js.Value) (DragEvent, error) {
 	var e DragEvent
-
+	var err error
 	if di := GetInterface(); !di.IsUndefined() {
-		if obj.InstanceOf(di) {
-			e.BaseObject = e.SetObject(obj)
-			return e, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(di) {
+				e.BaseObject = e.SetObject(obj)
+
+			} else {
+				err = ErrNotAnDragEvent
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return e, ErrNotAnDragEvent
+	return e, err
 }
 
 func (d DragEvent) DataTransfer() (datatransfer.DataTransfer, error) {
@@ -63,7 +72,7 @@ func (d DragEvent) DataTransfer() (datatransfer.DataTransfer, error) {
 	var err error
 	var obj js.Value
 
-	if obj, err = d.JSObject().GetWithErr("dataTransfer"); err == nil {
+	if obj, err = d.Get("dataTransfer"); err == nil {
 
 		return datatransfer.NewFromJSObject(obj)
 	}

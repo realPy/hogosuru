@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if customeventinterface, err = js.Global().GetWithErr("CustomEvent"); err != nil {
+		if customeventinterface, err = baseobject.Get(js.Global(), "CustomEvent"); err != nil {
 			customeventinterface = js.Undefined()
 		}
 
@@ -49,7 +49,8 @@ func GetInterface() js.Value {
 func New(message, detail interface{}) (CustomEvent, error) {
 	var event CustomEvent
 	var jsObj js.Value
-
+	var obj js.Value
+	var err error
 	if objGo, ok := detail.(baseobject.ObjectFrom); ok {
 		jsObj = objGo.JSObject()
 	} else {
@@ -57,10 +58,15 @@ func New(message, detail interface{}) (CustomEvent, error) {
 	}
 
 	if eventi := GetInterface(); !eventi.IsUndefined() {
-		event.BaseObject = event.SetObject(eventi.New(js.ValueOf(message), js.ValueOf(map[string]interface{}{"detail": jsObj})))
-		return event, nil
+
+		if obj, err = baseobject.New(eventi, js.ValueOf(message), js.ValueOf(map[string]interface{}{"detail": jsObj})); err == nil {
+			event.BaseObject = event.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return event, ErrNotImplemented
+	return event, err
 }
 
 func NewFromJSObject(obj js.Value) (CustomEvent, error) {
@@ -68,12 +74,19 @@ func NewFromJSObject(obj js.Value) (CustomEvent, error) {
 	var err error
 
 	if bi := GetInterface(); !bi.IsUndefined() {
-		if obj.InstanceOf(bi) {
-			c.BaseObject = c.SetObject(obj)
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
+			if obj.InstanceOf(bi) {
+				c.BaseObject = c.SetObject(obj)
+
+			} else {
+				err = ErrNotAnCustomEvent
+			}
 		}
 	} else {
-		err = ErrNotAnCustomEvent
+		err = ErrNotImplemented
 	}
 
 	return c, err
@@ -84,9 +97,8 @@ func (c CustomEvent) Detail() (interface{}, error) {
 	var err error
 	var i interface{}
 
-	if obj, err = c.JSObject().GetWithErr("detail"); err == nil {
-		i, err = baseobject.Discover(obj)
-
+	if obj, err = c.Get("detail"); err == nil {
+		i = baseobject.GoValue(obj)
 	}
 	return i, err
 }

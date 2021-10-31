@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlprogresselementinterface, err = js.Global().GetWithErr("HTMLProgressElement"); err != nil {
+		if htmlprogresselementinterface, err = baseobject.Get(js.Global(), "HTMLProgressElement"); err != nil {
 			htmlprogresselementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlprogresselementinterface, func(v js.Value) (interface{}, error) {
@@ -75,15 +75,24 @@ func NewFromElement(elem element.Element) (HtmlProgressElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlProgressElement, error) {
 	var h HtmlProgressElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmlProgressElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHtmlProgressElement
+	return h, err
 }
 
 func (h HtmlProgressElement) Max() (float64, error) {
@@ -111,7 +120,7 @@ func (h HtmlProgressElement) Labels() (nodelist.NodeList, error) {
 	var obj js.Value
 	var nlist nodelist.NodeList
 
-	if obj, err = h.JSObject().GetWithErr("labels"); err == nil {
+	if obj, err = h.Get("labels"); err == nil {
 
 		nlist, err = nodelist.NewFromJSObject(obj)
 	}

@@ -12,13 +12,13 @@ var singleton sync.Once
 
 var arrayinterface js.Value
 
-//GetInterface get teh JS interface of broadcast channel
+//GetInterface get the JS interface Array
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
 
 		var err error
-		if arrayinterface, err = js.Global().GetWithErr("Array"); err != nil {
+		if arrayinterface, err = baseobject.Get(js.Global(), "Array"); err != nil {
 			arrayinterface = js.Undefined()
 		}
 		baseobject.Register(arrayinterface, func(v js.Value) (interface{}, error) {
@@ -45,13 +45,18 @@ func (a Array) Array_() Array {
 func NewEmpty(size int) (Array, error) {
 
 	var a Array
-
+	var obj js.Value
+	var err error
 	if ai := GetInterface(); !ai.IsUndefined() {
 
-		a.BaseObject = a.SetObject(ai.New(js.ValueOf(size)))
-		return a, nil
+		if obj, err = baseobject.New(ai, js.ValueOf(size)); err == nil {
+			a.BaseObject = a.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return a, ErrNotImplemented
+	return a, err
 }
 
 func From(iterable interface{}, f ...func(interface{}) interface{}) (Array, error) {
@@ -78,7 +83,8 @@ func From(iterable interface{}, f ...func(interface{}) interface{}) (Array, erro
 			opts = append(opts, jsfunc)
 
 		}
-		if obj, err = ai.CallWithErr("from", opts...); err == nil {
+
+		if obj, err = baseobject.Call(ai, "from", opts...); err == nil {
 			a.BaseObject = a.SetObject(obj)
 		}
 
@@ -112,7 +118,8 @@ func Of(values ...interface{}) (Array, error) {
 func New(values ...interface{}) (Array, error) {
 	var a Array
 	var arrayJS []interface{}
-
+	var obj js.Value
+	var err error
 	for _, value := range values {
 		if objGo, ok := value.(baseobject.ObjectFrom); ok {
 			arrayJS = append(arrayJS, objGo.JSObject())
@@ -122,10 +129,15 @@ func New(values ...interface{}) (Array, error) {
 
 	}
 	if ai := GetInterface(); !ai.IsUndefined() {
-		a.BaseObject = a.SetObject(ai.New(arrayJS...))
-		return a, nil
+
+		if obj, err = baseobject.New(ai, arrayJS...); err == nil {
+			a.BaseObject = a.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return a, ErrNotImplemented
+	return a, err
 
 }
 
@@ -133,11 +145,16 @@ func NewFromJSObject(obj js.Value) (Array, error) {
 	var a Array
 	var err error
 	if ai := GetInterface(); !ai.IsUndefined() {
-		if obj.InstanceOf(ai) {
-			a.BaseObject = a.SetObject(obj)
-			return a, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnArray
+
+			if obj.InstanceOf(ai) {
+				a.BaseObject = a.SetObject(obj)
+
+			} else {
+				err = ErrNotAnArray
+			}
 		}
 	} else {
 		err = ErrNotImplemented
@@ -158,7 +175,7 @@ func (a Array) Concat(a2 Array) (Array, error) {
 	var obj js.Value
 	var newArr Array
 
-	if obj, err = a.JSObject().CallWithErr("concat", a2.JSObject()); err == nil {
+	if obj, err = a.Call("concat", a2.JSObject()); err == nil {
 
 		newArr, err = NewFromJSObject(obj)
 	}
@@ -180,7 +197,7 @@ func (a Array) CopyWithin(cible int, opts ...int) (Array, error) {
 		arrayJS = append(arrayJS, js.ValueOf(opt))
 	}
 
-	if obj, err = a.JSObject().CallWithErr("copyWithin", arrayJS...); err == nil {
+	if obj, err = a.Call("copyWithin", arrayJS...); err == nil {
 
 		newArr, err = NewFromJSObject(obj)
 	}
@@ -194,7 +211,7 @@ func (a Array) Entries() (iterator.Iterator, error) {
 	var obj js.Value
 	var iter iterator.Iterator
 
-	if obj, err = a.JSObject().CallWithErr("entries"); err == nil {
+	if obj, err = a.Call("entries"); err == nil {
 		iter = iterator.NewFromJSObject(obj)
 	}
 
@@ -211,7 +228,7 @@ func (a Array) Every(f func(interface{}) bool) (bool, error) {
 		return js.ValueOf(b)
 	})
 
-	if obj, err = a.JSObject().CallWithErr("every", jsfunc); err == nil {
+	if obj, err = a.Call("every", jsfunc); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
@@ -222,6 +239,7 @@ func (a Array) Every(f func(interface{}) bool) (bool, error) {
 	return result, err
 }
 
+//Fill (value, begin, end)
 func (a Array) Fill(i interface{}, opts ...int) error {
 	var err error
 	var arrayJS []interface{}
@@ -231,7 +249,7 @@ func (a Array) Fill(i interface{}, opts ...int) error {
 		arrayJS = append(arrayJS, js.ValueOf(opt))
 	}
 
-	_, err = a.JSObject().CallWithErr("fill", arrayJS...)
+	_, err = a.Call("fill", arrayJS...)
 	return err
 }
 
@@ -245,7 +263,7 @@ func (a Array) Filter(f func(interface{}) bool) (Array, error) {
 		return js.ValueOf(b)
 	})
 
-	if obj, err = a.JSObject().CallWithErr("filter", jsfunc); err == nil {
+	if obj, err = a.Call("filter", jsfunc); err == nil {
 		newArr, err = NewFromJSObject(obj)
 	}
 	jsfunc.Release()
@@ -262,7 +280,7 @@ func (a Array) Find(f func(interface{}) bool) (interface{}, error) {
 		return js.ValueOf(b)
 	})
 
-	if obj, err = a.JSObject().CallWithErr("find", jsfunc); err == nil {
+	if obj, err = a.Call("find", jsfunc); err == nil {
 		if obj.Type() != js.TypeUndefined {
 			i = baseobject.GoValue(obj)
 		}
@@ -282,7 +300,7 @@ func (a Array) FindIndex(f func(interface{}) bool) (int, error) {
 		return js.ValueOf(b)
 	})
 
-	if obj, err = a.JSObject().CallWithErr("findIndex", jsfunc); err == nil {
+	if obj, err = a.Call("findIndex", jsfunc); err == nil {
 		if obj.Type() == js.TypeNumber {
 			index = obj.Int()
 		}
@@ -303,7 +321,7 @@ func (a Array) Flat(opts ...int) (Array, error) {
 		}
 	}
 
-	if obj, err = a.JSObject().CallWithErr("flat", arrayJS...); err == nil {
+	if obj, err = a.Call("flat", arrayJS...); err == nil {
 		newArr, err = NewFromJSObject(obj)
 	}
 	return newArr, err
@@ -319,7 +337,7 @@ func (a Array) FlatMap(f func(interface{}, int) interface{}) (Array, error) {
 		return b
 	})
 
-	if obj, err = a.JSObject().CallWithErr("flatMap", jsfunc); err == nil {
+	if obj, err = a.Call("flatMap", jsfunc); err == nil {
 		newArr, err = NewFromJSObject(obj)
 	}
 	jsfunc.Release()
@@ -334,7 +352,7 @@ func (a Array) ForEach(f func(interface{})) error {
 		return nil
 	})
 
-	_, err = a.JSObject().CallWithErr("forEach", jsfunc)
+	_, err = a.Call("forEach", jsfunc)
 	jsfunc.Release()
 	return err
 }
@@ -352,7 +370,7 @@ func (a Array) Includes(i interface{}) (bool, error) {
 		includecheck = js.ValueOf(i)
 	}
 
-	if obj, err = a.JSObject().CallWithErr("includes", includecheck); err == nil {
+	if obj, err = a.Call("includes", includecheck); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
@@ -375,7 +393,7 @@ func (a Array) IndexOf(i interface{}) (int, error) {
 		indexCheck = js.ValueOf(i)
 	}
 
-	if obj, err = a.JSObject().CallWithErr("indexOf", indexCheck); err == nil {
+	if obj, err = a.Call("indexOf", indexCheck); err == nil {
 		if obj.Type() == js.TypeNumber {
 			index = obj.Int()
 		}
@@ -392,7 +410,7 @@ func IsArray(bobj baseobject.BaseObject) (bool, error) {
 
 	if ai := GetInterface(); !ai.IsUndefined() {
 
-		if obj, err = ai.CallWithErr("isArray", bobj.JSObject()); err == nil {
+		if obj, err = baseobject.Call(ai, "isArray", bobj.JSObject()); err == nil {
 			if obj.Type() == js.TypeBoolean {
 				result = obj.Bool()
 			} else {
@@ -411,7 +429,7 @@ func (a Array) Join(separator string) (string, error) {
 	var result string
 	var obj js.Value
 
-	if obj, err = a.JSObject().CallWithErr("join", js.ValueOf(separator)); err == nil {
+	if obj, err = a.Call("join", js.ValueOf(separator)); err == nil {
 		if obj.Type() == js.TypeString {
 			result = obj.String()
 		} else {
@@ -426,7 +444,7 @@ func (a Array) Keys() (iterator.Iterator, error) {
 	var obj js.Value
 	var iter iterator.Iterator
 
-	if obj, err = a.JSObject().CallWithErr("keys"); err == nil {
+	if obj, err = a.Call("keys"); err == nil {
 		iter = iterator.NewFromJSObject(obj)
 	}
 
@@ -446,7 +464,7 @@ func (a Array) LastIndexOf(i interface{}) (int, error) {
 		indexCheck = js.ValueOf(i)
 	}
 
-	if obj, err = a.JSObject().CallWithErr("lastIndexOf", indexCheck); err == nil {
+	if obj, err = a.Call("lastIndexOf", indexCheck); err == nil {
 		if obj.Type() == js.TypeNumber {
 			index = obj.Int()
 		}
@@ -465,7 +483,7 @@ func (a Array) Map(f func(interface{}) interface{}) (Array, error) {
 		return js.ValueOf(b)
 	})
 
-	if obj, err = a.JSObject().CallWithErr("map", jsfunc); err == nil {
+	if obj, err = a.Call("map", jsfunc); err == nil {
 		newArr, err = NewFromJSObject(obj)
 	}
 	jsfunc.Release()
@@ -475,7 +493,7 @@ func (a Array) Map(f func(interface{}) interface{}) (Array, error) {
 func (a Array) Pop() error {
 	var err error
 
-	_, err = a.JSObject().CallWithErr("pop")
+	_, err = a.Call("pop")
 
 	return err
 }
@@ -493,7 +511,7 @@ func (a Array) Push(i interface{}) (int, error) {
 		pushdata = js.ValueOf(i)
 	}
 
-	if obj, err = a.JSObject().CallWithErr("push", pushdata); err == nil {
+	if obj, err = a.Call("push", pushdata); err == nil {
 		if obj.Type() == js.TypeNumber {
 			index = obj.Int()
 		}
@@ -523,7 +541,7 @@ func (a Array) Reduce(f func(accumulateur interface{}, value interface{}, opts .
 	if len(initialValue) > 0 {
 		argCall = append(argCall, js.ValueOf(initialValue[0]))
 	}
-	if obj, err = a.JSObject().CallWithErr("reduce", argCall...); err == nil {
+	if obj, err = a.Call("reduce", argCall...); err == nil {
 		newValue = baseobject.GoValue(obj)
 	}
 	jsfunc.Release()
@@ -550,7 +568,7 @@ func (a Array) ReduceRight(f func(accumulateur interface{}, value interface{}, o
 	if len(initialValue) > 0 {
 		argCall = append(argCall, js.ValueOf(initialValue[0]))
 	}
-	if obj, err = a.JSObject().CallWithErr("reduceRight", argCall...); err == nil {
+	if obj, err = a.Call("reduceRight", argCall...); err == nil {
 		newValue = baseobject.GoValue(obj)
 	}
 	jsfunc.Release()
@@ -560,7 +578,7 @@ func (a Array) ReduceRight(f func(accumulateur interface{}, value interface{}, o
 func (a Array) Reverse() error {
 	var err error
 
-	_, err = a.JSObject().CallWithErr("reverse")
+	_, err = a.Call("reverse")
 
 	return err
 }
@@ -569,7 +587,7 @@ func (a Array) Shift() (interface{}, error) {
 	var err error
 	var obj js.Value
 	var i interface{}
-	if obj, err = a.JSObject().CallWithErr("shift"); err == nil {
+	if obj, err = a.Call("shift"); err == nil {
 		i = baseobject.GoValue(obj)
 	}
 	return i, err
@@ -585,7 +603,7 @@ func (a Array) Slice(opts ...int) (Array, error) {
 		arrayJS = append(arrayJS, js.ValueOf(opt))
 	}
 
-	if obj, err = a.JSObject().CallWithErr("slice", arrayJS...); err == nil {
+	if obj, err = a.Call("slice", arrayJS...); err == nil {
 
 		newArr, err = NewFromJSObject(obj)
 	}
@@ -604,7 +622,7 @@ func (a Array) Some(f func(interface{}) bool) (bool, error) {
 		return js.ValueOf(b)
 	})
 
-	if obj, err = a.JSObject().CallWithErr("some", jsfunc); err == nil {
+	if obj, err = a.Call("some", jsfunc); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
@@ -618,7 +636,7 @@ func (a Array) Some(f func(interface{}) bool) (bool, error) {
 func (a Array) Sort() error {
 	var err error
 
-	_, err = a.JSObject().CallWithErr("sort")
+	_, err = a.Call("sort")
 
 	return err
 }
@@ -638,7 +656,7 @@ func (a Array) Splice(begin, suppress int, values ...interface{}) error {
 		}
 
 	}
-	_, err = a.JSObject().CallWithErr("splice", arrayJS...)
+	_, err = a.Call("splice", arrayJS...)
 
 	return err
 }
@@ -663,7 +681,7 @@ func (a Array) Unshift(values ...interface{}) (int, error) {
 		}
 
 	}
-	if obj, err = a.JSObject().CallWithErr("unshift", arrayJS...); err == nil {
+	if obj, err = a.Call("unshift", arrayJS...); err == nil {
 		if obj.Type() == js.TypeNumber {
 			index = obj.Int()
 		}
@@ -676,7 +694,7 @@ func (a Array) Values() (iterator.Iterator, error) {
 	var obj js.Value
 	var iter iterator.Iterator
 
-	if obj, err = a.JSObject().CallWithErr("values"); err == nil {
+	if obj, err = a.Call("values"); err == nil {
 		iter = iterator.NewFromJSObject(obj)
 	}
 

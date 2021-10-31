@@ -4,32 +4,33 @@ import (
 	"fmt"
 	"net/url"
 
+	"github.com/realPy/hogosuru"
 	"github.com/realPy/hogosuru/formdata"
 	"github.com/realPy/hogosuru/progressevent"
 	"github.com/realPy/hogosuru/xmlhttprequest"
 )
 
 func main() {
-
+	hogosuru.Init()
 	endpoint, _ := url.Parse("http://localhost:9090/static.json")
 	if xhr, err := xmlhttprequest.New(); err == nil {
 
-		xhr.Open("GET", endpoint)
-		xhr.SetOnload(func(x xmlhttprequest.XMLHTTPRequest) {
+		xhr.Open("GET", endpoint.String())
+		xhr.SetOnload(func(i interface{}) {
 
 			fmt.Printf("XML HTTPRequest Loaded\n")
 
-			if text, err := x.ResponseText(); err == nil {
+			if text, err := xhr.ResponseText(); err == nil {
 				fmt.Printf("Resultat: %s\n", text)
 			}
 
-			if header, err := x.GetResponseHeader("Content-Type"); err == nil {
+			if header, err := xhr.GetResponseHeader("Content-Type"); err == nil {
 				fmt.Printf("Resultat: %s\n", header)
 			}
 
 		})
 
-		xhr.SetOnProgress(func(x xmlhttprequest.XMLHTTPRequest, p progressevent.ProgressEvent) {
+		xhr.SetOnProgress(func(p progressevent.ProgressEvent) {
 			println("onload")
 			loaddata, err := p.Loaded()
 			totaldata, err2 := p.Total()
@@ -45,23 +46,23 @@ func main() {
 
 	if xhr, err := xmlhttprequest.New(); err == nil {
 
-		xhr.Open("POST", endpoint)
+		xhr.Open("POST", endpoint.String())
 		f, _ := formdata.New()
 		f.AppendString("data", "pouet")
-		xhr.SetOnload(func(x xmlhttprequest.XMLHTTPRequest) {
+		xhr.SetOnload(func(i interface{}) {
 
 			fmt.Printf("XML HTTPRequest Loaded\n")
 
-			if text, err := x.ResponseText(); err == nil {
+			if text, err := xhr.ResponseText(); err == nil {
 				fmt.Printf("Resultat: %s\n", text)
 			}
 
-			if header, err := x.GetResponseHeader("Content-Type"); err == nil {
+			if header, err := xhr.GetResponseHeader("Content-Type"); err == nil {
 				fmt.Printf("Resultat: %s\n", header)
 			}
 
 		})
-		xhr.SendForm(f)
+		xhr.Send(f)
 	}
 
 	ch := make(chan struct{})

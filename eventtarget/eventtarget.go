@@ -19,7 +19,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if eventtargetinterface, err = js.Global().GetWithErr("EventTarget"); err != nil {
+		if eventtargetinterface, err = baseobject.Get(js.Global(), "EventTarget"); err != nil {
 			eventtargetinterface = js.Undefined()
 		}
 
@@ -46,25 +46,38 @@ func (e EventTarget) EventTarget_() EventTarget {
 func New() (EventTarget, error) {
 
 	var e EventTarget
-
+	var obj js.Value
+	var err error
 	if eti := GetInterface(); !eti.IsUndefined() {
-		e.BaseObject = e.SetObject(eti.New())
-		return e, nil
+
+		if obj, err = baseobject.New(eti); err == nil {
+			e.BaseObject = e.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return e, ErrNotImplemented
+	return e, err
 }
 
 func NewFromJSObject(obj js.Value) (EventTarget, error) {
 	var e EventTarget
-
+	var err error
 	if eti := GetInterface(); !eti.IsUndefined() {
-		if obj.InstanceOf(eti) {
-			e.BaseObject = e.SetObject(obj)
-			return e, nil
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(eti) {
+				e.BaseObject = e.SetObject(obj)
+
+			} else {
+				err = ErrNotAnEventTarget
+			}
 		}
 	}
 
-	return e, ErrNotAnEventTarget
+	return e, err
 }
 
 func (e EventTarget) AddEventListener(name string, handler func(e event.Event)) (js.Func, error) {
@@ -80,7 +93,7 @@ func (e EventTarget) AddEventListener(name string, handler func(e event.Event)) 
 			return nil
 		})
 
-		_, err = e.JSObject().CallWithErr("addEventListener", js.ValueOf(name), cb)
+		_, err = e.Call("addEventListener", js.ValueOf(name), cb)
 	}
 
 	return cb, err
@@ -88,13 +101,13 @@ func (e EventTarget) AddEventListener(name string, handler func(e event.Event)) 
 
 func (e EventTarget) RemoveEventListener(f js.Func, typeevent string) error {
 	var err error
-	_, err = e.JSObject().CallWithErr("removeEventListener", typeevent, f)
+	_, err = e.Call("removeEventListener", typeevent, f)
 	f.Release()
 	return err
 }
 
 func (e EventTarget) DispatchEvent(event event.Event) error {
 	var err error
-	_, err = e.JSObject().CallWithErr("dispatchEvent", event.JSObject())
+	_, err = e.Call("dispatchEvent", event.JSObject())
 	return err
 }

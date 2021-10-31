@@ -20,7 +20,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if progresseeventinterface, err = js.Global().GetWithErr("ProgressEvent"); err != nil {
+		if progresseeventinterface, err = baseobject.Get(js.Global(), "ProgressEvent"); err != nil {
 			progresseeventinterface = js.Undefined()
 		}
 		baseobject.Register(progresseeventinterface, func(v js.Value) (interface{}, error) {
@@ -46,27 +46,40 @@ func (p ProgressEvent) ProgressEvent_() ProgressEvent {
 func New() (ProgressEvent, error) {
 
 	var p ProgressEvent
-
+	var obj js.Value
+	var err error
 	if pei := GetInterface(); !pei.IsUndefined() {
-		p.BaseObject = p.SetObject(pei.New())
 
-		return p, nil
+		if obj, err = baseobject.New(pei); err == nil {
+			p.BaseObject = p.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return p, ErrNotImplemented
+	return p, err
 }
 
 func NewFromJSObject(obj js.Value) (ProgressEvent, error) {
 	var p ProgressEvent
-
+	var err error
 	if pei := GetInterface(); !pei.IsUndefined() {
-		if obj.InstanceOf(pei) {
-			p.BaseObject = p.SetObject(obj)
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			return p, nil
+			if obj.InstanceOf(pei) {
+				p.BaseObject = p.SetObject(obj)
+
+			} else {
+				err = ErrNotAnProgressEvent
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
 
-	return p, ErrNotAnProgressEvent
+	return p, err
 }
 
 func (p ProgressEvent) LengthComputable() (bool, error) {

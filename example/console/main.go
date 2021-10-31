@@ -1,11 +1,12 @@
 package main
 
 import (
+	"github.com/realPy/hogosuru"
 	"github.com/realPy/hogosuru/console"
 )
 
 func main() {
-
+	hogosuru.Init()
 	if c, err := console.New(); err == nil {
 		c.Time("console")
 		c.Debug("Debug message")

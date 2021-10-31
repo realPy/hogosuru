@@ -36,7 +36,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlselectelementinterface, err = js.Global().GetWithErr("HTMLSelectElement"); err != nil {
+		if htmlselectelementinterface, err = baseobject.Get(js.Global(), "HTMLSelectElement"); err != nil {
 			htmlselectelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlselectelementinterface, func(v js.Value) (interface{}, error) {
@@ -79,15 +79,24 @@ func NewFromElement(elem element.Element) (HtmlSelectElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlSelectElement, error) {
 	var h HtmlSelectElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHTMLSelectElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHTMLSelectElement
+	return h, err
 }
 
 func (h HtmlSelectElement) Autofocus() (bool, error) {
@@ -110,7 +119,7 @@ func (h HtmlSelectElement) Form() (htmlformelement.HtmlFormElement, error) {
 	var err error
 	var obj js.Value
 	var f htmlformelement.HtmlFormElement
-	if obj, err = h.JSObject().GetWithErr("form"); err == nil {
+	if obj, err = h.Get("form"); err == nil {
 
 		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject
@@ -141,7 +150,7 @@ func (h HtmlSelectElement) Options() (htmloptionscollection.HtmlOptionsCollectio
 	var obj js.Value
 	var optioncollection htmloptionscollection.HtmlOptionsCollection
 
-	if obj, err = h.JSObject().GetWithErr("options"); err == nil {
+	if obj, err = h.Get("options"); err == nil {
 
 		optioncollection, err = htmloptionscollection.NewFromJSObject(obj)
 	}
@@ -179,7 +188,7 @@ func (h HtmlSelectElement) SelectedOptions() (htmlcollection.HtmlCollection, err
 	var obj js.Value
 	var collection htmlcollection.HtmlCollection
 
-	if obj, err = h.JSObject().GetWithErr("selectedOptions"); err == nil {
+	if obj, err = h.Get("selectedOptions"); err == nil {
 
 		collection, err = htmlcollection.NewFromJSObject(obj)
 	}
@@ -204,7 +213,7 @@ func (h HtmlSelectElement) Validity() (validitystate.ValidityState, error) {
 	var obj js.Value
 	var state validitystate.ValidityState
 
-	if obj, err = h.JSObject().GetWithErr("validity"); err == nil {
+	if obj, err = h.Get("validity"); err == nil {
 
 		state, err = validitystate.NewFromJSObject(obj)
 	}
@@ -241,7 +250,7 @@ func (h HtmlSelectElement) Add(elem htmloptionelement.HtmlOptionElement, before 
 			arrayJS = append(arrayJS, js.ValueOf(value))
 		}
 	}
-	_, err = h.JSObject().CallWithErr("add", arrayJS...)
+	_, err = h.Call("add", arrayJS...)
 	return err
 }
 
@@ -256,7 +265,7 @@ func (h HtmlSelectElement) Item(index int) (htmloptionelement.HtmlOptionElement,
 	var jsobj js.Value
 	var err error
 
-	if jsobj, err = h.JSObject().CallWithErr("item", js.ValueOf(index)); err == nil {
+	if jsobj, err = h.Call("item", js.ValueOf(index)); err == nil {
 		optelem, err = htmloptionelement.NewFromJSObject(jsobj)
 	}
 	return optelem, err
@@ -268,14 +277,14 @@ func (h HtmlSelectElement) NamedItem(str string) (htmloptionelement.HtmlOptionEl
 	var jsobj js.Value
 	var err error
 
-	if jsobj, err = h.JSObject().CallWithErr("namedItem", js.ValueOf(str)); err == nil {
+	if jsobj, err = h.Call("namedItem", js.ValueOf(str)); err == nil {
 		optelem, err = htmloptionelement.NewFromJSObject(jsobj)
 	}
 	return optelem, err
 }
 
 func (h HtmlSelectElement) Remove(index int) error {
-	_, err := h.JSObject().CallWithErr("remove", js.ValueOf(index))
+	_, err := h.Call("remove", js.ValueOf(index))
 	return err
 }
 
@@ -286,6 +295,6 @@ func (h HtmlSelectElement) ReportValidity() (bool, error) {
 
 func (h HtmlSelectElement) SetCustomValidity(message string) error {
 
-	_, err := h.JSObject().CallWithErr("setCustomValidity", js.ValueOf(message))
+	_, err := h.Call("setCustomValidity", js.ValueOf(message))
 	return err
 }

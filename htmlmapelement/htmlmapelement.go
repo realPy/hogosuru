@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlmapelementinterface, err = js.Global().GetWithErr("HTMLMapElement"); err != nil {
+		if htmlmapelementinterface, err = baseobject.Get(js.Global(), "HTMLMapElement"); err != nil {
 			htmlmapelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlmapelementinterface, func(v js.Value) (interface{}, error) {
@@ -75,15 +75,24 @@ func NewFromElement(elem element.Element) (HtmlMapElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlMapElement, error) {
 	var h HtmlMapElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHTMLMapElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHTMLMapElement
+	return h, err
 }
 
 func (h HtmlMapElement) Name() (string, error) {
@@ -99,7 +108,7 @@ func (h HtmlMapElement) Areas() (htmlcollection.HtmlCollection, error) {
 	var obj js.Value
 	var collection htmlcollection.HtmlCollection
 
-	if obj, err = h.JSObject().GetWithErr("areas"); err == nil {
+	if obj, err = h.Get("areas"); err == nil {
 
 		collection, err = htmlcollection.NewFromJSObject(obj)
 	}

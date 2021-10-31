@@ -33,7 +33,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if domrectlistinterface, err = js.Global().GetWithErr("DOMRectList"); err != nil {
+		if domrectlistinterface, err = baseobject.Get(js.Global(), "DOMRectList"); err != nil {
 			domrectlistinterface = js.Undefined()
 		}
 		baseobject.Register(domrectlistinterface, func(v js.Value) (interface{}, error) {
@@ -48,11 +48,16 @@ func NewFromJSObject(obj js.Value) (DOMRectList, error) {
 	var d DOMRectList
 	var err error
 	if dli := GetInterface(); !dli.IsUndefined() {
-		if obj.InstanceOf(dli) {
-			d.BaseObject = d.SetObject(obj)
-
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnDOMRectList
+
+			if obj.InstanceOf(dli) {
+				d.BaseObject = d.SetObject(obj)
+
+			} else {
+				err = ErrNotAnDOMRectList
+			}
 		}
 	} else {
 		err = ErrNotImplemented

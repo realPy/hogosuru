@@ -39,7 +39,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if historyinterface, err = js.Global().GetWithErr("History"); err != nil {
+		if historyinterface, err = baseobject.Get(js.Global(), "History"); err != nil {
 			historyinterface = js.Undefined()
 		}
 		baseobject.Register(historyinterface, func(v js.Value) (interface{}, error) {
@@ -53,32 +53,41 @@ func GetInterface() js.Value {
 
 func NewFromJSObject(obj js.Value) (History, error) {
 	var h History
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHistory
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHistory
+	return h, err
 }
 
 func (h History) Forward() error {
 	var err error
-	_, err = h.JSObject().CallWithErr("forward")
+	_, err = h.Call("forward")
 	return err
 }
 
 func (h History) Back() error {
 	var err error
-	_, err = h.JSObject().CallWithErr("back")
+	_, err = h.Call("back")
 	return err
 }
 
 func (h History) Go(position int) error {
 	var err error
-	_, err = h.JSObject().CallWithErr("go", js.ValueOf(position))
+	_, err = h.Call("go", js.ValueOf(position))
 
 	return err
 }
@@ -86,21 +95,21 @@ func (h History) Go(position int) error {
 func (h History) Length() (int, error) {
 	var err error
 
-	obj, err := h.JSObject().GetWithErr("length")
+	obj, err := h.Get("length")
 
 	return obj.Int(), err
 }
 
 func (h History) PushState(obj interface{}, name string, page string) error {
 	var err error
-	_, err = h.JSObject().CallWithErr("pushState", js.ValueOf(obj), js.ValueOf(name), js.ValueOf(page))
+	_, err = h.Call("pushState", js.ValueOf(obj), js.ValueOf(name), js.ValueOf(page))
 
 	return err
 }
 
 func (h History) ReplaceState(obj interface{}, name string, page string) error {
 	var err error
-	_, err = h.JSObject().CallWithErr("replaceState", js.ValueOf(obj), js.ValueOf(name), js.ValueOf(page))
+	_, err = h.Call("replaceState", js.ValueOf(obj), js.ValueOf(name), js.ValueOf(page))
 
 	return err
 }
@@ -109,7 +118,7 @@ func (h History) State() (interface{}, error) {
 	var err error
 	var obj js.Value
 
-	obj, err = h.JSObject().GetWithErr("state")
+	obj, err = h.Get("state")
 
 	return obj, err
 }

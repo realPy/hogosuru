@@ -39,7 +39,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlinputelementinterface, err = js.Global().GetWithErr("HTMLInputElement"); err != nil {
+		if htmlinputelementinterface, err = baseobject.Get(js.Global(), "HTMLInputElement"); err != nil {
 			htmlinputelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlinputelementinterface, func(v js.Value) (interface{}, error) {
@@ -83,15 +83,24 @@ func NewFromElement(elem element.Element) (HtmlInputElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlInputElement, error) {
 	var h HtmlInputElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmlInputElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHtmlInputElement
+	return h, err
 }
 
 //Properties related to the parent form
@@ -101,7 +110,7 @@ func (h HtmlInputElement) Form() (element.Element, error) {
 	var obj js.Value
 	var elem element.Element
 
-	if obj, err = h.JSObject().GetWithErr("form"); err == nil {
+	if obj, err = h.Get("form"); err == nil {
 
 		elem, err = element.NewFromJSObject(obj)
 	}
@@ -203,7 +212,7 @@ func (h HtmlInputElement) Validity() (validitystate.ValidityState, error) {
 	var obj js.Value
 	var state validitystate.ValidityState
 
-	if obj, err = h.JSObject().GetWithErr("validity"); err == nil {
+	if obj, err = h.Get("validity"); err == nil {
 
 		state, err = validitystate.NewFromJSObject(obj)
 	}
@@ -291,7 +300,7 @@ func (h HtmlInputElement) SetAccept(value string) error {
 func (h HtmlInputElement) Files() (filelist.FileList, error) {
 	var files js.Value
 	var err error
-	if files, err = h.JSObject().GetWithErr("files"); err == nil {
+	if files, err = h.Get("files"); err == nil {
 		return filelist.NewFromJSObject(files)
 	}
 	return filelist.FileList{}, err
@@ -417,7 +426,7 @@ func (h HtmlInputElement) List() (htmlelement.HtmlElement, error) {
 	var obj js.Value
 	var err error
 	var elem htmlelement.HtmlElement
-	if obj, err = h.JSObject().GetWithErr("list"); err == nil {
+	if obj, err = h.Get("list"); err == nil {
 
 		elem, err = htmlelement.NewFromJSObject(obj)
 	}
@@ -436,7 +445,7 @@ func (h HtmlInputElement) Labels() (nodelist.NodeList, error) {
 	var obj js.Value
 	var err error
 	var arr nodelist.NodeList
-	if obj, err = h.JSObject().GetWithErr("labels"); err == nil {
+	if obj, err = h.Get("labels"); err == nil {
 
 		arr, err = nodelist.NewFromJSObject(obj)
 	}
@@ -455,7 +464,7 @@ func (h HtmlInputElement) ValueAsDate() (date.Date, error) {
 	var obj js.Value
 	var err error
 	var arr date.Date
-	if obj, err = h.JSObject().GetWithErr("valueAsDate"); err == nil {
+	if obj, err = h.Get("valueAsDate"); err == nil {
 
 		arr, err = date.NewFromJSObject(obj)
 	}

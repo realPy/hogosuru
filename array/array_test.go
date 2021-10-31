@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/testingutils"
 )
 
 func TestNewEmpty(t *testing.T) {
@@ -14,16 +15,12 @@ func TestNewEmpty(t *testing.T) {
 	var a Array
 	var len int
 
-	if a, err = NewEmpty(6); err == nil {
-		if len, err = a.Length(); err == nil {
-			if len != 6 {
-				t.Errorf("Size mismatch")
-			}
-		} else {
-			t.Errorf(err.Error())
+	if a, err = NewEmpty(6); testingutils.AssertErr(t, err) {
+		if len, err = a.Length(); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, 6, len)
+
 		}
-	} else {
-		t.Errorf(err.Error())
 	}
 
 }
@@ -33,40 +30,30 @@ func TestFrom(t *testing.T) {
 	var err error
 
 	var a Array
-
-	if a, err = From("test"); err == nil {
-		var str string
-		if str, err = a.ToString(); err == nil {
-			if str != "t,e,s,t" {
-				t.Errorf("not match %s", str)
+	t.Run("From string", func(t *testing.T) {
+		if a, err = From("test"); testingutils.AssertErr(t, err) {
+			var str string
+			if str, err = a.ToString(); testingutils.AssertErr(t, err) {
+				testingutils.AssertExpect(t, "t,e,s,t", str)
 			}
-
-		} else {
-			t.Errorf(err.Error())
 		}
-	} else {
-		t.Errorf(err.Error())
-	}
-	//with mapping
-	if a, err = From(New_(1, 2, 3, 4), func(i interface{}) interface{} {
-		if vi, ok := i.(int); ok {
+	})
+	t.Run("From array", func(t *testing.T) {
+		if a, err = From(New_(1, 2, 3, 4), func(i interface{}) interface{} {
+			if vi, ok := i.(int); ok {
 
-			return vi * 3
-		}
-		return i
-	}); err == nil {
-		var str string
-		if str, err = a.ToString(); err == nil {
-			if str != "3,6,9,12" {
-				t.Errorf("not match %s", str)
+				return vi * 3
 			}
+			return i
+		}); testingutils.AssertErr(t, err) {
+			var str string
+			if str, err = a.ToString(); testingutils.AssertErr(t, err) {
+				testingutils.AssertExpect(t, "3,6,9,12", str)
 
-		} else {
-			t.Errorf(err.Error())
+			}
 		}
-	} else {
-		t.Errorf(err.Error())
-	}
+
+	})
 
 }
 
@@ -76,23 +63,13 @@ func TestNewFromJSObject(t *testing.T) {
 	var a Array
 
 	baseobject.Eval("customarray=new Array(1,2,5)")
-	if obj, err = js.Global().GetWithErr("customarray"); err == nil {
-
-		if a, err = NewFromJSObject(obj); err == nil {
+	if obj, err = baseobject.Get(js.Global(), "customarray"); testingutils.AssertErr(t, err) {
+		if a, err = NewFromJSObject(obj); testingutils.AssertErr(t, err) {
 			var str string
-			if str, err = a.ToString(); err == nil {
-				if str != "1,2,5" {
-					t.Errorf("not match %s", str)
-				}
-
-			} else {
-				t.Errorf(err.Error())
+			if str, err = a.ToString(); testingutils.AssertErr(t, err) {
+				testingutils.AssertExpect(t, "1,2,5", str)
 			}
-		} else {
-			t.Errorf(err.Error())
 		}
-	} else {
-		t.Errorf(err.Error())
 	}
 }
 
@@ -101,23 +78,13 @@ func TestConcat(t *testing.T) {
 	var a Array
 	var err error
 
-	if a, err = New(1, 2, 3); err == nil {
-		if c, err := a.Concat(New_(6, 7, 8)); err == nil {
+	if a, err = New(1, 2, 3); testingutils.AssertErr(t, err) {
+		if c, err := a.Concat(New_(6, 7, 8)); testingutils.AssertErr(t, err) {
 			var str string
-			if str, err = c.ToString(); err == nil {
-				if str != "1,2,3,6,7,8" {
-					t.Errorf("not match %s", str)
-				}
-
-			} else {
-				t.Errorf(err.Error())
+			if str, err = c.ToString(); testingutils.AssertErr(t, err) {
+				testingutils.AssertExpect(t, "1,2,3,6,7,8", str)
 			}
-		} else {
-			t.Errorf(err.Error())
 		}
-
-	} else {
-		t.Errorf(err.Error())
 	}
 }
 
@@ -126,22 +93,14 @@ func TestCopyWithin(t *testing.T) {
 	var a Array
 	var err error
 
-	if a, err = New("a", "b", "c", "d", "e"); err == nil {
-		if c, err := a.CopyWithin(0, 3, 4); err == nil {
+	if a, err = New("a", "b", "c", "d", "e"); testingutils.AssertErr(t, err) {
+		if c, err := a.CopyWithin(0, 3, 4); testingutils.AssertErr(t, err) {
 			var str string
-			if str, err = c.ToString(); err == nil {
-				if str != "d,b,c,d,e" {
-					t.Errorf("not match %s", str)
-				}
+			if str, err = c.ToString(); testingutils.AssertErr(t, err) {
+				testingutils.AssertExpect(t, "d,b,c,d,e", str)
 
-			} else {
-				t.Errorf(err.Error())
 			}
-		} else {
-			t.Errorf(err.Error())
 		}
-	} else {
-		t.Errorf(err.Error())
 	}
 
 }
@@ -152,9 +111,9 @@ func TestEntries(t *testing.T) {
 	var err error
 	var goArray []interface{} = []interface{}{"a", "b", "c", "d", "e"}
 
-	if a, err = New(goArray...); err == nil {
+	if a, err = New(goArray...); testingutils.AssertErr(t, err) {
 
-		if it, err := a.Entries(); err == nil {
+		if it, err := a.Entries(); testingutils.AssertErr(t, err) {
 			var loop int
 			for index, value, err := it.Next(); err == nil; index, value, err = it.Next() {
 
@@ -162,7 +121,7 @@ func TestEntries(t *testing.T) {
 					if i, ok := index.(int); ok {
 
 						if str != goArray[i] {
-							t.Errorf("content not match %s", str)
+							testingutils.AssertExpect(t, goArray[i], str)
 						}
 					} else {
 						t.Errorf("Index is not int")
@@ -175,14 +134,13 @@ func TestEntries(t *testing.T) {
 				loop++
 
 			}
+
 			if loop != len(goArray) {
 				t.Errorf("Loop entries not match")
 			}
 
 		}
 
-	} else {
-		t.Errorf(err.Error())
 	}
 
 }
@@ -224,9 +182,9 @@ func TestFill(t *testing.T) {
 	var a Array
 	var err error
 
-	if a, err = NewEmpty(5); err == nil {
+	if a, err = NewEmpty(5); testingutils.AssertErr(t, err) {
 
-		if err := a.Fill(7); err == nil {
+		if err := a.Fill(7); testingutils.AssertErr(t, err) {
 
 			if ok, _ := a.Every(func(i interface{}) bool {
 
@@ -250,12 +208,7 @@ func TestFill(t *testing.T) {
 				t.Errorf("must be fill with 7")
 			}
 
-		} else {
-			t.Errorf(err.Error())
 		}
-
-	} else {
-		t.Errorf(err.Error())
 	}
 }
 
@@ -271,16 +224,12 @@ func TestFilter(t *testing.T) {
 				return true
 			}
 			return false
-		}); err == nil {
-			if str, err := b.ToString(); err == nil {
-				if str != "exuberant,destruction" {
-					t.Errorf("Mistmatch")
-				}
-			} else {
-				t.Errorf(err.Error())
+		}); testingutils.AssertErr(t, err) {
+			if str, err := b.ToString(); testingutils.AssertErr(t, err) {
+
+				testingutils.AssertExpect(t, "exuberant,destruction", str)
+
 			}
-		} else {
-			t.Errorf(err.Error())
 		}
 
 	}
@@ -291,7 +240,7 @@ func TestFind(t *testing.T) {
 	var a Array
 	var err error
 	var goArray []interface{} = []interface{}{5, 8, 12, 130, 44}
-	if a, err = New(goArray...); err == nil {
+	if a, err = New(goArray...); testingutils.AssertErr(t, err) {
 		if found, err := a.Find(func(i interface{}) bool {
 
 			if i.(int) > 10 {
@@ -301,22 +250,16 @@ func TestFind(t *testing.T) {
 
 			return false
 
-		}); err == nil {
+		}); testingutils.AssertErr(t, err) {
 
 			if found != nil {
-				if found.(int) != 12 {
-					t.Errorf("Value mismatch")
-				}
+				testingutils.AssertExpect(t, 12, found)
 			} else {
 				t.Errorf("no element found")
 			}
 
-		} else {
-			t.Errorf(err.Error())
 		}
 
-	} else {
-		t.Errorf(err.Error())
 	}
 
 }
@@ -325,7 +268,7 @@ func TestFindIndex(t *testing.T) {
 	var a Array
 	var err error
 	var goArray []interface{} = []interface{}{5, 8, 12, 130, 44}
-	if a, err = New(goArray...); err == nil {
+	if a, err = New(goArray...); testingutils.AssertErr(t, err) {
 		if found, err := a.FindIndex(func(i interface{}) bool {
 
 			if i.(int) == 12 {
@@ -335,21 +278,16 @@ func TestFindIndex(t *testing.T) {
 
 			return false
 
-		}); err == nil {
+		}); testingutils.AssertErr(t, err) {
 			if found >= 0 {
-				if found != 2 {
-					t.Errorf("Value mismatch %d", found)
-				}
+				testingutils.AssertExpect(t, 2, found)
+
 			} else {
 				t.Errorf("no element found")
 			}
 
-		} else {
-			t.Errorf(err.Error())
 		}
 
-	} else {
-		t.Errorf(err.Error())
 	}
 
 }
@@ -360,16 +298,13 @@ func TestFlat(t *testing.T) {
 	var err error
 
 	var goArray []interface{} = []interface{}{1, 2, []interface{}{3, 4}}
-	if a, err = New(goArray...); err == nil {
+	if a, err = New(goArray...); testingutils.AssertErr(t, err) {
 
-		if b, err := a.Flat(); err == nil {
+		if b, err := a.Flat(); testingutils.AssertErr(t, err) {
 
-			if str, err := b.ToString(); err == nil {
-				if str != "1,2,3,4" {
-					t.Errorf("Mistmatch %s", str)
-				}
-			} else {
-				t.Errorf(err.Error())
+			if str, err := b.ToString(); testingutils.AssertErr(t, err) {
+				testingutils.AssertExpect(t, "1,2,3,4", str)
+
 			}
 		}
 
@@ -381,28 +316,20 @@ func TestFlatMap(t *testing.T) {
 
 	var goArray []interface{} = []interface{}{1, 2, 3, 4}
 
-	if a, err := New(goArray...); err == nil {
+	if a, err := New(goArray...); testingutils.AssertErr(t, err) {
 
 		if b, err := a.FlatMap(func(i1 interface{}, i2 int) interface{} {
 
 			b1 := Of_(i1.(int) * 2)
 			return b1.JSObject()
 
-		}); err == nil {
+		}); testingutils.AssertErr(t, err) {
 
-			if str, err := b.ToString(); err == nil {
-				if str != "2,4,6,8" {
-					t.Errorf("Mistmatch %s", str)
-				}
-			} else {
-				t.Errorf(err.Error())
+			if str, err := b.ToString(); testingutils.AssertErr(t, err) {
+				testingutils.AssertExpect(t, "2,4,6,8", str)
 			}
-		} else {
-			t.Errorf(err.Error())
 		}
 
-	} else {
-		t.Errorf(err.Error())
 	}
 
 }
@@ -411,14 +338,12 @@ func TestForEach(t *testing.T) {
 	var a Array
 	var err error
 	var goArray []interface{} = []interface{}{"spray", "limit", "elite", "exuberant", "destruction", "present"}
-	if a, err = New(goArray...); err == nil {
+	if a, err = New(goArray...); testingutils.AssertErr(t, err) {
 
 		var count int = 0
 		a.ForEach(func(i interface{}) {
 
-			if i.(string) != goArray[count].(string) {
-				t.Errorf("Mistmatch value %s", goArray[count])
-			}
+			testingutils.AssertExpect(t, goArray[count], i)
 			count++
 
 		})
@@ -427,8 +352,6 @@ func TestForEach(t *testing.T) {
 			t.Errorf("Bad number of element")
 		}
 
-	} else {
-		t.Errorf(err.Error())
 	}
 
 }
@@ -437,30 +360,24 @@ func TestIncludes(t *testing.T) {
 	var a Array
 	var err error
 	var goArray []interface{} = []interface{}{"spray", "limit", "elite", "exuberant", "destruction", "present"}
-	if a, err = New(goArray...); err == nil {
+	if a, err = New(goArray...); testingutils.AssertErr(t, err) {
 
-		if ok, err := a.Includes("limit"); err == nil {
+		if ok, err := a.Includes("limit"); testingutils.AssertErr(t, err) {
 			if !ok {
 
 				t.Errorf("Must include limit")
 
 			}
-		} else {
-			t.Errorf(err.Error())
 		}
 
-		if ok, err := a.Includes("limit2"); err == nil {
+		if ok, err := a.Includes("limit2"); testingutils.AssertErr(t, err) {
 			if ok {
 
 				t.Errorf("Must not include limit")
 
 			}
-		} else {
-			t.Errorf(err.Error())
 		}
 
-	} else {
-		t.Errorf(err.Error())
 	}
 
 }
@@ -469,33 +386,27 @@ func TestIndexOf(t *testing.T) {
 	var a Array
 	var err error
 	var goArray []interface{} = []interface{}{"spray", "limit", "elite", "exuberant", "destruction", "present"}
-	if a, err = New(goArray...); err == nil {
+	if a, err = New(goArray...); testingutils.AssertErr(t, err) {
 
 		obj := a.JSObject().Index(2)
 		b, _ := baseobject.NewFromJSObject(obj)
 
-		if index, err := a.IndexOf(b); err == nil {
+		if index, err := a.IndexOf(b); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, 2, index)
 
 			if index != 2 {
 				t.Errorf("index must be 2 have %d when searching %s", index, obj.String())
 			}
 
-		} else {
-			t.Errorf(err.Error())
 		}
 
-		if index, err := a.IndexOf("elite"); err == nil {
+		if index, err := a.IndexOf("elite"); testingutils.AssertErr(t, err) {
 
-			if index != 2 {
-				t.Errorf("index must be 2 have %d", index)
-			}
+			testingutils.AssertExpect(t, 2, index)
 
-		} else {
-			t.Errorf(err.Error())
 		}
 
-	} else {
-		t.Errorf(err.Error())
 	}
 
 }
@@ -504,25 +415,19 @@ func TestIsArray(t *testing.T) {
 	var a Array
 	var err error
 
-	if a, err = NewEmpty(3); err == nil {
-		if ok, err := IsArray(a.BaseObject); err == nil {
+	if a, err = NewEmpty(3); testingutils.AssertErr(t, err) {
+		if ok, err := IsArray(a.BaseObject); testingutils.AssertErr(t, err) {
 			if !ok {
 				t.Errorf("Must be an array")
 			}
-		} else {
-			t.Errorf(err.Error())
 		}
 
-		if ok, err := IsArray(baseobject.BaseObject{}); err == nil {
+		if ok, err := IsArray(baseobject.BaseObject{}); testingutils.AssertErr(t, err) {
 			if ok {
 				t.Errorf("Must not be an array")
 			}
-		} else {
-			t.Errorf(err.Error())
 		}
 
-	} else {
-		t.Errorf(err.Error())
 	}
 
 }
@@ -531,18 +436,13 @@ func TestJoin(t *testing.T) {
 	var a Array
 	var err error
 	var goArray []interface{} = []interface{}{"Hello", "World", "elite"}
-	if a, err = New(goArray...); err == nil {
-		if str, err := a.Join("|"); err == nil {
-			if str != "Hello|World|elite" {
-				t.Errorf("Mistmatch %s", str)
-			}
+	if a, err = New(goArray...); testingutils.AssertErr(t, err) {
+		if str, err := a.Join("|"); testingutils.AssertErr(t, err) {
 
-		} else {
-			t.Errorf(err.Error())
+			testingutils.AssertExpect(t, "Hello|World|elite", str)
+
 		}
 
-	} else {
-		t.Errorf(err.Error())
 	}
 
 }
@@ -551,58 +451,41 @@ func TestKeys(t *testing.T) {
 	var a Array
 	var err error
 	var goArray []interface{} = []interface{}{"Hello", "World", "elite"}
-	if a, err = New(goArray...); err == nil {
+	if a, err = New(goArray...); testingutils.AssertErr(t, err) {
 		var i int = 0
-		if it, err := a.Keys(); err == nil {
+		if it, err := a.Keys(); testingutils.AssertErr(t, err) {
 			for _, value, err := it.Next(); err == nil; _, value, err = it.Next() {
 
-				if value.(int) != i {
-					t.Errorf("not match index %d", value.(int))
-				}
+				testingutils.AssertExpect(t, value, i)
+
 				i++
 
 			}
-		} else {
-			t.Errorf(err.Error())
 		}
 
-	} else {
-		t.Errorf(err.Error())
 	}
-
 }
 
 func TestLastIndexOf(t *testing.T) {
 	var a Array
 	var err error
 	var goArray []interface{} = []interface{}{"spray", "limit", "elite", "exuberant", "destruction", "present", "limit"}
-	if a, err = New(goArray...); err == nil {
+	if a, err = New(goArray...); testingutils.AssertErr(t, err) {
 
 		obj := a.JSObject().Index(6)
 		b, _ := baseobject.NewFromJSObject(obj)
 
-		if index, err := a.LastIndexOf(b); err == nil {
+		if index, err := a.LastIndexOf(b); testingutils.AssertErr(t, err) {
 
-			if index != 6 {
-				t.Errorf("index must be 6 have %d when searching %s", index, obj.String())
-			}
-
-		} else {
-			t.Errorf(err.Error())
+			testingutils.AssertExpect(t, 6, index)
 		}
 
-		if index, err := a.LastIndexOf("limit"); err == nil {
+		if index, err := a.LastIndexOf("limit"); testingutils.AssertErr(t, err) {
 
-			if index != 6 {
-				t.Errorf("index must be 6 have %d", index)
-			}
+			testingutils.AssertExpect(t, 6, index)
 
-		} else {
-			t.Errorf(err.Error())
 		}
 
-	} else {
-		t.Errorf(err.Error())
 	}
 
 }
@@ -612,27 +495,21 @@ func TestMap(t *testing.T) {
 	var a Array
 	var err error
 	var goArray []interface{} = []interface{}{1, 2, 3, 4}
-	if a, err = New(goArray...); err == nil {
+	if a, err = New(goArray...); testingutils.AssertErr(t, err) {
 		if b, err := a.Map(func(i interface{}) interface{} {
 			if vi, ok := i.(int); ok {
 
 				return vi * 3
 			}
 			return i
-		}); err == nil {
-			if str, err := b.ToString(); err == nil {
-				if str != "3,6,9,12" {
-					t.Errorf("Mistmatch %s", str)
-				}
-			} else {
-				t.Errorf(err.Error())
+		}); testingutils.AssertErr(t, err) {
+			if str, err := b.ToString(); testingutils.AssertErr(t, err) {
+
+				testingutils.AssertExpect(t, "3,6,9,12", str)
+
 			}
-		} else {
-			t.Errorf(err.Error())
 		}
 
-	} else {
-		t.Errorf(err.Error())
 	}
 }
 
@@ -640,19 +517,15 @@ func TestPop(t *testing.T) {
 	var a Array
 	var err error
 	var goArray []interface{} = []interface{}{"hello"}
-	if a, err = New(goArray...); err == nil {
+	if a, err = New(goArray...); testingutils.AssertErr(t, err) {
 
-		if err := a.Pop(); err == nil {
+		if err := a.Pop(); testingutils.AssertErr(t, err) {
 			if l, _ := a.Length(); l != 0 {
 
 				t.Errorf("Array must be empty now")
 
 			}
-		} else {
-			t.Errorf(err.Error())
 		}
-	} else {
-		t.Errorf(err.Error())
 	}
 
 }
@@ -661,25 +534,18 @@ func TestPush(t *testing.T) {
 	var a Array
 	var err error
 	var goArray []interface{} = []interface{}{"hello"}
-	if a, err = New(goArray...); err == nil {
+	if a, err = New(goArray...); testingutils.AssertErr(t, err) {
 
-		if length, err := a.Push("world"); err == nil {
-			if length == 2 {
-				if str, err := a.ToString(); err == nil {
-					if str != "hello,world" {
-						t.Errorf("Mistmatch %s", str)
-					}
-				} else {
-					t.Errorf(err.Error())
-				}
-			} else {
-				t.Errorf("Index must be 2 has %d", length)
+		if length, err := a.Push("world"); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, length, 2)
+
+			if str, err := a.ToString(); testingutils.AssertErr(t, err) {
+				testingutils.AssertExpect(t, "hello,world", str)
+
 			}
-		} else {
-			t.Errorf(err.Error())
+
 		}
-	} else {
-		t.Errorf(err.Error())
 	}
 
 }
@@ -689,22 +555,18 @@ func TestReduce(t *testing.T) {
 	var a Array
 	var err error
 	var goArray []interface{} = []interface{}{1, 2, 3, 4}
-	if a, err = New(goArray...); err == nil {
+	if a, err = New(goArray...); testingutils.AssertErr(t, err) {
 
 		if value, err := a.Reduce(func(accumulateur, value interface{}, opts ...interface{}) interface{} {
 			val := accumulateur.(int) + value.(int)
 
 			return val
-		}); err == nil {
-			if value.(int) != 10 {
-				t.Errorf("Must be equal 10 has %d", value.(int))
-			}
-		} else {
-			t.Errorf(err.Error())
+		}); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, 10, value)
+
 		}
 
-	} else {
-		t.Errorf(err.Error())
 	}
 }
 
@@ -713,22 +575,18 @@ func TestReduceRight(t *testing.T) {
 	var a Array
 	var err error
 	var goArray []interface{} = []interface{}{9, 6, 8, 40}
-	if a, err = New(goArray...); err == nil {
+	if a, err = New(goArray...); testingutils.AssertErr(t, err) {
 
 		if value, err := a.ReduceRight(func(accumulateur, value interface{}, opts ...interface{}) interface{} {
 			val := accumulateur.(int) - value.(int)
 
 			return val
-		}); err == nil {
-			if value.(int) != 17 {
-				t.Errorf("Must be equal 10 has %d", value.(int))
-			}
-		} else {
-			t.Errorf(err.Error())
+		}); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, 17, value)
+
 		}
 
-	} else {
-		t.Errorf(err.Error())
 	}
 }
 
@@ -737,23 +595,16 @@ func TestReverse(t *testing.T) {
 	var a Array
 	var err error
 	var goArray []interface{} = []interface{}{9, 6, 8, 40}
-	if a, err = New(goArray...); err == nil {
+	if a, err = New(goArray...); testingutils.AssertErr(t, err) {
 
-		if err := a.Reverse(); err == nil {
-			if str, err := a.ToString(); err == nil {
-				if str != "40,8,6,9" {
-					t.Errorf("Mistmatch %s", str)
-				}
-			} else {
-				t.Errorf(err.Error())
+		if err := a.Reverse(); testingutils.AssertErr(t, err) {
+			if str, err := a.ToString(); testingutils.AssertErr(t, err) {
+
+				testingutils.AssertExpect(t, "40,8,6,9", str)
+
 			}
 
-		} else {
-			t.Errorf(err.Error())
 		}
-
-	} else {
-		t.Errorf(err.Error())
 	}
 }
 
@@ -762,27 +613,19 @@ func TestShift(t *testing.T) {
 	var a Array
 	var err error
 	var goArray []interface{} = []interface{}{9, 6, 8, 40}
-	if a, err = New(goArray...); err == nil {
+	if a, err = New(goArray...); testingutils.AssertErr(t, err) {
 
-		if v, err := a.Shift(); err == nil {
+		if v, err := a.Shift(); testingutils.AssertErr(t, err) {
 
-			if v.(int) != 9 {
-				t.Errorf("Mistmatch %d", v.(int))
+			testingutils.AssertExpect(t, 9, v)
+
+			if str, err := a.ToString(); testingutils.AssertErr(t, err) {
+
+				testingutils.AssertExpect(t, "6,8,40", str)
+
 			}
-			if str, err := a.ToString(); err == nil {
-				if str != "6,8,40" {
-					t.Errorf("Mistmatch %s", str)
-				}
-			} else {
-				t.Errorf(err.Error())
-			}
-
-		} else {
-			t.Errorf(err.Error())
 		}
 
-	} else {
-		t.Errorf(err.Error())
 	}
 }
 
@@ -791,52 +634,34 @@ func TestSlice(t *testing.T) {
 	var a Array
 	var err error
 	var goArray []interface{} = []interface{}{"ant", "bison", "camel", "duck", "elephant"}
-	if a, err = New(goArray...); err == nil {
+	if a, err = New(goArray...); testingutils.AssertErr(t, err) {
 
-		if v, err := a.Slice(2); err == nil {
+		if v, err := a.Slice(2); testingutils.AssertErr(t, err) {
 
-			if str, err := v.ToString(); err == nil {
-				if str != "camel,duck,elephant" {
-					t.Errorf("Mistmatch %s", str)
-				}
-			} else {
-				t.Errorf(err.Error())
+			if str, err := v.ToString(); testingutils.AssertErr(t, err) {
+				testingutils.AssertExpect(t, "camel,duck,elephant", str)
 			}
 
-		} else {
-			t.Errorf(err.Error())
 		}
 
-		if v, err := a.Slice(2, 4); err == nil {
+		if v, err := a.Slice(2, 4); testingutils.AssertErr(t, err) {
 
-			if str, err := v.ToString(); err == nil {
-				if str != "camel,duck" {
-					t.Errorf("Mistmatch %s", str)
-				}
-			} else {
-				t.Errorf(err.Error())
+			if str, err := v.ToString(); testingutils.AssertErr(t, err) {
+
+				testingutils.AssertExpect(t, "camel,duck", str)
 			}
 
-		} else {
-			t.Errorf(err.Error())
 		}
+		if v, err := a.Slice(-2); testingutils.AssertErr(t, err) {
 
-		if v, err := a.Slice(-2); err == nil {
+			if str, err := v.ToString(); testingutils.AssertErr(t, err) {
 
-			if str, err := v.ToString(); err == nil {
-				if str != "duck,elephant" {
-					t.Errorf("Mistmatch %s", str)
-				}
-			} else {
-				t.Errorf(err.Error())
+				testingutils.AssertExpect(t, "duck,elephant", str)
+
 			}
 
-		} else {
-			t.Errorf(err.Error())
 		}
 
-	} else {
-		t.Errorf(err.Error())
 	}
 }
 
@@ -845,7 +670,7 @@ func TestSome(t *testing.T) {
 	var a Array
 	var err error
 	var goArray []interface{} = []interface{}{9, 6, 8, 40}
-	if a, err = New(goArray...); err == nil {
+	if a, err = New(goArray...); testingutils.AssertErr(t, err) {
 
 		if ok, err := a.Some(func(i interface{}) bool {
 
@@ -854,14 +679,10 @@ func TestSome(t *testing.T) {
 			}
 
 			return false
-		}); err == nil {
+		}); testingutils.AssertErr(t, err) {
 
-			if !ok {
-				t.Errorf("Must return true")
-			}
+			testingutils.AssertExpect(t, true, ok)
 
-		} else {
-			t.Errorf(err.Error())
 		}
 
 		if ok, err := a.Some(func(i interface{}) bool {
@@ -871,18 +692,12 @@ func TestSome(t *testing.T) {
 			}
 
 			return false
-		}); err == nil {
+		}); testingutils.AssertErr(t, err) {
 
-			if ok {
-				t.Errorf("Must not return true")
-			}
+			testingutils.AssertExpect(t, false, ok)
 
-		} else {
-			t.Errorf(err.Error())
 		}
 
-	} else {
-		t.Errorf(err.Error())
 	}
 }
 
@@ -891,21 +706,15 @@ func TestSort(t *testing.T) {
 	var a Array
 	var err error
 	var goArray []interface{} = []interface{}{"March", "Jan", "Feb", "Dec"}
-	if a, err = New(goArray...); err == nil {
+	if a, err = New(goArray...); testingutils.AssertErr(t, err) {
 
-		if err := a.Sort(); err == nil {
-			if str, err := a.ToString(); err == nil {
-				if str != "Dec,Feb,Jan,March" {
-					t.Errorf("Mistmatch %s", str)
-				}
-			} else {
-				t.Errorf(err.Error())
+		if err := a.Sort(); testingutils.AssertErr(t, err) {
+			if str, err := a.ToString(); testingutils.AssertErr(t, err) {
+
+				testingutils.AssertExpect(t, "Dec,Feb,Jan,March", str)
+
 			}
-		} else {
-			t.Errorf(err.Error())
 		}
-	} else {
-		t.Errorf(err.Error())
 	}
 }
 
@@ -914,33 +723,21 @@ func TestSplice(t *testing.T) {
 	var a Array
 	var err error
 	var goArray []interface{} = []interface{}{"Jan", "March", "April", "June"}
-	if a, err = New(goArray...); err == nil {
+	if a, err = New(goArray...); testingutils.AssertErr(t, err) {
 
-		if err := a.Splice(1, 0, "Feb"); err == nil {
-			if str, err := a.ToString(); err == nil {
-				if str != "Jan,Feb,March,April,June" {
-					t.Errorf("Mistmatch %s", str)
-				}
-			} else {
-				t.Errorf(err.Error())
+		if err := a.Splice(1, 0, "Feb"); testingutils.AssertErr(t, err) {
+			if str, err := a.ToString(); testingutils.AssertErr(t, err) {
+				testingutils.AssertExpect(t, "Jan,Feb,March,April,June", str)
 			}
-		} else {
-			t.Errorf(err.Error())
 		}
 
-		if err := a.Splice(4, 1, "May"); err == nil {
-			if str, err := a.ToString(); err == nil {
-				if str != "Jan,Feb,March,April,May" {
-					t.Errorf("Mistmatch %s", str)
-				}
-			} else {
-				t.Errorf(err.Error())
+		if err := a.Splice(4, 1, "May"); testingutils.AssertErr(t, err) {
+			if str, err := a.ToString(); testingutils.AssertErr(t, err) {
+
+				testingutils.AssertExpect(t, "Jan,Feb,March,April,May", str)
+
 			}
-		} else {
-			t.Errorf(err.Error())
 		}
-	} else {
-		t.Errorf(err.Error())
 	}
 }
 
@@ -949,27 +746,19 @@ func TestUnshift(t *testing.T) {
 	var a Array
 	var err error
 	var goArray []interface{} = []interface{}{1, 2, 3}
-	if a, err = New(goArray...); err == nil {
+	if a, err = New(goArray...); testingutils.AssertErr(t, err) {
 
-		if l, err := a.Unshift(4, 5); err == nil {
+		if l, err := a.Unshift(4, 5); testingutils.AssertErr(t, err) {
 
-			if str, err := a.ToString(); err == nil {
-				if str != "4,5,1,2,3" {
-					t.Errorf("Mistmatch %s", str)
-				}
-			} else {
-				t.Errorf(err.Error())
+			if str, err := a.ToString(); testingutils.AssertErr(t, err) {
+
+				testingutils.AssertExpect(t, "4,5,1,2,3", str)
+
 			}
+			testingutils.AssertExpect(t, 5, l)
 
-			if l != 5 {
-				t.Errorf("Lenght mismatch %d", l)
-			}
-		} else {
-			t.Errorf(err.Error())
 		}
 
-	} else {
-		t.Errorf(err.Error())
 	}
 }
 
@@ -977,27 +766,21 @@ func TestValues(t *testing.T) {
 	var a Array
 	var err error
 	var goArray []interface{} = []interface{}{"Hello", "World", "elite"}
-	if a, err = New(goArray...); err == nil {
+	if a, err = New(goArray...); testingutils.AssertErr(t, err) {
 		var i int = 0
-		if it, err := a.Values(); err == nil {
+		if it, err := a.Values(); testingutils.AssertErr(t, err) {
 			for _, value, err := it.Next(); err == nil; _, value, err = it.Next() {
-
-				if value.(string) != goArray[i] {
-					t.Errorf("not match index %s", value.(string))
-				}
+				testingutils.AssertExpect(t, goArray[i], value)
 				i++
 
 			}
-		} else {
-			t.Errorf(err.Error())
 		}
 
-	} else {
-		t.Errorf(err.Error())
 	}
 
 }
 
 func TestMain(m *testing.M) {
+	baseobject.SetSyscall()
 	m.Run()
 }

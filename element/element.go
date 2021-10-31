@@ -24,7 +24,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if elementinterface, err = js.Global().GetWithErr("Element"); err != nil {
+		if elementinterface, err = baseobject.Get(js.Global(), "Element"); err != nil {
 			elementinterface = js.Undefined()
 		}
 		baseobject.Register(elementinterface, func(v js.Value) (interface{}, error) {
@@ -51,8 +51,12 @@ func (e Element) Element_() Element {
 func New() (Element, error) {
 	var err error
 	var e Element
+	var obj js.Value
 	if ei := GetInterface(); !ei.IsUndefined() {
-		e.BaseObject = e.SetObject(ei.New())
+
+		if obj, err = baseobject.New(ei); err == nil {
+			e.BaseObject = e.SetObject(obj)
+		}
 
 	} else {
 		err = ErrNotImplemented
@@ -65,11 +69,16 @@ func NewFromJSObject(obj js.Value) (Element, error) {
 	var e Element
 	var err error
 	if ei := GetInterface(); !ei.IsUndefined() {
-		if obj.InstanceOf(ei) {
-			e.BaseObject = e.SetObject(obj)
-
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnElement
+
+			if obj.InstanceOf(ei) {
+				e.BaseObject = e.SetObject(obj)
+
+			} else {
+				err = ErrNotAnElement
+			}
 		}
 
 	} else {
@@ -80,8 +89,13 @@ func NewFromJSObject(obj js.Value) (Element, error) {
 }
 
 func ItemFromHTMLCollection(collection htmlcollection.HtmlCollection, index int) (Element, error) {
-
-	return NewFromJSObject(collection.Item(index))
+	var elem Element
+	var err error
+	var item interface{}
+	if item, err = collection.Item(index); err == nil {
+		elem, err = NewFromJSObject(item.(baseobject.ObjectFrom).JSObject())
+	}
+	return elem, err
 
 }
 
@@ -90,7 +104,7 @@ func (e Element) getAttributeElement(attribute string) (Element, error) {
 	var newElement Element
 	var err error
 
-	if nodeObject, err = e.JSObject().GetWithErr(attribute); err == nil {
+	if nodeObject, err = e.Get(attribute); err == nil {
 
 		if nodeObject.IsUndefined() {
 			err = ErrElementNoChilds
@@ -112,7 +126,7 @@ func (e Element) Attributes() (namednodemap.NamedNodeMap, error) {
 	var obj js.Value
 	var namednmap namednodemap.NamedNodeMap
 
-	if obj, err = e.JSObject().GetWithErr("attributes"); err == nil {
+	if obj, err = e.Get("attributes"); err == nil {
 		namednmap, err = namednodemap.NewFromJSObject(obj)
 	}
 	return namednmap, err
@@ -127,7 +141,7 @@ func (e Element) Children() (htmlcollection.HtmlCollection, error) {
 	var obj js.Value
 	var collection htmlcollection.HtmlCollection
 
-	if obj, err = e.JSObject().GetWithErr("children"); err == nil {
+	if obj, err = e.Get("children"); err == nil {
 
 		collection, err = htmlcollection.NewFromJSObject(obj)
 	}
@@ -140,7 +154,7 @@ func (e Element) ClassList() (domtokenlist.DOMTokenList, error) {
 	var obj js.Value
 	var dlist domtokenlist.DOMTokenList
 
-	if obj, err = e.JSObject().GetWithErr("classList"); err == nil {
+	if obj, err = e.Get("classList"); err == nil {
 
 		dlist, err = domtokenlist.NewFromJSObject(obj)
 	}
@@ -246,9 +260,21 @@ func (e Element) ScrollHeight() (int, error) {
 	return e.GetAttributeInt("scrollHeight")
 }
 
+func (e Element) SetScrollHeight(value int) error {
+
+	return e.SetAttributeInt("scrollHeight", value)
+
+}
+
 func (e Element) ScrollLeft() (int, error) {
 
 	return e.GetAttributeInt("scrollLeft")
+}
+
+func (e Element) SetScrollLeft(value int) error {
+
+	return e.SetAttributeInt("scrollLeft", value)
+
 }
 
 func (e Element) ScrollTop() (int, error) {
@@ -256,9 +282,21 @@ func (e Element) ScrollTop() (int, error) {
 	return e.GetAttributeInt("scrollTop")
 }
 
+func (e Element) SetScrollTop(value int) error {
+
+	return e.SetAttributeInt("scrollTop", value)
+
+}
+
 func (e Element) ScrollWidth() (int, error) {
 
 	return e.GetAttributeInt("scrollWidth")
+}
+
+func (e Element) SetScrollWidth(value int) error {
+
+	return e.SetAttributeInt("scrollWidth", value)
+
 }
 
 func (e Element) TagName() (string, error) {
@@ -271,7 +309,7 @@ func OwnerElementForAttr(a attr.Attr) (Element, error) {
 	var newElement Element
 	var err error
 
-	if elemObject, err = a.JSObject().GetWithErr("ownerElement"); err == nil {
+	if elemObject, err = a.Get("ownerElement"); err == nil {
 
 		if elemObject.IsUndefined() {
 			err = attr.ErrNoOwnerElement

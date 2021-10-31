@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-
+	hogosuru.Init()
 	//connect on echo websocket
 	if ws, err := websocket.New("ws://localhost:9090/echo"); hogosuru.AssertErr(err) {
 

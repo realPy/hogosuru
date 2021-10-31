@@ -36,7 +36,7 @@ func IDBRequestGetInterface() js.Value {
 	singletonIDBRequest.Do(func() {
 
 		var err error
-		if idbrequestinterface, err = js.Global().GetWithErr(classIDBRequest); err != nil {
+		if idbrequestinterface, err = baseobject.Get(js.Global(), classIDBRequest); err != nil {
 			idbrequestinterface = js.Undefined()
 		}
 
@@ -51,10 +51,15 @@ func IDBRequestNewFromJSObject(obj js.Value) (IDBRequest, error) {
 	var i IDBRequest
 	var err error
 	if ai := IDBRequestGetInterface(); !ai.IsUndefined() {
-		if obj.InstanceOf(ai) {
-			i.BaseObject = i.SetObject(obj)
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnIDBRequest
+
+			if obj.InstanceOf(ai) {
+				i.BaseObject = i.SetObject(obj)
+			} else {
+				err = ErrNotAnIDBRequest
+			}
 		}
 	} else {
 		err = ErrNotImplemented
@@ -77,7 +82,7 @@ func (i IDBRequest) Error() (domexception.DomException, error) {
 	var err error
 	var obj js.Value
 	var e domexception.DomException
-	if obj, err = i.JSObject().GetWithErr("error"); err == nil {
+	if obj, err = i.Get("error"); err == nil {
 		e, err = domexception.NewFromJSObject(obj)
 	}
 	return e, err
@@ -92,7 +97,7 @@ func (i IDBRequest) getObjectAttribute(attribute string) (baseobject.BaseObject,
 	var obj js.Value
 	var bobj baseobject.BaseObject
 
-	if obj, err = i.JSObject().GetWithErr(attribute); err == nil {
+	if obj, err = i.Get(attribute); err == nil {
 		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject
 

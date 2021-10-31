@@ -1,6 +1,9 @@
 package hogosurudebug
 
 import (
+	"fmt"
+	"path/filepath"
+	"runtime"
 	"sync"
 	"syscall/js"
 
@@ -19,11 +22,12 @@ func InstallConsoleHandler(typehandler string, handler func(string)) error {
 	if c, err = console.New(); err == nil {
 		var f js.Value
 
-		if f, err = c.JSObject().GetWithErr(typehandler); err == nil {
+		if f, err = c.Get(typehandler); err == nil {
 			var defaultType js.Value
-			if defaultType, err = f.CallWithErr("bind", c.JSObject()); err == nil {
 
-				if err = c.JSObject().SetWithErr("default"+typehandler, defaultType); err == nil {
+			if defaultType, err = baseobject.Call(f, "bind", c.JSObject()); err == nil {
+
+				if err = c.Set("default"+typehandler, defaultType); err == nil {
 
 					handlerFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
@@ -32,7 +36,7 @@ func InstallConsoleHandler(typehandler string, handler func(string)) error {
 						return nil
 					})
 
-					c.JSObject().SetWithErr(typehandler, handlerFunc)
+					c.Set(typehandler, handlerFunc)
 
 				}
 
@@ -45,6 +49,7 @@ func InstallConsoleHandler(typehandler string, handler func(string)) error {
 
 var singletonConsole sync.Once
 var globalconsole console.Console
+var AssertErr func(err error) bool = assertErr_wstrace
 
 func Console() console.Console {
 
@@ -60,11 +65,23 @@ func Console() console.Console {
 
 func EnableDebug() {
 	baseobject.SetConsoleDebug(Console())
+	AssertErr = assertErr_strace
 }
 
-func AssertErr(err error) bool {
+func assertErr_wstrace(err error) bool {
 	if err != nil {
 		Console().Assert(err == nil, err.Error())
+	}
+
+	return err == nil
+}
+
+func assertErr_strace(err error) bool {
+
+	if err != nil {
+		_, file, line, _ := runtime.Caller(2)
+		strerr := fmt.Sprintf("%s:%d >> %s", filepath.Base(file), line, err.Error())
+		Console().Assert(err == nil, strerr)
 	}
 
 	return err == nil

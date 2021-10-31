@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-
+	hogosuru.Init()
 	//we get the current document if an error occur the err is draw to the console thank to AssertErr
 	if doc, err := document.New(); hogosuru.AssertErr(err) {
 

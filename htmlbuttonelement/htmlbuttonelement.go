@@ -34,7 +34,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlbuttonelementinterface, err = js.Global().GetWithErr("HTMLButtonElement"); err != nil {
+		if htmlbuttonelementinterface, err = baseobject.Get(js.Global(), "HTMLButtonElement"); err != nil {
 			htmlbuttonelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlbuttonelementinterface, func(v js.Value) (interface{}, error) {
@@ -77,15 +77,24 @@ func NewFromElement(elem element.Element) (HtmlButtonElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlButtonElement, error) {
 	var h HtmlButtonElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHtmlButtonElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHtmlButtonElement
+	return h, err
 }
 
 func (h HtmlButtonElement) Autofocus() (bool, error) {
@@ -108,7 +117,7 @@ func (h HtmlButtonElement) Form() (htmlformelement.HtmlFormElement, error) {
 	var err error
 	var obj js.Value
 	var f htmlformelement.HtmlFormElement
-	if obj, err = h.JSObject().GetWithErr("form"); err == nil {
+	if obj, err = h.Get("form"); err == nil {
 
 		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject
@@ -165,7 +174,7 @@ func (h HtmlButtonElement) Labels() (nodelist.NodeList, error) {
 	var obj js.Value
 	var nlist nodelist.NodeList
 
-	if obj, err = h.JSObject().GetWithErr("labels"); err == nil {
+	if obj, err = h.Get("labels"); err == nil {
 
 		nlist, err = nodelist.NewFromJSObject(obj)
 	}
@@ -202,7 +211,7 @@ func (h HtmlButtonElement) Validity() (validitystate.ValidityState, error) {
 	var obj js.Value
 	var state validitystate.ValidityState
 
-	if obj, err = h.JSObject().GetWithErr("validity"); err == nil {
+	if obj, err = h.Get("validity"); err == nil {
 
 		state, err = validitystate.NewFromJSObject(obj)
 	}

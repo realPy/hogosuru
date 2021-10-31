@@ -20,17 +20,17 @@ type JSErrorFrom interface {
 	JSError_() JSError
 }
 
-func (e JSError) DomException_() JSError {
+func (e JSError) JSError_() JSError {
 	return e
 }
 
-//GetJSInterface get the Error interface
+//GetInterface get the Error interface
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
 
 		var err error
-		if errorinterface, err = js.Global().GetWithErr("Error"); err != nil {
+		if errorinterface, err = baseobject.Get(js.Global(), "Error"); err != nil {
 			errorinterface = js.Undefined()
 		}
 
@@ -42,36 +42,67 @@ func GetInterface() js.Value {
 	return errorinterface
 }
 
-func New(value interface{}) (JSError, error) {
+func New(values ...interface{}) (JSError, error) {
 	var e JSError
-	var obj interface{}
-
-	switch value.(type) {
-	case string:
-		obj = value
-	case error:
-		obj = value.(error).Error()
+	var objs []interface{}
+	var obj js.Value
+	var err error
+	if len(values) == 1 {
+		switch values[0].(type) {
+		case string:
+			objs = append(objs, values[0])
+		case error:
+			objs = append(objs, values[0].(error).Error())
+		}
 	}
 
 	if ei := GetInterface(); !ei.IsUndefined() {
-		e.BaseObject = e.SetObject(ei.New(obj))
-		return e, nil
+
+		if obj, err = baseobject.New(ei, objs...); err == nil {
+			e.BaseObject = e.SetObject(obj)
+		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return e, ErrNotImplemented
+	return e, err
 }
 
 func NewFromJSObject(obj js.Value) (JSError, error) {
 	var e JSError
 	var err error
 	if ei := GetInterface(); !ei.IsUndefined() {
-		if obj.InstanceOf(ei) {
-			e.BaseObject = e.SetObject(obj)
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnError
+
+			if obj.InstanceOf(ei) {
+				e.BaseObject = e.SetObject(obj)
+			} else {
+				err = ErrNotAnError
+			}
 		}
 	} else {
 		err = ErrNotImplemented
 	}
 
 	return e, err
+}
+
+func (j JSError) Message() (string, error) {
+	return j.GetAttributeString("message")
+}
+
+func (j JSError) SetMessage(value string) error {
+	return j.SetAttributeString("message", value)
+}
+
+func (j JSError) Name() (string, error) {
+	return j.GetAttributeString("name")
+}
+func (j JSError) SetName(value string) error {
+	return j.SetAttributeString("name", value)
+}
+
+func (j JSError) Stack() (string, error) {
+	return j.GetAttributeString("stack")
 }

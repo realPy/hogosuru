@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 	singleton.Do(func() {
 
 		var err error
-		if domstringlistinterface, err = js.Global().GetWithErr("DOMStringList"); err != nil {
+		if domstringlistinterface, err = baseobject.Get(js.Global(), "DOMStringList"); err != nil {
 			domstringlistinterface = js.Undefined()
 		}
 		baseobject.Register(domstringlistinterface, func(v js.Value) (interface{}, error) {
@@ -47,11 +47,16 @@ func NewFromJSObject(obj js.Value) (DOMStringList, error) {
 	var d DOMStringList
 	var err error
 	if dli := GetInterface(); !dli.IsUndefined() {
-		if obj.InstanceOf(dli) {
-			d.BaseObject = d.SetObject(obj)
-
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnDOMStringList
+
+			if obj.InstanceOf(dli) {
+				d.BaseObject = d.SetObject(obj)
+
+			} else {
+				err = ErrNotAnDOMStringList
+			}
 		}
 	} else {
 		err = ErrNotImplemented
@@ -70,7 +75,7 @@ func (d DOMStringList) Contains(search string) (bool, error) {
 	var err error
 	var obj js.Value
 	var result bool
-	if obj, err = d.JSObject().CallWithErr("contains", js.ValueOf(search)); err == nil {
+	if obj, err = d.Call("contains", js.ValueOf(search)); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {

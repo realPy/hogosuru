@@ -32,7 +32,7 @@ func GetInterface() js.Value {
 
 	singleton.Do(func() {
 		var err error
-		if htmlstylelementinterface, err = js.Global().GetWithErr("HTMLStyleElement"); err != nil {
+		if htmlstylelementinterface, err = baseobject.Get(js.Global(), "c"); err != nil {
 			htmlstylelementinterface = js.Undefined()
 		}
 		baseobject.Register(htmlstylelementinterface, func(v js.Value) (interface{}, error) {
@@ -75,15 +75,24 @@ func NewFromElement(elem element.Element) (HtmlStyleElement, error) {
 
 func NewFromJSObject(obj js.Value) (HtmlStyleElement, error) {
 	var h HtmlStyleElement
-
+	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.InstanceOf(hci) {
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
+		} else {
 
-			h.BaseObject = h.SetObject(obj)
-			return h, nil
+			if obj.InstanceOf(hci) {
+
+				h.BaseObject = h.SetObject(obj)
+
+			} else {
+				err = ErrNotAnHTMLStyleElement
+			}
 		}
+	} else {
+		err = ErrNotImplemented
 	}
-	return h, ErrNotAnHTMLStyleElement
+	return h, err
 }
 
 func (h HtmlStyleElement) Media() (string, error) {
@@ -114,7 +123,7 @@ func (h HtmlStyleElement) Sheet() (stylesheet.StyleSheet, error) {
 	var err error
 	var obj js.Value
 	var s stylesheet.StyleSheet
-	if obj, err = h.JSObject().GetWithErr("sheet"); err == nil {
+	if obj, err = h.Get("sheet"); err == nil {
 
 		if obj.IsUndefined() {
 			err = baseobject.ErrNotAnObject

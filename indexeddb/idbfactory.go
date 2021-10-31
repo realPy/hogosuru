@@ -18,7 +18,7 @@ func GetIDBFactoryInterface() js.Value {
 
 	singletonIDBFactory.Do(func() {
 		var err error
-		if idbfactoryinterface, err = js.Global().GetWithErr("IDBFactory"); err != nil {
+		if idbfactoryinterface, err = baseobject.Get(js.Global(), "IDBFactory"); err != nil {
 			idbfactoryinterface = js.Undefined()
 		}
 	})
@@ -42,10 +42,15 @@ func IDBFactoryNewFromJSObject(obj js.Value) (IDBFactory, error) {
 	var i IDBFactory
 	var err error
 	if ai := GetIDBFactoryInterface(); !ai.IsUndefined() {
-		if obj.InstanceOf(ai) {
-			i.BaseObject = i.SetObject(obj)
+		if obj.IsUndefined() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-			err = ErrNotAnIDBFactory
+
+			if obj.InstanceOf(ai) {
+				i.BaseObject = i.SetObject(obj)
+			} else {
+				err = ErrNotAnIDBFactory
+			}
 		}
 	} else {
 		err = ErrNotImplemented
@@ -66,7 +71,7 @@ func (f IDBFactory) genericRequest(method string, dbname string, option ...strin
 		arrayJS = append(arrayJS, js.ValueOf(option[0]))
 	}
 
-	if idbobj, err = f.JSObject().CallWithErr(method, arrayJS...); err == nil {
+	if idbobj, err = f.Call(method, arrayJS...); err == nil {
 		i, err = IDBOpenDBRequestNewFromJSObject(idbobj)
 
 	}
