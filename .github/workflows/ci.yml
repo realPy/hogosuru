@@ -14,8 +14,6 @@ jobs:
         go-version: ${{ matrix.go-version }}
     - name: Install chrome
       uses: browser-actions/setup-chrome@latest
-    - name: Run chrome headless
-      run:  google-chrome --no-sandbox --disable-gpu --headless --remote-debugging-address=0.0.0.0 --remote-debugging-port=9222 &
     - name: Install dep
       run: go install github.com/agnivade/wasmbrowsertest@latest
     - name: Setup wasmexec
