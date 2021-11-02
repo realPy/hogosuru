@@ -135,7 +135,7 @@ func TestPostRequest(t *testing.T) {
 
 		})
 		f, _ := formdata.New()
-		f.AppendString("data", "testing")
+		f.Append("data", "testing")
 
 		xhr.Send(f)
 

@@ -8,6 +8,8 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/htmlformelement"
+	"github.com/realPy/hogosuru/iterator"
 )
 
 var singleton sync.Once
@@ -42,14 +44,39 @@ func GetInterface() js.Value {
 	return formadatainterface
 }
 
-func New() (FormData, error) {
+func NewFromJSObject(obj js.Value) (FormData, error) {
+	var f FormData
+	var err error
+	if fi := GetInterface(); !fi.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+
+			if obj.InstanceOf(fi) {
+				f.BaseObject = f.SetObject(obj)
+
+			} else {
+				err = ErrNotAFormData
+			}
+		}
+	} else {
+		err = ErrNotImplemented
+	}
+	return f, err
+}
+
+func New(f ...htmlformelement.HtmlFormElement) (FormData, error) {
 
 	var formdata FormData
 	var obj js.Value
 	var err error
-	if fci := GetInterface(); !fci.IsUndefined() {
+	var opt []interface{}
 
-		if obj, err = baseobject.New(fci); err == nil {
+	if fci := GetInterface(); !fci.IsUndefined() {
+		if len(f) > 0 {
+			opt = append(opt, f[0].JSObject())
+		}
+		if obj, err = baseobject.New(fci, opt...); err == nil {
 			formdata.BaseObject = formdata.SetObject(obj)
 		}
 
@@ -59,17 +86,108 @@ func New() (FormData, error) {
 	return formdata, err
 }
 
-func (f FormData) AppendString(key string, value string) error {
+func (f FormData) Append(key string, value interface{}) error {
+	var i interface{}
 	var err error
-	_, err = f.Call("append", js.ValueOf(key), js.ValueOf(value))
+
+	if objGo, ok := value.(baseobject.ObjectFrom); ok {
+		i = objGo.JSObject()
+
+	} else {
+		i = js.ValueOf(value)
+	}
+
+	_, err = f.Call("append", js.ValueOf(key), i)
 
 	return err
-
 }
 
-func (f FormData) AppendJSObject(key string, object js.Value) error {
+func (f FormData) Delete(key string) error {
 	var err error
-	_, err = f.Call("append", js.ValueOf(key), object)
-	return err
 
+	_, err = f.Call("delete", js.ValueOf(key))
+	return err
+}
+
+func (f FormData) Entries() (iterator.Iterator, error) {
+	var err error
+	var obj js.Value
+	var iter iterator.Iterator
+
+	if obj, err = f.Call("entries"); err == nil {
+		iter = iterator.NewFromJSObject(obj)
+	}
+
+	return iter, err
+}
+
+func (f FormData) Get(key string) (interface{}, error) {
+
+	var err error
+	var obj js.Value
+	var result interface{}
+
+	if obj, err = f.Call("get", js.ValueOf(key)); err == nil {
+		if obj.IsNull() {
+			err = ErrNotAFormValueNotFound
+		} else {
+			result = baseobject.GoValue(obj)
+		}
+
+	}
+	return result, err
+}
+
+func (f FormData) Has(key string) (bool, error) {
+	var err error
+	var obj js.Value
+	var result bool
+
+	if obj, err = f.Call("has", js.ValueOf(key)); err == nil {
+		if obj.Type() == js.TypeBoolean {
+			result = obj.Bool()
+		} else {
+			err = baseobject.ErrObjectNotBool
+		}
+	}
+
+	return result, err
+}
+
+func (f FormData) Keys() (iterator.Iterator, error) {
+	var err error
+	var obj js.Value
+	var iter iterator.Iterator
+
+	if obj, err = f.Call("keys"); err == nil {
+		iter = iterator.NewFromJSObject(obj)
+	}
+
+	return iter, err
+}
+
+func (f FormData) Set(key string, value interface{}) error {
+	var err error
+	var globalValueObj interface{}
+
+	if objGo, ok := value.(baseobject.ObjectFrom); ok {
+		globalValueObj = objGo.JSObject()
+	} else {
+		globalValueObj = js.ValueOf(value)
+	}
+
+	_, err = f.Call("set", js.ValueOf(key), globalValueObj)
+	return err
+}
+
+func (f FormData) Values() (iterator.Iterator, error) {
+	var err error
+	var obj js.Value
+	var iter iterator.Iterator
+
+	if obj, err = f.Call("values"); err == nil {
+		iter = iterator.NewFromJSObject(obj)
+	}
+
+	return iter, err
 }
