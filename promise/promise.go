@@ -97,7 +97,7 @@ func NewFromJSObject(obj js.Value) (Promise, error) {
 	var p Promise
 	var err error
 	if pi := GetInterface(); !pi.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

@@ -81,7 +81,7 @@ func NewFromJSObject(obj js.Value) (HtmlTableElement, error) {
 	var h HtmlTableElement
 	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

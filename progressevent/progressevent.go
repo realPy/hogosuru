@@ -64,7 +64,7 @@ func NewFromJSObject(obj js.Value) (ProgressEvent, error) {
 	var p ProgressEvent
 	var err error
 	if pei := GetInterface(); !pei.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

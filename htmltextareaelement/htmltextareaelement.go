@@ -80,7 +80,7 @@ func NewFromJSObject(obj js.Value) (HtmlTextAreaElement, error) {
 	var h HtmlTextAreaElement
 	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

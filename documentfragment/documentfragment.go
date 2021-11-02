@@ -66,7 +66,7 @@ func NewFromJSObject(obj js.Value) (DocumentFragment, error) {
 	var d DocumentFragment
 	var err error
 	if dci := GetInterface(); !dci.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 
@@ -147,11 +147,11 @@ func (d DocumentFragment) nodesMethod(method string, elems ...interface{}) error
 }
 
 func (d DocumentFragment) Prepend(elems ...interface{}) error {
-	return d.nodesMethod("prepend")
+	return d.nodesMethod("prepend", elems...)
 }
 
 func (d DocumentFragment) Append(elems ...interface{}) error {
-	return d.nodesMethod("append")
+	return d.nodesMethod("append", elems...)
 }
 
 func (d DocumentFragment) QuerySelector(selector string) (node.Node, error) {

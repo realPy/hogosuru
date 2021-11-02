@@ -86,7 +86,7 @@ func NewInt32FromJSObject(obj js.Value) (Int32Array, error) {
 	var u Int32Array
 	var err error
 	if ui := GetInt32ArrayInterface(); !ui.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 
