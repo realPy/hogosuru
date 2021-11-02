@@ -252,10 +252,12 @@ js.Global().Set("test", TestFunc())
 
 YES, Webassembly was specially created for this use. The export variable and function can be helped for this use.
 
-## Lets see together some simple example
+## Lets see together some simple examples
 
-Lots of example can be found in the /example/ directory.  
-All example is simple and show you how to use some complex components.
+Lots of example can be found here:  
+
+https://github.com/realPy/hogosuru-examples
+
 
 
 # How to implement a single page application with hogosuru routing capabilities
