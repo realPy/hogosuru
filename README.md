@@ -455,7 +455,7 @@ All help is welcome. If you are interested by this project, please contact me
 | Fetch | Full | https://developer.mozilla.org/fr/docs/Web/API/Fetch_API |
 | File | Full | https://developer.mozilla.org/fr/docs/Web/API/File |
 | FileList | Full | https://developer.mozilla.org/fr/docs/Web/API/FileList |
-| FormData | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/FormData |
+| FormData | Full | https://developer.mozilla.org/fr/docs/Web/API/FormData |
 | Headers | Full | https://developer.mozilla.org/en-US/docs/Web/API/Headers |
 | History | Full | https://developer.mozilla.org/fr/docs/Web/API/History |
 | HTMLAnchorElement| Full| https://developer.mozilla.org/en-US/docs/Web/API/HTMLAnchorElement|
