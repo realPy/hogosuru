@@ -535,34 +535,6 @@ All help is welcome. If you are interested by this project, please contact me
 
 
 
-
-
-
-## Github online example
-
-### Hello world
-https://realpy.github.io/hogosuru/example/static/hello.html
-
-
-### Console 
-Open your console developer and see the logger result
-
-https://realpy.github.io/hogosuru/example/static/console.html
-
-
-### Node 
-Example build dynamic dom 
-https://realpy.github.io/hogosuru/example/static/node.html
-
-### Drag and drop 
-
-You can test a local example of local hash  
-Go to https://realpy.github.io/hogosuru/example/static/draganddrop.html
-
-Open you console developer. Drag some file and see result :)  
-
-
-
 ## Custom components
 
 ### A toaster components for hogosuru
