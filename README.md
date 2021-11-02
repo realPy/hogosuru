@@ -39,42 +39,38 @@ Follow the quick start guide https://github.com/agnivade/wasmbrowsertest#quickst
 and go run your project or some example
 
 ```
-WASM_HEADLESS=off GOOS=js GOARCH=wasm  go run example/hello/main.go
+WASM_HEADLESS=off GOOS=js GOARCH=wasm  go run main.go
 ```
 
 The hello world is open on your browser
 
-### building with tinygo
+### building your project with tinygo
 
 Start the tinygo container with your source  
 ```
-docker run --rm -it -w /go/src/hogosuru -v "$PWD":/go/src/hogosuru tinygo/tinygo bash 
+docker run --rm -it -w /go/src/yourproject -v "$PWD":/go/src/yourproject tinygo/tinygo bash 
 ```
 
-If you the compiler is upgraded, Sync the wasm_exec.js loader with your current wasm_exec.js compiler version
+If you the compiler is upgraded, sync the wasm_exec.js loader with your current wasm_exec.js compiler version
 
 ```
-cp /usr/local/tinygo/targets/wasm_exec.js /go/src/hogosuru/example/static/
+cp /usr/local/tinygo/targets/wasm_exec.js /go/src/hogosuru/yourstaticdirectory/
 ```
 
-Optional: If you want compile all example you need make:  
-
-```
-apt-get update
-apt-get install make
-```
 
 ### building with Go
 
 Just 
 
 ```
-GOOS=js GOARCH=wasm go build -o ./example/static/hello.wasm  example/hello/main.go
+GOOS=js GOARCH=wasm go build -o ./yourstaticdirectory/project.wasm  main.go
 ```
 
 dont forget to always include the wasm_exec.js from your go compiler
+
+
 ```
-cp $(go env GOROOT)/misc/wasm/wasm_exec.js example/static/
+cp $(go env GOROOT)/misc/wasm/wasm_exec.js ./yourstaticdirectory/
 ```
 
 ## How to load the wasm product with a web application
@@ -262,8 +258,7 @@ https://github.com/realPy/hogosuru-examples
 
 # How to implement a single page application with hogosuru routing capabilities
 
-Hogosuru is not just a "glue JS Framework". I want to give the possibility to gophers to implemented Back and Front with the 
-same language. I want to create an alternative to angular/react write in go.
+Hogosuru is not just a "glue JS Framework". I want to give the possibility to gophers to implemented Back and Front with the same language. I want to create an alternative to angular/react write in go.
 
 All this capabilities will be publish on the "hogosuru" namespace.  
 
