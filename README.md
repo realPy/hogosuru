@@ -206,26 +206,10 @@ func main() {
 }
 ```
 
-We compile our first wasm hello world  (inside the container) with :
-```
-tinygo build  -o ./example/static/hello.wasm --no-debug -target wasm example/hello/main.go
-```
+To try some examples follow instruction on the dedicated repo examples:
 
-And voila the hello.wasm is build :)  
+https://github.com/realPy/hogosuru-examples
 
-Now you want see the result in your favorite browser!  
-
-First we need to serve the wasm and html files with an HTTP Server . Thanks to go , it's easy to build 
-an http server with few lines of code (example/server/main.go) (PS: you can use nginx, caddy or other server http to serve it)
-This server must not be run inside the tinygo container. Just start it with your local machine
-
-```
-go run example/server/main.go
-```
-
-It's serve all static files on 9090 port (you can change it)
-
-Just open http://localhost:9090/hello.html and see result   
 
 You can now build your web page with all HTML5 components available (see hogosuru source , components wil begin with html prefix)  
 To understand all html function and attribute , go to MDN reference: https://developer.mozilla.org/fr/docs/Web/API
