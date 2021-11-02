@@ -147,11 +147,11 @@ func (d DocumentFragment) nodesMethod(method string, elems ...interface{}) error
 }
 
 func (d DocumentFragment) Prepend(elems ...interface{}) error {
-	return d.nodesMethod("prepend")
+	return d.nodesMethod("prepend", elems...)
 }
 
 func (d DocumentFragment) Append(elems ...interface{}) error {
-	return d.nodesMethod("append")
+	return d.nodesMethod("append", elems...)
 }
 
 func (d DocumentFragment) QuerySelector(selector string) (node.Node, error) {
