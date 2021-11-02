@@ -55,7 +55,7 @@ func NewFromJSObject(obj js.Value) (History, error) {
 	var h History
 	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

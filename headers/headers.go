@@ -49,7 +49,7 @@ func NewFromJSObject(obj js.Value) (Headers, error) {
 	var h Headers
 	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

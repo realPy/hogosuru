@@ -42,7 +42,7 @@ func NewFromJSObject(obj js.Value) (AbortSignal, error) {
 	var a AbortSignal
 	var err error
 	if ai := GetInterface(); !ai.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

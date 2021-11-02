@@ -77,7 +77,7 @@ func NewFromJSObject(obj js.Value) (HtmlImageElement, error) {
 	var h HtmlImageElement
 	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

@@ -76,7 +76,7 @@ func NewFromJSObject(obj js.Value) (HtmlMetaElement, error) {
 	var h HtmlMetaElement
 	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

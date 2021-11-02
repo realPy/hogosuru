@@ -88,7 +88,7 @@ func NewInt8FromJSObject(obj js.Value) (Int8Array, error) {
 	var u Int8Array
 	var err error
 	if ui := GetInt8ArrayInterface(); !ui.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

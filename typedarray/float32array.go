@@ -85,7 +85,7 @@ func NewFloat32FromJSObject(obj js.Value) (Float32Array, error) {
 	var u Float32Array
 	var err error
 	if ui := GetFloat32ArrayInterface(); !ui.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

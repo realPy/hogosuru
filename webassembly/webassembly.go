@@ -61,7 +61,7 @@ func NewFromJSObject(obj js.Value) (WebAssembly, error) {
 	var w WebAssembly
 	var err error
 	if wi := GetInterface(); !wi.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

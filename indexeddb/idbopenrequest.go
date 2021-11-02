@@ -47,7 +47,7 @@ func IDBOpenDBRequestNewFromJSObject(obj js.Value) (IDBOpenDBRequest, error) {
 	var i IDBOpenDBRequest
 	var err error
 	if ai := IDBOpenDBRequestGetInterface(); !ai.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

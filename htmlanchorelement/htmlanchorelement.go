@@ -77,7 +77,7 @@ func NewFromJSObject(obj js.Value) (HtmlAnchorElement, error) {
 	var h HtmlAnchorElement
 	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

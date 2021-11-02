@@ -86,7 +86,7 @@ func NewUint8ClampedFromJSObject(obj js.Value) (Uint8ClampedArray, error) {
 	var u Uint8ClampedArray
 	var err error
 	if ui := GetUint8ClampedArrayInterface(); !ui.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

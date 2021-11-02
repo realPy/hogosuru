@@ -62,7 +62,7 @@ func NewFromJSObject(obj js.Value) (DOMRectReadOnly, error) {
 	var d DOMRectReadOnly
 	var err error
 	if di := GetInterface(); !di.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

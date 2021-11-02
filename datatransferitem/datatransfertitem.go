@@ -46,7 +46,7 @@ func NewFromJSObject(obj js.Value) (DataTransferItem, error) {
 	var d DataTransferItem
 	var err error
 	if dti := GetInterface(); !dti.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 			if obj.InstanceOf(dti) {
