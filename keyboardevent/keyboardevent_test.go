@@ -88,7 +88,7 @@ func TestKey(t *testing.T) {
 }
 
 func TestCode(t *testing.T) {
-
+	//independent position (FR position) == (press q obtain KeyA, press a obtain KeyQ )
 	baseobject.Eval("keypress=new KeyboardEvent(\"keyup\",{code:\"KeyA\"})")
 
 	if obj, err := baseobject.Get(js.Global(), "keypress"); testingutils.AssertErr(t, err) {

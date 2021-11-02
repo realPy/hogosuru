@@ -77,7 +77,7 @@ func NewFromJSObject(obj js.Value) (Fetch, error) {
 	var h Fetch
 	var err error
 	if fetchi := GetInterface(); !fetchi.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

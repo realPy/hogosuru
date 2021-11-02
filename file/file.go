@@ -79,7 +79,7 @@ func NewFromJSObject(obj js.Value) (File, error) {
 	var f File
 	var err error
 	if fi := GetInterface(); !fi.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

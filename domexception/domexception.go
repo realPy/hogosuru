@@ -70,7 +70,7 @@ func NewFromJSObject(obj js.Value) (DomException, error) {
 	var d DomException
 	var err error
 	if di := GetInterface(); !di.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

@@ -66,7 +66,7 @@ func NewFromJSObject(obj js.Value) (DocumentFragment, error) {
 	var d DocumentFragment
 	var err error
 	if dci := GetInterface(); !dci.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

@@ -69,7 +69,7 @@ func NewFromJSObject(obj js.Value) (ReadableStream, error) {
 	var r ReadableStream
 	var err error
 	if rsi := GetInterface(); !rsi.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

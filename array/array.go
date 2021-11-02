@@ -145,7 +145,7 @@ func NewFromJSObject(obj js.Value) (Array, error) {
 	var a Array
 	var err error
 	if ai := GetInterface(); !ai.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

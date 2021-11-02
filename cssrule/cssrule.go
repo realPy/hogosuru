@@ -45,7 +45,7 @@ func NewFromJSObject(obj js.Value) (CSSRule, error) {
 	var c CSSRule
 	var err error
 	if dli := GetInterface(); !dli.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 
@@ -65,10 +65,6 @@ func NewFromJSObject(obj js.Value) (CSSRule, error) {
 func (c CSSRule) CssText() (string, error) {
 
 	return c.GetAttributeString("cssText")
-}
-
-func (c CSSRule) SetCssText(value string) error {
-	return c.SetAttributeString("cssText", value)
 }
 
 func (c CSSRule) ParentRule() (CSSRule, error) {

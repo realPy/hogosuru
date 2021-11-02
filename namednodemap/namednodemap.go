@@ -47,7 +47,7 @@ func NewFromJSObject(obj js.Value) (NamedNodeMap, error) {
 	var n NamedNodeMap
 	var err error
 	if nli := GetInterface(); !nli.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

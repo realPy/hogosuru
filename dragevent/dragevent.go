@@ -50,7 +50,7 @@ func NewFromJSObject(obj js.Value) (DragEvent, error) {
 	var e DragEvent
 	var err error
 	if di := GetInterface(); !di.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

@@ -46,7 +46,7 @@ func IDBObjectStoreNewFromJSObject(obj js.Value) (IDBObjectStore, error) {
 	var i IDBObjectStore
 	var err error
 	if ai := IDBObjectStoreGetInterface(); !ai.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

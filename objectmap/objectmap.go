@@ -46,7 +46,7 @@ func NewFromJSObject(obj js.Value) (ObjectMap, error) {
 	var o ObjectMap
 	var err error
 	if ai := GetInterface(); !ai.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

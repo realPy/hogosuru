@@ -74,7 +74,7 @@ func NewFromJSObject(obj js.Value) (KeyboardEvent, error) {
 	var err error
 
 	if bi := GetInterface(); !bi.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 
