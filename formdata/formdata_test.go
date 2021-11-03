@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/htmlformelement"
 	"github.com/realPy/hogosuru/testingutils"
 )
 
@@ -19,6 +20,32 @@ func TestNew(t *testing.T) {
 
 	if f, err := New(); testingutils.AssertErr(t, err) {
 		testingutils.AssertExpect(t, "[object FormData]", f.ToString_())
+	}
+	baseobject.Eval(`f= document.createElement("form")
+	intext=document.createElement("input")
+	intext.type="text"
+	intext.name="hello"
+	intext.value="world"
+	f.appendChild(intext)
+	`)
+
+	if obj, err := baseobject.Get(js.Global(), "f"); testingutils.AssertErr(t, err) {
+
+		if form, err := htmlformelement.NewFromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			if f, err := New(form); testingutils.AssertErr(t, err) {
+
+				if v, err := f.Get("hello"); testingutils.AssertErr(t, err) {
+
+					testingutils.AssertExpect(t, "world", v)
+				}
+
+				_, err := f.Get("hell")
+				testingutils.AssertExpect(t, true, errors.Is(ErrNotAFormValueNotFound, err))
+
+			}
+		}
+
 	}
 }
 
