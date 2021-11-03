@@ -46,7 +46,20 @@ func InvokeCheck(t *testing.T, object interface{}, expectDesc map[string]interfa
 
 				if gettermethod, ok := expectDesc["gettermethod"]; ok {
 
-					val2 := reflect.ValueOf(object).MethodByName(gettermethod.(string)).Call([]reflect.Value{})
+					var getterArgsReflect []reflect.Value
+
+					if getterArgsMethodsExist, ok := expectDesc["getterargs"]; ok {
+						if argsMethods, ok := getterArgsMethodsExist.([]interface{}); ok {
+
+							for _, i := range argsMethods {
+								getterArgsReflect = append(getterArgsReflect, reflect.ValueOf(i))
+							}
+
+						}
+
+					}
+
+					val2 := reflect.ValueOf(object).MethodByName(gettermethod.(string)).Call(getterArgsReflect)
 					if err, ok := val2[1].Interface().(error); ok {
 						AssertErr(t, err)
 					} else {
