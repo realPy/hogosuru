@@ -21,8 +21,20 @@ func TestMain(m *testing.M) {
 func TestNew(t *testing.T) {
 
 	if doc, err := document.New(); testingutils.AssertErr(t, err) {
-		if a, err := New(doc); testingutils.AssertErr(t, err) {
-			testingutils.AssertExpect(t, "HTMLBaseElement", a.ConstructName_())
+		if b, err := New(doc); testingutils.AssertErr(t, err) {
+			testingutils.AssertExpect(t, "HTMLBaseElement", b.ConstructName_())
+		}
+
+	}
+}
+
+func TestNewFromJSObject(t *testing.T) {
+
+	if obj, err := baseobject.Get(js.Global(), "b"); testingutils.AssertErr(t, err) {
+
+		if b, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "HTMLBaseElement", b.ConstructName_())
 		}
 
 	}
@@ -38,10 +50,10 @@ func TestGetters(t *testing.T) {
 
 	if obj, err := baseobject.Get(js.Global(), "b"); testingutils.AssertErr(t, err) {
 
-		if anchor, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
+		if base, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
 
 			for _, result := range getterAttempt {
-				testingutils.InvokeCheck(t, anchor, result)
+				testingutils.InvokeCheck(t, base, result)
 			}
 
 		}
@@ -58,11 +70,11 @@ func TestSetters(t *testing.T) {
 
 	if obj, err := baseobject.Get(js.Global(), "b"); testingutils.AssertErr(t, err) {
 
-		if anchor, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
+		if base, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
 
 			for _, result := range setterAttempt {
 
-				testingutils.InvokeCheck(t, anchor, result)
+				testingutils.InvokeCheck(t, base, result)
 
 			}
 

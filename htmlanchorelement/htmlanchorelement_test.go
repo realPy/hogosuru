@@ -35,6 +35,18 @@ func TestNew(t *testing.T) {
 
 }
 
+func TestNewFromJSObject(t *testing.T) {
+
+	if obj, err := baseobject.Get(js.Global(), "a"); testingutils.AssertErr(t, err) {
+
+		if a, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "HTMLAnchorElement", a.ConstructName_())
+		}
+
+	}
+}
+
 var getterAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "AccessKey", "resultattempt": "o"},
 	{"method": "Download", "resultattempt": "tdownload"},

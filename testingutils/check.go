@@ -1,6 +1,7 @@
 package testingutils
 
 import (
+	"errors"
 	"reflect"
 	"testing"
 
@@ -26,9 +27,21 @@ func InvokeCheck(t *testing.T, object interface{}, expectDesc map[string]interfa
 		if method := reflect.ValueOf(object).MethodByName(expectDesc["method"].(string)); method != (reflect.Value{}) {
 
 			val := method.Call(argsReflect)
+			var typechecking string
+
+			if valtype, ok := expectDesc["type"]; ok {
+				typechecking = valtype.(string)
+			}
 
 			if err, ok := val[len(val)-1].Interface().(error); ok {
-				AssertErr(t, err)
+				if typechecking == "error" {
+					if !errors.Is(expectDesc["resultattempt"].(error), err) {
+						AssertErr(t, err)
+					}
+				} else {
+					AssertErr(t, err)
+				}
+
 			} else {
 
 				if gettermethod, ok := expectDesc["gettermethod"]; ok {
@@ -42,11 +55,6 @@ func InvokeCheck(t *testing.T, object interface{}, expectDesc map[string]interfa
 
 				}
 
-				var typechecking string
-
-				if valtype, ok := expectDesc["type"]; ok {
-					typechecking = valtype.(string)
-				}
 				switch typechecking {
 				case "constructnamechecking":
 					if objfrom, ok := val[0].Interface().(baseobject.ObjectFrom); ok {
@@ -81,6 +89,8 @@ func InvokeCheck(t *testing.T, object interface{}, expectDesc map[string]interfa
 						t.Errorf("tostringchecking need a baseobject")
 					}
 
+				case "contains":
+					AssertStringContains(t, expectDesc["resultattempt"], val[0].Interface())
 				default:
 					AssertExpect(t, expectDesc["resultattempt"], val[0].Interface())
 				}
