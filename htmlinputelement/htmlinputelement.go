@@ -85,7 +85,7 @@ func NewFromJSObject(obj js.Value) (HtmlInputElement, error) {
 	var h HtmlInputElement
 	var err error
 	if hci := GetInterface(); !hci.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

@@ -71,7 +71,7 @@ func NewFromJSObject(obj js.Value) (JSError, error) {
 	var e JSError
 	var err error
 	if ei := GetInterface(); !ei.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

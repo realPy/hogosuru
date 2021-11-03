@@ -86,7 +86,7 @@ func NewInt16FromJSObject(obj js.Value) (Int16Array, error) {
 	var u Int16Array
 	var err error
 	if ui := GetInt16ArrayInterface(); !ui.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

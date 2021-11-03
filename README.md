@@ -39,42 +39,38 @@ Follow the quick start guide https://github.com/agnivade/wasmbrowsertest#quickst
 and go run your project or some example
 
 ```
-WASM_HEADLESS=off GOOS=js GOARCH=wasm  go run example/hello/main.go
+WASM_HEADLESS=off GOOS=js GOARCH=wasm  go run main.go
 ```
 
 The hello world is open on your browser
 
-### building with tinygo
+### building your project with tinygo
 
 Start the tinygo container with your source  
 ```
-docker run --rm -it -w /go/src/hogosuru -v "$PWD":/go/src/hogosuru tinygo/tinygo bash 
+docker run --rm -it -w /go/src/yourproject -v "$PWD":/go/src/yourproject tinygo/tinygo bash 
 ```
 
-If you the compiler is upgraded, Sync the wasm_exec.js loader with your current wasm_exec.js compiler version
+If you the compiler is upgraded, sync the wasm_exec.js loader with your current wasm_exec.js compiler version
 
 ```
-cp /usr/local/tinygo/targets/wasm_exec.js /go/src/hogosuru/example/static/
+cp /usr/local/tinygo/targets/wasm_exec.js /go/src/hogosuru/yourstaticdirectory/
 ```
 
-Optional: If you want compile all example you need make:  
-
-```
-apt-get update
-apt-get install make
-```
 
 ### building with Go
 
 Just 
 
 ```
-GOOS=js GOARCH=wasm go build -o ./example/static/hello.wasm  example/hello/main.go
+GOOS=js GOARCH=wasm go build -o ./yourstaticdirectory/project.wasm  main.go
 ```
 
 dont forget to always include the wasm_exec.js from your go compiler
+
+
 ```
-cp $(go env GOROOT)/misc/wasm/wasm_exec.js example/static/
+cp $(go env GOROOT)/misc/wasm/wasm_exec.js ./yourstaticdirectory/
 ```
 
 ## How to load the wasm product with a web application
@@ -206,26 +202,10 @@ func main() {
 }
 ```
 
-We compile our first wasm hello world  (inside the container) with :
-```
-tinygo build  -o ./example/static/hello.wasm --no-debug -target wasm example/hello/main.go
-```
+To try some examples follow instruction on the dedicated repo examples:
 
-And voila the hello.wasm is build :)  
+https://github.com/realPy/hogosuru-examples
 
-Now you want see the result in your favorite browser!  
-
-First we need to serve the wasm and html files with an HTTP Server . Thanks to go , it's easy to build 
-an http server with few lines of code (example/server/main.go) (PS: you can use nginx, caddy or other server http to serve it)
-This server must not be run inside the tinygo container. Just start it with your local machine
-
-```
-go run example/server/main.go
-```
-
-It's serve all static files on 9090 port (you can change it)
-
-Just open http://localhost:9090/hello.html and see result   
 
 You can now build your web page with all HTML5 components available (see hogosuru source , components wil begin with html prefix)  
 To understand all html function and attribute , go to MDN reference: https://developer.mozilla.org/fr/docs/Web/API
@@ -268,16 +248,17 @@ js.Global().Set("test", TestFunc())
 
 YES, Webassembly was specially created for this use. The export variable and function can be helped for this use.
 
-## Lets see together some simple example
+## Lets see together some simple examples
 
-Lots of example can be found in the /example/ directory.  
-All example is simple and show you how to use some complex components.
+Lots of example can be found here:  
+
+https://github.com/realPy/hogosuru-examples
+
 
 
 # How to implement a single page application with hogosuru routing capabilities
 
-Hogosuru is not just a "glue JS Framework". I want to give the possibility to gophers to implemented Back and Front with the 
-same language. I want to create an alternative to angular/react write in go.
+Hogosuru is not just a "glue JS Framework". I want to give the possibility to gophers to implemented Back and Front with the same language. I want to create an alternative to angular/react write in go.
 
 All this capabilities will be publish on the "hogosuru" namespace.  
 
@@ -474,7 +455,7 @@ All help is welcome. If you are interested by this project, please contact me
 | Fetch | Full | https://developer.mozilla.org/fr/docs/Web/API/Fetch_API |
 | File | Full | https://developer.mozilla.org/fr/docs/Web/API/File |
 | FileList | Full | https://developer.mozilla.org/fr/docs/Web/API/FileList |
-| FormData | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/FormData |
+| FormData | Full | https://developer.mozilla.org/fr/docs/Web/API/FormData |
 | Headers | Full | https://developer.mozilla.org/en-US/docs/Web/API/Headers |
 | History | Full | https://developer.mozilla.org/fr/docs/Web/API/History |
 | HTMLAnchorElement| Full| https://developer.mozilla.org/en-US/docs/Web/API/HTMLAnchorElement|
@@ -539,7 +520,6 @@ All help is welcome. If you are interested by this project, please contact me
 | ProgressEvent | Full | https://developer.mozilla.org/en-US/docs/Web/API/ProgressEvent |
 | Promise | Full | https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise |
 | ReadableStream | Full | https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream |
-
 | Response | Full | https://developer.mozilla.org/fr/docs/Web/API/Response |
 | Storage | Full | https://developer.mozilla.org/fr/docs/Mozilla/Add-ons/WebExtensions/API/storage |
 | Stream | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/Streams_API |
@@ -551,34 +531,6 @@ All help is welcome. If you are interested by this project, please contact me
 | Window | Partial |https://developer.mozilla.org/en-US/docs/Web/API/Window |
 | XMLHttpRequest | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/XMLHttpRequest/XMLHttpRequest |
 
-
-
-
-
-
-
-## Github online example
-
-### Hello world
-https://realpy.github.io/hogosuru/example/static/hello.html
-
-
-### Console 
-Open your console developer and see the logger result
-
-https://realpy.github.io/hogosuru/example/static/console.html
-
-
-### Node 
-Example build dynamic dom 
-https://realpy.github.io/hogosuru/example/static/node.html
-
-### Drag and drop 
-
-You can test a local example of local hash  
-Go to https://realpy.github.io/hogosuru/example/static/draganddrop.html
-
-Open you console developer. Drag some file and see result :)  
 
 
 
