@@ -229,7 +229,7 @@ func (h HtmlAreaElement) TabIndex() (int, error) {
 	return h.GetAttributeInt("tabIndex")
 }
 
-func (h HtmlAreaElement) SetIndex(value int) error {
+func (h HtmlAreaElement) SetTabIndex(value int) error {
 	return h.SetAttributeInt("tabIndex", value)
 }
 
