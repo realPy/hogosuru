@@ -52,7 +52,7 @@ var methodsAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "SetText", "args": []interface{}{"test"}, "gettermethod": "Text", "resultattempt": "test"},
 	{"method": "NoModule", "resultattempt": false},
 	{"method": "SetNoModule", "args": []interface{}{true}, "gettermethod": "NoModule", "resultattempt": true},
-	{"method": "ReferrerPolicy", "resultattempt": ""},
+	{"method": "ReferrerPolicy", "type": "error", "resultattempt": baseobject.ErrUndefinedValue},
 	{"method": "SetReferrerPolicy", "args": []interface{}{"no-referrer"}, "gettermethod": "ReferrerPolicy", "resultattempt": "no-referrer"},
 }
 
