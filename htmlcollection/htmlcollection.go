@@ -47,7 +47,7 @@ func NewFromJSObject(obj js.Value) (HtmlCollection, error) {
 	var h HtmlCollection
 	var err error
 	if fli := GetInterface(); !fli.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 			if obj.InstanceOf(fli) {

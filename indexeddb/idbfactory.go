@@ -42,7 +42,7 @@ func IDBFactoryNewFromJSObject(obj js.Value) (IDBFactory, error) {
 	var i IDBFactory
 	var err error
 	if ai := GetIDBFactoryInterface(); !ai.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

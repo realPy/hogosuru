@@ -85,7 +85,7 @@ func NewFloat64FromJSObject(obj js.Value) (Float64Array, error) {
 	var u Float64Array
 	var err error
 	if ui := GetFloat64ArrayInterface(); !ui.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

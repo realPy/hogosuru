@@ -47,7 +47,7 @@ func NewFromJSObject(obj js.Value) (NodeList, error) {
 	var n NodeList
 	var err error
 	if nli := GetInterface(); !nli.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

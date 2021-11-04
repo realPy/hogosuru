@@ -45,7 +45,7 @@ func NewFromJSObject(obj js.Value) (ValidityState, error) {
 	var v ValidityState
 	var err error
 	if hei := GetInterface(); !hei.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 

@@ -50,7 +50,7 @@ func NewFromJSObject(obj js.Value) (AnimationEvent, error) {
 	var a AnimationEvent
 	var err error
 	if di := GetInterface(); !di.IsUndefined() {
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
 			if obj.InstanceOf(di) {
