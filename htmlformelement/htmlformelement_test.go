@@ -59,10 +59,10 @@ func TestGetters(t *testing.T) {
 
 	if obj, err := baseobject.Get(js.Global(), "f"); testingutils.AssertErr(t, err) {
 
-		if button, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
+		if form, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
 
 			for _, result := range getterAttempt {
-				testingutils.InvokeCheck(t, button, result)
+				testingutils.InvokeCheck(t, form, result)
 			}
 
 		}
@@ -86,11 +86,11 @@ func TestSetters(t *testing.T) {
 
 	if obj, err := baseobject.Get(js.Global(), "f"); testingutils.AssertErr(t, err) {
 
-		if button, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
+		if form, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
 
 			for _, result := range setterAttempt {
 
-				testingutils.InvokeCheck(t, button, result)
+				testingutils.InvokeCheck(t, form, result)
 
 			}
 
