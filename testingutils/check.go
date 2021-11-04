@@ -35,14 +35,22 @@ func InvokeCheck(t *testing.T, object interface{}, expectDesc map[string]interfa
 
 			if err, ok := val[len(val)-1].Interface().(error); ok {
 				if typechecking == "error" {
+
 					if !errors.Is(expectDesc["resultattempt"].(error), err) {
 						AssertErr(t, err)
 					}
+
 				} else {
 					AssertErr(t, err)
 				}
 
 			} else {
+
+				if typechecking == "error" {
+					if expectDesc["resultattempt"] == nil && err == nil {
+						return
+					}
+				}
 
 				if gettermethod, ok := expectDesc["gettermethod"]; ok {
 

@@ -175,12 +175,12 @@ func (h HtmlInputElement) SetType(value string) error {
 	return h.SetAttributeString("type", value)
 }
 
-func (h HtmlInputElement) Disable() (bool, error) {
-	return h.GetAttributeBool("disable")
+func (h HtmlInputElement) Disabled() (bool, error) {
+	return h.GetAttributeBool("disabled")
 }
 
-func (h HtmlInputElement) SetDisable(value bool) error {
-	return h.SetAttributeBool("disable", value)
+func (h HtmlInputElement) SetDisabled(value bool) error {
+	return h.SetAttributeBool("disabled", value)
 }
 
 func (h HtmlInputElement) Autofocus() (bool, error) {
@@ -263,12 +263,14 @@ func (h HtmlInputElement) SetAlt(value string) error {
 	return h.SetAttributeString("alt", value)
 }
 
-func (h HtmlInputElement) Height() (string, error) {
-	return h.GetAttributeString("height")
+// MSN  is wrong return type is int not string
+
+func (h HtmlInputElement) Height() (int, error) {
+	return h.GetAttributeInt("height")
 }
 
-func (h HtmlInputElement) SetHeight(value string) error {
-	return h.SetAttributeString("height", value)
+func (h HtmlInputElement) SetHeight(value int) error {
+	return h.SetAttributeInt("height", value)
 }
 
 func (h HtmlInputElement) Src() (string, error) {
@@ -279,12 +281,12 @@ func (h HtmlInputElement) SetSrc(value string) error {
 	return h.SetAttributeString("src", value)
 }
 
-func (h HtmlInputElement) Width() (string, error) {
-	return h.GetAttributeString("width")
+func (h HtmlInputElement) Width() (int, error) {
+	return h.GetAttributeInt("width")
 }
 
-func (h HtmlInputElement) SetWidth(value string) error {
-	return h.SetAttributeString("width", value)
+func (h HtmlInputElement) SetWidth(value int) error {
+	return h.SetAttributeInt("width", value)
 }
 
 // Properties that apply only to elements of type "file"
