@@ -38,43 +38,22 @@ func TestNewFromJSObject(t *testing.T) {
 	}
 }
 
-var getterAttempt []map[string]interface{} = []map[string]interface{}{
+var methodsAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "Value", "resultattempt": ""},
-}
-
-func TestGetters(t *testing.T) {
-
-	if obj, err := baseobject.Get(js.Global(), "d"); testingutils.AssertErr(t, err) {
-
-		if button, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
-
-			for _, result := range getterAttempt {
-				testingutils.InvokeCheck(t, button, result)
-			}
-
-		}
-
-	}
-}
-
-var setterAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "SetValue", "args": []interface{}{"value"}, "gettermethod": "Value", "resultattempt": "value"},
 }
 
-func TestSetters(t *testing.T) {
+func TestMethods(t *testing.T) {
 
 	if obj, err := baseobject.Get(js.Global(), "d"); testingutils.AssertErr(t, err) {
 
 		if button, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
 
-			for _, result := range setterAttempt {
-
+			for _, result := range methodsAttempt {
 				testingutils.InvokeCheck(t, button, result)
-
 			}
 
 		}
 
 	}
-
 }

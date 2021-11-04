@@ -41,19 +41,19 @@ func TestNewFromJSObject(t *testing.T) {
 	}
 }
 
-var getterAttempt []map[string]interface{} = []map[string]interface{}{
+var methodsAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "Control", "type": "constructnamechecking", "resultattempt": "HTMLInputElement"},
 	{"method": "Form", "type": "error", "resultattempt": baseobject.ErrUndefinedValue},
 	{"method": "HtmlFor", "resultattempt": ""},
 }
 
-func TestGetters(t *testing.T) {
+func TestMethods(t *testing.T) {
 
 	if obj, err := baseobject.Get(js.Global(), "l"); testingutils.AssertErr(t, err) {
 
 		if button, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
 
-			for _, result := range getterAttempt {
+			for _, result := range methodsAttempt {
 				testingutils.InvokeCheck(t, button, result)
 			}
 

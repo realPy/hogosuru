@@ -37,44 +37,23 @@ func TestNewFromJSObject(t *testing.T) {
 	}
 }
 
-var getterAttempt []map[string]interface{} = []map[string]interface{}{
+var methodsAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "AccessKey", "resultattempt": ""},
 	{"method": "Form", "type": "error", "resultattempt": baseobject.ErrUndefinedValue},
-}
-
-func TestGetters(t *testing.T) {
-
-	if obj, err := baseobject.Get(js.Global(), "l"); testingutils.AssertErr(t, err) {
-
-		if area, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
-
-			for _, result := range getterAttempt {
-				testingutils.InvokeCheck(t, area, result)
-			}
-
-		}
-
-	}
-}
-
-var setterAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "SetAccessKey", "args": []interface{}{"i"}, "gettermethod": "AccessKey", "resultattempt": "i"},
 }
 
-func TestSetters(t *testing.T) {
+func TestMethods(t *testing.T) {
 
 	if obj, err := baseobject.Get(js.Global(), "l"); testingutils.AssertErr(t, err) {
 
 		if area, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
 
-			for _, result := range setterAttempt {
-
+			for _, result := range methodsAttempt {
 				testingutils.InvokeCheck(t, area, result)
-
 			}
 
 		}
 
 	}
-
 }

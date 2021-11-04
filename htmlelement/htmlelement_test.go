@@ -26,7 +26,7 @@ func TestNewFromJSObject(t *testing.T) {
 	}
 }
 
-var getterAttempt []map[string]interface{} = []map[string]interface{}{
+var methodsAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "AccessKey", "resultattempt": ""},
 	{"method": "AccessKeyLabel", "type": "error", "resultattempt": baseobject.ErrUndefinedValue},
 	{"method": "ClassName", "resultattempt": ""},
@@ -46,24 +46,6 @@ var getterAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "Blur", "type": "error", "resultattempt": nil},
 	{"method": "Click", "type": "error", "resultattempt": nil},
 	{"method": "Focus", "type": "error", "resultattempt": nil},
-}
-
-func TestGetters(t *testing.T) {
-
-	if obj, err := baseobject.Get(js.Global(), "e"); testingutils.AssertErr(t, err) {
-
-		if area, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
-
-			for _, result := range getterAttempt {
-				testingutils.InvokeCheck(t, area, result)
-			}
-
-		}
-
-	}
-}
-
-var setterAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "SetAccessKey", "args": []interface{}{"i"}, "gettermethod": "AccessKey", "resultattempt": "i"},
 	{"method": "SetAccessKeyLabel", "args": []interface{}{"i"}, "gettermethod": "AccessKeyLabel", "resultattempt": "i"},
 	{"method": "SetClassName", "args": []interface{}{"test"}, "gettermethod": "ClassName", "resultattempt": "test"},
@@ -75,20 +57,17 @@ var setterAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "SetTitle", "args": []interface{}{"mytitle"}, "gettermethod": "Title", "resultattempt": "mytitle"},
 }
 
-func TestSetters(t *testing.T) {
+func TestMethods(t *testing.T) {
 
 	if obj, err := baseobject.Get(js.Global(), "e"); testingutils.AssertErr(t, err) {
 
 		if area, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
 
-			for _, result := range setterAttempt {
-
+			for _, result := range methodsAttempt {
 				testingutils.InvokeCheck(t, area, result)
-
 			}
 
 		}
 
 	}
-
 }

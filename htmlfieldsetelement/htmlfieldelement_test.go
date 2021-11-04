@@ -38,7 +38,7 @@ func TestNewFromJSObject(t *testing.T) {
 	}
 }
 
-var getterAttempt []map[string]interface{} = []map[string]interface{}{
+var methodsAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "Disabled", "resultattempt": false},
 	{"method": "Elements", "type": "constructnamechecking", "resultattempt": "HTMLCollection"},
 	{"method": "Form", "type": "error", "resultattempt": ErrNoForm},
@@ -48,44 +48,22 @@ var getterAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "Validity", "type": "constructnamechecking", "resultattempt": "ValidityState"},
 	{"method": "WillValidate", "resultattempt": false},
 	{"method": "ReportValidity", "resultattempt": true},
-}
-
-func TestGetters(t *testing.T) {
-
-	if obj, err := baseobject.Get(js.Global(), "f"); testingutils.AssertErr(t, err) {
-
-		if button, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
-
-			for _, result := range getterAttempt {
-				testingutils.InvokeCheck(t, button, result)
-			}
-
-		}
-
-	}
-}
-
-var setterAttempt []map[string]interface{} = []map[string]interface{}{
-
 	{"method": "SetDisabled", "args": []interface{}{true}, "gettermethod": "Disabled", "resultattempt": true},
 	{"method": "SetName", "args": []interface{}{"hello"}, "gettermethod": "Name", "resultattempt": "hello"},
 	{"method": "SetCustomValidity", "args": []interface{}{"hello"}, "type": "error", "resultattempt": nil},
 }
 
-func TestSetters(t *testing.T) {
+func TestMethods(t *testing.T) {
 
 	if obj, err := baseobject.Get(js.Global(), "f"); testingutils.AssertErr(t, err) {
 
 		if button, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
 
-			for _, result := range setterAttempt {
-
+			for _, result := range methodsAttempt {
 				testingutils.InvokeCheck(t, button, result)
-
 			}
 
 		}
 
 	}
-
 }

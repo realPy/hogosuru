@@ -37,7 +37,7 @@ func TestNewFromJSObject(t *testing.T) {
 	}
 }
 
-var getterAttempt []map[string]interface{} = []map[string]interface{}{
+var methodsAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "Alt", "resultattempt": ""},
 	{"method": "Complete", "resultattempt": true},
 	{"method": "CrossOrigin", "type": "error", "resultattempt": baseobject.ErrUndefinedValue},
@@ -68,7 +68,7 @@ func TestMethods(t *testing.T) {
 
 		if image, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
 
-			for _, result := range getterAttempt {
+			for _, result := range methodsAttempt {
 				testingutils.InvokeCheck(t, image, result)
 			}
 

@@ -38,7 +38,7 @@ func TestNewFromJSObject(t *testing.T) {
 	}
 }
 
-var getterAttempt []map[string]interface{} = []map[string]interface{}{
+var methodsAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "AllowPaymentRequest", "resultattempt": false},
 	{"method": "ContentDocument", "type": "error", "resultattempt": ErrNoContentDocument},
 	{"method": "Height", "resultattempt": ""},
@@ -46,26 +46,6 @@ var getterAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "Name", "resultattempt": ""},
 	{"method": "Width", "resultattempt": ""},
 	{"method": "Srcdoc", "resultattempt": ""},
-}
-
-func TestGetters(t *testing.T) {
-
-	if obj, err := baseobject.Get(js.Global(), "i"); testingutils.AssertErr(t, err) {
-
-		if iframe, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
-
-			for _, result := range getterAttempt {
-				testingutils.InvokeCheck(t, iframe, result)
-			}
-
-		}
-
-	}
-}
-
-//
-
-var setterAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "SetAllowPaymentRequest", "args": []interface{}{true}, "gettermethod": "AllowPaymentRequest", "resultattempt": true},
 	{"method": "SetHeight", "args": []interface{}{"value"}, "gettermethod": "Height", "resultattempt": "value"},
 	{"method": "SetSrc", "args": []interface{}{"value"}, "gettermethod": "Src", "type": "contains", "resultattempt": "/value"},
@@ -74,20 +54,17 @@ var setterAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "SetSrcdoc", "args": []interface{}{"value"}, "gettermethod": "Srcdoc", "resultattempt": "value"},
 }
 
-func TestSetters(t *testing.T) {
+func TestMethods(t *testing.T) {
 
 	if obj, err := baseobject.Get(js.Global(), "i"); testingutils.AssertErr(t, err) {
 
 		if iframe, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
 
-			for _, result := range setterAttempt {
-
+			for _, result := range methodsAttempt {
 				testingutils.InvokeCheck(t, iframe, result)
-
 			}
 
 		}
 
 	}
-
 }

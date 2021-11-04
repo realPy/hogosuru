@@ -38,17 +38,17 @@ func TestNewFromJSObject(t *testing.T) {
 	}
 }
 
-var getterAttempt []map[string]interface{} = []map[string]interface{}{
+var methodsAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "Options", "type": "constructnamechecking", "resultattempt": "HTMLCollection"},
 }
 
-func TestGetters(t *testing.T) {
+func TestMethods(t *testing.T) {
 
 	if obj, err := baseobject.Get(js.Global(), "d"); testingutils.AssertErr(t, err) {
 
 		if button, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
 
-			for _, result := range getterAttempt {
+			for _, result := range methodsAttempt {
 				testingutils.InvokeCheck(t, button, result)
 			}
 

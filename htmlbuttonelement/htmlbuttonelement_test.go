@@ -38,7 +38,7 @@ func TestNewFromJSObject(t *testing.T) {
 	}
 }
 
-var getterAttempt []map[string]interface{} = []map[string]interface{}{
+var methodsAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "Autofocus", "resultattempt": false},
 	{"method": "Disabled", "resultattempt": false},
 	{"method": "Form", "type": "error", "resultattempt": ErrNoForm},
@@ -55,24 +55,6 @@ var getterAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "ValidationMessage", "resultattempt": ""},
 	{"method": "WillValidate", "resultattempt": true},
 	{"method": "Value", "resultattempt": ""},
-}
-
-func TestGetters(t *testing.T) {
-
-	if obj, err := baseobject.Get(js.Global(), "b"); testingutils.AssertErr(t, err) {
-
-		if button, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
-
-			for _, result := range getterAttempt {
-				testingutils.InvokeCheck(t, button, result)
-			}
-
-		}
-
-	}
-}
-
-var setterAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "SetAutofocus", "args": []interface{}{true}, "gettermethod": "Autofocus", "resultattempt": true},
 	{"method": "SetDisabled", "args": []interface{}{true}, "gettermethod": "Disabled", "resultattempt": true},
 	{"method": "SetFormAction", "args": []interface{}{"postdata"}, "gettermethod": "FormAction", "type": "contains", "resultattempt": "/postdata"},
@@ -86,20 +68,17 @@ var setterAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "SetValue", "args": []interface{}{"value"}, "gettermethod": "Value", "resultattempt": "value"},
 }
 
-func TestSetters(t *testing.T) {
+func TestMethods(t *testing.T) {
 
 	if obj, err := baseobject.Get(js.Global(), "b"); testingutils.AssertErr(t, err) {
 
 		if button, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
 
-			for _, result := range setterAttempt {
-
+			for _, result := range methodsAttempt {
 				testingutils.InvokeCheck(t, button, result)
-
 			}
 
 		}
 
 	}
-
 }
