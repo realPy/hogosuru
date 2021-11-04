@@ -119,11 +119,11 @@ func (h HtmlSourceElement) SetSrc(value string) error {
 }
 
 func (h HtmlSourceElement) SrcSet() (string, error) {
-	return h.GetAttributeString("srcSet")
+	return h.GetAttributeString("srcset")
 }
 
 func (h HtmlSourceElement) SetSrcSet(value string) error {
-	return h.SetAttributeString("srcSet", value)
+	return h.SetAttributeString("srcset", value)
 }
 
 func (h HtmlSourceElement) Type() (string, error) {
