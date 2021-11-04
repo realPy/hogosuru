@@ -18,8 +18,8 @@ func TestMain(m *testing.M) {
 func TestNew(t *testing.T) {
 
 	if doc, err := document.New(); testingutils.AssertErr(t, err) {
-		if b, err := New(doc); testingutils.AssertErr(t, err) {
-			testingutils.AssertExpect(t, "HTMLMetaElement", b.ConstructName_())
+		if meta, err := New(doc); testingutils.AssertErr(t, err) {
+			testingutils.AssertExpect(t, "HTMLMetaElement", meta.ConstructName_())
 		}
 
 	}
