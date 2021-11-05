@@ -107,10 +107,6 @@ func (h HtmlAnchorElement) Hash() (string, error) {
 	return h.GetAttributeString("hash")
 }
 
-func (h HtmlAnchorElement) SetHash(value string) error {
-	return h.SetAttributeString("hash", value)
-}
-
 func (h HtmlAnchorElement) Host() (string, error) {
 	return h.GetAttributeString("host")
 }
@@ -220,7 +216,7 @@ func (h HtmlAnchorElement) TabIndex() (int, error) {
 	return h.GetAttributeInt("tabIndex")
 }
 
-func (h HtmlAnchorElement) SetIndex(value int) error {
+func (h HtmlAnchorElement) SetTabIndex(value int) error {
 	return h.SetAttributeInt("tabIndex", value)
 }
 

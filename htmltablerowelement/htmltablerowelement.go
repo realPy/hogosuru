@@ -7,6 +7,7 @@ import (
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/document"
 	"github.com/realPy/hogosuru/element"
+	"github.com/realPy/hogosuru/htmlcollection"
 	"github.com/realPy/hogosuru/htmlelement"
 	"github.com/realPy/hogosuru/htmltablecellelement"
 )
@@ -95,18 +96,18 @@ func NewFromJSObject(obj js.Value) (HtmlTableRowElement, error) {
 	return h, err
 }
 
-func (h HtmlTableRowElement) Cells(method string) (htmlelement.HtmlElement, error) {
+func (h HtmlTableRowElement) Cells() (htmlcollection.HtmlCollection, error) {
 
 	var err error
 	var obj js.Value
-	var elem htmlelement.HtmlElement
+	var collection htmlcollection.HtmlCollection
 
 	if obj, err = h.Get("cells"); err == nil {
 
-		elem, err = htmlelement.NewFromJSObject(obj)
+		collection, err = htmlcollection.NewFromJSObject(obj)
 	}
 
-	return elem, err
+	return collection, err
 }
 
 func (h HtmlTableRowElement) RowIndex() (int, error) {

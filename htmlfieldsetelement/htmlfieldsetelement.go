@@ -124,8 +124,12 @@ func (h HtmlFieldSetElement) Form() (htmlcollection.HtmlCollection, error) {
 	var collection htmlcollection.HtmlCollection
 
 	if obj, err = h.Get("form"); err == nil {
+		if !obj.IsNull() {
+			collection, err = htmlcollection.NewFromJSObject(obj)
+		} else {
+			err = ErrNoForm
+		}
 
-		collection, err = htmlcollection.NewFromJSObject(obj)
 	}
 
 	return collection, err

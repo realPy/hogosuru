@@ -181,6 +181,22 @@ func (h HtmlLinkElement) Sheet() (stylesheet.StyleSheet, error) {
 	return s, err
 }
 
+func (h HtmlLinkElement) Sizes() (domtokenlist.DOMTokenList, error) {
+	var err error
+	var obj js.Value
+	var d domtokenlist.DOMTokenList
+	if obj, err = h.Get("sizes"); err == nil {
+
+		if obj.IsUndefined() {
+			err = baseobject.ErrNotAnObject
+
+		} else {
+			d, err = domtokenlist.NewFromJSObject(obj)
+		}
+	}
+	return d, err
+}
+
 func (h HtmlLinkElement) Type() (string, error) {
 	return h.GetAttributeString("type")
 }

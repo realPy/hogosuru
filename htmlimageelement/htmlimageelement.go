@@ -126,6 +126,21 @@ func (h HtmlImageElement) Decoding() (string, error) {
 func (h HtmlImageElement) SetDecoding(value string) error {
 	return h.SetAttributeString("decoding", value)
 }
+func (h HtmlImageElement) Height() (int, error) {
+	return h.GetAttributeInt("height")
+}
+
+func (h HtmlImageElement) SetHeight(value int) error {
+	return h.SetAttributeInt("height", value)
+}
+
+func (h HtmlImageElement) IsMap() (bool, error) {
+	return h.GetAttributeBool("isMap")
+}
+
+func (h HtmlImageElement) SetIsMap(value bool) error {
+	return h.SetAttributeBool("isMap", value)
+}
 
 func (h HtmlImageElement) Loading() (string, error) {
 	return h.GetAttributeString("loading")
@@ -149,6 +164,14 @@ func (h HtmlImageElement) Src() (string, error) {
 
 func (h HtmlImageElement) SetSrc(value string) error {
 	return h.SetAttributeString("src", value)
+}
+
+func (h HtmlImageElement) Width() (int, error) {
+	return h.GetAttributeInt("width")
+}
+
+func (h HtmlImageElement) SetWidth(value int) error {
+	return h.SetAttributeInt("width", value)
 }
 
 func (h HtmlImageElement) X() (int, error) {

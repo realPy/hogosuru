@@ -123,7 +123,13 @@ func (h HtmlButtonElement) Form() (htmlformelement.HtmlFormElement, error) {
 			err = baseobject.ErrNotAnObject
 
 		} else {
-			f, err = htmlformelement.NewFromJSObject(obj)
+
+			if obj.IsNull() {
+				err = ErrNoForm
+			} else {
+				f, err = htmlformelement.NewFromJSObject(obj)
+			}
+
 		}
 	}
 	return f, err
@@ -138,11 +144,11 @@ func (h HtmlButtonElement) SetFormAction(value string) error {
 }
 
 func (h HtmlButtonElement) FormEncType() (string, error) {
-	return h.GetAttributeString("formEncType")
+	return h.GetAttributeString("formEnctype")
 }
 
 func (h HtmlButtonElement) SetFormEncType(value string) error {
-	return h.SetAttributeString("formEncType", value)
+	return h.SetAttributeString("formEnctype", value)
 }
 
 func (h HtmlButtonElement) FormMethod() (string, error) {
@@ -194,7 +200,7 @@ func (h HtmlButtonElement) TabIndex() (int, error) {
 	return h.GetAttributeInt("tabIndex")
 }
 
-func (h HtmlButtonElement) SetIndex(value int) error {
+func (h HtmlButtonElement) SetTabIndex(value int) error {
 	return h.SetAttributeInt("tabIndex", value)
 }
 

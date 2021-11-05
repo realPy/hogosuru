@@ -99,12 +99,24 @@ func NewFromJSObject(obj js.Value) (HtmlTableElement, error) {
 	return h, err
 }
 
-func (h HtmlTableElement) Caption() (string, error) {
-	return h.GetAttributeString("caption")
+func (h HtmlTableElement) Caption() (htmltablecaptionelement.HtmlTableCaptionElement, error) {
+
+	var err error
+	var obj js.Value
+	var caption htmltablecaptionelement.HtmlTableCaptionElement
+
+	if obj, err = h.Get("caption"); err == nil {
+
+		caption, err = htmltablecaptionelement.NewFromJSObject(obj)
+	}
+
+	return caption, err
+
 }
 
-func (h HtmlTableElement) SetCaption(value string) error {
-	return h.SetAttributeString("caption", value)
+func (h HtmlTableElement) SetCaption(caption htmltablecaptionelement.HtmlTableCaptionElement) error {
+
+	return h.Set("caption", caption.JSObject())
 }
 
 func (h HtmlTableElement) getCollectionMethod(method string) (htmlcollection.HtmlCollection, error) {

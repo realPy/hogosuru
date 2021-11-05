@@ -1,4 +1,4 @@
-package htmliframelement
+package htmliframeelement
 
 import (
 	"sync"
@@ -109,8 +109,12 @@ func (h HtmlIFrameElement) ContentDocument() (document.Document, error) {
 	var doc document.Document
 
 	if obj, err = h.Get("contentDocument"); err == nil {
+		if !obj.IsNull() {
+			doc, err = document.NewFromJSObject(obj)
+		} else {
+			err = ErrNoContentDocument
+		}
 
-		doc, err = document.NewFromJSObject(obj)
 	}
 
 	return doc, err

@@ -410,11 +410,16 @@ func (b BaseObject) GetAttributeString(attribute string) (string, error) {
 		if obj.IsUndefined() {
 			err = ErrUndefinedValue
 		} else {
-			if obj.Type() == js.TypeString {
-				ret = obj.String()
+			if obj.IsNull() {
+				err = ErrUndefinedValue
 			} else {
-				err = ErrObjectNotString
+				if obj.Type() == js.TypeString {
+					ret = obj.String()
+				} else {
+					err = ErrObjectNotString
+				}
 			}
+
 		}
 
 	}
