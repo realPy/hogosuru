@@ -81,39 +81,50 @@ func NewFromJSObject(obj js.Value) (DOMRect, error) {
 	return d, err
 }
 
-func (d DOMRect) SetBottom(value float64) error {
-
-	return d.Set("bottom", js.ValueOf(value))
-}
 func (d DOMRect) SetHeight(value float64) error {
 
-	return d.Set("height", js.ValueOf(value))
+	return d.SetAttributeDouble("height", value)
 }
 func (d DOMRect) SetLeft(value float64) error {
 
-	return d.Set("left", js.ValueOf(value))
+	return d.SetAttributeDouble("left", value)
 }
 func (d DOMRect) SetRight(value float64) error {
 
-	return d.Set("right", js.ValueOf(value))
+	return d.SetAttributeDouble("right", value)
 }
 
 func (d DOMRect) SetTop(value float64) error {
 
-	return d.Set("top", js.ValueOf(value))
+	return d.SetAttributeDouble("top", value)
 }
 
 func (d DOMRect) SetWidth(value float64) error {
 
-	return d.Set("width", js.ValueOf(value))
+	return d.SetAttributeDouble("width", value)
 }
 
 func (d DOMRect) SetX(value float64) error {
 
-	return d.Set("x", js.ValueOf(value))
+	return d.SetAttributeDouble("x", value)
 }
 
 func (d DOMRect) SetY(value float64) error {
 
-	return d.Set("y", js.ValueOf(value))
+	return d.SetAttributeDouble("y", value)
+}
+
+func (d DOMRect) RectReadOnly() (domrectreadonly.DOMRectReadOnly, error) {
+	var ro domrectreadonly.DOMRectReadOnly
+	var err error
+	if di := domrectreadonly.GetInterface(); !di.IsUndefined() {
+
+		if objro, err := baseobject.Call(di, "fromRect", d.JSObject()); err == nil {
+			ro, err = domrectreadonly.NewFromJSObject(objro)
+		}
+
+	} else {
+		err = domrectreadonly.ErrNotImplemented
+	}
+	return ro, err
 }
