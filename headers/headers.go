@@ -45,6 +45,24 @@ func GetInterface() js.Value {
 	return headersinterface
 }
 
+func New() (Headers, error) {
+
+	var h Headers
+	var err error
+	var obj js.Value
+
+	if hci := GetInterface(); !hci.IsUndefined() {
+
+		if obj, err = baseobject.New(hci); err == nil {
+			h.BaseObject = h.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
+	}
+	return h, err
+}
+
 func NewFromJSObject(obj js.Value) (Headers, error) {
 	var h Headers
 	var err error
@@ -102,7 +120,7 @@ func (h Headers) Get(name string) (string, error) {
 		if obj.Type() == js.TypeString {
 			result = obj.String()
 		} else {
-			err = baseobject.ErrObjectNotBool
+			err = baseobject.ErrUndefinedValue
 		}
 
 	}
