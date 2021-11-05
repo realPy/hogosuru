@@ -122,7 +122,7 @@ func (p Promise) Then(resolve func(interface{}) *Promise, reject func(error)) (P
 	resolveFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
 		if len(args) > 0 {
-			obj = baseobject.GoValue(args[0])
+			obj, err = baseobject.GoValue(args[0])
 			if resolve != nil {
 				if retp := resolve(obj); retp != nil {
 					return retp.JSObject()

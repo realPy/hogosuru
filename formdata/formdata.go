@@ -131,7 +131,7 @@ func (f FormData) Get(key string) (interface{}, error) {
 		if obj.IsNull() {
 			err = ErrNotAFormValueNotFound
 		} else {
-			result = baseobject.GoValue(obj)
+			result, err = baseobject.GoValue(obj)
 		}
 
 	}

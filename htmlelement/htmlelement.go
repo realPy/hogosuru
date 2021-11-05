@@ -131,7 +131,7 @@ func (h HtmlElement) Dataset(name string) (interface{}, error) {
 
 		if objv, err = baseobject.Get(obj, name); err == nil {
 			if !objv.IsUndefined() {
-				ret = baseobject.GoValue(objv)
+				ret, err = baseobject.GoValue(objv)
 			} else {
 				err = ErrDatasetNotFound
 			}

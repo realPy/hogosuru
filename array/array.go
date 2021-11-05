@@ -77,7 +77,7 @@ func From(iterable interface{}, f ...func(interface{}) interface{}) (Array, erro
 
 		if f != nil && len(f) == 1 {
 			jsfunc = js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-				b := f[0](baseobject.GoValue(args[0]))
+				b := f[0](baseobject.GoValue_(args[0]))
 				return js.ValueOf(b)
 			})
 			opts = append(opts, jsfunc)
@@ -224,7 +224,7 @@ func (a Array) Every(f func(interface{}) bool) (bool, error) {
 	var result bool
 
 	jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		b := f(baseobject.GoValue(args[0]))
+		b := f(baseobject.GoValue_(args[0]))
 		return js.ValueOf(b)
 	})
 
@@ -259,7 +259,7 @@ func (a Array) Filter(f func(interface{}) bool) (Array, error) {
 	var newArr Array
 
 	jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		b := f(baseobject.GoValue(args[0]))
+		b := f(baseobject.GoValue_(args[0]))
 		return js.ValueOf(b)
 	})
 
@@ -276,13 +276,13 @@ func (a Array) Find(f func(interface{}) bool) (interface{}, error) {
 	var i interface{}
 
 	jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		b := f(baseobject.GoValue(args[0]))
+		b := f(baseobject.GoValue_(args[0]))
 		return js.ValueOf(b)
 	})
 
 	if obj, err = a.Call("find", jsfunc); err == nil {
 		if obj.Type() != js.TypeUndefined {
-			i = baseobject.GoValue(obj)
+			i = baseobject.GoValue_(obj)
 		}
 
 	}
@@ -296,7 +296,7 @@ func (a Array) FindIndex(f func(interface{}) bool) (int, error) {
 	var index int = -1
 
 	jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		b := f(baseobject.GoValue(args[0]))
+		b := f(baseobject.GoValue_(args[0]))
 		return js.ValueOf(b)
 	})
 
@@ -333,7 +333,7 @@ func (a Array) FlatMap(f func(interface{}, int) interface{}) (Array, error) {
 	var newArr Array
 
 	jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		b := f(baseobject.GoValue(args[0]), args[1].Int())
+		b := f(baseobject.GoValue_(args[0]), args[1].Int())
 		return b
 	})
 
@@ -348,7 +348,7 @@ func (a Array) ForEach(f func(interface{})) error {
 	var err error
 
 	jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		f(baseobject.GoValue(args[0]))
+		f(baseobject.GoValue_(args[0]))
 		return nil
 	})
 
@@ -479,7 +479,7 @@ func (a Array) Map(f func(interface{}) interface{}) (Array, error) {
 	var newArr Array
 
 	jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		b := f(baseobject.GoValue(args[0]))
+		b := f(baseobject.GoValue_(args[0]))
 		return js.ValueOf(b)
 	})
 
@@ -533,7 +533,7 @@ func (a Array) Reduce(f func(accumulateur interface{}, value interface{}, opts .
 			arrayJS = append(arrayJS, js.ValueOf(args[i]))
 		}
 
-		b := f(baseobject.GoValue(args[0]), baseobject.GoValue(args[1]), arrayJS...)
+		b := f(baseobject.GoValue_(args[0]), baseobject.GoValue_(args[1]), arrayJS...)
 		return js.ValueOf(b)
 	})
 
@@ -542,7 +542,7 @@ func (a Array) Reduce(f func(accumulateur interface{}, value interface{}, opts .
 		argCall = append(argCall, js.ValueOf(initialValue[0]))
 	}
 	if obj, err = a.Call("reduce", argCall...); err == nil {
-		newValue = baseobject.GoValue(obj)
+		newValue = baseobject.GoValue_(obj)
 	}
 	jsfunc.Release()
 	return newValue, err
@@ -560,7 +560,7 @@ func (a Array) ReduceRight(f func(accumulateur interface{}, value interface{}, o
 			arrayJS = append(arrayJS, js.ValueOf(args[i]))
 		}
 
-		b := f(baseobject.GoValue(args[0]), baseobject.GoValue(args[1]), arrayJS...)
+		b := f(baseobject.GoValue_(args[0]), baseobject.GoValue_(args[1]), arrayJS...)
 		return js.ValueOf(b)
 	})
 
@@ -569,7 +569,7 @@ func (a Array) ReduceRight(f func(accumulateur interface{}, value interface{}, o
 		argCall = append(argCall, js.ValueOf(initialValue[0]))
 	}
 	if obj, err = a.Call("reduceRight", argCall...); err == nil {
-		newValue = baseobject.GoValue(obj)
+		newValue = baseobject.GoValue_(obj)
 	}
 	jsfunc.Release()
 	return newValue, err
@@ -588,7 +588,7 @@ func (a Array) Shift() (interface{}, error) {
 	var obj js.Value
 	var i interface{}
 	if obj, err = a.Call("shift"); err == nil {
-		i = baseobject.GoValue(obj)
+		i = baseobject.GoValue_(obj)
 	}
 	return i, err
 }
@@ -618,7 +618,7 @@ func (a Array) Some(f func(interface{}) bool) (bool, error) {
 	var result bool
 
 	jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		b := f(baseobject.GoValue(args[0]))
+		b := f(baseobject.GoValue_(args[0]))
 		return js.ValueOf(b)
 	})
 
@@ -718,5 +718,5 @@ func (a Array) SetValue(index int, i interface{}) error {
 func (a Array) GetValue(index int) (interface{}, error) {
 
 	obj := a.JSObject().Index(index)
-	return baseobject.GoValue(obj), nil
+	return baseobject.GoValue_(obj), nil
 }

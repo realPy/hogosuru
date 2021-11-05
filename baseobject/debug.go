@@ -13,9 +13,13 @@ func SetConsoleDebug(obj interface{}) {
 	}
 }
 
-func (b BaseObject) Debug(msg string) error {
+func debug(msg string) error {
 	if debugC != nil {
 		return debugC.Debug(msg)
 	}
 	return nil
+}
+
+func (b BaseObject) Debug(msg string) error {
+	return debug(msg)
 }

@@ -1,5 +1,19 @@
 package baseobject
 
+import "syscall/js"
+
+func GoValue_(object js.Value) interface{} {
+
+	var i interface{}
+	var err error
+
+	if i, err = GoValue(object); err != nil {
+		debug(err.Error())
+	}
+
+	return i
+}
+
 func (b BaseObject) Class_() string {
 
 	var c string

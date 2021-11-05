@@ -113,7 +113,7 @@ func extractJsonFromObject(jsobj js.Value) interface{} {
 				if key, ok := vkey.(string); ok {
 
 					if value, err := baseobject.Get(jsobj, key); err == nil {
-						i := baseobject.GoValue(value)
+						i := baseobject.GoValue_(value)
 						if obj1, ok := i.(baseobject.ObjectFrom); !ok {
 							json[key] = i
 						} else {

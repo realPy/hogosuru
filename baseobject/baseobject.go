@@ -618,25 +618,25 @@ func Eval(str string) (js.Value, error) {
 
 }
 
-func GoValue(object js.Value) interface{} {
-
+func GoValue(object js.Value) (interface{}, error) {
+	var err error
 	switch object.Type() {
 	case js.TypeNumber:
 		val := object.Float()
 		if val == float64(int(val)) {
-			return object.Int()
+			return object.Int(), nil
 		} else {
-			return object.Float()
+			return object.Float(), nil
 		}
 	case js.TypeString:
-		return object.String()
+		return object.String(), nil
 	case js.TypeBoolean:
-		return object.Bool()
+		return object.Bool(), nil
 	case js.TypeNull:
-		return nil
+		return nil, nil
 	}
 
-	obj, _ := Discover(object)
+	obj, err := Discover(object)
 
-	return obj
+	return obj, err
 }

@@ -33,9 +33,9 @@ func pairValues(obj js.Value) (interface{}, interface{}) {
 	if obj.Type() == js.TypeObject {
 		if obj.Length() == 2 {
 
-			index = baseobject.GoValue(obj.Index(0))
+			index = baseobject.GoValue_(obj.Index(0))
 
-			value = baseobject.GoValue(obj.Index(1))
+			value = baseobject.GoValue_(obj.Index(1))
 
 		}
 
@@ -76,7 +76,7 @@ func (i Iterator) Next() (interface{}, interface{}, error) {
 				if valueobj.Type() == js.TypeObject {
 					index, value = pairValues(valueobj)
 				} else {
-					value = baseobject.GoValue(valueobj)
+					value, err = baseobject.GoValue(valueobj)
 				}
 
 			}

@@ -984,7 +984,7 @@ func TestGoValue(t *testing.T) {
 
 	if obj, err = Get(js.Global(), "customobject"); err == nil {
 
-		v := GoValue(obj)
+		v := GoValue_(obj)
 		if vi, ok := v.(int); ok {
 			if vi != 1 {
 				t.Errorf("Value not match")
@@ -999,7 +999,7 @@ func TestGoValue(t *testing.T) {
 
 	if obj, err = Get(js.Global(), "customobject"); err == nil {
 
-		v := GoValue(obj)
+		v := GoValue_(obj)
 		if vi, ok := v.(float64); ok {
 			if vi != 1.6 {
 				t.Errorf("Value not match")
@@ -1014,7 +1014,7 @@ func TestGoValue(t *testing.T) {
 
 	if obj, err = Get(js.Global(), "customobject"); err == nil {
 
-		v := GoValue(obj)
+		v := GoValue_(obj)
 		if vi, ok := v.(string); ok {
 			if vi != "string" {
 				t.Errorf("Value not match")
@@ -1029,7 +1029,7 @@ func TestGoValue(t *testing.T) {
 
 	if obj, err = Get(js.Global(), "customobject"); err == nil {
 
-		v := GoValue(obj)
+		v := GoValue_(obj)
 		if vi, ok := v.(bool); ok {
 			if vi != true {
 				t.Errorf("Value not match")
@@ -1044,7 +1044,7 @@ func TestGoValue(t *testing.T) {
 
 	if obj, err = Get(js.Global(), "customobject"); err == nil {
 
-		v := GoValue(obj)
+		v := GoValue_(obj)
 		if _, ok := v.(ObjectFrom); !ok {
 			t.Errorf("Must be Object")
 		}
