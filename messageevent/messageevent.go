@@ -47,6 +47,28 @@ func (m MessageEvent) MessageEvent_() MessageEvent {
 	return m
 }
 
+func New(typeevent string, init ...map[string]interface{}) (MessageEvent, error) {
+
+	var m MessageEvent
+	var obj js.Value
+	var err error
+	var arrayJS []interface{}
+
+	if pei := GetInterface(); !pei.IsUndefined() {
+		arrayJS = append(arrayJS, js.ValueOf(typeevent))
+		if len(init) > 0 {
+			arrayJS = append(arrayJS, js.ValueOf(init[0]))
+		}
+		if obj, err = baseobject.New(pei, arrayJS...); err == nil {
+			m.BaseObject = m.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
+	}
+	return m, err
+}
+
 func NewFromJSObject(obj js.Value) (MessageEvent, error) {
 
 	var message MessageEvent
@@ -82,8 +104,21 @@ func (m MessageEvent) Data() (interface{}, error) {
 	return globalObj, err
 }
 
-func (m MessageEvent) Source() (js.Value, error) {
-	return m.Get("source")
+func (m MessageEvent) Source() (interface{}, error) {
+	var obj js.Value
+	var err error
+	var i interface{}
+
+	if obj, err = m.Get("source"); err == nil {
+		if obj.IsUndefined() || obj.IsNull() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+			i, err = baseobject.Discover(obj)
+		}
+
+	}
+
+	return i, err
 }
 func (m MessageEvent) Origin() (string, error) {
 	var err error
