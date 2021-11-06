@@ -18,6 +18,7 @@ var drageventinterface js.Value
 
 //DragEvent DragEvent struct
 type DragEvent struct {
+	//Must be herited from mouseevent
 	event.Event
 }
 
