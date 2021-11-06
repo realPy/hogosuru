@@ -43,14 +43,19 @@ func (p ProgressEvent) ProgressEvent_() ProgressEvent {
 	return p
 }
 
-func New() (ProgressEvent, error) {
+func New(typeevent string, opts ...map[string]interface{}) (ProgressEvent, error) {
 
 	var p ProgressEvent
 	var obj js.Value
 	var err error
-	if pei := GetInterface(); !pei.IsUndefined() {
+	var arrayJS []interface{}
 
-		if obj, err = baseobject.New(pei); err == nil {
+	if pei := GetInterface(); !pei.IsUndefined() {
+		arrayJS = append(arrayJS, js.ValueOf(typeevent))
+		if len(opts) > 0 {
+			arrayJS = append(arrayJS, js.ValueOf(opts[0]))
+		}
+		if obj, err = baseobject.New(pei, arrayJS...); err == nil {
 			p.BaseObject = p.SetObject(obj)
 		}
 
@@ -83,7 +88,7 @@ func NewFromJSObject(obj js.Value) (ProgressEvent, error) {
 }
 
 func (p ProgressEvent) LengthComputable() (bool, error) {
-	return p.CallBool("lengthComputable")
+	return p.GetAttributeBool("lengthComputable")
 }
 
 func (p ProgressEvent) Loaded() (int, error) {
