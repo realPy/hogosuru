@@ -19,10 +19,23 @@ func (i Iterator) Iterator_() Iterator {
 	return i
 }
 
-func NewFromJSObject(obj js.Value) Iterator {
+func NewFromJSObject(obj js.Value) (Iterator, error) {
 	var i Iterator
-	i.BaseObject = i.SetObject(obj)
-	return i
+	var err error
+	var objf js.Value
+
+	symbol := js.Global().Get("Symbol")
+	it := symbol.Get("iterator")
+
+	if objf, err = baseobject.Get(obj, it); err == nil {
+		if objf.Type() == js.TypeFunction {
+			i.BaseObject = i.SetObject(obj)
+		} else {
+			err = NotAnIterator
+		}
+	}
+
+	return i, err
 }
 
 func pairValues(obj js.Value) (interface{}, interface{}) {

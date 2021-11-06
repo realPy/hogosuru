@@ -151,7 +151,7 @@ func (d DOMTokenList) Entries() (iterator.Iterator, error) {
 	var iter iterator.Iterator
 
 	if obj, err = d.Call("entries"); err == nil {
-		iter = iterator.NewFromJSObject(obj)
+		iter, err = iterator.NewFromJSObject(obj)
 	}
 
 	return iter, err
@@ -176,7 +176,7 @@ func (d DOMTokenList) Keys() (iterator.Iterator, error) {
 	var iter iterator.Iterator
 
 	if obj, err = d.Call("keys"); err == nil {
-		iter = iterator.NewFromJSObject(obj)
+		iter, err = iterator.NewFromJSObject(obj)
 	}
 
 	return iter, err
@@ -188,7 +188,7 @@ func (d DOMTokenList) Values() (iterator.Iterator, error) {
 	var iter iterator.Iterator
 
 	if obj, err = d.Call("values"); err == nil {
-		iter = iterator.NewFromJSObject(obj)
+		iter, err = iterator.NewFromJSObject(obj)
 	}
 
 	return iter, err

@@ -115,7 +115,7 @@ func (f FormData) Entries() (iterator.Iterator, error) {
 	var iter iterator.Iterator
 
 	if obj, err = f.Call("entries"); err == nil {
-		iter = iterator.NewFromJSObject(obj)
+		iter, err = iterator.NewFromJSObject(obj)
 	}
 
 	return iter, err
@@ -160,7 +160,7 @@ func (f FormData) Keys() (iterator.Iterator, error) {
 	var iter iterator.Iterator
 
 	if obj, err = f.Call("keys"); err == nil {
-		iter = iterator.NewFromJSObject(obj)
+		iter, err = iterator.NewFromJSObject(obj)
 	}
 
 	return iter, err
@@ -186,7 +186,7 @@ func (f FormData) Values() (iterator.Iterator, error) {
 	var iter iterator.Iterator
 
 	if obj, err = f.Call("values"); err == nil {
-		iter = iterator.NewFromJSObject(obj)
+		iter, err = iterator.NewFromJSObject(obj)
 	}
 
 	return iter, err

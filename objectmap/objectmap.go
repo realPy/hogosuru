@@ -131,7 +131,7 @@ func (o ObjectMap) Entries() (iterator.Iterator, error) {
 	var iter iterator.Iterator
 
 	if obj, err = o.Call("entries"); err == nil {
-		iter = iterator.NewFromJSObject(obj)
+		iter, err = iterator.NewFromJSObject(obj)
 	}
 
 	return iter, err
@@ -201,7 +201,7 @@ func (o ObjectMap) Keys() (iterator.Iterator, error) {
 	var iter iterator.Iterator
 
 	if obj, err = o.Call("keys"); err == nil {
-		iter = iterator.NewFromJSObject(obj)
+		iter, err = iterator.NewFromJSObject(obj)
 	}
 
 	return iter, err
@@ -234,7 +234,7 @@ func (o ObjectMap) Values() (iterator.Iterator, error) {
 	var iter iterator.Iterator
 
 	if obj, err = o.Call("values"); err == nil {
-		iter = iterator.NewFromJSObject(obj)
+		iter, err = iterator.NewFromJSObject(obj)
 	}
 
 	return iter, err

@@ -103,7 +103,7 @@ func (h Headers) Entries() (iterator.Iterator, error) {
 	var iter iterator.Iterator
 
 	if obj, err = h.Call("entries"); err == nil {
-		iter = iterator.NewFromJSObject(obj)
+		iter, err = iterator.NewFromJSObject(obj)
 	}
 
 	return iter, err
@@ -149,7 +149,7 @@ func (h Headers) Keys() (iterator.Iterator, error) {
 	var iter iterator.Iterator
 
 	if obj, err = h.Call("keys"); err == nil {
-		iter = iterator.NewFromJSObject(obj)
+		iter, err = iterator.NewFromJSObject(obj)
 	}
 
 	return iter, err
@@ -167,7 +167,7 @@ func (h Headers) Values() (iterator.Iterator, error) {
 	var iter iterator.Iterator
 
 	if obj, err = h.Call("values"); err == nil {
-		iter = iterator.NewFromJSObject(obj)
+		iter, err = iterator.NewFromJSObject(obj)
 	}
 
 	return iter, err

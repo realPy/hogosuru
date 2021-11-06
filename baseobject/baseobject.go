@@ -39,9 +39,16 @@ func Set(obj js.Value, name string, val interface{}) error {
 	return err
 }
 
-func Get(obj js.Value, name string) (js.Value, error) {
+func Get(obj js.Value, i interface{}) (js.Value, error) {
+	var invokvar interface{}
 
-	ret := getFunc.Invoke(obj, js.ValueOf(name))
+	if s, ok := i.(string); ok {
+
+		invokvar = js.ValueOf(s)
+	} else {
+		invokvar = i
+	}
+	ret := getFunc.Invoke(obj, invokvar)
 
 	if ret.Index(0).Bool() {
 		return ret.Index(1), nil

@@ -212,7 +212,7 @@ func (a Array) Entries() (iterator.Iterator, error) {
 	var iter iterator.Iterator
 
 	if obj, err = a.Call("entries"); err == nil {
-		iter = iterator.NewFromJSObject(obj)
+		iter, err = iterator.NewFromJSObject(obj)
 	}
 
 	return iter, err
@@ -445,7 +445,7 @@ func (a Array) Keys() (iterator.Iterator, error) {
 	var iter iterator.Iterator
 
 	if obj, err = a.Call("keys"); err == nil {
-		iter = iterator.NewFromJSObject(obj)
+		iter, err = iterator.NewFromJSObject(obj)
 	}
 
 	return iter, err
@@ -695,7 +695,7 @@ func (a Array) Values() (iterator.Iterator, error) {
 	var iter iterator.Iterator
 
 	if obj, err = a.Call("values"); err == nil {
-		iter = iterator.NewFromJSObject(obj)
+		iter, err = iterator.NewFromJSObject(obj)
 	}
 
 	return iter, err

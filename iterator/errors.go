@@ -4,5 +4,6 @@ import "errors"
 
 var (
 	//ErrNotImplemented ErrNotImplemented error
-	EOI = errors.New("End of iterator")
+	EOI           = errors.New("End of iterator")
+	NotAnIterator = errors.New("Object Not an iterator")
 )
