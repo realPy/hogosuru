@@ -122,9 +122,9 @@ func (n NamedNodeMap) GetNamedItemNS(namespace string, name string) (attr.Attr, 
 
 }
 
-func (n NamedNodeMap) SetNamedItemNS(namespace string, a attr.Attr) error {
+func (n NamedNodeMap) SetNamedItemNS(a attr.Attr) error {
 	var err error
-	_, err = n.Call("setNamedItemNS", js.ValueOf(namespace), a.JSObject())
+	_, err = n.Call("setNamedItemNS", a.JSObject())
 	return err
 }
 
