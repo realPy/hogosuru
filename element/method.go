@@ -39,12 +39,51 @@ func (e Element) Animate(keyframes, options interface{}) error {
 	return err
 }
 
-func (e Element) Closest() (Element, error) {
+func (e Element) After(elements ...Element) error {
+	var err error
+	var arrayJS []interface{}
+
+	for _, elem := range elements {
+		arrayJS = append(arrayJS, elem.JSObject())
+	}
+
+	_, err = e.Call("after", arrayJS...)
+
+	return err
+}
+
+func (e Element) Append(elements ...Element) error {
+	var err error
+	var arrayJS []interface{}
+
+	for _, elem := range elements {
+		arrayJS = append(arrayJS, elem.JSObject())
+	}
+
+	_, err = e.Call("append", arrayJS...)
+
+	return err
+}
+
+func (e Element) Before(elements ...Element) error {
+	var err error
+	var arrayJS []interface{}
+
+	for _, elem := range elements {
+		arrayJS = append(arrayJS, elem.JSObject())
+	}
+
+	_, err = e.Call("before", arrayJS...)
+
+	return err
+}
+
+func (e Element) Closest(query string) (Element, error) {
 	var err error
 	var obj js.Value
 	var elem Element
 
-	if obj, err = e.Call("closest"); err == nil {
+	if obj, err = e.Call("closest", js.ValueOf(query)); err == nil {
 
 		elem, err = NewFromJSObject(obj)
 	}
@@ -155,37 +194,39 @@ func (e Element) GetElementsByClassName(classname string) (htmlcollection.HtmlCo
 	return collection, err
 }
 
-func (e Element) GetElementsByTagName(tagname string) (nodelist.NodeList, error) {
+func (e Element) GetElementsByTagName(tagname string) (htmlcollection.HtmlCollection, error) {
 
 	var err error
 	var obj js.Value
-	var nlist nodelist.NodeList
+	var collection htmlcollection.HtmlCollection
 
 	if obj, err = e.Call("getElementsByTagName", js.ValueOf(tagname)); err == nil {
-		if !obj.IsNull() {
-			nlist, err = nodelist.NewFromJSObject(obj)
-		} else {
+		if obj.IsNull() || obj.IsUndefined() {
 			err = ErrElementsNotFound
+
+		} else {
+			collection, err = htmlcollection.NewFromJSObject(obj)
 		}
 	}
 
-	return nlist, err
+	return collection, err
 }
 
-func (e Element) getElementsByTagNameNS(namespace, tagname string) (nodelist.NodeList, error) {
+func (e Element) GetElementsByTagNameNS(namespace, tagname string) (htmlcollection.HtmlCollection, error) {
 	var err error
 	var obj js.Value
-	var nlist nodelist.NodeList
+	var collection htmlcollection.HtmlCollection
 
 	if obj, err = e.Call("getElementsByTagNameNS", js.ValueOf(namespace), js.ValueOf(tagname)); err == nil {
-		if !obj.IsNull() {
-			nlist, err = nodelist.NewFromJSObject(obj)
-		} else {
+		if obj.IsNull() || obj.IsUndefined() {
 			err = ErrElementsNotFound
+		} else {
+			collection, err = htmlcollection.NewFromJSObject(obj)
+
 		}
 	}
 
-	return nlist, err
+	return collection, err
 }
 
 func (e Element) HasAttribute(attributename string) (bool, error) {
@@ -228,7 +269,7 @@ func (e Element) InsertAdjacentElement(position string, elem Element) (Element, 
 	if elemObject, err = e.Call("insertAdjacentElement", js.ValueOf(position), elem.JSObject()); err == nil {
 
 		if elemObject.IsNull() {
-			err = ErrInsertAdajacent
+			err = ErrInsertAdjacent
 
 		} else {
 			newelem = elem
