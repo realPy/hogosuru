@@ -138,12 +138,12 @@ func (h HtmlTextAreaElement) SetCols(value int) error {
 	return h.SetAttributeInt("cols", value)
 }
 
-func (h HtmlTextAreaElement) DefaultValue() (bool, error) {
-	return h.GetAttributeBool("defaultValue")
+func (h HtmlTextAreaElement) DefaultValue() (string, error) {
+	return h.GetAttributeString("defaultValue")
 }
 
-func (h HtmlTextAreaElement) SetDefaultValue(value bool) error {
-	return h.SetAttributeBool("defaultValue", value)
+func (h HtmlTextAreaElement) SetDefaultValue(value string) error {
+	return h.SetAttributeString("defaultValue", value)
 }
 
 func (h HtmlTextAreaElement) Disabled() (bool, error) {
@@ -226,6 +226,9 @@ func (h HtmlTextAreaElement) SetRows(value int) error {
 	return h.SetAttributeInt("rows", value)
 }
 
+func (h HtmlTextAreaElement) SelectionStart() (int, error) {
+	return h.GetAttributeInt("selectionStart")
+}
 func (h HtmlTextAreaElement) SetSelectionStart(value int) error {
 	return h.SetAttributeInt("selectionStart", value)
 }
@@ -250,7 +253,7 @@ func (h HtmlTextAreaElement) TabIndex() (int, error) {
 	return h.GetAttributeInt("tabIndex")
 }
 
-func (h HtmlTextAreaElement) SetIndex(value int) error {
+func (h HtmlTextAreaElement) SetTabIndex(value int) error {
 	return h.SetAttributeInt("tabIndex", value)
 }
 
@@ -260,10 +263,6 @@ func (h HtmlTextAreaElement) TextLength() (int, error) {
 
 func (h HtmlTextAreaElement) Type() (string, error) {
 	return h.GetAttributeString("type")
-}
-
-func (h HtmlTextAreaElement) SetType(value string) error {
-	return h.SetAttributeString("type", value)
 }
 
 func (h HtmlTextAreaElement) Validity() (validitystate.ValidityState, error) {

@@ -18,6 +18,7 @@ var drageventinterface js.Value
 
 //DragEvent DragEvent struct
 type DragEvent struct {
+	//Must be herited from mouseevent
 	event.Event
 }
 
@@ -44,6 +45,28 @@ func GetInterface() js.Value {
 	})
 
 	return drageventinterface
+}
+
+func New(typeevent string, init ...map[string]interface{}) (DragEvent, error) {
+
+	var d DragEvent
+	var obj js.Value
+	var err error
+	var arrayJS []interface{}
+
+	if pei := GetInterface(); !pei.IsUndefined() {
+		arrayJS = append(arrayJS, js.ValueOf(typeevent))
+		if len(init) > 0 {
+			arrayJS = append(arrayJS, js.ValueOf(init[0]))
+		}
+		if obj, err = baseobject.New(pei, arrayJS...); err == nil {
+			d.BaseObject = d.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
+	}
+	return d, err
 }
 
 func NewFromJSObject(obj js.Value) (DragEvent, error) {

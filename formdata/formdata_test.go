@@ -54,7 +54,6 @@ func TestNewFromJSObject(t *testing.T) {
 	baseobject.Eval(`f= new FormData()
 	`)
 
-	//CSSSyleRule is derivated from CSSRule
 	if obj, err := baseobject.Get(js.Global(), "f"); testingutils.AssertErr(t, err) {
 
 		if f, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {

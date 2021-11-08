@@ -19,10 +19,23 @@ func (i Iterator) Iterator_() Iterator {
 	return i
 }
 
-func NewFromJSObject(obj js.Value) Iterator {
+func NewFromJSObject(obj js.Value) (Iterator, error) {
 	var i Iterator
-	i.BaseObject = i.SetObject(obj)
-	return i
+	var err error
+	var objf js.Value
+
+	symbol := js.Global().Get("Symbol")
+	it := symbol.Get("iterator")
+
+	if objf, err = baseobject.Get(obj, it); err == nil {
+		if objf.Type() == js.TypeFunction {
+			i.BaseObject = i.SetObject(obj)
+		} else {
+			err = NotAnIterator
+		}
+	}
+
+	return i, err
 }
 
 func pairValues(obj js.Value) (interface{}, interface{}) {
@@ -33,9 +46,9 @@ func pairValues(obj js.Value) (interface{}, interface{}) {
 	if obj.Type() == js.TypeObject {
 		if obj.Length() == 2 {
 
-			index = baseobject.GoValue(obj.Index(0))
+			index = baseobject.GoValue_(obj.Index(0))
 
-			value = baseobject.GoValue(obj.Index(1))
+			value = baseobject.GoValue_(obj.Index(1))
 
 		}
 
@@ -76,7 +89,7 @@ func (i Iterator) Next() (interface{}, interface{}, error) {
 				if valueobj.Type() == js.TypeObject {
 					index, value = pairValues(valueobj)
 				} else {
-					value = baseobject.GoValue(valueobj)
+					value, err = baseobject.GoValue(valueobj)
 				}
 
 			}

@@ -65,10 +65,11 @@ func NewFromJSObject(obj js.Value) (DOMTokenList, error) {
 	return d, err
 }
 
-func (d DOMTokenList) Item(index int) js.Value {
+func (d DOMTokenList) Item(index int) (interface{}, error) {
 	var obj js.Value
 	obj = d.JSObject().Index(index)
-	return obj
+	return baseobject.GoValue(obj)
+
 }
 
 func (d DOMTokenList) methodGetValue(method string, value string) (bool, error) {
@@ -110,7 +111,7 @@ func (d DOMTokenList) Add(tokens ...string) error {
 }
 
 func (d DOMTokenList) Remove(tokens ...string) error {
-	return d.method("add", tokens...)
+	return d.method("remove", tokens...)
 }
 
 func (d DOMTokenList) Replace(oldtoken, newtoken string) error {
@@ -150,17 +151,17 @@ func (d DOMTokenList) Entries() (iterator.Iterator, error) {
 	var iter iterator.Iterator
 
 	if obj, err = d.Call("entries"); err == nil {
-		iter = iterator.NewFromJSObject(obj)
+		iter, err = iterator.NewFromJSObject(obj)
 	}
 
 	return iter, err
 }
 
-func (d DOMTokenList) ForEach(f func(string, string)) error {
+func (d DOMTokenList) ForEach(f func(string)) error {
 	var err error
 
 	jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		f(args[0].String(), args[0].String())
+		f(args[0].String())
 		return nil
 	})
 
@@ -175,7 +176,7 @@ func (d DOMTokenList) Keys() (iterator.Iterator, error) {
 	var iter iterator.Iterator
 
 	if obj, err = d.Call("keys"); err == nil {
-		iter = iterator.NewFromJSObject(obj)
+		iter, err = iterator.NewFromJSObject(obj)
 	}
 
 	return iter, err
@@ -187,7 +188,7 @@ func (d DOMTokenList) Values() (iterator.Iterator, error) {
 	var iter iterator.Iterator
 
 	if obj, err = d.Call("values"); err == nil {
-		iter = iterator.NewFromJSObject(obj)
+		iter, err = iterator.NewFromJSObject(obj)
 	}
 
 	return iter, err

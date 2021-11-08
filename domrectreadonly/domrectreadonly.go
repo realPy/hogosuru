@@ -109,6 +109,7 @@ func (d DOMRectReadOnly) Y() (float64, error) {
 	return d.GetAttributeDouble("y")
 }
 
+//Impossible cyclic import use RectReadOnly
 func (d DOMRectReadOnly) FromRect() {
 	//TODO IMPLEMENT
 }

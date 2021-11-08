@@ -49,7 +49,7 @@ func New(d document.Document) (HtmlPreElement, error) {
 	var h HtmlPreElement
 	var e element.Element
 
-	if e, err = d.CreateElement("p"); err == nil {
+	if e, err = d.CreateElement("pre"); err == nil {
 		h, err = NewFromElement(e)
 	}
 	return h, err

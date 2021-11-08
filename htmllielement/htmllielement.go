@@ -98,6 +98,6 @@ func (h HtmlLIElement) Value() (int, error) {
 	return h.GetAttributeInt("value")
 }
 
-func (h HtmlLIElement) SetAccessKey(value int) error {
+func (h HtmlLIElement) SetValue(value int) error {
 	return h.SetAttributeInt("value", value)
 }

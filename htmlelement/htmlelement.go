@@ -130,7 +130,12 @@ func (h HtmlElement) Dataset(name string) (interface{}, error) {
 	if obj, err = h.Get("dataset"); err == nil {
 
 		if objv, err = baseobject.Get(obj, name); err == nil {
-			ret = baseobject.GoValue(objv)
+			if !objv.IsUndefined() {
+				ret, err = baseobject.GoValue(objv)
+			} else {
+				err = ErrDatasetNotFound
+			}
+
 		}
 
 	}
@@ -179,16 +184,8 @@ func (h HtmlElement) OffsetHeight() (int, error) {
 	return h.GetAttributeInt("offsetHeight")
 }
 
-func (h HtmlElement) SetOffsetHeight(value int) error {
-	return h.SetAttributeInt("offsetHeight", value)
-}
-
 func (h HtmlElement) OffsetLeft() (int, error) {
 	return h.GetAttributeInt("offsetLeft")
-}
-
-func (h HtmlElement) SetOffsetLeft(value int) error {
-	return h.SetAttributeInt("offsetLeft", value)
 }
 
 func (h HtmlElement) OffsetParent() (baseobject.BaseObject, error) {
@@ -198,7 +195,12 @@ func (h HtmlElement) OffsetParent() (baseobject.BaseObject, error) {
 
 	if obj, err = h.Get("offsetParent"); err == nil {
 		if !obj.IsUndefined() {
-			ret, err = baseobject.NewFromJSObject(obj)
+			if !obj.IsNull() {
+				ret, err = baseobject.NewFromJSObject(obj)
+			} else {
+				err = ErrParentNotFound
+			}
+
 		} else {
 			err = baseobject.ErrNotAnObject
 		}
@@ -211,16 +213,8 @@ func (h HtmlElement) OffsetTop() (int, error) {
 	return h.GetAttributeInt("offsetTop")
 }
 
-func (h HtmlElement) SetOffsetTop(value int) error {
-	return h.SetAttributeInt("offsetTop", value)
-}
-
 func (h HtmlElement) OffsetWidth() (int, error) {
 	return h.GetAttributeInt("offsetWidth")
-}
-
-func (h HtmlElement) SetOffsetWidth(value int) error {
-	return h.SetAttributeInt("offsetWidth", value)
 }
 
 func (h HtmlElement) Title() (string, error) {

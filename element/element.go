@@ -48,23 +48,6 @@ func (e Element) Element_() Element {
 	return e
 }
 
-func New() (Element, error) {
-	var err error
-	var e Element
-	var obj js.Value
-	if ei := GetInterface(); !ei.IsUndefined() {
-
-		if obj, err = baseobject.New(ei); err == nil {
-			e.BaseObject = e.SetObject(obj)
-		}
-
-	} else {
-		err = ErrNotImplemented
-	}
-
-	return e, err
-}
-
 func NewFromJSObject(obj js.Value) (Element, error) {
 	var e Element
 	var err error
@@ -184,17 +167,12 @@ func (e Element) ClientLeft() (int, error) {
 
 func (e Element) ClientTop() (int, error) {
 
-	return e.GetAttributeInt("clienTop")
+	return e.GetAttributeInt("clientTop")
 }
 
 func (e Element) ClientWidth() (int, error) {
 
-	return e.GetAttributeInt("clienWidth")
-}
-
-func (e Element) ComputedName() (string, error) {
-
-	return e.GetAttributeString("computedName")
+	return e.GetAttributeInt("clientWidth")
 }
 
 func (e Element) ComputedRole() (string, error) {

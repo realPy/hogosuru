@@ -237,6 +237,22 @@ func (h HtmlSelectElement) WillValidate() (bool, error) {
 	return h.GetAttributeBool("willValidate")
 }
 
+func (h HtmlSelectElement) CheckValidity() (bool, error) {
+
+	return h.CallBool("checkValidity")
+}
+
+func (h HtmlSelectElement) ReportValidity() (bool, error) {
+
+	return h.CallBool("reportValidity")
+}
+
+func (h HtmlSelectElement) SetCustomValidity(message string) error {
+
+	_, err := h.Call("setCustomValidity", js.ValueOf(message))
+	return err
+}
+
 func (h HtmlSelectElement) Add(elem htmloptionelement.HtmlOptionElement, before ...interface{}) error {
 	var err error
 	var arrayJS []interface{}
@@ -252,11 +268,6 @@ func (h HtmlSelectElement) Add(elem htmloptionelement.HtmlOptionElement, before 
 	}
 	_, err = h.Call("add", arrayJS...)
 	return err
-}
-
-func (h HtmlSelectElement) CheckValidity() (bool, error) {
-
-	return h.CallBool("checkValidity")
 }
 
 func (h HtmlSelectElement) Item(index int) (htmloptionelement.HtmlOptionElement, error) {
@@ -285,16 +296,5 @@ func (h HtmlSelectElement) NamedItem(str string) (htmloptionelement.HtmlOptionEl
 
 func (h HtmlSelectElement) Remove(index int) error {
 	_, err := h.Call("remove", js.ValueOf(index))
-	return err
-}
-
-func (h HtmlSelectElement) ReportValidity() (bool, error) {
-
-	return h.CallBool("reportValidity")
-}
-
-func (h HtmlSelectElement) SetCustomValidity(message string) error {
-
-	_, err := h.Call("setCustomValidity", js.ValueOf(message))
 	return err
 }

@@ -12,7 +12,7 @@ var singleton sync.Once
 
 var nodeinterface js.Value
 
-//GetInterface
+//GetInterface Get the js node interface
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
@@ -27,8 +27,6 @@ func GetInterface() js.Value {
 
 	return nodeinterface
 }
-
-//we use here aenw method of chaining method
 
 type Node struct {
 	eventtarget.EventTarget
@@ -119,13 +117,29 @@ func (n Node) NodeType() (int, error) {
 	return n.GetAttributeInt("nodeType")
 }
 
-func (n Node) NodeValue() (Node, error) {
-	return n.getAttributeNode("nodeValue")
+func (n Node) NodeValue() (interface{}, error) {
+
+	var err error
+	var obj js.Value
+	var v interface{}
+
+	if obj, err = n.Get("nodeValue"); err == nil {
+		v, err = baseobject.GoValue(obj)
+	}
+
+	return v, err
 }
 
-func (n Node) SetNodeValue(nset Node) error {
+func (n Node) SetNodeValue(i interface{}) error {
+	var data js.Value
 
-	return n.Set("nodeValue", nset.JSObject())
+	if objGo, ok := i.(baseobject.ObjectFrom); ok {
+
+		data = objGo.JSObject()
+	} else {
+		data = js.ValueOf(i)
+	}
+	return n.Set("nodeValue", data)
 }
 
 func (n Node) OwnerDocument() (Node, error) {
@@ -229,12 +243,12 @@ func (n Node) InsertBefore(elem, before Node) (Node, error) {
 
 }
 
-func (n *Node) IsDefaultNamespace() (bool, error) {
+func (n Node) IsDefaultNamespace(namespace string) (bool, error) {
 	var err error
 	var obj js.Value
 	var result bool
 
-	if obj, err = n.Call("isDefaultNamespace"); err == nil {
+	if obj, err = n.Call("isDefaultNamespace", js.ValueOf(namespace)); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
@@ -246,7 +260,7 @@ func (n *Node) IsDefaultNamespace() (bool, error) {
 
 }
 
-func (n *Node) IsEqualNode(n1 Node) (bool, error) {
+func (n Node) IsEqualNode(n1 Node) (bool, error) {
 
 	var err error
 	var obj js.Value
@@ -264,7 +278,7 @@ func (n *Node) IsEqualNode(n1 Node) (bool, error) {
 
 }
 
-func (n *Node) IsSameNode(n1 Node) (bool, error) {
+func (n Node) IsSameNode(n1 Node) (bool, error) {
 	var err error
 	var obj js.Value
 	var result bool
@@ -281,12 +295,12 @@ func (n *Node) IsSameNode(n1 Node) (bool, error) {
 
 }
 
-func (n *Node) LookupPrefix() (string, error) {
+func (n Node) LookupPrefix(prefix string) (string, error) {
 	var err error
 	var obj js.Value
 	var result string
 
-	if obj, err = n.Call("lookupPrefix"); err == nil {
+	if obj, err = n.Call("lookupPrefix", js.ValueOf(prefix)); err == nil {
 		if obj.Type() == js.TypeString {
 			result = obj.String()
 		}
@@ -296,7 +310,7 @@ func (n *Node) LookupPrefix() (string, error) {
 
 }
 
-func (n *Node) LookupNamespaceURI(prefix string) error {
+func (n Node) LookupNamespaceURI(prefix string) error {
 	var err error
 	_, err = n.Call("lookupNamespaceURI", js.ValueOf(prefix))
 	return err

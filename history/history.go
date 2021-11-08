@@ -100,16 +100,45 @@ func (h History) Length() (int, error) {
 	return obj.Int(), err
 }
 
-func (h History) PushState(obj interface{}, name string, page string) error {
+func (h History) PushState(obj interface{}, title string, url ...string) error {
 	var err error
-	_, err = h.Call("pushState", js.ValueOf(obj), js.ValueOf(name), js.ValueOf(page))
+	var arrayJS []interface{}
+
+	if objGo, ok := obj.(baseobject.ObjectFrom); ok {
+		arrayJS = append(arrayJS, objGo.JSObject())
+	} else {
+		arrayJS = append(arrayJS, js.ValueOf(obj))
+	}
+
+	arrayJS = append(arrayJS, js.ValueOf(title))
+
+	if len(url) > 0 {
+		arrayJS = append(arrayJS, js.ValueOf(url[0]))
+	}
+
+	_, err = h.Call("pushState", arrayJS...)
 
 	return err
 }
 
-func (h History) ReplaceState(obj interface{}, name string, page string) error {
+func (h History) ReplaceState(obj interface{}, title string, url ...string) error {
 	var err error
-	_, err = h.Call("replaceState", js.ValueOf(obj), js.ValueOf(name), js.ValueOf(page))
+
+	var arrayJS []interface{}
+
+	if objGo, ok := obj.(baseobject.ObjectFrom); ok {
+		arrayJS = append(arrayJS, objGo.JSObject())
+	} else {
+		arrayJS = append(arrayJS, js.ValueOf(obj))
+	}
+
+	arrayJS = append(arrayJS, js.ValueOf(title))
+
+	if len(url) > 0 {
+		arrayJS = append(arrayJS, js.ValueOf(url[0]))
+	}
+
+	_, err = h.Call("replaceState", arrayJS...)
 
 	return err
 }
@@ -117,8 +146,16 @@ func (h History) ReplaceState(obj interface{}, name string, page string) error {
 func (h History) State() (interface{}, error) {
 	var err error
 	var obj js.Value
+	var ret interface{}
 
-	obj, err = h.Get("state")
+	if obj, err = h.Get("state"); err == nil {
+		if obj.IsUndefined() || obj.IsNull() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+			ret, err = baseobject.Discover(obj)
+		}
 
-	return obj, err
+	}
+
+	return ret, err
 }

@@ -42,6 +42,32 @@ func GetInterface() js.Value {
 	return htmloptionelementinterface
 }
 
+func Option(text string, opts ...interface{}) (HtmlOptionElement, error) {
+
+	var err error
+	var h HtmlOptionElement
+	var arrayjs []interface{}
+
+	arrayjs = append(arrayjs, js.ValueOf(text))
+
+	for opt := range opts {
+		arrayjs = append(arrayjs, js.ValueOf(opt))
+
+	}
+
+	if hci, err := baseobject.Get(js.Global(), "Option"); err == nil {
+		var obj js.Value
+		if obj, err = baseobject.New(hci, arrayjs...); err == nil {
+
+			h, err = NewFromJSObject(obj)
+		}
+	} else {
+		err = ErrNotImplemented
+	}
+
+	return h, err
+}
+
 func New(d document.Document) (HtmlOptionElement, error) {
 	var err error
 
@@ -128,6 +154,10 @@ func (h HtmlOptionElement) Index() (int, error) {
 
 func (h HtmlOptionElement) Label() (string, error) {
 	return h.GetAttributeString("label")
+}
+
+func (h HtmlOptionElement) SetLabel(value string) error {
+	return h.SetAttributeString("label", value)
 }
 
 func (h HtmlOptionElement) Selected() (bool, error) {

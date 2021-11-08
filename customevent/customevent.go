@@ -98,7 +98,7 @@ func (c CustomEvent) Detail() (interface{}, error) {
 	var i interface{}
 
 	if obj, err = c.Get("detail"); err == nil {
-		i = baseobject.GoValue(obj)
+		i, err = baseobject.GoValue(obj)
 	}
 	return i, err
 }

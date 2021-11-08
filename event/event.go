@@ -47,14 +47,25 @@ func GetInterface() js.Value {
 }
 
 //New Create a event
-func New(message string) (Event, error) {
-	var event Event
+func New(typeevent string, init ...map[string]interface{}) (Event, error) {
+	var e Event
+	var obj js.Value
+	var err error
+	var arrayJS []interface{}
 
-	if eventi := GetInterface(); !eventi.IsUndefined() {
-		event.BaseObject = event.SetObject(eventi.New(js.ValueOf(message)))
-		return event, nil
+	if ei := GetInterface(); !ei.IsUndefined() {
+		arrayJS = append(arrayJS, js.ValueOf(typeevent))
+		if len(init) > 0 {
+			arrayJS = append(arrayJS, js.ValueOf(init[0]))
+		}
+		if obj, err = baseobject.New(ei, arrayJS...); err == nil {
+			e.BaseObject = e.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
 	}
-	return event, ErrNotImplemented
+	return e, err
 }
 
 func NewFromJSObject(obj js.Value) (Event, error) {
@@ -85,8 +96,12 @@ func (e Event) Target() (interface{}, error) {
 	var bobj interface{}
 
 	if obj, err = e.Get("target"); err == nil {
+		if obj.IsUndefined() || obj.IsNull() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+			bobj, err = baseobject.Discover(obj)
+		}
 
-		bobj, err = baseobject.Discover(obj)
 	}
 	return bobj, err
 }
@@ -96,8 +111,12 @@ func (e Event) CurrentTarget() (interface{}, error) {
 	var bobj interface{}
 
 	if obj, err = e.Get("currentTarget"); err == nil {
+		if obj.IsUndefined() || obj.IsNull() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+			bobj, err = baseobject.Discover(obj)
+		}
 
-		bobj, err = baseobject.Discover(obj)
 	}
 	return bobj, err
 }
@@ -121,4 +140,28 @@ func (e Event) StopPropagation() error {
 	_, err = e.Call("stopPropagation")
 
 	return err
+}
+
+func (e Event) Bubbles() (bool, error) {
+	return e.GetAttributeBool("bubbles")
+}
+
+func (e Event) Cancelable() (bool, error) {
+	return e.GetAttributeBool("cancelable")
+}
+
+func (e Event) Composed() (bool, error) {
+	return e.GetAttributeBool("composed")
+}
+
+func (e Event) EventPhase() (int, error) {
+	return e.GetAttributeInt("eventPhase")
+}
+
+func (e Event) Type() (string, error) {
+	return e.GetAttributeString("type")
+}
+
+func (e Event) IsTrusted() (bool, error) {
+	return e.GetAttributeBool("isTrusted")
 }
