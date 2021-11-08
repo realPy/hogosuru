@@ -313,6 +313,19 @@ func (e Element) pseudo() {
 	//TODO IMPLEMENT
 }
 
+func (e Element) Prepend(elements ...Element) error {
+	var err error
+	var arrayJS []interface{}
+
+	for _, elem := range elements {
+		arrayJS = append(arrayJS, elem.JSObject())
+	}
+
+	_, err = e.Call("prepend", arrayJS...)
+
+	return err
+}
+
 func (e Element) QuerySelector(selector string) (node.Node, error) {
 
 	var err error
