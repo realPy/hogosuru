@@ -447,7 +447,7 @@ func (b BaseObject) GetAttributeGlobal(attribute string) (interface{}, error) {
 
 		} else {
 
-			objGlobal, err = Discover(obj)
+			objGlobal, err = GoValue(obj)
 		}
 	}
 

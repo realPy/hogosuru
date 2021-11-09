@@ -27,7 +27,7 @@ func (d DataTransfer) DataTransfer_() DataTransfer {
 	return d
 }
 
-//GetJSInterface get teh JS interface of broadcast channel
+//GetJSInterface get the JS interface
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

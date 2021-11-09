@@ -35,16 +35,17 @@ func IDBDatabaseGetInterface() js.Value {
 	singletonIDBDatabase.Do(func() {
 
 		var err error
-		if idbrequestinterface, err = baseobject.Get(js.Global(), "IDBDatabase"); err != nil {
-			idbrequestinterface = js.Undefined()
+		if idbdatabaseinterface, err = baseobject.Get(js.Global(), "IDBDatabase"); err != nil {
+			idbdatabaseinterface = js.Undefined()
 		}
 
-		baseobject.Register(idbrequestinterface, func(v js.Value) (interface{}, error) {
+		baseobject.Register(idbdatabaseinterface, func(v js.Value) (interface{}, error) {
+
 			return IDBDatabaseNewFromJSObject(v)
 		})
 	})
 
-	return idbrequestinterface
+	return idbdatabaseinterface
 }
 
 func IDBDatabaseNewFromJSObject(obj js.Value) (IDBDatabase, error) {
@@ -66,11 +67,6 @@ func IDBDatabaseNewFromJSObject(obj js.Value) (IDBDatabase, error) {
 	}
 
 	return i, err
-}
-
-func IDBDatabaseNewFromObject(obj baseobject.BaseObject) (IDBDatabase, error) {
-
-	return IDBDatabaseNewFromJSObject(obj.JSObject())
 }
 
 func (i IDBDatabase) Close() error {

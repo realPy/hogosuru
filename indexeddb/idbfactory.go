@@ -7,13 +7,14 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/promise"
 )
 
 var singletonIDBFactory sync.Once
 
 var idbfactoryinterface js.Value
 
-//GetInterface get teh JS interface of broadcast channel
+//GetInterface get the JS interface
 func GetIDBFactoryInterface() js.Value {
 
 	singletonIDBFactory.Do(func() {
@@ -80,6 +81,36 @@ func (f IDBFactory) genericRequest(method string, dbname string, option ...strin
 
 }
 
+func (f IDBFactory) Cmp(a, b interface{}) (int, error) {
+
+	var arrayJS []interface{}
+	var err error
+	var obj js.Value
+	var result int
+
+	if objGo, ok := a.(baseobject.ObjectFrom); ok {
+		arrayJS = append(arrayJS, objGo.JSObject())
+	} else {
+		arrayJS = append(arrayJS, js.ValueOf(a))
+	}
+
+	if objGo, ok := b.(baseobject.ObjectFrom); ok {
+		arrayJS = append(arrayJS, objGo.JSObject())
+	} else {
+		arrayJS = append(arrayJS, js.ValueOf(b))
+	}
+
+	if obj, err = f.Call("cmp", arrayJS...); err == nil {
+		if obj.Type() == js.TypeNumber {
+			result = obj.Int()
+		} else {
+			err = baseobject.ErrObjectNotNumber
+		}
+	}
+	return result, err
+
+}
+
 func (f IDBFactory) Open(dbname string, option ...string) (IDBOpenDBRequest, error) {
 
 	return f.genericRequest("open", dbname, option...)
@@ -90,7 +121,16 @@ func (f IDBFactory) DeleteDatabase(dbname string, option ...string) (IDBOpenDBRe
 
 }
 
-func (f IDBFactory) Databases() {
+func (f IDBFactory) Databases() (promise.Promise, error) {
 	//not support in firefox
+	var err error
+	var obj js.Value
+	var p promise.Promise
 
+	if obj, err = f.Call("databases"); err == nil {
+
+		p, err = promise.NewFromJSObject(obj)
+	}
+
+	return p, err
 }

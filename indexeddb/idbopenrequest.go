@@ -39,6 +39,7 @@ func IDBOpenDBRequestGetInterface() js.Value {
 		baseobject.Register(idbopendbrequestinterface, func(v js.Value) (interface{}, error) {
 			return IDBOpenDBRequestNewFromJSObject(v)
 		})
+		IDBRequestGetInterface()
 	})
 	return idbopendbrequestinterface
 }
