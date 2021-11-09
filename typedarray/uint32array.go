@@ -24,7 +24,7 @@ func (u Uint32Array) Uint32Array_() Uint32Array {
 	return u
 }
 
-//GetInterface get teh JS interface of broadcast channel
+//GetInterface get the JS interface
 func GetUint32ArrayInterface() js.Value {
 
 	singletonuint32array.Do(func() {

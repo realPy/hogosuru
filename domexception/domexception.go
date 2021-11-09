@@ -24,7 +24,7 @@ func (d DomException) DomException_() DomException {
 	return d
 }
 
-//GetJSInterface get teh JS interface of broadcast channel
+//GetJSInterface get the JS interface
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

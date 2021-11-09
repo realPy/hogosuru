@@ -27,15 +27,17 @@ var idbcursorinterface js.Value
 
 func IDBCursorGetInterface() js.Value {
 
-	singletonIDBDatabase.Do(func() {
+	singletonIDBCursor.Do(func() {
 
 		var err error
 		if idbcursorinterface, err = baseobject.Get(js.Global(), "IDBCursor"); err != nil {
 			idbcursorinterface = js.Undefined()
 		}
+
 		baseobject.Register(idbcursorinterface, func(v js.Value) (interface{}, error) {
-			return IDBDatabaseNewFromJSObject(v)
+			return IDBCursorNewFromJSObject(v)
 		})
+		IDBCursorWithValueGetInterface()
 	})
 
 	return idbcursorinterface
@@ -84,7 +86,7 @@ func (i IDBCursor) Request() (IDBRequest, error) {
 	var obj js.Value
 	var request IDBRequest
 
-	if obj, err = i.Call("request"); err == nil {
+	if obj, err = i.Get("request"); err == nil {
 		request, err = IDBRequestNewFromJSObject(obj)
 	}
 	return request, err
@@ -95,7 +97,7 @@ func (i IDBCursor) Source() (interface{}, error) {
 	var obj js.Value
 	var bobj interface{}
 
-	if obj, err = i.Call("source"); err == nil {
+	if obj, err = i.Get("source"); err == nil {
 
 		bobj, err = baseobject.Discover(obj)
 	}
@@ -103,7 +105,7 @@ func (i IDBCursor) Source() (interface{}, error) {
 }
 
 func (i IDBCursor) Continue(option ...interface{}) error {
-	var err error
+	//var err error
 	var arrayJS []interface{}
 
 	if len(option) > 0 {
@@ -114,11 +116,12 @@ func (i IDBCursor) Continue(option ...interface{}) error {
 		}
 	}
 
-	_, err = i.Call("continue", arrayJS...)
-	return err
+	i.Call("continue", arrayJS...)
+
+	return nil
 }
 
-func (i IDBCursor) Delete(count int) (IDBRequest, error) {
+func (i IDBCursor) Delete() (IDBRequest, error) {
 	var err error
 	var obj js.Value
 	var request IDBRequest

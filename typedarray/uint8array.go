@@ -24,7 +24,7 @@ func (u Uint8Array) Uint8Array_() Uint8Array {
 	return u
 }
 
-//GetInterface get teh JS interface of broadcast channel
+//GetInterface get the JS interface
 func GetUint8ArrayInterface() js.Value {
 
 	singletonuint8array.Do(func() {

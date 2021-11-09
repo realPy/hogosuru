@@ -13,7 +13,7 @@ var singletonIDBKeyRange sync.Once
 
 var idbkeyrangeinterface js.Value
 
-//GetIDBIndexInterface get teh JS interface of broadcast channel
+//GetIDBIndexInterface get the JS interface
 func GetIDBKeyRangeInterface() js.Value {
 
 	singletonIDBIndex.Do(func() {

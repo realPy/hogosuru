@@ -12,7 +12,7 @@ var singleton sync.Once
 
 var domrectinterface js.Value
 
-//GetJSInterface get teh JS interface of broadcast channel
+//GetJSInterface get the JS interface
 func GetInterface() js.Value {
 
 	singleton.Do(func() {

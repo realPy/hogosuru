@@ -38,6 +38,7 @@ func IDBObjectStoreGetInterface() js.Value {
 		baseobject.Register(idbobjectstoreinterface, func(v js.Value) (interface{}, error) {
 			return IDBObjectStoreNewFromJSObject(v)
 		})
+		IDBRequestGetInterface()
 	})
 	return idbobjectstoreinterface
 }
@@ -216,11 +217,11 @@ func (i IDBObjectStore) getAll(method string, option ...interface{}) (IDBRequest
 	return request, err
 }
 
-func (i IDBObjectStore) GetAll(method string, option ...interface{}) (IDBRequest, error) {
+func (i IDBObjectStore) GetAll(option ...interface{}) (IDBRequest, error) {
 	return i.getAll("getAll", option...)
 }
 
-func (i IDBObjectStore) GetAllKeys(method string, option ...interface{}) (IDBRequest, error) {
+func (i IDBObjectStore) GetAllKeys(option ...interface{}) (IDBRequest, error) {
 	return i.getAll("getAllKeys", option...)
 }
 
@@ -233,7 +234,7 @@ func (i IDBObjectStore) Index(indexname string) (IDBIndex, error) {
 	var o IDBIndex
 	var err error
 
-	if obj, err = i.Call("createIndex", js.ValueOf(indexname)); err == nil {
+	if obj, err = i.Call("index", js.ValueOf(indexname)); err == nil {
 		o, err = IDBDIndexNewFromJSObject(obj)
 	}
 
@@ -242,4 +243,44 @@ func (i IDBObjectStore) Index(indexname string) (IDBIndex, error) {
 
 func (i IDBObjectStore) Put(value interface{}, key ...string) (IDBRequest, error) {
 	return i.addput("put", value, key...)
+}
+
+func (i IDBObjectStore) openCursorWithMethod(method string, options ...interface{}) (IDBRequest, error) {
+	var obj js.Value
+	var request IDBRequest
+	var err error
+	var objquery js.Value
+	var arrayJS []interface{}
+
+	if len(options) > 1 {
+		if rangequery, ok := options[0].(IDBKeyRange); ok {
+			objquery = rangequery.JSObject()
+			arrayJS = append(arrayJS, objquery)
+		}
+
+	}
+
+	if len(options) > 2 {
+		if direction, ok := options[1].(string); ok {
+			objquery = js.ValueOf(direction)
+			arrayJS = append(arrayJS, objquery)
+		}
+
+	}
+
+	if obj, err = i.Call("openCursor", arrayJS...); err == nil {
+		request, err = IDBRequestNewFromJSObject(obj)
+	}
+
+	return request, err
+}
+
+func (i IDBObjectStore) OpenCursor(options ...interface{}) (IDBRequest, error) {
+
+	return i.openCursorWithMethod("openCursor", options...)
+}
+
+func (i IDBObjectStore) OpenKeyCursor(options ...interface{}) (IDBRequest, error) {
+
+	return i.openCursorWithMethod("openKeyCursor", options...)
 }

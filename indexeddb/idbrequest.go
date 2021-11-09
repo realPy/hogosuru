@@ -43,6 +43,9 @@ func IDBRequestGetInterface() js.Value {
 		baseobject.Register(idbrequestinterface, func(v js.Value) (interface{}, error) {
 			return IDBRequestNewFromJSObject(v)
 		})
+		IDBTransactionGetInterface()
+		IDBDatabaseGetInterface()
+		IDBCursorGetInterface()
 	})
 	return idbrequestinterface
 }
@@ -89,43 +92,71 @@ func (i IDBRequest) Error() (domexception.DomException, error) {
 }
 
 func (i IDBRequest) ReadyState() (string, error) {
-	return i.GetAttributeString("readystate")
+	return i.GetAttributeString("readyState")
 }
 
-func (i IDBRequest) getObjectAttribute(attribute string) (baseobject.BaseObject, error) {
+func (i IDBRequest) Result() (interface{}, error) {
+
 	var err error
 	var obj js.Value
-	var bobj baseobject.BaseObject
+	var ret interface{}
 
-	if obj, err = i.Get(attribute); err == nil {
-		if obj.IsUndefined() {
-			err = baseobject.ErrNotAnObject
+	if obj, err = i.Get("result"); err == nil {
 
+		if obj.IsUndefined() || obj.IsNull() {
+			err = baseobject.ErrUndefinedValue
 		} else {
-
-			bobj, err = baseobject.NewFromJSObject(obj)
+			ret, err = baseobject.Discover(obj)
 		}
 	}
 
-	return bobj, err
+	return ret, err
 }
 
-func (i IDBRequest) Result() (baseobject.BaseObject, error) {
-	return i.getObjectAttribute("result")
-}
+func (i IDBRequest) Source() (interface{}, error) {
 
-func (i IDBRequest) Source() (baseobject.BaseObject, error) {
-	return i.getObjectAttribute("source")
+	var err error
+	var obj js.Value
+	var ret interface{}
+
+	if obj, err = i.Get("source"); err == nil {
+
+		if obj.IsUndefined() || obj.IsNull() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+			ret, err = baseobject.Discover(obj)
+		}
+
+	}
+
+	return ret, err
+
 }
 
 func (i IDBRequest) Transaction() (IDBTransaction, error) {
+
 	var err error
-	var obj baseobject.BaseObject
+	var obj js.Value
 	var it IDBTransaction
+	var ret interface{}
 
-	if obj, err = i.getObjectAttribute("transaction"); err == nil {
-		it, err = IDBTransactionNewFromJSObject(obj.JSObject())
+	if obj, err = i.Get("transaction"); err == nil {
 
+		if obj.IsUndefined() || obj.IsNull() {
+			err = baseobject.ErrUndefinedValue
+		} else {
+			if ret, err = baseobject.Discover(obj); err == nil {
+
+				if tfrom, ok := ret.(IDBTransactionFrom); ok {
+
+					it = tfrom.IDBTransaction_()
+
+				} else {
+					err = ErrNotAnIDBTransaction
+				}
+
+			}
+		}
 	}
 	return it, err
 }

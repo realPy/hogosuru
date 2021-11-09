@@ -13,7 +13,7 @@ var singletonIDBIndex sync.Once
 
 var idbindexinterface js.Value
 
-//GetIDBIndexInterface get teh JS interface of broadcast channel
+//GetIDBIndexInterface get the JS interface
 func GetIDBIndexInterface() js.Value {
 
 	singletonIDBIndex.Do(func() {
@@ -79,9 +79,9 @@ func (i IDBIndex) ObjectStore() (IDBObjectStore, error) {
 	var obj js.Value
 	var store IDBObjectStore
 
-	if obj, err = i.BaseObject.Get("objectstore"); err == nil {
+	if obj, err = i.BaseObject.Get("objectStore"); err == nil {
 
-		if obj.IsUndefined() {
+		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrNotAnObject
 
 		} else {
@@ -97,15 +97,23 @@ func (i IDBIndex) Unique() (bool, error) {
 	return i.GetAttributeBool("unique")
 }
 
-func (i IDBIndex) callMethodKey(method string, key ...IDBKeyRange) (IDBRequest, error) {
+func (i IDBIndex) callMethodKey(method string, key ...interface{}) (IDBRequest, error) {
 	var obj js.Value
 	var o IDBRequest
 	var err error
 	var arrayJS []interface{}
 
-	if len(key) > 1 {
+	if len(key) > 0 {
 
-		arrayJS = append(arrayJS, key[0].JSObject())
+		var objkey interface{}
+
+		if o, ok := key[0].(IDBKeyRange); ok {
+			objkey = o.JSObject()
+		} else {
+			objkey = js.ValueOf(key[0])
+		}
+
+		arrayJS = append(arrayJS, objkey)
 	}
 
 	if obj, err = i.Call(method, arrayJS...); err == nil {
@@ -115,16 +123,17 @@ func (i IDBIndex) callMethodKey(method string, key ...IDBKeyRange) (IDBRequest, 
 	return o, err
 }
 
-func (i IDBIndex) Count(key ...IDBKeyRange) (IDBRequest, error) {
+func (i IDBIndex) Count(key ...interface{}) (IDBRequest, error) {
 	return i.callMethodKey("count", key...)
 }
 
-func (i IDBIndex) Get(key ...IDBKeyRange) (IDBRequest, error) {
-	return i.callMethodKey("get", key...)
+func (i IDBIndex) Get(key interface{}) (IDBRequest, error) {
+	return i.callMethodKey("get", key)
 }
 
-func (i IDBIndex) GetKey(key ...IDBKeyRange) (IDBRequest, error) {
-	return i.callMethodKey("getKey", key...)
+func (i IDBIndex) GetKey(key interface{}) (IDBRequest, error) {
+
+	return i.callMethodKey("getKey", key)
 }
 
 func (i IDBIndex) getAll(method string, option ...interface{}) (IDBRequest, error) {
@@ -156,11 +165,11 @@ func (i IDBIndex) getAll(method string, option ...interface{}) (IDBRequest, erro
 	return request, err
 }
 
-func (i IDBIndex) GetAll(method string, option ...interface{}) (IDBRequest, error) {
+func (i IDBIndex) GetAll(option ...interface{}) (IDBRequest, error) {
 	return i.getAll("getAll", option...)
 }
 
-func (i IDBIndex) GetAllKeys(method string, option ...interface{}) (IDBRequest, error) {
+func (i IDBIndex) GetAllKeys(option ...interface{}) (IDBRequest, error) {
 	return i.getAll("getAllKeys", option...)
 }
 
@@ -194,12 +203,12 @@ func (i IDBIndex) openCursorWithMethod(method string, options ...interface{}) (I
 	return request, err
 }
 
-func (i IDBIndex) OpenCursor(method string, options ...interface{}) (IDBRequest, error) {
+func (i IDBIndex) OpenCursor(options ...interface{}) (IDBRequest, error) {
 
 	return i.openCursorWithMethod("openCursor", options...)
 }
 
-func (i IDBIndex) OpenKeyCursor(method string, options ...interface{}) (IDBRequest, error) {
+func (i IDBIndex) OpenKeyCursor(options ...interface{}) (IDBRequest, error) {
 
 	return i.openCursorWithMethod("openKeyCursor", options...)
 }

@@ -30,11 +30,13 @@ func ImplementedExpect(t *testing.T, obj baseobject.BaseObject, methodsname []st
 func AssertErr(t *testing.T, err error, skips ...int) bool {
 
 	if err != nil {
+
 		skip := 1
 		if len(skips) > 0 {
 			skip = skips[0]
 		}
 		_, file, line, _ := runtime.Caller(skip)
+
 		t.Errorf("%s:%d >> %s", filepath.Base(file), line, err.Error())
 		return false
 	}
