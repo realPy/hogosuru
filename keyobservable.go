@@ -14,7 +14,7 @@ var ko Observable
 
 var (
 	//ErrKeyNotFound ErrKeyNotFound error
-	ErrKeyNotFound = errors.New("Key ot found")
+	ErrKeyNotFound = errors.New("Key not found")
 )
 
 type KeyObservableFunc func(value interface{})

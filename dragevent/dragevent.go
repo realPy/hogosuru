@@ -9,7 +9,7 @@ import (
 
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/datatransfer"
-	"github.com/realPy/hogosuru/event"
+	"github.com/realPy/hogosuru/mouseevent"
 )
 
 var singleton sync.Once
@@ -18,8 +18,7 @@ var drageventinterface js.Value
 
 //DragEvent DragEvent struct
 type DragEvent struct {
-	//Must be herited from mouseevent
-	event.Event
+	mouseevent.MouseEvent
 }
 
 type DragEventFrom interface {
