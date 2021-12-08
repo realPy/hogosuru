@@ -53,20 +53,20 @@ func Router() *RouteMap {
 	singletonRoute.Do(func() {
 		route.routing = make(map[string]Rendering)
 		if w, err := window.New(); err == nil {
+			/*
+				//Vérifier si cette fonction a du sens
+				w.OnHashChange(func(e event.Event) {
 
-			//Vérifier si cette fonction a du sens
-			w.OnHashChange(func(e event.Event) {
-				r := Router()
-				if r.mode == HASHROUTE {
-					r.onurlchange()
-				}
+					if route.mode == HASHROUTE {
+						fmt.Printf("onurlhash\n")
+						route.onurlchange()
+					}
 
-			})
+				})*/
 
 			w.OnPopState(func(e event.Event) {
-				r := Router()
 
-				r.onurlchange()
+				route.onurlchange()
 
 			})
 
@@ -147,6 +147,9 @@ func (r *RouteMap) loadChilds(d document.Document, obj Rendering, node node.Node
 				}
 
 				obj.OnEndChildsRendering()
+				if r.defaultRendering == obj {
+					r.onurlchange()
+				}
 
 			})
 		}
@@ -155,6 +158,7 @@ func (r *RouteMap) loadChilds(d document.Document, obj Rendering, node node.Node
 		if obj == r.defaultRendering {
 			if promisewaitAll, err = promise.All(allpromise...); AssertErr(err) {
 				promisewaitAll.Finally(func() {
+
 					r.onurlchange()
 
 				})
@@ -181,7 +185,11 @@ func (r *RouteMap) Go(newroute string) {
 
 		if historyObj, err := w.History(); err == nil {
 			historyObj.PushState(nil, newroute, newroute)
-			r.onurlchange()
+			if route.mode != HASHROUTE {
+
+				r.onurlchange()
+			}
+
 		}
 	}
 
@@ -276,6 +284,7 @@ func (r *RouteMap) onurlchange() {
 
 			} else {
 				route, err = l.Hash()
+
 				if len(route) > 1 {
 					route = route[1:]
 
