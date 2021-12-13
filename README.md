@@ -51,6 +51,12 @@ Start the tinygo container with your source
 docker run --rm -it -w /go/src/yourproject -v "$PWD":/go/src/yourproject tinygo/tinygo bash 
 ```
 
+Build your binary
+
+```
+tinygo build -o -o ./yourstaticdirectory/project.wasm  --no-debug -target wasm main.go
+```
+
 If you the compiler is upgraded, sync the wasm_exec.js loader with your current wasm_exec.js compiler version
 
 ```
@@ -133,7 +139,7 @@ Just replace the "example.wasm" with the relative (or absolute) link of you bina
 
 Hogosuru is splitted in several directory for each components for a specific reason:  
 Avoid the inclusion of binary code that would not be necessary and thus avoid loading the entire framework (and especially having the smallest binaries possible)  
-Apart from the dependence of the components between them, tinygo will include the strict necessary for the compilation of your project
+Apart from the dependence of the components between them, the compiler will include the strict necessary for the compilation of your project
 
 ## Minimal code for your wasm
 

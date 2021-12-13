@@ -84,22 +84,27 @@ func extractJsonFromObject(jsobj js.Value) interface{} {
 	if obj, err := object.NewFromJSObject(jsobj); err == nil {
 
 		if ok, err := array.IsArray(obj.BaseObject); ok && err == nil {
-			var array []interface{}
-			keys, _ := obj.Values()
-			itkeys, _ := keys.Values()
 
-			for _, vkey, err := itkeys.Next(); err == nil; _, vkey, err = itkeys.Next() {
+			var arrayret []interface{}
 
-				if obj1, ok := vkey.(baseobject.ObjectFrom); !ok {
-					array = append(array, vkey)
+			if a, err := array.NewFromJSObject(obj.JSObject()); err == nil {
+				if it, err := a.Entries(); err == nil {
+					for _, value, err := it.Next(); err == nil; _, value, err = it.Next() {
 
-				} else {
-					array = append(array, extractJsonFromObject(obj1.JSObject()))
+						if obj1, ok := value.(baseobject.ObjectFrom); !ok {
+							arrayret = append(arrayret, value)
+
+						} else {
+							arrayret = append(arrayret, extractJsonFromObject(obj1.JSObject()))
+						}
+
+					}
+
 				}
 
 			}
 
-			retvalue = array
+			retvalue = arrayret
 
 		} else {
 
