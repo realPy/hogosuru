@@ -98,6 +98,16 @@ func (l Location) Search() (string, error) {
 	return l.GetAttributeString("search")
 }
 
+func (l Location) Username() (string, error) {
+
+	return l.GetAttributeString("username")
+}
+
+func (l Location) Password() (string, error) {
+
+	return l.GetAttributeString("password")
+}
+
 func (l Location) Assign(url string) error {
 	var err error
 	_, err = l.Call("assign", js.ValueOf(url))
