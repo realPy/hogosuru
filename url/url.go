@@ -5,6 +5,7 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/urlsearchparams"
 )
 
 var singleton sync.Once
@@ -37,6 +38,24 @@ type URLFrom interface {
 
 func (u URL) Location_() URL {
 	return u
+}
+
+func New(value string) (URL, error) {
+	var u URL
+	var err error
+	var obj js.Value
+
+	if ui := GetInterface(); !ui.IsUndefined() {
+
+		if obj, err = baseobject.New(ui, js.ValueOf(value)); err == nil {
+			u.BaseObject = u.SetObject(obj)
+		}
+
+	} else {
+		err = ErrNotImplemented
+	}
+
+	return u, err
 }
 
 func NewFromJSObject(obj js.Value) (URL, error) {
@@ -96,11 +115,6 @@ func (u URL) SetHref(href string) error {
 func (u URL) Origin() (string, error) {
 
 	return u.GetAttributeString("origin")
-}
-
-func (u URL) SetOrigin(origin string) error {
-
-	return u.SetAttributeString("origin", origin)
 }
 
 func (u URL) Pathname() (string, error) {
@@ -163,34 +177,58 @@ func (u URL) SetSearch(search string) error {
 	return u.SetAttributeString("search", search)
 }
 
-/*
-todo
-searchParams
-*/
+func (u URL) SearchParams() (urlsearchparams.URLSearchParams, error) {
+	var err error
+	var obj js.Value
+	var params urlsearchparams.URLSearchParams
 
-func (u URL) CreateObjectURL(object interface{}) (string, error) {
+	if obj, err = u.Get("searchParams"); err == nil {
+
+		if obj.IsUndefined() || obj.IsNull() {
+			err = baseobject.ErrNotAnObject
+
+		} else {
+
+			params, err = urlsearchparams.NewFromJSObject(obj)
+		}
+	}
+
+	return params, err
+}
+
+func CreateObjectURL(object interface{}) (string, error) {
 	var err error
 	var obj js.Value
 	var ret string
-	if objGo, ok := object.(baseobject.ObjectFrom); ok {
+	if ui := GetInterface(); !ui.IsUndefined() {
 
-		if obj, err = u.Call("createObjectURL", objGo.JSObject()); err == nil {
-			if obj.Type() == js.TypeString {
-				ret = obj.String()
-			} else {
-				err = baseobject.ErrObjectNotString
+		if objGo, ok := object.(baseobject.ObjectFrom); ok {
+
+			if obj, err = baseobject.Call(ui, "createObjectURL", objGo.JSObject()); err == nil {
+				if obj.Type() == js.TypeString {
+					ret = obj.String()
+				} else {
+					err = baseobject.ErrObjectNotString
+				}
+
 			}
 
 		}
-
+	} else {
+		err = ErrNotImplemented
 	}
 
 	return ret, err
 }
 
-func (u URL) RevokeObjectURL(objecturl string) error {
+func RevokeObjectURL(objecturl string) error {
 	var err error
-	_, err = u.Call("revokeObjectURL", objecturl)
+
+	if ui := GetInterface(); !ui.IsUndefined() {
+		_, err = baseobject.Call(ui, "revokeObjectURL", objecturl)
+	} else {
+		err = ErrNotImplemented
+	}
 
 	return err
 }
