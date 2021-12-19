@@ -59,59 +59,47 @@ func GetInterface() js.Value {
 
 func NewFromJSObject(obj js.Value) (WebSocket, error) {
 	var w WebSocket
-	var err error
-	if si := GetInterface(); !si.IsUndefined() {
-		if obj.IsUndefined() || obj.IsNull() {
-			err = baseobject.ErrUndefinedValue
-		} else {
-
-			if obj.InstanceOf(si) {
-				w.BaseObject = w.SetObject(obj)
-
-			} else {
-				err = ErrNotAWebSocket
-			}
-		}
-	} else {
-		err = ErrNotImplemented
+	var si js.Value
+	if si = GetInterface(); si.IsUndefined() {
+		return w, ErrNotImplemented
 	}
-
-	return w, err
+	if obj.IsUndefined() || obj.IsNull() {
+		return w, baseobject.ErrUndefinedValue
+	}
+	if obj.InstanceOf(si) {
+		return w, ErrNotAWebSocket
+	}
+	w.BaseObject = w.SetObject(obj)
+	return w, nil
 }
 
 //New Get a new channel broadcast
 func New(url string) (WebSocket, error) {
 	var ws WebSocket
 	var err error
-	var obj js.Value
-
-	if wsi := GetInterface(); !wsi.IsUndefined() {
-		if obj, err = baseobject.New(wsi, js.ValueOf(url)); err == nil {
-			ws.BaseObject = ws.SetObject(obj)
-		}
-	} else {
-		err = ErrNotImplemented
+	var wsi, obj js.Value
+	if wsi = GetInterface(); wsi.IsUndefined() {
+		return ws, ErrNotImplemented
 	}
-	return ws, err
+	if obj, err = baseobject.New(wsi, js.ValueOf(url)); err != nil {
+		return ws, err
+	}
+	ws.BaseObject = ws.SetObject(obj)
+	return ws, nil
 }
 
 func (w WebSocket) setHandler(jshandlername string, handler func(e event.Event)) {
-
 	jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-
 		if e, err := event.NewFromJSObject(args[0]); err == nil {
 			handler(e)
 		}
-
 		return nil
 	})
-
 	w.JSObject().Set(jshandlername, jsfunc)
 }
 
 //SetOnOpen Set onOpen Handler
 func (w WebSocket) SetOnOpen(handler func(e event.Event)) {
-
 	w.setHandler("onopen", func(e event.Event) {
 		handler(e)
 	})
@@ -134,9 +122,7 @@ func (w WebSocket) SetOnError(handler func(e event.Event)) {
 //SetOnClose Set onClose Handler
 func (w WebSocket) SetOnMessage(handler func(e messageevent.MessageEvent)) {
 	w.setHandler("onmessage", func(e event.Event) {
-
 		if obj, err := baseobject.Discover(e.JSObject()); err == nil {
-
 			if m, ok := obj.(messageevent.MessageEventFrom); ok {
 				handler(m.MessageEvent_())
 			}

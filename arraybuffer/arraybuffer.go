@@ -2,22 +2,18 @@ package arraybuffer
 
 //partial implemented (herited from function)
 // https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer
-
 import (
 	"sync"
-
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/baseobject"
 )
 
 var singleton sync.Once
-
 var arraybufferinterface js.Value
 
 //GetInterface get the JS interface ArrayBuffer
 func GetInterface() js.Value {
-
 	singleton.Do(func() {
 		var err error
 		if arraybufferinterface, err = baseobject.Get(js.Global(), "ArrayBuffer"); err != nil {
@@ -27,7 +23,6 @@ func GetInterface() js.Value {
 			return NewFromJSObject(v)
 		})
 	})
-
 	return arraybufferinterface
 }
 
@@ -35,7 +30,6 @@ func GetInterface() js.Value {
 type ArrayBuffer struct {
 	baseobject.BaseObject
 }
-
 type ArrayBufferFrom interface {
 	ArrayBuffer_() ArrayBuffer
 }
@@ -45,95 +39,65 @@ func (a ArrayBuffer) ArrayBuffer_() ArrayBuffer {
 }
 
 func New(size int) (ArrayBuffer, error) {
-
 	var a ArrayBuffer
-	var obj js.Value
+	var ai, obj js.Value
 	var err error
-	if ai := GetInterface(); !ai.IsUndefined() {
-
-		if obj, err = baseobject.New(ai, js.ValueOf(size)); err == nil {
-			a.BaseObject = a.SetObject(obj)
-		}
-
-	} else {
-		err = ErrNotImplemented
+	if ai = GetInterface(); ai.IsUndefined() {
+		return a, ErrNotImplemented
 	}
-
-	return a, err
+	if obj, err = baseobject.New(ai, js.ValueOf(size)); err != nil {
+		return a, err
+	}
+	a.BaseObject = a.SetObject(obj)
+	return a, nil
 }
 
 func NewFromJSObject(obj js.Value) (ArrayBuffer, error) {
 	var a ArrayBuffer
-	var err error
-	if ai := GetInterface(); !ai.IsUndefined() {
-		if obj.IsUndefined() || obj.IsNull() {
-			err = baseobject.ErrUndefinedValue
-		} else {
-
-			if obj.InstanceOf(ai) {
-				a.BaseObject = a.SetObject(obj)
-
-			} else {
-				err = ErrNotAnArrayBuffer
-			}
-		}
-	} else {
-		err = ErrNotImplemented
+	var ai js.Value
+	if ai = GetInterface(); ai.IsUndefined() {
+		return a, ErrNotImplemented
 	}
-
-	return a, err
+	if obj.IsUndefined() || obj.IsNull() {
+		return a, baseobject.ErrUndefinedValue
+	}
+	if !obj.InstanceOf(ai) {
+		return a, ErrNotAnArrayBuffer
+	}
+	a.BaseObject = a.SetObject(obj)
+	return a, nil
 }
 
 func (a ArrayBuffer) ByteLength() (int64, error) {
-
 	return a.GetAttributeInt64("byteLength")
 }
 
 func (a ArrayBuffer) Slice(begin int, end ...int) (ArrayBuffer, error) {
-
 	var optjs []interface{}
 	var err error
 	var obj js.Value
 	var ret ArrayBuffer
-
 	optjs = append(optjs, js.ValueOf(begin))
 	if len(end) > 0 {
 		optjs = append(optjs, js.ValueOf(end[0]))
 	}
-
 	if obj, err = a.Call("slice", optjs...); err == nil {
-
-		ret, err = NewFromJSObject(obj)
+		return NewFromJSObject(obj)
 	}
 	return ret, err
 }
 
 func IsView(i interface{}) (bool, error) {
-
-	var objjs interface{}
-	var ret bool
 	var err error
-	var obj js.Value
-
-	if objGo, ok := i.(baseobject.ObjectFrom); ok {
-		objjs = objGo.JSObject()
-	} else {
-		objjs = js.ValueOf(i)
+	var ai, obj js.Value
+	if ai = GetInterface(); ai.IsUndefined() {
+		return false, ErrNotImplemented
 	}
-
-	if ai := GetInterface(); !ai.IsUndefined() {
-
-		if obj, err = baseobject.Call(ai, "isView", objjs); err == nil {
-
-			if obj.Type() == js.TypeBoolean {
-				ret = obj.Bool()
-			} else {
-				err = baseobject.ErrObjectNotBool
-			}
-		}
-	} else {
-		err = ErrNotImplemented
+	if obj, err = baseobject.Call(ai, "isView", baseobject.GetJsValueOf(i)); err != nil {
+		return false, ErrNotImplemented
 	}
-
-	return ret, err
+	if obj.Type() != js.TypeBoolean {
+		return false, baseobject.ErrObjectNotBool
+	}
+	return obj.Bool(), nil
 }

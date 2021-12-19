@@ -66,18 +66,10 @@ func IDBObjectStoreNewFromJSObject(obj js.Value) (IDBObjectStore, error) {
 
 func (i IDBObjectStore) addput(method string, value interface{}, key ...string) (IDBRequest, error) {
 
-	var obj, objAdd js.Value
+	var obj js.Value
 	var request IDBRequest
 	var err error
-	var arrayJS []interface{}
-
-	if objGo, ok := value.(baseobject.ObjectFrom); ok {
-		objAdd = objGo.JSObject()
-	} else {
-		objAdd = js.ValueOf(value)
-	}
-
-	arrayJS = append(arrayJS, objAdd)
+	var arrayJS []interface{} = []interface{}{baseobject.GetJsValueOf(value)}
 
 	if len(key) > 0 {
 		arrayJS = append(arrayJS, js.ValueOf(key[0]))

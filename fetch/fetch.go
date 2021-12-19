@@ -55,12 +55,7 @@ func New(urlfetch string, opts ...interface{}) (Fetch, error) {
 
 	arrayJS = append(arrayJS, urlfetch)
 	for _, value := range opts {
-		if objGo, ok := value.(baseobject.ObjectFrom); ok {
-			arrayJS = append(arrayJS, objGo.JSObject())
-		} else {
-			arrayJS = append(arrayJS, js.ValueOf(value))
-		}
-
+		arrayJS = append(arrayJS, baseobject.GetJsValueOf(value))
 	}
 
 	if fetchi := GetInterface(); !fetchi.IsUndefined() {

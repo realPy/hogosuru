@@ -44,23 +44,18 @@ func GetInterface() js.Value {
 
 func NewFromJSObject(obj js.Value) (DataTransferItem, error) {
 	var d DataTransferItem
-	var err error
-	if dti := GetInterface(); !dti.IsUndefined() {
-		if obj.IsUndefined() || obj.IsNull() {
-			err = baseobject.ErrUndefinedValue
-		} else {
-			if obj.InstanceOf(dti) {
-				d.BaseObject = d.SetObject(obj)
-
-			} else {
-				err = ErrNotADataTransferItem
-			}
-		}
-
-	} else {
-		err = ErrNotImplemented
+	var dti js.Value
+	if dti = GetInterface(); dti.IsUndefined() {
+		return d, ErrNotImplemented
 	}
-	return d, err
+	if obj.IsUndefined() || obj.IsNull() {
+		return d, baseobject.ErrUndefinedValue
+	}
+	if !obj.InstanceOf(dti) {
+		return d, ErrNotADataTransferItem
+	}
+	d.BaseObject = d.SetObject(obj)
+	return d, nil
 }
 
 func (d DataTransferItem) Kind() (string, error) {
@@ -72,14 +67,11 @@ func (d DataTransferItem) Type() (string, error) {
 }
 
 func (d DataTransferItem) GetAsFile() (file.File, error) {
-
 	var err error
 	var obj js.Value
 	var f file.File
-
 	if obj, err = d.Call("getAsFile"); err == nil {
-
-		f, err = file.NewFromJSObject(obj)
+		return file.NewFromJSObject(obj)
 	}
 	return f, err
 

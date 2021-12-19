@@ -44,44 +44,33 @@ func GetInterface() js.Value {
 }
 
 func New() (DocumentFragment, error) {
-
 	var d DocumentFragment
 	var err error
-	var obj js.Value
-	if di := GetInterface(); !di.IsUndefined() {
-
-		if obj, err = baseobject.New(di); err == nil {
-			d.BaseObject = d.SetObject(obj)
-		}
-
-	} else {
-
-		err = ErrNotImplemented
+	var di, obj js.Value
+	if di = GetInterface(); di.IsUndefined() {
+		return d, nil
 	}
-
-	return d, err
+	if obj, err = baseobject.New(di); err != nil {
+		return d, ErrNotImplemented
+	}
+	d.BaseObject = d.SetObject(obj)
+	return d, nil
 }
 
 func NewFromJSObject(obj js.Value) (DocumentFragment, error) {
 	var d DocumentFragment
-	var err error
-	if dci := GetInterface(); !dci.IsUndefined() {
-		if obj.IsUndefined() || obj.IsNull() {
-			err = baseobject.ErrUndefinedValue
-		} else {
-
-			if obj.InstanceOf(dci) {
-
-				d.BaseObject = d.SetObject(obj)
-
-			} else {
-				err = ErrNotADocumentFragment
-			}
-		}
-	} else {
-		err = ErrNotImplemented
+	var dci js.Value
+	if dci = GetInterface(); dci.IsUndefined() {
+		return d, ErrNotImplemented
 	}
-	return d, err
+	if obj.IsUndefined() || obj.IsNull() {
+		return d, baseobject.ErrUndefinedValue
+	}
+	if !obj.InstanceOf(dci) {
+		return d, ErrNotADocumentFragment
+	}
+	d.BaseObject = d.SetObject(obj)
+	return d, nil
 }
 
 func (d DocumentFragment) ChildElementCount() (int, error) {
@@ -92,12 +81,9 @@ func (e DocumentFragment) Children() (htmlcollection.HtmlCollection, error) {
 	var err error
 	var obj js.Value
 	var collection htmlcollection.HtmlCollection
-
 	if obj, err = e.Get("children"); err == nil {
-
-		collection, err = htmlcollection.NewFromJSObject(obj)
+		return htmlcollection.NewFromJSObject(obj)
 	}
-
 	return collection, err
 }
 
@@ -105,21 +91,13 @@ func (e DocumentFragment) getAttributeElement(attribute string) (element.Element
 	var nodeObject js.Value
 	var newElement element.Element
 	var err error
-
-	if nodeObject, err = e.Get(attribute); err == nil {
-
-		if nodeObject.IsUndefined() {
-			err = element.ErrElementNoChilds
-
-		} else {
-
-			newElement, err = element.NewFromJSObject(nodeObject)
-
-		}
-
+	if nodeObject, err = e.Get(attribute); err != nil {
+		return newElement, err
 	}
-
-	return newElement, err
+	if nodeObject.IsUndefined() {
+		return newElement, element.ErrElementNoChilds
+	}
+	return element.NewFromJSObject(nodeObject)
 }
 
 func (d DocumentFragment) FirstElementChild() (element.Element, error) {
@@ -135,11 +113,7 @@ func (d DocumentFragment) nodesMethod(method string, elems ...interface{}) error
 	var arrayJS []interface{}
 
 	for _, elem := range elems {
-		if objGo, ok := elem.(baseobject.ObjectFrom); ok {
-			arrayJS = append(arrayJS, objGo.JSObject())
-		} else {
-			arrayJS = append(arrayJS, js.ValueOf(elem))
-		}
+		arrayJS = append(arrayJS, baseobject.GetJsValueOf(elem))
 	}
 	_, err = d.Call(method, arrayJS...)
 	return err
@@ -155,50 +129,38 @@ func (d DocumentFragment) Append(elems ...interface{}) error {
 }
 
 func (d DocumentFragment) QuerySelector(selector string) (node.Node, error) {
-
 	var err error
 	var obj js.Value
 	var nod node.Node
-
 	if obj, err = d.Call("querySelector", js.ValueOf(selector)); err == nil {
-
-		nod, err = node.NewFromJSObject(obj)
+		return node.NewFromJSObject(obj)
 	}
 	return nod, err
 }
 
 func (d DocumentFragment) QuerySelectorAll(selector string) (nodelist.NodeList, error) {
-
 	var err error
 	var obj js.Value
 	var nlist nodelist.NodeList
-
 	if obj, err = d.Call("querySelectorAll", js.ValueOf(selector)); err == nil {
-
-		nlist, err = nodelist.NewFromJSObject(obj)
+		return nodelist.NewFromJSObject(obj)
 	}
 	return nlist, err
 }
 
 func (d DocumentFragment) ReplaceChild(new, old node.Node) (node.Node, error) {
 	var err error
-
 	_, err = d.Call("replaceChild", new.JSObject(), old.JSObject())
-
 	return old, err
 
 }
 
 func (d DocumentFragment) GetElementById(id string) (element.Element, error) {
-
 	var err error
 	var obj js.Value
 	var elem element.Element
-
 	if obj, err = d.Call("getElementById", js.ValueOf(id)); err == nil {
-
-		elem, err = element.NewFromJSObject(obj)
+		return element.NewFromJSObject(obj)
 	}
-
 	return elem, err
 }

@@ -46,42 +46,31 @@ func GetInterface() js.Value {
 }
 
 func New() (Document, error) {
-
 	var d Document
+	var di, dobj js.Value
 	var err error
-	if di := GetInterface(); !di.IsUndefined() {
-
-		if dobj, err := baseobject.Get(js.Global(), "document"); err == nil {
-
-			d.BaseObject = d.SetObject(dobj)
-		}
-
-	} else {
-
-		err = ErrNotImplemented
+	if di = GetInterface(); di.IsUndefined() {
+		return d, ErrNotImplemented
 	}
-
-	return d, err
+	if dobj, err = baseobject.Get(js.Global(), "document"); err != nil {
+		return d, err
+	}
+	d.BaseObject = d.SetObject(dobj)
+	return d, nil
 }
 
 func NewFromJSObject(obj js.Value) (Document, error) {
 	var d Document
-	var err error
-	if dci := GetInterface(); !dci.IsUndefined() {
-		if obj.IsUndefined() || obj.IsNull() {
-			err = baseobject.ErrUndefinedValue
-		} else {
-
-			if obj.InstanceOf(dci) {
-
-				d.BaseObject = d.SetObject(obj)
-
-			} else {
-				err = ErrNotADocument
-			}
-		}
-	} else {
-		err = ErrNotImplemented
+	var dci js.Value
+	if dci = GetInterface(); dci.IsUndefined() {
+		return d, ErrNotImplemented
 	}
-	return d, err
+	if obj.IsUndefined() || obj.IsNull() {
+		return d, baseobject.ErrUndefinedValue
+	}
+	if !obj.InstanceOf(dci) {
+		return d, ErrNotADocument
+	}
+	d.BaseObject = d.SetObject(obj)
+	return d, nil
 }

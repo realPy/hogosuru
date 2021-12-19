@@ -333,16 +333,10 @@ func (h HtmlTextAreaElement) Select() error {
 func (h HtmlTextAreaElement) SetRangeText(replacement string, options ...interface{}) error {
 
 	var err error
-	var arrayJS []interface{}
-
-	arrayJS = append(arrayJS, js.ValueOf(replacement))
+	var arrayJS []interface{} = []interface{}{js.ValueOf(replacement)}
 
 	for _, option := range options {
-		if objGo, ok := option.(baseobject.ObjectFrom); ok {
-			arrayJS = append(arrayJS, objGo.JSObject())
-		} else {
-			arrayJS = append(arrayJS, js.ValueOf(option))
-		}
+		arrayJS = append(arrayJS, baseobject.GetJsValueOf(option))
 	}
 	_, err = h.Call("setRangeText", arrayJS...)
 	return err
@@ -351,10 +345,7 @@ func (h HtmlTextAreaElement) SetRangeText(replacement string, options ...interfa
 func (h HtmlTextAreaElement) SetSelectionRange(selectionStart, selectionEnd string, selectionDirection ...string) error {
 
 	var err error
-	var arrayJS []interface{}
-
-	arrayJS = append(arrayJS, js.ValueOf(selectionStart))
-	arrayJS = append(arrayJS, js.ValueOf(selectionEnd))
+	var arrayJS []interface{} = []interface{}{js.ValueOf(selectionStart), js.ValueOf(selectionEnd)}
 
 	if len(selectionDirection) > 0 {
 		arrayJS = append(arrayJS, js.ValueOf(selectionDirection[0]))

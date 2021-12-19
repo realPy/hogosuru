@@ -44,17 +44,10 @@ func GetInt16ArrayInterface() js.Value {
 func NewInt16Array(value interface{}) (Int16Array, error) {
 
 	var a Int16Array
-	var obj interface{}
 	var objnew js.Value
 	var err error
 	if ai := GetInt16ArrayInterface(); !ai.IsUndefined() {
-		if objGo, ok := value.(baseobject.ObjectFrom); ok {
-			obj = objGo.JSObject()
-		} else {
-			obj = js.ValueOf(value)
-		}
-
-		if objnew, err = baseobject.New(ai, obj); err == nil {
+		if objnew, err = baseobject.New(ai, baseobject.GetJsValueOf(value)); err == nil {
 			a.BaseObject = a.SetObject(objnew)
 		}
 

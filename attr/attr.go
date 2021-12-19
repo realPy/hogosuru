@@ -43,49 +43,37 @@ func (a Attr) Attr_() Attr {
 
 func NewFromJSObject(obj js.Value) (Attr, error) {
 	var a Attr
-	var err error
-	if ai := GetInterface(); !ai.IsUndefined() {
-		if obj.IsUndefined() || obj.IsNull() {
-			err = baseobject.ErrUndefinedValue
-		} else {
-
-			if obj.InstanceOf(ai) {
-				a.BaseObject = a.SetObject(obj)
-
-			} else {
-				err = ErrNotAnAttr
-			}
-		}
-
-	} else {
-		err = ErrNotImplemented
+	var ai js.Value
+	if ai = GetInterface(); ai.IsUndefined() {
+		return a, ErrNotImplemented
 	}
-
-	return a, err
+	if obj.IsUndefined() || obj.IsNull() {
+		return a, baseobject.ErrUndefinedValue
+	}
+	if obj.InstanceOf(ai) {
+		a.BaseObject = a.SetObject(obj)
+		return a, nil
+	}
+	return a, ErrNotAnAttr
 }
 
 func (a Attr) Name() (string, error) {
-
 	return a.GetAttributeString("name")
 }
 
 func (a Attr) NamespaceURI() (string, error) {
-
 	return a.GetAttributeString("namespaceURI")
 }
 
 func (a Attr) LocalName() (string, error) {
-
 	return a.GetAttributeString("localName")
 }
 
 func (a Attr) Prefix() (string, error) {
-
 	return a.GetAttributeString("prefix")
 }
 
 func (a Attr) Value() (string, error) {
-
 	return a.GetAttributeString("value")
 }
 

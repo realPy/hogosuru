@@ -32,47 +32,31 @@ func (b BroadcastChannel) BroadcastChannel_() BroadcastChannel {
 
 //GetJSInterface get the JS interface
 func GetInterface() js.Value {
-
 	singleton.Do(func() {
 		var err error
 		if bcinterface, err = baseobject.Get(js.Global(), "BroadcastChannel"); err != nil {
 			bcinterface = js.Undefined()
 		}
-
 		messageevent.GetInterface()
 
 	})
-
 	return bcinterface
 }
 
 //New Get a new channel broadcast
 func New(channelname string) (BroadcastChannel, error) {
 	var channel BroadcastChannel
-	var err error
 	if bci := GetInterface(); !bci.IsUndefined() {
 		channel.BaseObject = channel.SetObject(bci.New(js.ValueOf(channelname)))
-	} else {
-		err = ErrNotImplemented
+		return channel, nil
 	}
-	return channel, err
+	return channel, ErrNotImplemented
 }
 
 //PostMessage Post a message on channel
 func (c BroadcastChannel) PostMessage(message interface{}) error {
-
 	var err error
-	var data js.Value
-
-	if objGo, ok := message.(baseobject.ObjectFrom); ok {
-
-		data = objGo.JSObject()
-	} else {
-		data = js.ValueOf(message)
-	}
-
-	_, err = c.Call("postMessage", data)
-
+	_, err = c.Call("postMessage", baseobject.GetJsValueOf(message))
 	return err
 }
 
@@ -80,11 +64,9 @@ func (c BroadcastChannel) PostMessage(message interface{}) error {
 func (c BroadcastChannel) Close() error {
 	var err error
 	_, err = c.Call("close")
-
 	return err
 }
 
 func (c BroadcastChannel) Name() (string, error) {
-
 	return c.GetAttributeString("name")
 }

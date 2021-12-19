@@ -50,115 +50,88 @@ func (b Blob) Blob_() Blob {
 }
 
 func New(values ...interface{}) (Blob, error) {
-
 	var b Blob
-	var obj js.Value
+	var bi, obj js.Value
 	var err error
 	var arrayJS []interface{}
-
 	for _, value := range values {
-		if objGo, ok := value.(baseobject.ObjectFrom); ok {
-			arrayJS = append(arrayJS, objGo.JSObject())
-		} else {
-			arrayJS = append(arrayJS, js.ValueOf(value))
-		}
-
+		arrayJS = append(arrayJS, baseobject.GetJsValueOf(value))
 	}
-
-	if bi := GetInterface(); !bi.IsUndefined() {
-
-		if obj, err = baseobject.New(bi, arrayJS); err == nil {
-			b.BaseObject = b.SetObject(obj)
-		}
-
-	} else {
-		err = ErrNotImplemented
+	if bi = GetInterface(); bi.IsUndefined() {
+		return b, ErrNotImplemented
 	}
-	return b, err
+	if obj, err = baseobject.New(bi, arrayJS); err != nil {
+		return b, err
+	}
+	b.BaseObject = b.SetObject(obj)
+	return b, nil
 }
 
 func NewWithObject(o js.Value) (Blob, error) {
-
 	var b Blob
-	var obj js.Value
+	var bi, obj js.Value
 	var err error
-	if bi := GetInterface(); !bi.IsUndefined() {
-
-		if obj, err = baseobject.New(bi, o); err == nil {
-			b.BaseObject = b.SetObject(obj)
-		}
-
-	} else {
-		err = ErrNotImplemented
+	if bi = GetInterface(); bi.IsUndefined() {
+		return b, ErrNotImplemented
 	}
-	return b, err
+	if obj, err = baseobject.New(bi, o); err != nil {
+		return b, err
+	}
+	b.BaseObject = b.SetObject(obj)
+	return b, nil
 }
 
 func NewWithArrayBuffer(a arraybuffer.ArrayBuffer) (Blob, error) {
-
 	var b Blob
-	var obj js.Value
+	var bi, obj js.Value
 	var err error
-	if bi := GetInterface(); !bi.IsUndefined() {
-
-		if obj, err = baseobject.New(bi, []interface{}{a.JSObject()}); err == nil {
-			b.BaseObject = b.SetObject(obj)
-		}
-
-	} else {
-		err = ErrNotImplemented
+	if bi = GetInterface(); bi.IsUndefined() {
+		return b, ErrNotImplemented
 	}
-	return b, err
+	if obj, err = baseobject.New(bi, []interface{}{a.JSObject()}); err != nil {
+		return b, err
+	}
+	b.BaseObject = b.SetObject(obj)
+	return b, nil
 }
 
 func NewFromJSObject(obj js.Value) (Blob, error) {
 	var b Blob
-	var err error
-	if bi := GetInterface(); !bi.IsUndefined() {
-		if obj.IsUndefined() || obj.IsNull() {
-			err = baseobject.ErrUndefinedValue
-		} else {
-
-			if obj.InstanceOf(bi) {
-				b.BaseObject = b.SetObject(obj)
-
-			} else {
-				err = ErrNotABlob
-			}
-		}
-	} else {
-		err = ErrNotImplemented
+	var bi js.Value
+	if bi = GetInterface(); bi.IsUndefined() {
+		return b, ErrNotImplemented
 	}
-
-	return b, err
+	if obj.IsUndefined() || obj.IsNull() {
+		return b, baseobject.ErrUndefinedValue
+	}
+	if !obj.InstanceOf(bi) {
+		return b, ErrNotABlob
+	}
+	b.BaseObject = b.SetObject(obj)
+	return b, nil
 }
 
 func (b Blob) IsClosed() (bool, error) {
 	var err error
 	var obj js.Value
 	var ret bool
-
-	if obj, err = b.Get("isClosed"); err == nil {
-		if !obj.IsUndefined() {
-			ret = obj.Bool()
-		} else {
-			err = baseobject.ErrNotImplementedFunc
-		}
-
+	if obj, err = b.Get("isClosed"); err != nil {
+		return ret, err
 	}
-	return ret, err
+	if obj.IsUndefined() {
+		return ret, baseobject.ErrNotImplementedFunc
+	}
+	return obj.Bool(), nil
 }
 
 func (b Blob) Size() (int64, error) {
-
 	return b.GetAttributeInt64("size")
 }
+
 func (b Blob) Type() (string, error) {
 	var err error
 	var obj js.Value
-
 	if obj, err = b.Get("type"); err == nil {
-
 		return obj.String(), nil
 	}
 	return "", err
@@ -182,29 +155,21 @@ func (b Blob) Slice(begin, end int64) (Blob, error) {
 }
 
 func (b Blob) Stream() (stream.ReadableStream, error) {
-
 	var err error
 	var obj js.Value
-
 	if obj, err = b.Call("stream"); err == nil {
 		return stream.NewFromJSObject(obj)
-
 	}
 	return readablestream.ReadableStream{}, err
 }
 
 func (b Blob) ArrayBuffer() (promise.Promise, error) {
-
 	var err error
 	var promisebuffer js.Value
 	var p promise.Promise
-
 	if promisebuffer, err = b.Call("arrayBuffer"); err == nil {
-
-		p, err = promise.NewFromJSObject(promisebuffer)
-
+		return promise.NewFromJSObject(promisebuffer)
 	}
-
 	return p, err
 }
 
@@ -212,10 +177,8 @@ func (b Blob) Text() (promise.Promise, error) {
 	var err error
 	var promisetext js.Value
 	var p promise.Promise
-
 	if promisetext, err = b.Call("text"); err == nil {
-		p, err = promise.NewFromJSObject(promisetext)
+		return promise.NewFromJSObject(promisetext)
 	}
-
 	return p, err
 }

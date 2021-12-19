@@ -46,13 +46,10 @@ func Option(text string, opts ...interface{}) (HtmlOptionElement, error) {
 
 	var err error
 	var h HtmlOptionElement
-	var arrayjs []interface{}
-
-	arrayjs = append(arrayjs, js.ValueOf(text))
+	var arrayjs []interface{} = []interface{}{js.ValueOf(text)}
 
 	for opt := range opts {
 		arrayjs = append(arrayjs, js.ValueOf(opt))
-
 	}
 
 	if hci, err := baseobject.Get(js.Global(), "Option"); err == nil {

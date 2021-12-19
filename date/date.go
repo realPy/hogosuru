@@ -45,71 +45,51 @@ func New(values ...interface{}) (Date, error) {
 	var d Date
 	var err error
 	var arrayJS []interface{}
-	var obj js.Value
-
+	var di, obj js.Value
 	for _, value := range values {
-		if objGo, ok := value.(baseobject.ObjectFrom); ok {
-			arrayJS = append(arrayJS, objGo.JSObject())
-		} else {
-			arrayJS = append(arrayJS, js.ValueOf(value))
-		}
-
+		arrayJS = append(arrayJS, baseobject.GetJsValueOf(value))
 	}
-	if di := GetInterface(); !di.IsUndefined() {
-
-		if obj, err = baseobject.New(di, arrayJS...); err == nil {
-			d.BaseObject = d.SetObject(obj)
-		}
-
-	} else {
-		err = ErrNotImplemented
+	if di = GetInterface(); di.IsUndefined() {
+		return d, ErrNotImplemented
 	}
-
-	return d, err
+	if obj, err = baseobject.New(di, arrayJS...); err != nil {
+		return d, err
+	}
+	d.BaseObject = d.SetObject(obj)
+	return d, nil
 }
 
 func NewFromJSObject(obj js.Value) (Date, error) {
 	var d Date
-	var err error
-
-	if di := GetInterface(); !di.IsUndefined() {
-		if obj.IsUndefined() || obj.IsNull() {
-			err = baseobject.ErrUndefinedValue
-		} else {
-
-			if obj.InstanceOf(di) {
-				d.BaseObject = d.SetObject(obj)
-			} else {
-				err = ErrNotADate
-			}
-		}
-	} else {
-		err = ErrNotImplemented
+	var di js.Value
+	if di := GetInterface(); di.IsUndefined() {
+		return d, ErrNotImplemented
 	}
-
-	return d, err
+	if obj.IsUndefined() || obj.IsNull() {
+		return d, baseobject.ErrUndefinedValue
+	}
+	if obj.InstanceOf(di) {
+		return d, ErrNotADate
+	}
+	d.BaseObject = d.SetObject(obj)
+	return d, nil
 }
 
 func (d Date) callString(method string, opts ...interface{}) (string, error) {
-
 	var err error
 	var obj js.Value
 	var ret string
-
 	var optJSValue []interface{}
-
 	for _, opt := range opts {
 		optJSValue = append(optJSValue, js.ValueOf(opt))
 	}
-
-	if obj, err = d.Call(method, optJSValue...); err == nil {
-		if obj.Type() == js.TypeString {
-			ret = obj.String()
-		} else {
-			err = baseobject.ErrObjectNotString
-		}
+	if obj, err = d.Call(method, optJSValue...); err != nil {
+		return ret, err
 	}
-	return ret, err
+	if obj.Type() == js.TypeString {
+		return obj.String(), nil
+	}
+	return ret, baseobject.ErrObjectNotString
 }
 
 func (d Date) GetDate() (int, error) {
@@ -280,46 +260,34 @@ func (d Date) SetUTCSeconds(value int) error {
 
 func Parse(value string) (int64, error) {
 	var err error
-	var obj js.Value
+	var di, obj js.Value
 	var ret int64
-	if di := GetInterface(); !di.IsUndefined() {
-
-		if obj, err = baseobject.Call(di, "parse", js.ValueOf(value)); err == nil {
-			if obj.Type() == js.TypeNumber {
-				ret = int64(obj.Float())
-			} else {
-				err = baseobject.ErrObjectNotNumber
-			}
-		}
-		return ret, err
-
-	} else {
-		err = ErrNotImplemented
+	if di = GetInterface(); di.IsUndefined() {
+		return ret, ErrNotImplemented
 	}
-
-	return ret, err
+	if obj, err = baseobject.Call(di, "parse", js.ValueOf(value)); err != nil {
+		return ret, err
+	}
+	if obj.Type() == js.TypeNumber {
+		return int64(obj.Float()), nil
+	}
+	return ret, baseobject.ErrObjectNotNumber
 }
 
 func Now() (int64, error) {
 	var err error
-	var obj js.Value
+	var di, obj js.Value
 	var ret int64
-	if di := GetInterface(); !di.IsUndefined() {
-
-		if obj, err = baseobject.Call(di, "now"); err == nil {
-			if obj.Type() == js.TypeNumber {
-				ret = int64(obj.Float())
-			} else {
-				err = baseobject.ErrObjectNotNumber
-			}
-		}
-		return ret, err
-
-	} else {
-		err = ErrNotImplemented
+	if di = GetInterface(); di.IsUndefined() {
+		return ret, ErrNotImplemented
 	}
-
-	return ret, err
+	if obj, err = baseobject.Call(di, "now"); err != nil {
+		return ret, err
+	}
+	if obj.Type() == js.TypeNumber {
+		return int64(obj.Float()), nil
+	}
+	return ret, baseobject.ErrObjectNotNumber
 }
 
 func (d Date) ToDateString() (string, error) {
@@ -339,7 +307,6 @@ func (d Date) ToLocaleDateString(opts ...interface{}) (string, error) {
 	if len(opts) > 0 {
 		arrayopts = append(arrayopts, js.ValueOf(opts[0]))
 	}
-
 	if len(opts) > 1 {
 		arrayopts = append(arrayopts, js.ValueOf(opts[1]))
 	}
@@ -347,26 +314,21 @@ func (d Date) ToLocaleDateString(opts ...interface{}) (string, error) {
 }
 
 func (d Date) ToLocaleString(opts ...interface{}) (string, error) {
-
 	var arrayopts []interface{}
 	if len(opts) > 0 {
 		arrayopts = append(arrayopts, js.ValueOf(opts[0]))
 	}
-
 	if len(opts) > 1 {
 		arrayopts = append(arrayopts, js.ValueOf(opts[1]))
 	}
-
 	return d.callString("toLocaleString", arrayopts...)
 }
 
 func (d Date) ToLocaleTimeString(opts ...interface{}) (string, error) {
-
 	var arrayopts []interface{}
 	if len(opts) > 0 {
 		arrayopts = append(arrayopts, js.ValueOf(opts[0]))
 	}
-
 	if len(opts) > 1 {
 		arrayopts = append(arrayopts, js.ValueOf(opts[1]))
 	}
@@ -387,33 +349,20 @@ func (d Date) ValueOf() (int64, error) {
 
 func UTC(values ...interface{}) (int64, error) {
 	var err error
-	var obj js.Value
+	var di, obj js.Value
 	var ret int64
 	var arrayJS []interface{}
-
 	for _, value := range values {
-		if objGo, ok := value.(baseobject.ObjectFrom); ok {
-			arrayJS = append(arrayJS, objGo.JSObject())
-		} else {
-			arrayJS = append(arrayJS, js.ValueOf(value))
-		}
-
+		arrayJS = append(arrayJS, baseobject.GetJsValueOf(value))
 	}
-
-	if di := GetInterface(); !di.IsUndefined() {
-
-		if obj, err = baseobject.Call(di, "UTC", arrayJS...); err == nil {
-			if obj.Type() == js.TypeNumber {
-				ret = int64(obj.Float())
-			} else {
-				err = baseobject.ErrObjectNotNumber
-			}
-		}
+	if di = GetInterface(); di.IsUndefined() {
+		return ret, ErrNotImplemented
+	}
+	if obj, err = baseobject.Call(di, "UTC", arrayJS...); err != nil {
 		return ret, err
-
-	} else {
-		err = ErrNotImplemented
 	}
-
-	return ret, err
+	if obj.Type() == js.TypeNumber {
+		return int64(obj.Float()), nil
+	}
+	return ret, baseobject.ErrObjectNotNumber
 }

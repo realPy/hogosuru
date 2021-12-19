@@ -173,12 +173,7 @@ func iterablePromises(method string, values ...interface{}) (Promise, error) {
 	var arrayJS []interface{}
 	if pi := GetInterface(); !pi.IsUndefined() {
 		for _, value := range values {
-			if objGo, ok := value.(baseobject.ObjectFrom); ok {
-				arrayJS = append(arrayJS, objGo.JSObject())
-			} else {
-				arrayJS = append(arrayJS, js.ValueOf(value))
-			}
-
+			arrayJS = append(arrayJS, baseobject.GetJsValueOf(value))
 		}
 		if arr, err = array.New(arrayJS...); err == nil {
 
@@ -297,20 +292,9 @@ func Reject(reason error) (Promise, error) {
 func Resolve(result interface{}) (Promise, error) {
 	var p Promise
 	var obj js.Value
-	var objresult js.Value
-
 	var err error
 	if pi := GetInterface(); !pi.IsUndefined() {
-
-		if objGo, ok := result.(baseobject.ObjectFrom); ok {
-
-			objresult = objGo.JSObject()
-		} else {
-			objresult = js.ValueOf(result)
-		}
-
-		if obj, err = baseobject.Call(pi, "resolve", objresult); err == nil {
-
+		if obj, err = baseobject.Call(pi, "resolve", baseobject.GetJsValueOf(result)); err == nil {
 			p, err = NewFromJSObject(obj)
 		}
 

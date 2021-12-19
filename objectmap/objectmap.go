@@ -76,12 +76,7 @@ func New(values ...interface{}) (ObjectMap, error) {
 	var arrayJS []interface{}
 
 	for _, value := range values {
-		if objGo, ok := value.(baseobject.ObjectFrom); ok {
-			arrayJS = append(arrayJS, objGo.JSObject())
-		} else {
-			arrayJS = append(arrayJS, js.ValueOf(value))
-		}
-
+		arrayJS = append(arrayJS, baseobject.GetJsValueOf(value))
 	}
 
 	if omi := GetInterface(); !omi.IsUndefined() {
@@ -106,15 +101,8 @@ func (o ObjectMap) Delete(key interface{}) (bool, error) {
 	var err error
 	var obj js.Value
 	var result bool
-	var globalKeyObj interface{}
 
-	if objGo, ok := key.(baseobject.ObjectFrom); ok {
-		globalKeyObj = objGo.JSObject()
-	} else {
-		globalKeyObj = js.ValueOf(key)
-	}
-
-	if obj, err = o.Call("delete", globalKeyObj); err == nil {
+	if obj, err = o.Call("delete", baseobject.GetJsValueOf(key)); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
@@ -157,15 +145,7 @@ func (o ObjectMap) Get(key interface{}) (interface{}, error) {
 	var obj js.Value
 	var result interface{}
 
-	var globalKeyObj interface{}
-
-	if objGo, ok := key.(baseobject.ObjectFrom); ok {
-		globalKeyObj = objGo.JSObject()
-	} else {
-		globalKeyObj = js.ValueOf(key)
-	}
-
-	if obj, err = o.Call("get", globalKeyObj); err == nil {
+	if obj, err = o.Call("get", baseobject.GetJsValueOf(key)); err == nil {
 		result, err = baseobject.GoValue(obj)
 	}
 	return result, err
@@ -176,15 +156,7 @@ func (o ObjectMap) Has(key interface{}) (bool, error) {
 	var obj js.Value
 	var result bool
 
-	var globalKeyObj interface{}
-
-	if objGo, ok := key.(baseobject.ObjectFrom); ok {
-		globalKeyObj = objGo.JSObject()
-	} else {
-		globalKeyObj = js.ValueOf(key)
-	}
-
-	if obj, err = o.Call("has", globalKeyObj); err == nil {
+	if obj, err = o.Call("has", baseobject.GetJsValueOf(key)); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
@@ -209,22 +181,7 @@ func (o ObjectMap) Keys() (iterator.Iterator, error) {
 
 func (o ObjectMap) Set(key interface{}, value interface{}) error {
 	var err error
-	var globalKeyObj interface{}
-	var globalValueObj interface{}
-
-	if objGo, ok := key.(baseobject.ObjectFrom); ok {
-		globalKeyObj = objGo.JSObject()
-	} else {
-		globalKeyObj = js.ValueOf(key)
-	}
-
-	if objGo, ok := value.(baseobject.ObjectFrom); ok {
-		globalValueObj = objGo.JSObject()
-	} else {
-		globalValueObj = js.ValueOf(value)
-	}
-
-	_, err = o.Call("set", globalKeyObj, globalValueObj)
+	_, err = o.Call("set", baseobject.GetJsValueOf(key), baseobject.GetJsValueOf(value))
 	return err
 }
 

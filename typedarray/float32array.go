@@ -44,17 +44,11 @@ func GetFloat32ArrayInterface() js.Value {
 func NewFloat32Array(value interface{}) (Float32Array, error) {
 
 	var a Float32Array
-	var obj interface{}
 	var objnew js.Value
 	var err error
 	if ai := GetFloat32ArrayInterface(); !ai.IsUndefined() {
-		if objGo, ok := value.(baseobject.ObjectFrom); ok {
-			obj = objGo.JSObject()
-		} else {
-			obj = js.ValueOf(value)
-		}
 
-		if objnew, err = baseobject.New(ai, obj); err == nil {
+		if objnew, err = baseobject.New(ai, baseobject.GetJsValueOf(value)); err == nil {
 			a.BaseObject = a.SetObject(objnew)
 		}
 

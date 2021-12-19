@@ -59,33 +59,26 @@ func New() (WebAssembly, error) {
 
 func NewFromJSObject(obj js.Value) (WebAssembly, error) {
 	var w WebAssembly
-	var err error
-	if wi := GetInterface(); !wi.IsUndefined() {
-		if obj.IsUndefined() || obj.IsNull() {
-			err = baseobject.ErrUndefinedValue
-		} else {
-
-			if obj.InstanceOf(wi) {
-				w.BaseObject = w.SetObject(obj)
-			} else {
-				err = ErrNotAWebAssembly
-			}
-		}
-	} else {
-		err = ErrNotImplemented
+	var wi js.Value
+	if wi = GetInterface(); wi.IsUndefined() {
+		return w, ErrNotImplemented
 	}
-
-	return w, err
+	if obj.IsUndefined() || obj.IsNull() {
+		return w, baseobject.ErrUndefinedValue
+	}
+	if !obj.InstanceOf(wi) {
+		return w, ErrNotAWebAssembly
+	}
+	w.BaseObject = w.SetObject(obj)
+	return w, nil
 }
 
 func (w WebAssembly) InstantiateStreaming(source promise.Promise, imports js.Value) (promise.Promise, error) {
-
 	var obj js.Value
 	var err error
 	var p promise.Promise
 	if obj, err = w.Call("instantiateStreaming", source.JSObject(), imports); err == nil {
-		p, err = promise.NewFromJSObject(obj)
-
+		return promise.NewFromJSObject(obj)
 	}
 	return p, err
 }
@@ -94,10 +87,8 @@ func (w WebAssembly) Instantiate(source arraybuffer.ArrayBuffer, imports js.Valu
 	var obj js.Value
 	var err error
 	var p promise.Promise
-
 	if obj, err = w.Call("instantiate", source.JSObject(), imports); err == nil {
-		p, err = promise.NewFromJSObject(obj)
-
+		return promise.NewFromJSObject(obj)
 	}
 	return p, err
 }

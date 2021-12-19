@@ -15,14 +15,11 @@ func (d Document) Close() error {
 }
 
 func (d Document) GetElementsByName(name string) (nodelist.NodeList, error) {
-
 	var err error
 	var obj js.Value
 	var nlist nodelist.NodeList
-
 	if obj, err = d.Call("getElementsByName", js.ValueOf(name)); err == nil {
-
-		nlist, err = nodelist.NewFromJSObject(obj)
+		return nodelist.NewFromJSObject(obj)
 	}
 	return nlist, err
 }
@@ -32,13 +29,11 @@ func (d Document) getSelection() {
 }
 
 func (d Document) HasFocus() (bool, error) {
-
 	return d.GetAttributeBool("hasFocus")
 }
 
 //Close Closer interface
 func (d Document) Open() error {
-
 	_, err := d.Call("open")
 	return err
 }
@@ -59,7 +54,6 @@ func (d Document) Write(p []byte) (n int, err error) {
 }
 
 func (d Document) Writeln(text string) error {
-
 	_, err := d.Call("writeln", js.ValueOf(text))
 	return err
 }

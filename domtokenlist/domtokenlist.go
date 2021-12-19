@@ -120,11 +120,9 @@ func (d DOMTokenList) Replace(oldtoken, newtoken string) error {
 
 func (d DOMTokenList) Toggle(token string, force ...bool) (bool, error) {
 	var err error
-	var arrayJS []interface{}
 	var result bool
 	var obj js.Value
-
-	arrayJS = append(arrayJS, js.ValueOf(token))
+	var arrayJS []interface{} = []interface{}{js.ValueOf(token)}
 	if len(force) > 0 {
 		arrayJS = append(arrayJS, js.ValueOf(force[0]))
 	}

@@ -45,29 +45,22 @@ func GetInterface() js.Value {
 
 func NewFromJSObject(obj js.Value) (DataTransferItemList, error) {
 	var d DataTransferItemList
-	var err error
-	if dli := GetInterface(); !dli.IsUndefined() {
-		if obj.IsUndefined() || obj.IsNull() {
-			err = baseobject.ErrUndefinedValue
-		} else {
-
-			if obj.InstanceOf(dli) {
-				d.BaseObject = d.SetObject(obj)
-
-			} else {
-				err = ErrNotADataTransferItemList
-			}
-		}
-	} else {
-		err = ErrNotImplemented
+	var dli js.Value
+	if dli = GetInterface(); dli.IsUndefined() {
+		return d, ErrNotImplemented
 	}
-	return d, err
+	if obj.IsUndefined() || obj.IsNull() {
+		return d, baseobject.ErrUndefinedValue
+	}
+	if !obj.InstanceOf(dli) {
+		return d, ErrNotADataTransferItemList
+	}
+	d.BaseObject = d.SetObject(obj)
+	return d, nil
 }
 
 func (d DataTransferItemList) Length() (int, error) {
-
 	return d.GetAttributeInt("length")
-
 }
 
 // doc said input can be file or string but string not work
@@ -91,15 +84,12 @@ func (d DataTransferItemList) Clear() error {
 
 //this func doesn't work but exist in doc
 func (d DataTransferItemList) DataTransferItem(index int) (datatransferitem.DataTransferItem, error) {
-
 	var err error
 	var obj js.Value
 	var dt datatransferitem.DataTransferItem
-
-	if obj, err = d.GetIndex(index); err == nil {
-
-		dt, err = datatransferitem.NewFromJSObject(obj)
+	if obj, err = d.GetIndex(index); err != nil {
+		return dt, err
 	}
-	return dt, err
+	return datatransferitem.NewFromJSObject(obj)
 
 }

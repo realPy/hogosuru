@@ -43,95 +43,80 @@ func GetInterface() js.Value {
 
 func NewFromJSObject(obj js.Value) (CSSStyleDeclaration, error) {
 	var c CSSStyleDeclaration
-	var err error
-	if dli := GetInterface(); !dli.IsUndefined() {
-		if obj.IsUndefined() || obj.IsNull() {
-			err = baseobject.ErrUndefinedValue
-		} else {
-
-			if obj.InstanceOf(dli) {
-				c.BaseObject = c.SetObject(obj)
-
-			} else {
-				err = ErrNotAnCSSStyleDeclaration
-			}
-		}
-	} else {
-		err = ErrNotImplemented
+	var dli js.Value
+	if dli = GetInterface(); dli.IsUndefined() {
+		return c, ErrNotImplemented
 	}
-	return c, err
+	if obj.IsUndefined() || obj.IsNull() {
+		return c, baseobject.ErrUndefinedValue
+	}
+	if !obj.InstanceOf(dli) {
+		return c, ErrNotAnCSSStyleDeclaration
+	}
+	c.BaseObject = c.SetObject(obj)
+	return c, nil
 }
 
 func (c CSSStyleDeclaration) ParentRule() (cssrule.CSSRule, error) {
 	var err error
 	var obj js.Value
 	var cr cssrule.CSSRule
-	if obj, err = c.Get("parentRule"); err == nil {
-
-		if obj.IsUndefined() {
-			err = baseobject.ErrNotAnObject
-
-		} else {
-			cr, err = cssrule.NewFromJSObject(obj)
-		}
+	if obj, err = c.Get("parentRule"); err != nil {
+		return cr, err
 	}
-	return cr, err
+	if obj.IsUndefined() {
+		return cr, baseobject.ErrNotAnObject
+	}
+	return cssrule.NewFromJSObject(obj)
 }
 
 func (c CSSStyleDeclaration) SetProperty(propertyName string, opts ...string) error {
 	var err error
 	var arrayJS []interface{}
-
 	arrayJS = append(arrayJS, js.ValueOf(propertyName))
-
 	for _, opt := range opts {
 		arrayJS = append(arrayJS, js.ValueOf(opt))
 	}
 	_, err = c.Call("setProperty", arrayJS...)
 	return err
-
 }
 
 func (c CSSStyleDeclaration) Item(index int) (string, error) {
 	var err error
 	var obj js.Value
 	var ret string
-
-	if obj, err = c.Call("item", js.ValueOf(index)); err == nil {
-		ret = obj.String()
+	if obj, err = c.Call("item", js.ValueOf(index)); err != nil {
+		return ret, err
 	}
-	return ret, err
+	return obj.String(), nil
 }
 
 func (c CSSStyleDeclaration) GetPropertyPriority(property string) (string, error) {
 	var err error
 	var obj js.Value
 	var ret string
-
-	if obj, err = c.Call("getPropertyPriority", js.ValueOf(property)); err == nil {
-		ret = obj.String()
+	if obj, err = c.Call("getPropertyPriority", js.ValueOf(property)); err != nil {
+		return ret, err
 	}
-	return ret, err
+	return obj.String(), nil
 }
 
 func (c CSSStyleDeclaration) GetPropertyValue(property string) (string, error) {
 	var err error
 	var obj js.Value
 	var ret string
-
-	if obj, err = c.Call("getPropertyValue", js.ValueOf(property)); err == nil {
-		ret = obj.String()
+	if obj, err = c.Call("getPropertyValue", js.ValueOf(property)); err != nil {
+		return ret, err
 	}
-	return ret, err
+	return obj.String(), nil
 }
 
 func (c CSSStyleDeclaration) RemoveProperty(property string) (string, error) {
 	var err error
 	var obj js.Value
 	var ret string
-
-	if obj, err = c.Call("removeProperty", js.ValueOf(property)); err == nil {
-		ret = obj.String()
+	if obj, err = c.Call("removeProperty", js.ValueOf(property)); err != nil {
+		return ret, err
 	}
-	return ret, err
+	return obj.String(), nil
 }

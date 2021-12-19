@@ -103,43 +103,22 @@ func (h History) Length() (int, error) {
 func (h History) PushState(obj interface{}, title string, url ...string) error {
 	var err error
 	var arrayJS []interface{}
-
-	if objGo, ok := obj.(baseobject.ObjectFrom); ok {
-		arrayJS = append(arrayJS, objGo.JSObject())
-	} else {
-		arrayJS = append(arrayJS, js.ValueOf(obj))
-	}
-
-	arrayJS = append(arrayJS, js.ValueOf(title))
-
+	arrayJS = append(arrayJS, baseobject.GetJsValueOf(obj), js.ValueOf(title))
 	if len(url) > 0 {
 		arrayJS = append(arrayJS, js.ValueOf(url[0]))
 	}
-
 	_, err = h.Call("pushState", arrayJS...)
-
 	return err
 }
 
 func (h History) ReplaceState(obj interface{}, title string, url ...string) error {
 	var err error
-
 	var arrayJS []interface{}
-
-	if objGo, ok := obj.(baseobject.ObjectFrom); ok {
-		arrayJS = append(arrayJS, objGo.JSObject())
-	} else {
-		arrayJS = append(arrayJS, js.ValueOf(obj))
-	}
-
-	arrayJS = append(arrayJS, js.ValueOf(title))
-
+	arrayJS = append(arrayJS, baseobject.GetJsValueOf(obj), js.ValueOf(title))
 	if len(url) > 0 {
 		arrayJS = append(arrayJS, js.ValueOf(url[0]))
 	}
-
 	_, err = h.Call("replaceState", arrayJS...)
-
 	return err
 }
 

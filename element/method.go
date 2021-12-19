@@ -395,10 +395,7 @@ func (e Element) RequestPointerLock() error {
 
 func (e Element) Scroll(x, y int, opts ...map[string]interface{}) error {
 	var err error
-	var optJSValue []interface{}
-
-	optJSValue = append(optJSValue, js.ValueOf(x))
-	optJSValue = append(optJSValue, js.ValueOf(y))
+	var optJSValue []interface{} = []interface{}{js.ValueOf(x), js.ValueOf(y)}
 	if opts != nil && len(opts) == 1 {
 		optJSValue = append(optJSValue, js.ValueOf(opts[0]))
 	}
@@ -407,10 +404,7 @@ func (e Element) Scroll(x, y int, opts ...map[string]interface{}) error {
 }
 func (e Element) ScrollTo(x, y int, opts ...map[string]interface{}) error {
 	var err error
-	var optJSValue []interface{}
-
-	optJSValue = append(optJSValue, js.ValueOf(x))
-	optJSValue = append(optJSValue, js.ValueOf(y))
+	var optJSValue []interface{} = []interface{}{js.ValueOf(x), js.ValueOf(y)}
 	if opts != nil && len(opts) == 1 {
 		optJSValue = append(optJSValue, js.ValueOf(opts[0]))
 	}

@@ -44,18 +44,11 @@ func GetUint8ClampedArrayInterface() js.Value {
 func NewUint8ClampedArray(value interface{}) (Uint8ClampedArray, error) {
 
 	var a Uint8ClampedArray
-	var obj interface{}
 	var objnew js.Value
 	var err error
 
 	if ai := GetUint8ClampedArrayInterface(); !ai.IsUndefined() {
-		if objGo, ok := value.(baseobject.ObjectFrom); ok {
-			obj = objGo.JSObject()
-		} else {
-			obj = js.ValueOf(value)
-		}
-
-		if objnew, err = baseobject.New(ai, obj); err == nil {
+		if objnew, err = baseobject.New(ai, baseobject.GetJsValueOf(value)); err == nil {
 			a.BaseObject = a.SetObject(objnew)
 		}
 

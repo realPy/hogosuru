@@ -43,24 +43,18 @@ func GetInterface() js.Value {
 
 func NewFromJSObject(obj js.Value) (ValidityState, error) {
 	var v ValidityState
-	var err error
-	if hei := GetInterface(); !hei.IsUndefined() {
-		if obj.IsUndefined() || obj.IsNull() {
-			err = baseobject.ErrUndefinedValue
-		} else {
-
-			if obj.InstanceOf(hei) {
-
-				v.BaseObject = v.SetObject(obj)
-
-			} else {
-				err = ErrNotAnValidityState
-			}
-		}
-	} else {
-		err = ErrNotImplemented
+	var hei js.Value
+	if hei = GetInterface(); hei.IsUndefined() {
+		return v, ErrNotImplemented
 	}
-	return v, err
+	if obj.IsUndefined() || obj.IsNull() {
+		return v, baseobject.ErrUndefinedValue
+	}
+	if !obj.InstanceOf(hei) {
+		return v, ErrNotAnValidityState
+	}
+	v.BaseObject = v.SetObject(obj)
+	return v, nil
 }
 
 func (v ValidityState) BadInput() (bool, error) {

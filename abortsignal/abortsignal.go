@@ -40,44 +40,33 @@ type AbortSignalFrom interface {
 
 func NewFromJSObject(obj js.Value) (AbortSignal, error) {
 	var a AbortSignal
-	var err error
-	if ai := GetInterface(); !ai.IsUndefined() {
-		if obj.IsUndefined() || obj.IsNull() {
-			err = baseobject.ErrUndefinedValue
-		} else {
-
-			if obj.InstanceOf(ai) {
-				a.BaseObject = a.SetObject(obj)
-
-			} else {
-				err = ErrNotAnAbortSignal
-			}
-		}
-	} else {
-		err = ErrNotImplemented
+	var ai js.Value
+	if ai = GetInterface(); ai.IsUndefined() {
+		return a, ErrNotImplemented
 	}
-
-	return a, err
+	if obj.IsUndefined() || obj.IsNull() {
+		return a, baseobject.ErrUndefinedValue
+	}
+	if !obj.InstanceOf(ai) {
+		return a, ErrNotAnAbortSignal
+	}
+	a.BaseObject = a.SetObject(obj)
+	return a, nil
 }
 
 func (a AbortSignal) Aborted() (bool, error) {
-
 	return a.GetAttributeBool("aborted")
-
 }
 
 func (a AbortSignal) Abort() (AbortSignal, error) {
 	var err error
 	var obj js.Value
 	var as AbortSignal
-	if obj, err = a.Call("abort"); err == nil {
-
-		if obj.IsUndefined() {
-			err = baseobject.ErrNotAnObject
-
-		} else {
-			as, err = NewFromJSObject(obj)
-		}
+	if obj, err = a.Call("abort"); err != nil {
+		return as, err
 	}
-	return as, err
+	if obj.IsUndefined() {
+		return as, baseobject.ErrNotAnObject
+	}
+	return NewFromJSObject(obj)
 }

@@ -48,57 +48,40 @@ func GetInterface() js.Value {
 //New Create a CustomEvent
 func New(message, detail interface{}) (CustomEvent, error) {
 	var event CustomEvent
-	var jsObj js.Value
-	var obj js.Value
+	var eventi, obj js.Value
 	var err error
-	if objGo, ok := detail.(baseobject.ObjectFrom); ok {
-		jsObj = objGo.JSObject()
-	} else {
-		jsObj = js.ValueOf(detail)
+	if eventi = GetInterface(); eventi.IsUndefined() {
+		return event, ErrNotImplemented
 	}
-
-	if eventi := GetInterface(); !eventi.IsUndefined() {
-
-		if obj, err = baseobject.New(eventi, js.ValueOf(message), js.ValueOf(map[string]interface{}{"detail": jsObj})); err == nil {
-			event.BaseObject = event.SetObject(obj)
-		}
-
-	} else {
-		err = ErrNotImplemented
+	if obj, err = baseobject.New(eventi, js.ValueOf(message), js.ValueOf(map[string]interface{}{"detail": baseobject.GetJsValueOf(detail)})); err != nil {
+		return event, err
 	}
-	return event, err
+	event.BaseObject = event.SetObject(obj)
+	return event, nil
 }
 
 func NewFromJSObject(obj js.Value) (CustomEvent, error) {
 	var c CustomEvent
-	var err error
-
-	if bi := GetInterface(); !bi.IsUndefined() {
-		if obj.IsUndefined() || obj.IsNull() {
-			err = baseobject.ErrUndefinedValue
-		} else {
-
-			if obj.InstanceOf(bi) {
-				c.BaseObject = c.SetObject(obj)
-
-			} else {
-				err = ErrNotAnCustomEvent
-			}
-		}
-	} else {
-		err = ErrNotImplemented
+	var bi js.Value
+	if bi = GetInterface(); bi.IsUndefined() {
+		return c, ErrNotImplemented
 	}
-
-	return c, err
+	if obj.IsUndefined() || obj.IsNull() {
+		return c, baseobject.ErrUndefinedValue
+	}
+	if !obj.InstanceOf(bi) {
+		return c, ErrNotAnCustomEvent
+	}
+	c.BaseObject = c.SetObject(obj)
+	return c, nil
 }
 
 func (c CustomEvent) Detail() (interface{}, error) {
 	var obj js.Value
 	var err error
 	var i interface{}
-
-	if obj, err = c.Get("detail"); err == nil {
-		i, err = baseobject.GoValue(obj)
+	if obj, err = c.Get("detail"); err != nil {
+		return i, err
 	}
-	return i, err
+	return baseobject.GoValue(obj)
 }

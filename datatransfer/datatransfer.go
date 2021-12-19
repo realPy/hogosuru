@@ -47,86 +47,68 @@ func GetInterface() js.Value {
 //New Get a new channel broadcast
 func New() (DataTransfer, error) {
 	var dt DataTransfer
-	var obj js.Value
+	var dti, obj js.Value
 	var err error
-	if dti := GetInterface(); !dti.IsUndefined() {
-
-		if obj, err = baseobject.New(dti); err == nil {
-			dt.BaseObject = dt.SetObject(obj)
-		}
-
-	} else {
-		err = ErrNotImplemented
+	if dti = GetInterface(); dti.IsUndefined() {
+		return dt, ErrNotImplemented
 	}
-	return dt, err
+	if obj, err = baseobject.New(dti); err != nil {
+		return dt, err
+	}
+	dt.BaseObject = dt.SetObject(obj)
+	return dt, nil
 }
 
 func NewFromJSObject(obj js.Value) (DataTransfer, error) {
 	var dt DataTransfer
-	var err error
-	if dti := GetInterface(); !dti.IsUndefined() {
-		if obj.IsUndefined() || obj.IsNull() {
-			err = baseobject.ErrUndefinedValue
-		} else {
-
-			if obj.InstanceOf(dti) {
-				dt.BaseObject = dt.SetObject(obj)
-
-			} else {
-				err = ErrNotADataTransfer
-			}
-		}
-	} else {
-		err = ErrNotImplemented
+	var dti js.Value
+	if dti = GetInterface(); dti.IsUndefined() {
+		return dt, ErrNotImplemented
 	}
-
-	return dt, err
+	if obj.IsUndefined() || obj.IsNull() {
+		return dt, baseobject.ErrUndefinedValue
+	}
+	if !obj.InstanceOf(dti) {
+		return dt, ErrNotADataTransfer
+	}
+	dt.BaseObject = dt.SetObject(obj)
+	return dt, nil
 }
 
 func (dt DataTransfer) Files() (filelist.FileList, error) {
-
 	var err error
 	var obj js.Value
 	var f filelist.FileList
-
 	if obj, err = dt.Get("files"); err == nil {
-
-		f, err = filelist.NewFromJSObject(obj)
+		return filelist.NewFromJSObject(obj)
 	}
 	return f, err
 }
 func (dt DataTransfer) SetFiles(files filelist.FileList) error {
-
 	return dt.SetAttribute("files", files)
 }
 
 func (dt DataTransfer) Items() (datatranferitemlist.DataTransferItemList, error) {
-
 	var err error
 	var obj js.Value
 	var items datatranferitemlist.DataTransferItemList
-
 	if obj, err = dt.Get("items"); err == nil {
-
-		items, err = datatranferitemlist.NewFromJSObject(obj)
+		return datatranferitemlist.NewFromJSObject(obj)
 	}
 	return items, err
 
 }
 
 func (dt DataTransfer) SetItems(list datatranferitemlist.DataTransferItemList) error {
-
 	return dt.SetAttribute("items", list)
 }
-func (dt DataTransfer) Types() (array.Array, error) {
 
+func (dt DataTransfer) Types() (array.Array, error) {
 	var err error
 	var obj js.Value
 	var types array.Array
-
 	if obj, err = dt.Get("types"); err == nil {
-
-		types, err = array.NewFromJSObject(obj)
+		return array.NewFromJSObject(obj)
 	}
 	return types, err
 }
