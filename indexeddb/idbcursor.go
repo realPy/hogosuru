@@ -109,11 +109,7 @@ func (i IDBCursor) Continue(option ...interface{}) error {
 	var arrayJS []interface{}
 
 	if len(option) > 0 {
-		if objGo, ok := option[0].(baseobject.ObjectFrom); ok {
-			arrayJS = append(arrayJS, objGo.JSObject())
-		} else {
-			arrayJS = append(arrayJS, js.ValueOf(option[0]))
-		}
+		arrayJS = append(arrayJS, baseobject.GetJsValueOf(option[0]))
 	}
 
 	i.Call("continue", arrayJS...)
@@ -137,13 +133,7 @@ func (i IDBCursor) Update(value interface{}) (IDBRequest, error) {
 	var obj js.Value
 	var request IDBRequest
 	var arrayJS []interface{}
-
-	if objGo, ok := value.(baseobject.ObjectFrom); ok {
-		arrayJS = append(arrayJS, objGo.JSObject())
-	} else {
-		arrayJS = append(arrayJS, js.ValueOf(value))
-	}
-
+	arrayJS = append(arrayJS, baseobject.GetJsValueOf(value))
 	if obj, err = i.Call("update", arrayJS...); err == nil {
 		request, err = IDBRequestNewFromJSObject(obj)
 	}
