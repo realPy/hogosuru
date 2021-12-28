@@ -260,11 +260,7 @@ func (h HtmlSelectElement) Add(elem htmloptionelement.HtmlOptionElement, before 
 	arrayJS = append(arrayJS, elem.JSObject())
 
 	for _, value := range before {
-		if objGo, ok := value.(baseobject.ObjectFrom); ok {
-			arrayJS = append(arrayJS, objGo.JSObject())
-		} else {
-			arrayJS = append(arrayJS, js.ValueOf(value))
-		}
+		arrayJS = append(arrayJS, baseobject.GetJsValueOf(value))
 	}
 	_, err = h.Call("add", arrayJS...)
 	return err

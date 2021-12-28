@@ -50,14 +50,7 @@ func New(bits interface{}, name string, value ...map[string]interface{}) (File, 
 	var obj js.Value
 	var err error
 	var arrayJS []interface{}
-
-	if objGo, ok := bits.(baseobject.ObjectFrom); ok {
-		arrayJS = append(arrayJS, objGo.JSObject())
-	} else {
-		arrayJS = append(arrayJS, js.ValueOf(bits))
-	}
-
-	arrayJS = append(arrayJS, js.ValueOf(name))
+	arrayJS = append(arrayJS, baseobject.GetJsValueOf(bits), js.ValueOf(name))
 	if len(value) > 0 {
 		arrayJS = append(arrayJS, js.ValueOf(value[0]))
 	}

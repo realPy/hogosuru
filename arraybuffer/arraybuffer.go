@@ -109,21 +109,13 @@ func (a ArrayBuffer) Slice(begin int, end ...int) (ArrayBuffer, error) {
 }
 
 func IsView(i interface{}) (bool, error) {
-
-	var objjs interface{}
 	var ret bool
 	var err error
 	var obj js.Value
 
-	if objGo, ok := i.(baseobject.ObjectFrom); ok {
-		objjs = objGo.JSObject()
-	} else {
-		objjs = js.ValueOf(i)
-	}
-
 	if ai := GetInterface(); !ai.IsUndefined() {
 
-		if obj, err = baseobject.Call(ai, "isView", objjs); err == nil {
+		if obj, err = baseobject.Call(ai, "isView", baseobject.GetJsValueOf(i)); err == nil {
 
 			if obj.Type() == js.TypeBoolean {
 				ret = obj.Bool()

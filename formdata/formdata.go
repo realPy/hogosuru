@@ -87,18 +87,8 @@ func New(f ...htmlformelement.HtmlFormElement) (FormData, error) {
 }
 
 func (f FormData) Append(key string, value interface{}) error {
-	var i interface{}
 	var err error
-
-	if objGo, ok := value.(baseobject.ObjectFrom); ok {
-		i = objGo.JSObject()
-
-	} else {
-		i = js.ValueOf(value)
-	}
-
-	_, err = f.Call("append", js.ValueOf(key), i)
-
+	_, err = f.Call("append", js.ValueOf(key), baseobject.GetJsValueOf(value))
 	return err
 }
 
@@ -168,15 +158,7 @@ func (f FormData) Keys() (iterator.Iterator, error) {
 
 func (f FormData) Set(key string, value interface{}) error {
 	var err error
-	var globalValueObj interface{}
-
-	if objGo, ok := value.(baseobject.ObjectFrom); ok {
-		globalValueObj = objGo.JSObject()
-	} else {
-		globalValueObj = js.ValueOf(value)
-	}
-
-	_, err = f.Call("set", js.ValueOf(key), globalValueObj)
+	_, err = f.Call("set", js.ValueOf(key), baseobject.GetJsValueOf(value))
 	return err
 }
 

@@ -67,14 +67,7 @@ func From(iterable interface{}, f ...func(interface{}) interface{}) (Array, erro
 	var jsfunc js.Func
 
 	if ai := GetInterface(); !ai.IsUndefined() {
-
-		if objGo, ok := iterable.(baseobject.ObjectFrom); ok {
-			opts = append(opts, objGo.JSObject())
-
-		} else {
-			opts = append(opts, js.ValueOf(iterable))
-		}
-
+		opts = append(opts, baseobject.GetJsValueOf(iterable))
 		if f != nil && len(f) == 1 {
 			jsfunc = js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 				b := f[0](baseobject.GoValue_(args[0]))
@@ -100,12 +93,7 @@ func Of(values ...interface{}) (Array, error) {
 	var arrayJS []interface{}
 
 	for _, value := range values {
-		if objGo, ok := value.(baseobject.ObjectFrom); ok {
-			arrayJS = append(arrayJS, objGo.JSObject())
-		} else {
-			arrayJS = append(arrayJS, js.ValueOf(value))
-		}
-
+		arrayJS = append(arrayJS, baseobject.GetJsValueOf(value))
 	}
 	if ai := GetInterface(); !ai.IsUndefined() {
 		a.BaseObject = a.SetObject(ai.Call("of", arrayJS...))
@@ -121,12 +109,7 @@ func New(values ...interface{}) (Array, error) {
 	var obj js.Value
 	var err error
 	for _, value := range values {
-		if objGo, ok := value.(baseobject.ObjectFrom); ok {
-			arrayJS = append(arrayJS, objGo.JSObject())
-		} else {
-			arrayJS = append(arrayJS, js.ValueOf(value))
-		}
-
+		arrayJS = append(arrayJS, baseobject.GetJsValueOf(value))
 	}
 	if ai := GetInterface(); !ai.IsUndefined() {
 
@@ -361,16 +344,8 @@ func (a Array) Includes(i interface{}) (bool, error) {
 	var err error
 	var obj js.Value
 	var result bool
-	var includecheck js.Value
 
-	if objGo, ok := i.(baseobject.ObjectFrom); ok {
-
-		includecheck = objGo.JSObject()
-	} else {
-		includecheck = js.ValueOf(i)
-	}
-
-	if obj, err = a.Call("includes", includecheck); err == nil {
+	if obj, err = a.Call("includes", baseobject.GetJsValueOf(i)); err == nil {
 		if obj.Type() == js.TypeBoolean {
 			result = obj.Bool()
 		} else {
@@ -385,15 +360,8 @@ func (a Array) IndexOf(i interface{}) (int, error) {
 	var err error
 	var obj js.Value
 	var index int = -1
-	var indexCheck js.Value
 
-	if objGo, ok := i.(baseobject.ObjectFrom); ok {
-		indexCheck = objGo.JSObject()
-	} else {
-		indexCheck = js.ValueOf(i)
-	}
-
-	if obj, err = a.Call("indexOf", indexCheck); err == nil {
+	if obj, err = a.Call("indexOf", baseobject.GetJsValueOf(i)); err == nil {
 		if obj.Type() == js.TypeNumber {
 			index = obj.Int()
 		}
@@ -455,16 +423,8 @@ func (a Array) LastIndexOf(i interface{}) (int, error) {
 	var err error
 	var obj js.Value
 	var index int = -1
-	var indexCheck js.Value
 
-	if objGo, ok := i.(baseobject.ObjectFrom); ok {
-
-		indexCheck = objGo.JSObject()
-	} else {
-		indexCheck = js.ValueOf(i)
-	}
-
-	if obj, err = a.Call("lastIndexOf", indexCheck); err == nil {
+	if obj, err = a.Call("lastIndexOf", baseobject.GetJsValueOf(i)); err == nil {
 		if obj.Type() == js.TypeNumber {
 			index = obj.Int()
 		}
@@ -502,16 +462,8 @@ func (a Array) Push(i interface{}) (int, error) {
 	var err error
 	var obj js.Value
 	var index int = -1
-	var pushdata js.Value
 
-	if objGo, ok := i.(baseobject.ObjectFrom); ok {
-
-		pushdata = objGo.JSObject()
-	} else {
-		pushdata = js.ValueOf(i)
-	}
-
-	if obj, err = a.Call("push", pushdata); err == nil {
+	if obj, err = a.Call("push", baseobject.GetJsValueOf(i)); err == nil {
 		if obj.Type() == js.TypeNumber {
 			index = obj.Int()
 		}
@@ -645,16 +597,10 @@ func (a Array) Splice(begin, suppress int, values ...interface{}) error {
 
 	var err error
 	var arrayJS []interface{}
-	arrayJS = append(arrayJS, js.ValueOf(begin))
-	arrayJS = append(arrayJS, js.ValueOf(suppress))
+	arrayJS = append(arrayJS, js.ValueOf(begin), js.ValueOf(suppress))
 
 	for _, value := range values {
-		if objGo, ok := value.(baseobject.ObjectFrom); ok {
-			arrayJS = append(arrayJS, objGo.JSObject())
-		} else {
-			arrayJS = append(arrayJS, js.ValueOf(value))
-		}
-
+		arrayJS = append(arrayJS, baseobject.GetJsValueOf(value))
 	}
 	_, err = a.Call("splice", arrayJS...)
 
@@ -674,12 +620,7 @@ func (a Array) Unshift(values ...interface{}) (int, error) {
 	var index int = -1
 
 	for _, value := range values {
-		if objGo, ok := value.(baseobject.ObjectFrom); ok {
-			arrayJS = append(arrayJS, objGo.JSObject())
-		} else {
-			arrayJS = append(arrayJS, js.ValueOf(value))
-		}
-
+		arrayJS = append(arrayJS, baseobject.GetJsValueOf(value))
 	}
 	if obj, err = a.Call("unshift", arrayJS...); err == nil {
 		if obj.Type() == js.TypeNumber {

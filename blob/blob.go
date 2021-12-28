@@ -57,12 +57,7 @@ func New(values ...interface{}) (Blob, error) {
 	var arrayJS []interface{}
 
 	for _, value := range values {
-		if objGo, ok := value.(baseobject.ObjectFrom); ok {
-			arrayJS = append(arrayJS, objGo.JSObject())
-		} else {
-			arrayJS = append(arrayJS, js.ValueOf(value))
-		}
-
+		arrayJS = append(arrayJS, baseobject.GetJsValueOf(value))
 	}
 
 	if bi := GetInterface(); !bi.IsUndefined() {

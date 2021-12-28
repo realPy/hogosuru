@@ -44,17 +44,10 @@ func GetFloat64ArrayInterface() js.Value {
 func NewFloat64Array(value interface{}) (Float64Array, error) {
 
 	var a Float64Array
-	var obj interface{}
 	var objnew js.Value
 	var err error
 	if ai := GetFloat64ArrayInterface(); !ai.IsUndefined() {
-		if objGo, ok := value.(baseobject.ObjectFrom); ok {
-			obj = objGo.JSObject()
-		} else {
-			obj = js.ValueOf(value)
-		}
-
-		if objnew, err = baseobject.New(ai, obj); err == nil {
+		if objnew, err = baseobject.New(ai, baseobject.GetJsValueOf(value)); err == nil {
 			a.BaseObject = a.SetObject(objnew)
 		}
 

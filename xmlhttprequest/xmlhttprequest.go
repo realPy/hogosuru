@@ -99,17 +99,10 @@ func (x XMLHTTPRequest) SetRequestHeader(header string, value string) error {
 //Send the form. Can accept a form data in args
 func (x XMLHTTPRequest) Send(value ...interface{}) error {
 	var err error
-
 	var arrayJS []interface{}
-
 	if len(value) > 0 {
-		if objGo, ok := value[0].(baseobject.ObjectFrom); ok {
-			arrayJS = append(arrayJS, objGo.JSObject())
-		} else {
-			arrayJS = append(arrayJS, js.ValueOf(value[0]))
-		}
+		arrayJS = append(arrayJS, baseobject.GetJsValueOf(value[0]))
 	}
-
 	_, err = x.Call("send", arrayJS...)
 	return err
 }
