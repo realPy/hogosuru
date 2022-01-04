@@ -66,21 +66,27 @@ func NewFromJSObject(obj js.Value) (EventSource, error) {
 }
 
 func New(url string, opts ...interface{}) (EventSource, error) {
+
 	var arrayJS []interface{}
 	var e EventSource
 	var err error
+	var obj js.Value
+
 	arrayJS = append(arrayJS, url)
 	for _, value := range opts {
 		arrayJS = append(arrayJS, baseobject.GetJsValueOf(value))
 	}
+
 	if eventsourcei := GetInterface(); !eventsourcei.IsUndefined() {
-		promisefetchobj := eventsourcei.Invoke(arrayJS...)
-		e.BaseObject = e.SetObject(promisefetchobj)
+
+		if obj, err = baseobject.New(eventsourcei, arrayJS...); err == nil {
+			e.BaseObject = e.SetObject(obj)
+		}
+
 	} else {
 		err = ErrNotImplemented
 	}
 	return e, err
-
 }
 
 func (e EventSource) ReadyState() (int, error) {
