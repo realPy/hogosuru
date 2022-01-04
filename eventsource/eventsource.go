@@ -23,6 +23,7 @@ func GetInterface() js.Value {
 			sseinterface = js.Undefined()
 		}
 
+		messageevent.GetInterface()
 		baseobject.Register(sseinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
 		})
@@ -111,11 +112,17 @@ func (e EventSource) Url() (string, error) {
 
 }
 
+func (e EventSource) Close() error {
+	var err error
+	_, err = e.Call("close")
+	return err
+}
+
 func (e EventSource) WithCredentials() (bool, error) {
 	return e.GetAttributeBool("withCredentials")
 }
 
-func (e EventSource) setHandler(jshandlername string, handler func(e event.Event)) {
+func (sse EventSource) setHandler(jshandlername string, handler func(e event.Event)) {
 
 	jsfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
@@ -126,34 +133,34 @@ func (e EventSource) setHandler(jshandlername string, handler func(e event.Event
 		return nil
 	})
 
-	e.JSObject().Set(jshandlername, jsfunc)
+	sse.JSObject().Set(jshandlername, jsfunc)
 }
 
 //SetOnOpen Set onOpen Handler
-func (e EventSource) SetOnOpen(handler func(e event.Event)) {
+func (sse EventSource) SetOnOpen(handler func(e event.Event)) {
 
-	e.setHandler("onopen", func(e event.Event) {
+	sse.setHandler("onopen", func(e event.Event) {
 		handler(e)
 	})
 }
 
 //SetOnClose Set onClose Handler
-func (e EventSource) SetOnClose(handler func(e event.Event)) {
-	e.setHandler("onclose", func(e event.Event) {
+func (sse EventSource) SetOnClose(handler func(e event.Event)) {
+	sse.setHandler("onclose", func(e event.Event) {
 		handler(e)
 	})
 }
 
 //SetOnClose Set onClose Handler
-func (e EventSource) SetOnError(handler func(e event.Event)) {
-	e.setHandler("onerror", func(e event.Event) {
+func (sse EventSource) SetOnError(handler func(e event.Event)) {
+	sse.setHandler("onerror", func(e event.Event) {
 		handler(e)
 	})
 }
 
 //SetOnClose Set onClose Handler
-func (e EventSource) SetOnMessage(handler func(e messageevent.MessageEvent)) {
-	e.setHandler("onmessage", func(e event.Event) {
+func (sse EventSource) SetOnMessage(handler func(e messageevent.MessageEvent)) {
+	sse.setHandler("onmessage", func(e event.Event) {
 
 		if obj, err := baseobject.Discover(e.JSObject()); err == nil {
 
