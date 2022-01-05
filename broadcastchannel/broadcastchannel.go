@@ -60,19 +60,8 @@ func New(channelname string) (BroadcastChannel, error) {
 
 //PostMessage Post a message on channel
 func (c BroadcastChannel) PostMessage(message interface{}) error {
-
 	var err error
-	var data js.Value
-
-	if objGo, ok := message.(baseobject.ObjectFrom); ok {
-
-		data = objGo.JSObject()
-	} else {
-		data = js.ValueOf(message)
-	}
-
-	_, err = c.Call("postMessage", data)
-
+	_, err = c.Call("postMessage", baseobject.GetJsValueOf(message))
 	return err
 }
 

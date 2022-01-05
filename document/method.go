@@ -27,21 +27,8 @@ func (d Document) AdoptNode(externalNode node.Node) (interface{}, error) {
 }
 
 func (d Document) Append(i interface{}) error {
-
 	var err error
-	var obji interface{}
-
-	if objb, ok := i.(baseobject.ObjectFrom); ok {
-
-		obji = objb.JSObject()
-
-	} else {
-		obji = js.ValueOf(i)
-
-	}
-
-	_, err = d.Call("append", obji)
-
+	_, err = d.Call("append", baseobject.GetJsValueOf(i))
 	return err
 }
 

@@ -82,24 +82,11 @@ func (f IDBFactory) genericRequest(method string, dbname string, option ...strin
 }
 
 func (f IDBFactory) Cmp(a, b interface{}) (int, error) {
-
 	var arrayJS []interface{}
 	var err error
 	var obj js.Value
 	var result int
-
-	if objGo, ok := a.(baseobject.ObjectFrom); ok {
-		arrayJS = append(arrayJS, objGo.JSObject())
-	} else {
-		arrayJS = append(arrayJS, js.ValueOf(a))
-	}
-
-	if objGo, ok := b.(baseobject.ObjectFrom); ok {
-		arrayJS = append(arrayJS, objGo.JSObject())
-	} else {
-		arrayJS = append(arrayJS, js.ValueOf(b))
-	}
-
+	arrayJS = append(arrayJS, baseobject.GetJsValueOf(a), baseobject.GetJsValueOf(b))
 	if obj, err = f.Call("cmp", arrayJS...); err == nil {
 		if obj.Type() == js.TypeNumber {
 			result = obj.Int()

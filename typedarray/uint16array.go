@@ -42,26 +42,16 @@ func GetUint16ArrayInterface() js.Value {
 }
 
 func NewUint16Array(value interface{}) (Uint16Array, error) {
-
 	var a Uint16Array
-	var obj interface{}
 	var objnew js.Value
 	var err error
 	if ai := GetUint16ArrayInterface(); !ai.IsUndefined() {
-		if objGo, ok := value.(baseobject.ObjectFrom); ok {
-			obj = objGo.JSObject()
-		} else {
-			obj = js.ValueOf(value)
-		}
-
-		if objnew, err = baseobject.New(ai, obj); err == nil {
+		if objnew, err = baseobject.New(ai, baseobject.GetJsValueOf(value)); err == nil {
 			a.BaseObject = a.SetObject(objnew)
 		}
-
 	} else {
 		err = ErrNotImplementedUint16Array
 	}
-
 	return a, err
 }
 

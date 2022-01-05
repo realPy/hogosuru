@@ -135,11 +135,7 @@ func (d DocumentFragment) nodesMethod(method string, elems ...interface{}) error
 	var arrayJS []interface{}
 
 	for _, elem := range elems {
-		if objGo, ok := elem.(baseobject.ObjectFrom); ok {
-			arrayJS = append(arrayJS, objGo.JSObject())
-		} else {
-			arrayJS = append(arrayJS, js.ValueOf(elem))
-		}
+		arrayJS = append(arrayJS, baseobject.GetJsValueOf(elem))
 	}
 	_, err = d.Call(method, arrayJS...)
 	return err

@@ -131,15 +131,7 @@ func (n Node) NodeValue() (interface{}, error) {
 }
 
 func (n Node) SetNodeValue(i interface{}) error {
-	var data js.Value
-
-	if objGo, ok := i.(baseobject.ObjectFrom); ok {
-
-		data = objGo.JSObject()
-	} else {
-		data = js.ValueOf(i)
-	}
-	return n.Set("nodeValue", data)
+	return n.Set("nodeValue", baseobject.GetJsValueOf(i))
 }
 
 func (n Node) OwnerDocument() (Node, error) {

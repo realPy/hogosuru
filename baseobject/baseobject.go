@@ -391,16 +391,7 @@ func (b BaseObject) SetFunc(attribute string, f func(this js.Value, args []js.Va
 }
 
 func (b BaseObject) SetAttribute(attribute string, i interface{}) error {
-	var obj interface{}
-
-	if objGo, ok := i.(ObjectFrom); ok {
-		obj = objGo
-
-	} else {
-		obj = js.ValueOf(i)
-	}
-
-	return b.Set(attribute, obj)
+	return b.Set(attribute, GetJsValueOf(i))
 }
 
 func (b BaseObject) Export(name string) {
@@ -646,4 +637,11 @@ func GoValue(object js.Value) (interface{}, error) {
 	obj, err := Discover(object)
 
 	return obj, err
+}
+
+func GetJsValueOf(i interface{}) js.Value {
+	if objGo, ok := i.(ObjectFrom); ok {
+		return objGo.JSObject()
+	}
+	return js.ValueOf(i)
 }
