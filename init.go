@@ -5,7 +5,12 @@ import (
 	"github.com/realPy/hogosuru/initinterface"
 )
 
-func Init() {
+func init() {
 	baseobject.SetSyscall()
+
+}
+
+func Init() {
+
 	initinterface.Init()
 }
