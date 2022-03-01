@@ -7,7 +7,22 @@ import (
 	"github.com/realPy/hogosuru/array"
 	"github.com/realPy/hogosuru/arraybuffer"
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/initinterface"
 )
+
+func init() {
+
+	initinterface.RegisterInterface(GetFloat32ArrayInterface)
+	initinterface.RegisterInterface(GetFloat64ArrayInterface)
+	initinterface.RegisterInterface(GetInt8ArrayInterface)
+	initinterface.RegisterInterface(GetInt16ArrayInterface)
+	initinterface.RegisterInterface(GetInt32ArrayInterface)
+	initinterface.RegisterInterface(GetUint8ArrayInterface)
+	initinterface.RegisterInterface(GetUint8ClampedArrayInterface)
+	initinterface.RegisterInterface(GetUint16ArrayInterface)
+	initinterface.RegisterInterface(GetUint32ArrayInterface)
+
+}
 
 //TypedArray struct
 type TypedArray struct {

@@ -7,7 +7,24 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/initinterface"
 )
+
+func init() {
+
+	initinterface.RegisterInterface(GetIDBIndexInterface)
+	initinterface.RegisterInterface(GetIDBFactoryInterface)
+	initinterface.RegisterInterface(GetIDBKeyRangeInterface)
+	initinterface.RegisterInterface(IDBOpenDBRequestGetInterface)
+	initinterface.RegisterInterface(IDBDatabaseGetInterface)
+	initinterface.RegisterInterface(IDBCursorGetInterface)
+	initinterface.RegisterInterface(IDBDatabaseGetInterface)
+	initinterface.RegisterInterface(IDBCursorWithValueGetInterface)
+	initinterface.RegisterInterface(IDBObjectStoreGetInterface)
+	initinterface.RegisterInterface(IDBRequestGetInterface)
+	initinterface.RegisterInterface(IDBTransactionGetInterface)
+
+}
 
 var singletonIDBIndex sync.Once
 

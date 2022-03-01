@@ -7,8 +7,14 @@ import (
 
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/documentfragment"
+	"github.com/realPy/hogosuru/initinterface"
 	"github.com/realPy/hogosuru/node"
 )
+
+func init() {
+
+	initinterface.RegisterInterface(GetInterface)
+}
 
 var singleton sync.Once
 

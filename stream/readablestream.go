@@ -8,8 +8,16 @@ import (
 
 	"github.com/realPy/hogosuru/array"
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/initinterface"
 	"github.com/realPy/hogosuru/promise"
 )
+
+func init() {
+
+	initinterface.RegisterInterface(GetInterface)
+	initinterface.RegisterInterface(GetReadStreamInterface)
+
+}
 
 var singleton sync.Once
 

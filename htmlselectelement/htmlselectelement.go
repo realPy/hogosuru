@@ -12,8 +12,14 @@ import (
 	"github.com/realPy/hogosuru/htmlformelement"
 	"github.com/realPy/hogosuru/htmloptionelement"
 	"github.com/realPy/hogosuru/htmloptionscollection"
+	"github.com/realPy/hogosuru/initinterface"
 	"github.com/realPy/hogosuru/validitystate"
 )
+
+func init() {
+
+	initinterface.RegisterInterface(GetInterface)
+}
 
 var singleton sync.Once
 

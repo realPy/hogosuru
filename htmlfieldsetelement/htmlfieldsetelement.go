@@ -9,8 +9,14 @@ import (
 	"github.com/realPy/hogosuru/element"
 	"github.com/realPy/hogosuru/htmlcollection"
 	"github.com/realPy/hogosuru/htmlelement"
+	"github.com/realPy/hogosuru/initinterface"
 	"github.com/realPy/hogosuru/validitystate"
 )
+
+func init() {
+
+	initinterface.RegisterInterface(GetInterface)
+}
 
 var singleton sync.Once
 

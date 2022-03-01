@@ -10,7 +10,13 @@ import (
 	"github.com/realPy/hogosuru/htmlcollection"
 	"github.com/realPy/hogosuru/htmlelement"
 	"github.com/realPy/hogosuru/htmltablecellelement"
+	"github.com/realPy/hogosuru/initinterface"
 )
+
+func init() {
+
+	initinterface.RegisterInterface(GetInterface)
+}
 
 var singleton sync.Once
 

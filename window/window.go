@@ -9,9 +9,15 @@ import (
 	"github.com/realPy/hogosuru/eventtarget"
 	"github.com/realPy/hogosuru/history"
 	"github.com/realPy/hogosuru/indexeddb"
+	"github.com/realPy/hogosuru/initinterface"
 	"github.com/realPy/hogosuru/location"
 	"github.com/realPy/hogosuru/storage"
 )
+
+func init() {
+
+	initinterface.RegisterInterface(GetInterface)
+}
 
 var singleton sync.Once
 
