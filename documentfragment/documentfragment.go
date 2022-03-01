@@ -7,9 +7,15 @@ import (
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/element"
 	"github.com/realPy/hogosuru/htmlcollection"
+	"github.com/realPy/hogosuru/initinterface"
 	"github.com/realPy/hogosuru/node"
 	"github.com/realPy/hogosuru/nodelist"
 )
+
+func init() {
+
+	initinterface.RegisterInterface(GetInterface)
+}
 
 var singleton sync.Once
 

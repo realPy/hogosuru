@@ -11,10 +11,16 @@ import (
 	"github.com/realPy/hogosuru/blob"
 	"github.com/realPy/hogosuru/event"
 	"github.com/realPy/hogosuru/eventtarget"
+	"github.com/realPy/hogosuru/initinterface"
 	"github.com/realPy/hogosuru/messageevent"
 
 	"github.com/realPy/hogosuru/baseobject"
 )
+
+func init() {
+
+	initinterface.RegisterInterface(GetInterface)
+}
 
 var singleton sync.Once
 

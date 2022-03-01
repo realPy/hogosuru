@@ -8,8 +8,14 @@ import (
 	"github.com/realPy/hogosuru/array"
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/domexception"
+	"github.com/realPy/hogosuru/initinterface"
 	"github.com/realPy/hogosuru/jserror"
 )
+
+func init() {
+
+	initinterface.RegisterInterface(GetInterface)
+}
 
 var singleton sync.Once
 

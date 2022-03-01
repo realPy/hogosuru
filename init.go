@@ -1,7 +1,16 @@
 package hogosuru
 
-import "github.com/realPy/hogosuru/baseobject"
+import (
+	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/initinterface"
+)
+
+func init() {
+	baseobject.SetSyscall()
+
+}
 
 func Init() {
-	baseobject.SetSyscall()
+
+	initinterface.Init()
 }

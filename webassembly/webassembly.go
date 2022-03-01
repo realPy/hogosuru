@@ -6,8 +6,14 @@ import (
 
 	"github.com/realPy/hogosuru/arraybuffer"
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/initinterface"
 	"github.com/realPy/hogosuru/promise"
 )
+
+func init() {
+
+	initinterface.RegisterInterface(GetInterface)
+}
 
 var singleton sync.Once
 

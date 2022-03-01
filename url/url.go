@@ -5,8 +5,14 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/initinterface"
 	"github.com/realPy/hogosuru/urlsearchparams"
 )
+
+func init() {
+
+	initinterface.RegisterInterface(GetInterface)
+}
 
 var singleton sync.Once
 

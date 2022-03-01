@@ -11,9 +11,15 @@ import (
 	"github.com/realPy/hogosuru/arraybuffer"
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/headers"
+	"github.com/realPy/hogosuru/initinterface"
 	"github.com/realPy/hogosuru/promise"
 	"github.com/realPy/hogosuru/stream"
 )
+
+func init() {
+
+	initinterface.RegisterInterface(GetInterface)
+}
 
 var (
 	ErrNotAnFResp = errors.New("The given value must be an fetch response")

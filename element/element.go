@@ -9,10 +9,16 @@ import (
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/domtokenlist"
 	"github.com/realPy/hogosuru/htmlcollection"
+	"github.com/realPy/hogosuru/initinterface"
 
 	"github.com/realPy/hogosuru/namednodemap"
 	"github.com/realPy/hogosuru/node"
 )
+
+func init() {
+
+	initinterface.RegisterInterface(GetInterface)
+}
 
 var singleton sync.Once
 

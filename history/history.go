@@ -5,9 +5,15 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/initinterface"
 )
 
 // https://developer.mozilla.org/fr/docs/Web/API/History_API
+
+func init() {
+
+	initinterface.RegisterInterface(GetInterface)
+}
 
 var singleton sync.Once
 

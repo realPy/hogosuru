@@ -7,7 +7,13 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/initinterface"
 )
+
+func init() {
+
+	initinterface.RegisterInterface(GetInterface)
+}
 
 var singleton sync.Once
 
