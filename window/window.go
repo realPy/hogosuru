@@ -11,6 +11,7 @@ import (
 	"github.com/realPy/hogosuru/indexeddb"
 	"github.com/realPy/hogosuru/initinterface"
 	"github.com/realPy/hogosuru/location"
+	"github.com/realPy/hogosuru/navigator"
 	"github.com/realPy/hogosuru/storage"
 )
 
@@ -149,4 +150,16 @@ func (w Window) IndexdedDB() (indexeddb.IDBFactory, error) {
 	}
 
 	return i, err
+}
+
+func (w Window) Navigator() (navigator.Navigator, error) {
+	var err error
+	var obj js.Value
+	var n navigator.Navigator
+
+	if obj, err = w.Get("navigator"); err == nil {
+		n, err = navigator.NewFromJSObject(obj)
+	}
+
+	return n, err
 }

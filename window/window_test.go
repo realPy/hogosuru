@@ -86,3 +86,15 @@ func TestIndexdedDB(t *testing.T) {
 	}
 
 }
+
+func TestNavigator(t *testing.T) {
+
+	if w, err := New(); testingutils.AssertErr(t, err) {
+
+		if i, err := w.Navigator(); testingutils.AssertErr(t, err) {
+			testingutils.AssertExpect(t, "[object Navigator]", i.ToString_())
+		}
+
+	}
+
+}
