@@ -5,6 +5,7 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/clipboard"
 	"github.com/realPy/hogosuru/initinterface"
 	"github.com/realPy/hogosuru/permissions"
 )
@@ -30,6 +31,7 @@ func GetInterface() js.Value {
 			return NewFromJSObject(v)
 		})
 
+		clipboard.GetInterface()
 		permissions.GetInterface()
 	})
 
@@ -88,6 +90,22 @@ func (n Navigator) Credentials() (Credentials, error) {
 	return n.GetAttributeBool("credentials")
 }
 */
+
+func (n Navigator) Clipboard() (clipboard.Clipboard, error) {
+
+	var err error
+	var obj interface{}
+	var c clipboard.Clipboard
+	var ok bool
+
+	if obj, err = n.GetAttributeGlobal("clipboard"); err == nil {
+		if c, ok = obj.(clipboard.Clipboard); !ok {
+			err = clipboard.ErrNotAClipboard
+		}
+	}
+
+	return c, err
+}
 
 func (n Navigator) DeviceMemory() (float64, error) {
 

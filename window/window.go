@@ -35,6 +35,11 @@ func GetInterface() js.Value {
 		baseobject.Register(windowinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
 		})
+		navigator.GetInterface()
+		history.GetInterface()
+		location.GetInterface()
+		storage.GetInterface()
+
 	})
 
 	return windowinterface

@@ -34,6 +34,7 @@ var methodsAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "Vendor", "resultattempt": "Google Inc."},
 	{"method": "JavaEnabled", "resultattempt": false},
 	{"method": "Permissions", "type": "constructnamechecking", "resultattempt": "Permissions"},
+	{"method": "Clipboard", "type": "constructnamechecking", "resultattempt": "Clipboard"},
 }
 
 func TestMethods(t *testing.T) {

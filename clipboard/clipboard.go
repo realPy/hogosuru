@@ -29,7 +29,7 @@ type ClipboardFrom interface {
 	Clipboard_() Clipboard
 }
 
-func (c Clipboard) Clipboard() Clipboard {
+func (c Clipboard) Clipboard_() Clipboard {
 	return c
 }
 
@@ -41,6 +41,11 @@ func GetInterface() js.Value {
 		if clipboardinterface, err = baseobject.Get(js.Global(), "Clipboard"); err != nil {
 			clipboardinterface = js.Undefined()
 		}
+
+		baseobject.Register(clipboardinterface, func(v js.Value) (interface{}, error) {
+			return NewFromJSObject(v)
+
+		})
 
 		clipboarditem.GetInterface()
 		promise.GetInterface()
