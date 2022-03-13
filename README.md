@@ -445,6 +445,9 @@ All help is welcome. If you are interested by this project, please contact me
 | Attr | Full | https://developer.mozilla.org/fr/docs/Web/API/Attr |
 | Blob | Full |  https://developer.mozilla.org/fr/docs/Web/API/Blob |
 | Broadcast Channel |  Full |  https://developer.mozilla.org/en-US/docs/Web/API/BroadcastChannel  | 
+| Clipboard |  Full | https://developer.mozilla.org/en-US/docs/Web/API/Clipboard |
+| ClipboardItem | Full | https://developer.mozilla.org/en-US/docs/Web/API/ClipboardItem |
+| ClipboardEvent | Full | https://developer.mozilla.org/en-US/docs/Web/API/ClipboardEvent | 
 | Console |  Full |  https://developer.mozilla.org/fr/docs/Web/API/Console  | 
 | CSSRule |  Full |  https://developer.mozilla.org/en-US/docs/Web/API/CSSRule | 
 | CSSStyleDeclaration |  Full |  https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration | 
@@ -519,10 +522,13 @@ All help is welcome. If you are interested by this project, please contact me
 | Location | Full | https://developer.mozilla.org/fr/docs/Web/API/window/location |
 | MessageEvent | Full | https://developer.mozilla.org/fr/docs/Web/API/MessageEvent |
 | NamedNodeMap | Full | https://developer.mozilla.org/fr/docs/Web/API/NamedNodeMap |
+| Navigator | Partial | https://developer.mozilla.org/en-US/docs/Web/API/Navigator | 
 | Node | Full | https://developer.mozilla.org/en-US/docs/Web/API/Node |
 | NodeList | Considerated at Full (Partial implemented but no more need )| https://developer.mozilla.org/fr/docs/Web/API/NodeList | 
 | Object | Partial| https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Object | 
 | Map | Full | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Map |
+| Permissions | Full | https://developer.mozilla.org/en-US/docs/Web/API/Permissions_API | 
+| PermissionStatus | Full | https://developer.mozilla.org/en-US/docs/Web/API/PermissionStatus |
 | ProgressEvent | Full | https://developer.mozilla.org/en-US/docs/Web/API/ProgressEvent |
 | Promise | Full | https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise |
 | ReadableStream | Full | https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream |
