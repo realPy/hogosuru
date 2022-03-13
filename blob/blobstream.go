@@ -3,7 +3,6 @@ package blob
 import (
 	"syscall/js"
 
-	"github.com/realPy/hogosuru"
 	"github.com/realPy/hogosuru/arraybuffer"
 	"github.com/realPy/hogosuru/jserror"
 	"github.com/realPy/hogosuru/promise"
@@ -93,8 +92,6 @@ func (b *BlobStream) AsyncRead(data []byte, dataHandle func([]byte, int)) (promi
 		}, func(e error) {
 			if errjs, err := jserror.New(e); err == nil {
 				errfunc.Invoke(errjs.JSObject())
-			} else {
-				hogosuru.AssertErr(err)
 			}
 		})
 

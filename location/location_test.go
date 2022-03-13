@@ -18,9 +18,9 @@ func TestMain(m *testing.M) {
 func TestNewFromJSObject(t *testing.T) {
 
 	if obj, err := baseobject.Get(js.Global(), "l"); testingutils.AssertErr(t, err) {
-		if event, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
+		if l, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
 
-			testingutils.AssertExpect(t, "Location", event.ConstructName_())
+			testingutils.AssertExpect(t, "Location", l.ConstructName_())
 
 		}
 	}
