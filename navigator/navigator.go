@@ -20,7 +20,7 @@ var singleton sync.Once
 
 var navigatorinterface js.Value
 
-//GetInterface get the JS interface of formdata
+// GetInterface get the JS interface of formdata
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
