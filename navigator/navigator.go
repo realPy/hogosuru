@@ -8,6 +8,7 @@ import (
 	"github.com/realPy/hogosuru/clipboard"
 	"github.com/realPy/hogosuru/initinterface"
 	"github.com/realPy/hogosuru/permissions"
+	"github.com/realPy/hogosuru/serviceworkercontainer"
 )
 
 func init() {
@@ -33,6 +34,7 @@ func GetInterface() js.Value {
 
 		clipboard.GetInterface()
 		permissions.GetInterface()
+		serviceworkercontainer.GetInterface()
 	})
 
 	return navigatorinterface
@@ -125,6 +127,24 @@ func (n Navigator) UserAgent() (string, error) {
 func (n Navigator) Language() (string, error) {
 
 	return n.GetAttributeString("language")
+}
+
+func (n Navigator) ServiceWorker() (serviceworkercontainer.ServiceWorkerContainer, error) {
+
+	var err error
+	var obj interface{}
+	var s serviceworkercontainer.ServiceWorkerContainer
+	var ok bool
+
+	if obj, err = n.GetAttributeGlobal("serviceWorker"); err == nil {
+
+		if s, ok = obj.(serviceworkercontainer.ServiceWorkerContainer); !ok {
+			err = serviceworkercontainer.ErrNotAServiceWorkerContainer
+		}
+
+	}
+
+	return s, err
 }
 
 func (n Navigator) Vendor() (string, error) {
