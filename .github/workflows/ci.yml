@@ -15,7 +15,7 @@ jobs:
     - name: Install chrome
       uses: browser-actions/setup-chrome@latest
     - name: Install dep
-      run: go install github.com/agnivade/wasmbrowsertest@latest
+      run: go install github.com/realPy/wasmbrowsertest@latest
     - name: Setup wasmexec
       run: mv $(go env GOPATH)/bin/wasmbrowsertest $(go env GOPATH)/bin/go_js_wasm_exec
     - name: Keep only env useful
