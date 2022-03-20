@@ -182,6 +182,16 @@ func (h HtmlElement) Lang() (string, error) {
 	return h.GetAttributeString("lang")
 }
 
+func (h HtmlElement) InnerText() (string, error) {
+
+	return h.GetAttributeString("innerText")
+}
+
+func (h HtmlElement) SetInnerText(value string) error {
+
+	return h.SetAttributeString("innerText", value)
+}
+
 func (h HtmlElement) SetLang(value string) error {
 	return h.SetAttributeString("lang", value)
 }
