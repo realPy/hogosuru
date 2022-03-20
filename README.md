@@ -523,6 +523,7 @@ All help is welcome. If you are interested by this project, please contact me
 | MessageEvent | Full | https://developer.mozilla.org/fr/docs/Web/API/MessageEvent |
 | NamedNodeMap | Full | https://developer.mozilla.org/fr/docs/Web/API/NamedNodeMap |
 | Navigator | Partial | https://developer.mozilla.org/en-US/docs/Web/API/Navigator | 
+| NavigatorPreloadManager | Full | https://developer.mozilla.org/en-US/docs/Web/API/NavigationPreloadManager |
 | Node | Full | https://developer.mozilla.org/en-US/docs/Web/API/Node |
 | NodeList | Considerated at Full (Partial implemented but no more need )| https://developer.mozilla.org/fr/docs/Web/API/NodeList | 
 | Object | Partial| https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Object | 
@@ -531,8 +532,12 @@ All help is welcome. If you are interested by this project, please contact me
 | PermissionStatus | Full | https://developer.mozilla.org/en-US/docs/Web/API/PermissionStatus |
 | ProgressEvent | Full | https://developer.mozilla.org/en-US/docs/Web/API/ProgressEvent |
 | Promise | Full | https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise |
+| PushManager | Full | https://developer.mozilla.org/en-US/docs/Web/API/PushManager |
 | ReadableStream | Full | https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream |
 | Response | Full | https://developer.mozilla.org/fr/docs/Web/API/Response |
+| ServiceWorker | Full | https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorker|
+| ServiceWorkerContainer | Full | https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerContainer|
+| ServiceWorkerRegistration | Full | https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration |
 | Storage | Full | https://developer.mozilla.org/fr/docs/Mozilla/Add-ons/WebExtensions/API/storage |
 | Stream | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/Streams_API |
 | StyleSheet | Full | https://developer.mozilla.org/en-US/docs/Web/API/StyleSheet |
@@ -541,6 +546,7 @@ All help is welcome. If you are interested by this project, please contact me
 | WebSocket | Full | https://developer.mozilla.org/fr/docs/Web/API/WebSocket |
 | Webassembly | Partial |https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly|
 | Window | Partial |https://developer.mozilla.org/en-US/docs/Web/API/Window |
+| WorkerGlobalScope| Partial | https://developer.mozilla.org/en-US/docs/Web/API/WorkerGlobalScope |
 | XMLHttpRequest | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/XMLHttpRequest/XMLHttpRequest |
 
 

@@ -55,6 +55,7 @@ var methodsAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "SetHidden", "args": []interface{}{true}, "gettermethod": "Hidden", "resultattempt": true},
 	{"method": "SetLang", "args": []interface{}{"fr"}, "gettermethod": "Lang", "resultattempt": "fr"},
 	{"method": "SetTitle", "args": []interface{}{"mytitle"}, "gettermethod": "Title", "resultattempt": "mytitle"},
+	{"method": "SetInnerText", "args": []interface{}{"<b>Test</b>"}, "gettermethod": "InnerText", "resultattempt": "<b>Test</b>"},
 }
 
 func TestMethods(t *testing.T) {
