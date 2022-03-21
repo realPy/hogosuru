@@ -2,6 +2,7 @@ package baseobject
 
 import (
 	"errors"
+	"strings"
 	"syscall/js"
 	"testing"
 )
@@ -141,6 +142,21 @@ func TestNewFromJSObject(t *testing.T) {
 	if err != nil {
 		t.Errorf(err.Error())
 	}
+}
+
+func TestSelf(t *testing.T) {
+	if obj, err := Self(); err == nil {
+		if b, ok := obj.(ObjectFrom); ok {
+
+			if !strings.EqualFold(b.BaseObject_().ConstructName_(), "Window") {
+				t.Errorf("Self must be a Window")
+			}
+
+		} else {
+			t.Errorf("Self must be a object")
+		}
+	}
+
 }
 
 func TestSetObject(t *testing.T) {

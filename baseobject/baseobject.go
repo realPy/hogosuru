@@ -194,6 +194,18 @@ func Discover(obj js.Value) (interface{}, error) {
 	return bobj, err
 }
 
+func Self() (interface{}, error) {
+
+	var err error
+	var self js.Value
+
+	if self, err = Get(js.Global(), "self"); err == nil {
+		return Discover(self)
+	}
+
+	return nil, err
+}
+
 //ObjectFrom Interface to check if Object is a BaseObject
 type ObjectFrom interface {
 	JSObject() js.Value
