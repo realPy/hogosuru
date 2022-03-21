@@ -456,6 +456,7 @@ All help is welcome. If you are interested by this project, please contact me
 | DataTransferItem | Partial | https://developer.mozilla.org/en-US/docs/Web/API/DataTransferItem |
 | DataTransferItemList | Full | https://developer.mozilla.org/en-US/docs/Web/API/DataTransferItemList |
 | Date| Full | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Date | 
+| DedicatedWorkerGlobalScope | Full | https://developer.mozilla.org/en-US/docs/Web/API/DedicatedWorkerGlobalScope |
 | Document | Mostly  | https://developer.mozilla.org/fr/docs/Web/API/Document | 
 | DragEvent |  Full |  https://developer.mozilla.org/en-US/docs/Web/API/DragEvent |
 | Element | Full | https://developer.mozilla.org/fr/docs/Web/API/Element | 
@@ -541,11 +542,14 @@ All help is welcome. If you are interested by this project, please contact me
 | Storage | Full | https://developer.mozilla.org/fr/docs/Mozilla/Add-ons/WebExtensions/API/storage |
 | Stream | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/Streams_API |
 | StyleSheet | Full | https://developer.mozilla.org/en-US/docs/Web/API/StyleSheet |
-| Uint8array | Partial implemented | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array |
+| Uint8array | Partial implemented | https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array 
+| UrlSearchParams | Full | https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams |
+| Url | Full | https://developer.mozilla.org/en-US/docs/Web/API/URL | 
 | ValidityState | Full | https://developer.mozilla.org/en-US/docs/Web/API/ValidityState |
-| WebSocket | Full | https://developer.mozilla.org/fr/docs/Web/API/WebSocket |
+| Websocket | Full | https://developer.mozilla.org/fr/docs/Web/API/WebSocket |
 | Webassembly | Partial |https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly|
 | Window | Partial |https://developer.mozilla.org/en-US/docs/Web/API/Window |
+| Worker | Full | https://developer.mozilla.org/en-US/docs/Web/API/Worker |
 | WorkerGlobalScope| Partial | https://developer.mozilla.org/en-US/docs/Web/API/WorkerGlobalScope |
 | XMLHttpRequest | Partial implemented | https://developer.mozilla.org/fr/docs/Web/API/XMLHttpRequest/XMLHttpRequest |
 
