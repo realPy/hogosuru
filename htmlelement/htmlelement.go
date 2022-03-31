@@ -9,6 +9,7 @@ import (
 
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/cssstyledeclaration"
+	"github.com/realPy/hogosuru/dragevent"
 	"github.com/realPy/hogosuru/element"
 	"github.com/realPy/hogosuru/initinterface"
 )
@@ -46,6 +47,7 @@ func GetInterface() js.Value {
 		baseobject.Register(htmlelementinterface, func(v js.Value) (interface{}, error) {
 			return NewFromJSObject(v)
 		})
+		dragevent.GetInterface()
 	})
 
 	return htmlelementinterface

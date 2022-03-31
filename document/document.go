@@ -7,6 +7,7 @@ import (
 
 	"github.com/realPy/hogosuru/baseobject"
 	"github.com/realPy/hogosuru/documentfragment"
+	"github.com/realPy/hogosuru/dragevent"
 	"github.com/realPy/hogosuru/initinterface"
 	"github.com/realPy/hogosuru/node"
 )
@@ -45,6 +46,7 @@ func GetInterface() js.Value {
 		})
 		node.GetInterface()
 		documentfragment.GetInterface()
+		dragevent.GetInterface()
 
 	})
 
