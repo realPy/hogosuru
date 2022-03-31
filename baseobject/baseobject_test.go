@@ -541,6 +541,7 @@ func TestExport(t *testing.T) {
 		if b, err = NewFromJSObject(obj); err == nil {
 
 			b.Export("arrayGoExported")
+
 			var objExported js.Value
 			if objExported, err = Get(js.Global(), "arrayGoExported"); err == nil {
 				if objExported.IsUndefined() {

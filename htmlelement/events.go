@@ -4,6 +4,8 @@ import (
 	"syscall/js"
 
 	"github.com/realPy/hogosuru/animationevent"
+	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/dragevent"
 	"github.com/realPy/hogosuru/event"
 )
 
@@ -127,4 +129,95 @@ func (h HtmlElement) OnTransitionRun(handler func(e event.Event)) (js.Func, erro
 func (h HtmlElement) OnTransitionStart(handler func(e event.Event)) (js.Func, error) {
 
 	return h.AddEventListener("transitionstart", handler)
+}
+
+func (h HtmlElement) OnDrag(handler func(e dragevent.DragEvent)) (js.Func, error) {
+
+	return h.AddEventListener("drag", func(e event.Event) {
+
+		if globalObj, err := baseobject.Discover(e.JSObject()); err == nil {
+
+			if m, ok := globalObj.(dragevent.DragEventFrom); ok {
+				handler(m.DragEvent_())
+			}
+		}
+	})
+}
+
+func (h HtmlElement) OnDragStart(handler func(e dragevent.DragEvent)) (js.Func, error) {
+
+	return h.AddEventListener("dragstart", func(e event.Event) {
+
+		if globalObj, err := baseobject.Discover(e.JSObject()); err == nil {
+
+			if m, ok := globalObj.(dragevent.DragEventFrom); ok {
+				handler(m.DragEvent_())
+			}
+		}
+	})
+}
+
+func (h HtmlElement) OnDragEnd(handler func(e dragevent.DragEvent)) (js.Func, error) {
+
+	return h.AddEventListener("dragend", func(e event.Event) {
+
+		if globalObj, err := baseobject.Discover(e.JSObject()); err == nil {
+
+			if m, ok := globalObj.(dragevent.DragEventFrom); ok {
+				handler(m.DragEvent_())
+			}
+		}
+	})
+}
+
+func (h HtmlElement) OnDragOver(handler func(e dragevent.DragEvent)) (js.Func, error) {
+
+	return h.AddEventListener("dragover", func(e event.Event) {
+
+		if globalObj, err := baseobject.Discover(e.JSObject()); err == nil {
+
+			if m, ok := globalObj.(dragevent.DragEventFrom); ok {
+				handler(m.DragEvent_())
+			}
+		}
+	})
+}
+
+func (h HtmlElement) OnDragEnter(handler func(e dragevent.DragEvent)) (js.Func, error) {
+
+	return h.AddEventListener("dragenter", func(e event.Event) {
+
+		if globalObj, err := baseobject.Discover(e.JSObject()); err == nil {
+
+			if m, ok := globalObj.(dragevent.DragEventFrom); ok {
+				handler(m.DragEvent_())
+			}
+		}
+	})
+}
+
+func (h HtmlElement) OnDragLeave(handler func(e dragevent.DragEvent)) (js.Func, error) {
+
+	return h.AddEventListener("dragleave", func(e event.Event) {
+
+		if globalObj, err := baseobject.Discover(e.JSObject()); err == nil {
+
+			if m, ok := globalObj.(dragevent.DragEventFrom); ok {
+				handler(m.DragEvent_())
+			}
+		}
+	})
+}
+
+func (h HtmlElement) OnDrop(handler func(e dragevent.DragEvent)) (js.Func, error) {
+
+	return h.AddEventListener("drop", func(e event.Event) {
+
+		if globalObj, err := baseobject.Discover(e.JSObject()); err == nil {
+
+			if m, ok := globalObj.(dragevent.DragEventFrom); ok {
+				handler(m.DragEvent_())
+			}
+		}
+	})
 }

@@ -407,7 +407,7 @@ func (b BaseObject) SetAttribute(attribute string, i interface{}) error {
 }
 
 func (b BaseObject) Export(name string) {
-	js.Global().Set(name, b.object)
+	js.Global().Set(name, *b.object)
 }
 
 func (b BaseObject) GetAttributeString(attribute string) (string, error) {
