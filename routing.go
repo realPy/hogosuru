@@ -45,6 +45,7 @@ type RouteMap struct {
 	currentRendering Rendering
 	nextRendering    Rendering
 	routing          map[string]Rendering
+	cancel           *bool
 }
 
 //Router
@@ -135,9 +136,18 @@ func (r *RouteMap) loadChilds(d document.Document, obj Rendering, node node.Node
 
 	var promisewaitAll promise.Promise
 	var err error
+	var cancel *bool = r.cancel
+
 	if p != nil {
 		if promisewaitAll, err = promise.All(allpromise...); AssertErr(err) {
 			promisewaitAll.Finally(func() {
+
+				if cancel != nil {
+					if *cancel == true {
+						return
+					}
+				}
+
 				if r.nextRendering == obj {
 					if r.currentRendering != nil {
 						r.currentRendering.OnUnload()
@@ -185,7 +195,9 @@ func (r *RouteMap) Go(newroute string) {
 
 		if historyObj, err := w.History(); err == nil {
 			historyObj.PushState(nil, newroute, newroute)
-
+			if r.currentRendering != r.nextRendering {
+				*r.cancel = true
+			}
 			r.onurlchange()
 
 		}
@@ -212,7 +224,8 @@ func (r *RouteMap) onChangeRoute(newroute string) {
 func (r *RouteMap) LoadRendering(obj Rendering) {
 
 	r.nextRendering = obj
-
+	var cancel bool = false
+	r.cancel = &cancel
 	if d, err := document.New(); err == nil {
 
 		if r.defaultRendering != nil {
