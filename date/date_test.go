@@ -571,7 +571,7 @@ func TestToLocaleString(t *testing.T) {
 		if d, err := New(timestamp); testingutils.AssertErr(t, err) {
 
 			if s, err := d.ToLocaleString("fr-FR", map[string]interface{}{"timeZone": "UTC"}); testingutils.AssertErr(t, err) {
-				testingutils.AssertStringContains(t, "28/07/1993, 14:39:07", s)
+				testingutils.AssertStringContains(t, "28/07/1993 14:39:07", s)
 			}
 
 		}
