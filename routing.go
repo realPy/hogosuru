@@ -185,7 +185,9 @@ func (r *RouteMap) Go(newroute string) {
 
 		if historyObj, err := w.History(); err == nil {
 			historyObj.PushState(nil, newroute, newroute)
-
+			if r.currentRendering != r.nextRendering {
+				r.nextRendering.OnUnload()
+			}
 			r.onurlchange()
 
 		}
