@@ -634,7 +634,7 @@ func GoValue(object js.Value) (interface{}, error) {
 	case js.TypeNumber:
 
 		if v, err := IsInteger(object); err == nil && v {
-			return object.Int(), nil
+			return int64(object.Float()), nil
 		}
 		return object.Float(), nil
 	case js.TypeString:
