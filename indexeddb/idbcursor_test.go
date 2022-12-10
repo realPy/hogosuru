@@ -12,8 +12,8 @@ import (
 
 var methodsIDBCursorAttempt []map[string]interface{} = []map[string]interface{}{
 	{"method": "Direction", "resultattempt": "next"},
-	{"method": "Key", "resultattempt": 1},
-	{"method": "PrimaryKey", "resultattempt": 1},
+	{"method": "Key", "resultattempt": int64(1)},
+	{"method": "PrimaryKey", "resultattempt": int64(1)},
 	{"method": "Source", "type": "constructnamechecking", "resultattempt": "IDBObjectStore"},
 	{"method": "Request", "type": "constructnamechecking", "resultattempt": "IDBRequest"},
 	{"method": "Update", "args": []interface{}{map[string]interface{}{"id": 1, "email": "test", "data": "name"}}, "type": "constructnamechecking", "resultattempt": "IDBRequest"},

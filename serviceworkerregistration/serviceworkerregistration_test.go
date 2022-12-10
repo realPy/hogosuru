@@ -57,7 +57,7 @@ func TestNewFromJSObject(t *testing.T) {
 
 			select {
 			case <-wchan:
-			case <-time.After(time.Duration(200) * time.Millisecond):
+			case <-time.After(time.Duration(500) * time.Millisecond):
 				t.Errorf("ServiceWorker request timeout")
 
 			}
@@ -113,7 +113,7 @@ func TestMethods(t *testing.T) {
 
 			select {
 			case <-wchan:
-			case <-time.After(time.Duration(200) * time.Millisecond):
+			case <-time.After(time.Duration(500) * time.Millisecond):
 				t.Errorf("ServiceWorker request timeout")
 
 			}

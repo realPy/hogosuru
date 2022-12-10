@@ -429,7 +429,7 @@ func TestResolve(t *testing.T) {
 
 		p.Then(func(i interface{}) *Promise {
 
-			if i.(int) != 100 {
+			if i.(int64) != 100 {
 				t.Errorf("Must equal to 100 get %d", i.(int))
 			}
 			io <- true

@@ -1002,7 +1002,7 @@ func TestGoValue(t *testing.T) {
 	if obj, err = Get(js.Global(), "customobject"); err == nil {
 
 		v := GoValue_(obj)
-		if vi, ok := v.(int); ok {
+		if vi, ok := v.(int64); ok {
 			if vi != 1 {
 				t.Errorf("Value not match")
 			}
