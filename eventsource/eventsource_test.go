@@ -1,3 +1,6 @@
+//go:build localtest
+// +build localtest
+
 package eventsource
 
 import (
