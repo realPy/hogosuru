@@ -125,7 +125,7 @@ func CopyBytesToJS(dst js.Value, src []byte) (int, error) {
 
 var registry map[string]func(js.Value) (interface{}, error)
 
-//Register Register a construct func for type Object given
+// Register Register a construct func for type Object given
 func Register(inter js.Value, contruct func(js.Value) (interface{}, error)) error {
 
 	var err error
@@ -157,7 +157,7 @@ func GetFuncName(inter js.Value) (string, error) {
 	return name, err
 }
 
-//Discover Discover the Object Given and return a Hogosuru Class if the construct is registered
+// Discover Discover the Object Given and return a Hogosuru Class if the construct is registered
 func Discover(obj js.Value) (interface{}, error) {
 	var err error
 	var bobj interface{}
@@ -206,23 +206,23 @@ func Self() (interface{}, error) {
 	return nil, err
 }
 
-//ObjectFrom Interface to check if Object is a BaseObject
+// ObjectFrom Interface to check if Object is a BaseObject
 type ObjectFrom interface {
 	JSObject() js.Value
 	BaseObject_() BaseObject
 }
 
-//BaseObject_ Return the current BaseObject
+// BaseObject_ Return the current BaseObject
 func (b BaseObject) BaseObject_() BaseObject {
 	return b
 }
 
-//String return the string representation of the given Object
+// String return the string representation of the given Object
 func String(object js.Value) string {
 	return object.String()
 }
 
-//ToStringWithErr return the ToString representation of the given Object
+// ToStringWithErr return the ToString representation of the given Object
 func ToStringWithErr(object js.Value) (string, error) {
 
 	if object.Type() == js.TypeObject {
@@ -239,12 +239,12 @@ func ToStringWithErr(object js.Value) (string, error) {
 
 /*------------------------------------------------------*/
 
-//BaseObject Base Object where all hogosuru herited from
+// BaseObject Base Object where all hogosuru herited from
 type BaseObject struct {
 	object *js.Value
 }
 
-//NewFromJSObject Build a BaseObject from a Js Value Object given
+// NewFromJSObject Build a BaseObject from a Js Value Object given
 func NewFromJSObject(obj js.Value) (BaseObject, error) {
 	var o BaseObject
 	if obj.IsUndefined() {
@@ -255,38 +255,38 @@ func NewFromJSObject(obj js.Value) (BaseObject, error) {
 
 }
 
-//Empty check if the struct is an empty Struct or have a JS Value attached
+// Empty check if the struct is an empty Struct or have a JS Value attached
 func (b BaseObject) Empty() bool {
 
 	return b.object == nil
 }
 
-//Get Get Value of object and handle err
+// Get Get Value of object and handle err
 func (b BaseObject) Get(name string) (js.Value, error) {
 	return Get(b.JSObject(), name)
 }
 
-//Get Get Value of object and handle err
+// Get Get Value of object and handle err
 func (b BaseObject) GetIndex(index int) (js.Value, error) {
 	return GetIndex(b.JSObject(), index)
 }
 
-//Set Set Value of object and handle err
+// Set Set Value of object and handle err
 func (b BaseObject) Set(name string, value interface{}) error {
 	return Set(b.JSObject(), name, value)
 }
 
-//Call
+// Call
 func (b BaseObject) Call(name string, args ...interface{}) (js.Value, error) {
 	return Call(b.JSObject(), name, args...)
 }
 
-//Discover Use Discover of this struct
+// Discover Use Discover of this struct
 func (b BaseObject) Discover() (interface{}, error) {
 	return Discover(b.JSObject())
 }
 
-//ConstructName Get the construct name
+// ConstructName Get the construct name
 func (b BaseObject) ConstructName() (string, error) {
 	var construct js.Value
 	var err error
@@ -302,7 +302,7 @@ func (b BaseObject) ConstructName() (string, error) {
 	return constructname, err
 }
 
-//SetObject Set the JS value Object to this struct
+// SetObject Set the JS value Object to this struct
 func (b BaseObject) SetObject(object js.Value) BaseObject {
 
 	b.object = &object
@@ -310,7 +310,7 @@ func (b BaseObject) SetObject(object js.Value) BaseObject {
 	return b
 }
 
-//JSObject Give the JS Value Object attach to this struct
+// JSObject Give the JS Value Object attach to this struct
 func (b BaseObject) JSObject() js.Value {
 	if b.object != nil {
 		return *b.object
@@ -320,12 +320,12 @@ func (b BaseObject) JSObject() js.Value {
 
 }
 
-//String Get the current string representation of the js Value attached to this struct
+// String Get the current string representation of the js Value attached to this struct
 func (b BaseObject) String() string {
 	return String(*b.object)
 }
 
-//ToString Get the current toString representation of the js Value attached to this struct
+// ToString Get the current toString representation of the js Value attached to this struct
 func (b BaseObject) ToString() (string, error) {
 	var value js.Value
 	var err error
@@ -341,17 +341,17 @@ func (b BaseObject) ToString() (string, error) {
 	return "", ErrNotAnObject
 }
 
-//Value Equivalent to String()
+// Value Equivalent to String()
 func (b BaseObject) Value() string {
 	return b.object.String()
 }
 
-//Length Length of the JS.Value attached of this strict
+// Length Length of the JS.Value attached of this strict
 func (b BaseObject) Length() int {
 	return b.object.Length()
 }
 
-//Bind Bind
+// Bind Bind
 func (b BaseObject) Bind(to BaseObject) (interface{}, error) {
 	var err error
 	var bindObj js.Value
@@ -365,7 +365,7 @@ func (b BaseObject) Bind(to BaseObject) (interface{}, error) {
 	return gobj, err
 }
 
-//Implement Check if the stuct implement a given name method
+// Implement Check if the stuct implement a given name method
 func (b BaseObject) Implement(method string) (bool, error) {
 
 	var obj js.Value
@@ -564,7 +564,7 @@ func (b BaseObject) SetAttributeDouble(attribute string, value float64) error {
 	return b.Set(attribute, js.ValueOf(value))
 }
 
-//CallInt64 Call method given and return a 64bit int
+// CallInt64 Call method given and return a 64bit int
 func (b BaseObject) CallInt64(method string) (int64, error) {
 
 	var err error
@@ -581,7 +581,7 @@ func (b BaseObject) CallInt64(method string) (int64, error) {
 	return ret, err
 }
 
-//CallInt Call method given and return int
+// CallInt Call method given and return int
 func (b BaseObject) CallInt(method string) (int, error) {
 
 	var err error
@@ -598,7 +598,7 @@ func (b BaseObject) CallInt(method string) (int, error) {
 	return ret, err
 }
 
-//CallInt64 Call method given and return a bool int
+// CallInt64 Call method given and return a bool int
 func (b BaseObject) CallBool(method string) (bool, error) {
 	var err error
 	var obj js.Value
@@ -632,12 +632,11 @@ func GoValue(object js.Value) (interface{}, error) {
 	var err error
 	switch object.Type() {
 	case js.TypeNumber:
-		val := object.Float()
-		if val == float64(int(val)) {
+
+		if v, err := IsInteger(object); err == nil && v {
 			return object.Int(), nil
-		} else {
-			return object.Float(), nil
 		}
+		return object.Float(), nil
 	case js.TypeString:
 		return object.String(), nil
 	case js.TypeBoolean:
