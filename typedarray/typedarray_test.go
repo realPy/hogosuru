@@ -162,7 +162,7 @@ func TestNewInt8Array(t *testing.T) {
 		a.Fill(200)
 		if v, err := a.GetValue(0); testingutils.AssertErr(t, err) {
 
-			if v.(int) > 0 {
+			if v.(int64) > 0 {
 				t.Error("Must be a negative value")
 			}
 		}
@@ -203,7 +203,7 @@ func TestNewUInt8ClampedArray(t *testing.T) {
 		a.SetValue(0, 3.6)
 		if v, err := a.GetValue(0); testingutils.AssertErr(t, err) {
 
-			if v.(int) != 4 {
+			if v.(int64) != 4 {
 				t.Error("Must be a egal 4")
 			}
 		}
@@ -245,7 +245,7 @@ func TestNewUInt16Array(t *testing.T) {
 		a.SetValue(0, 1000)
 		if v, err := a.GetValue(0); testingutils.AssertErr(t, err) {
 
-			if v.(int) != 1000 {
+			if v.(int64) != 1000 {
 				t.Error("Must be a egal 1000")
 			}
 		}
@@ -292,7 +292,7 @@ func TestNewInt16Array(t *testing.T) {
 		a.SetValue(0, 45000)
 		if v, err := a.GetValue(0); testingutils.AssertErr(t, err) {
 
-			if v.(int) > 0 {
+			if v.(int64) > 0 {
 				t.Error("Must be <0")
 			}
 		}
@@ -381,7 +381,7 @@ func TestNewInt32Array(t *testing.T) {
 
 		if v, err := a.GetValue(0); testingutils.AssertErr(t, err) {
 
-			if v.(int) > 0 {
+			if v.(int64) > 0 {
 				t.Error("Must be <0")
 			}
 		}
