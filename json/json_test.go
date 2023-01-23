@@ -44,4 +44,14 @@ func TestStringify(t *testing.T) {
 		testingutils.AssertExpect(t, "[1,\"hello\",true]", str)
 
 	}
+
+}
+
+func TestStringifyObject(t *testing.T) {
+
+	if str, err := StringifyObject(map[string]interface{}{"hello": "world"}); testingutils.AssertErr(t, err) {
+
+		testingutils.AssertExpect(t, "{\"hello\":\"world\"}", str)
+
+	}
 }

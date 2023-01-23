@@ -22,7 +22,7 @@ var singleton sync.Once
 
 var jsoninterface js.Value
 
-//Json  struct
+// Json  struct
 type Json struct {
 	object.Object
 }
@@ -35,7 +35,7 @@ func (i Json) Json_() Json {
 	return i
 }
 
-//GetInterface get the JS interface
+// GetInterface get the JS interface
 func GetInterface() js.Value {
 
 	singleton.Do(func() {
@@ -164,6 +164,28 @@ func Stringify(opts ...interface{}) (string, error) {
 	if jsoni := GetInterface(); !jsoni.IsUndefined() {
 
 		if stringObject, err = baseobject.Call(jsoni, "stringify", arrayJS); err != nil {
+			return "", err
+		} else {
+
+			return stringObject.String(), nil
+		}
+
+	} else {
+		err = ErrNotImplemented
+	}
+
+	return "", err
+
+}
+
+func StringifyObject(object interface{}) (string, error) {
+
+	var err error
+	var stringObject js.Value
+
+	if jsoni := GetInterface(); !jsoni.IsUndefined() {
+
+		if stringObject, err = baseobject.Call(jsoni, "stringify", js.ValueOf(object)); err != nil {
 			return "", err
 		} else {
 
