@@ -442,6 +442,30 @@ func TestRemoveAttributeNS(t *testing.T) {
 
 }
 
+func TestReplaceChildren(t *testing.T) {
+	baseobject.Eval(`
+	div= document.createElement("div")
+	pTemp = document.createElement("p")
+	pTemp.innerText = "remove me"
+	div.append(pTemp)
+	span = document.createElement("span")
+	span.innerText = "done"
+	`)
+
+	if objdiv, err := baseobject.Get(js.Global(), "div"); testingutils.AssertErr(t, err) {
+		if div, err := NewFromJSObject(objdiv); testingutils.AssertErr(t, err) {
+			if objspan, err := baseobject.Get(js.Global(), "span"); testingutils.AssertErr(t, err) {
+				if span, err := NewFromJSObject(objspan); testingutils.AssertErr(t, err) {
+					testingutils.AssertErr(t, div.ReplaceChildren("well ", span.Node))
+					if val, err := div.OuterHTML(); testingutils.AssertErr(t, err) {
+						testingutils.AssertExpect(t, "<div>well <span>done</span></div>", val)
+					}
+				}
+			}
+		}
+	}
+}
+
 func TestSetAttribute(t *testing.T) {
 
 	baseobject.Eval(`

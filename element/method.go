@@ -162,7 +162,7 @@ func (e Element) GetBoundingClientRect() (domrect.DOMRect, error) {
 	return newdomrect, err
 }
 
-//retourne un DOMRectList
+// retourne un DOMRectList
 func (e Element) GetClientRects() (domrectlist.DOMRectList, error) {
 	var err error
 	var obj js.Value
@@ -379,6 +379,25 @@ func (e Element) RemoveAttribute(attrname string) error {
 func (e Element) RemoveAttributeNS(namespace, attrname string) error {
 	var err error
 	_, err = e.Call("removeAttributeNS", js.ValueOf(namespace), js.ValueOf(attrname))
+	return err
+}
+
+func (e Element) ReplaceChildren(params ...interface{}) error {
+	var err error
+	var arrayJS []interface{}
+	for _, param := range params {
+		switch p := param.(type) {
+		case node.Node:
+			arrayJS = append(arrayJS, p.JSObject())
+		case string:
+			arrayJS = append(arrayJS, js.ValueOf(p))
+		default:
+			return ErrSendUnknownType
+		}
+	}
+
+	_, err = e.Call("replaceChildren", arrayJS...)
+
 	return err
 }
 
