@@ -11,4 +11,5 @@ var (
 	ErrInsertAdjacent   = errors.New("Insert Adjacent failed")
 	ErrElementNotFound  = errors.New("Element not Found")
 	ErrElementsNotFound = errors.New("Elements not Found")
+	ErrSendUnknownType  = errors.New("Unknown type send data provide to send method")
 )
