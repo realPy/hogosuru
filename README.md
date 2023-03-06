@@ -111,6 +111,7 @@ All help is welcome. If you are interested by this project, please contact me
 | HTMLFormElement| Full| https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement|
 | HTMLHeadElement| Full| https://developer.mozilla.org/en-US/docs/Web/API/HTMLHeadElement|
 | HTMLHeadingElement| Full| https://developer.mozilla.org/en-US/docs/Web/API/HTMLHeadingElement|
+| HTMLHtmlElement| Full| https://developer.mozilla.org/en-US/docs/Web/API/HTMLHtmlElement|
 | HTMLHRElement| Full| https://developer.mozilla.org/en-US/docs/Web/API/HTMLHRElement|
 | HTMLIFrameElement| Full| https://developer.mozilla.org/en-US/docs/Web/API/HTMLIFrameElement|
 | HTMLImageElement| Full| https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement|
