@@ -82,7 +82,7 @@ func TestKeys(t *testing.T) {
 		testingutils.AssertErr(t, h.Append("X-custom", "1234"))
 
 		if it, err := h.Keys(); testingutils.AssertErr(t, err) {
-			testingutils.AssertExpect(t, "[object Iterator]", it.ToString_())
+			testingutils.AssertExpect(t, "[object Headers Iterator]", it.ToString_())
 		}
 	}
 }
@@ -93,7 +93,7 @@ func TestValues(t *testing.T) {
 		testingutils.AssertErr(t, h.Append("X-custom", "1234"))
 
 		if it, err := h.Keys(); testingutils.AssertErr(t, err) {
-			testingutils.AssertExpect(t, "[object Iterator]", it.ToString_())
+			testingutils.AssertExpect(t, "[object Headers Iterator]", it.ToString_())
 		}
 	}
 }

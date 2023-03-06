@@ -82,7 +82,7 @@ func TestKeys(t *testing.T) {
 		testingutils.AssertErr(t, u.Append("TestKey", "1234"))
 
 		if it, err := u.Keys(); testingutils.AssertErr(t, err) {
-			testingutils.AssertExpect(t, "[object Iterator]", it.ToString_())
+			testingutils.AssertExpect(t, "[object URLSearchParams Iterator]", it.ToString_())
 		}
 	}
 }
@@ -93,7 +93,7 @@ func TestValues(t *testing.T) {
 		testingutils.AssertErr(t, u.Append("TestKey", "1234"))
 
 		if it, err := u.Keys(); testingutils.AssertErr(t, err) {
-			testingutils.AssertExpect(t, "[object Iterator]", it.ToString_())
+			testingutils.AssertExpect(t, "[object URLSearchParams Iterator]", it.ToString_())
 		}
 	}
 }
