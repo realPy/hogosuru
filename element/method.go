@@ -337,7 +337,7 @@ func (e Element) QuerySelector(selector string) (node.Node, error) {
 		if !obj.IsNull() {
 			nod, err = node.NewFromJSObject(obj)
 		} else {
-			err = errors.New(ErrElementNotFound.Error() + "" + selector)
+			err = errors.New(ErrElementNotFound.Error() + " " + selector)
 		}
 	}
 	return nod, err
@@ -353,7 +353,7 @@ func (e Element) QuerySelectorAll(selector string) (nodelist.NodeList, error) {
 		if !obj.IsNull() {
 			nlist, err = nodelist.NewFromJSObject(obj)
 		} else {
-			err = errors.New(ErrElementsNotFound.Error() + "" + selector)
+			err = errors.New(ErrElementsNotFound.Error() + " " + selector)
 		}
 	}
 	return nlist, err
