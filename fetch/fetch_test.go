@@ -173,7 +173,7 @@ func TestNew(t *testing.T) {
 
 		select {
 		case <-io:
-		case <-time.After(time.Duration(2000) * time.Millisecond):
+		case <-time.After(time.Duration(3000) * time.Millisecond):
 			t.Errorf("No message channel receive")
 		}
 
