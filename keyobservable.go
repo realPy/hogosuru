@@ -19,7 +19,7 @@ var (
 
 type KeyObservableFunc func(value interface{})
 
-//KeyObservable struct
+// KeyObservable struct
 type Observable struct {
 	register    map[string]map[*KeyObservableFunc]bool
 	persistData objectmap.ObjectMap
@@ -54,6 +54,12 @@ func (ko *Observable) RegisterFunc(key string, f KeyObservableFunc) {
 	ko.register[key][&f] = true
 }
 
+func (ko *Observable) Put(key string, value interface{}, persist bool) {
+	if persist {
+		ko.persistData.Set(key, value)
+	}
+}
+
 func (ko *Observable) Set(key string, value interface{}, persist bool) {
 
 	if persist {
@@ -85,7 +91,7 @@ func (ko *Observable) UnRegisterFunc(key string, f KeyObservableFunc) {
 	}
 }
 
-//Get Get key in persist array . return error if key is not found
+// Get Get key in persist array . return error if key is not found
 func (ko *Observable) Get(key string) (interface{}, error) {
 	if haskey, err := ko.persistData.Has(key); err == nil && haskey {
 		return ko.persistData.Get(key)
