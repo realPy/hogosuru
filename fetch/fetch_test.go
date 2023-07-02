@@ -19,10 +19,10 @@ func TestMain(m *testing.M) {
 }
 
 func TestNew(t *testing.T) {
-	var io chan bool = make(chan bool)
 
 	//Start promise and wait result
 	t.Run("Get ", func(t *testing.T) {
+		io := make(chan bool)
 		if f, err := New("https://httpbin.org/get"); testingutils.AssertErr(t, err) {
 			f.Then(func(r response.Response) *promise.Promise {
 
@@ -46,7 +46,7 @@ func TestNew(t *testing.T) {
 		}
 	})
 	t.Run("Get with custom headers", func(t *testing.T) {
-
+		io := make(chan bool)
 		var headers map[string]interface{} = map[string]interface{}{"Content-Type": "application/json",
 			"XCustomValue": "Test"}
 
@@ -113,7 +113,7 @@ func TestNew(t *testing.T) {
 	})
 
 	t.Run("Post with custom headers", func(t *testing.T) {
-
+		io := make(chan bool)
 		var headers map[string]interface{} = map[string]interface{}{"Content-Type": "application/json",
 			"XCustomValue": "Test"}
 
@@ -182,7 +182,7 @@ func TestNew(t *testing.T) {
 	object.GetInterface()
 
 	t.Run("Post with custom headers and json response and form data ", func(t *testing.T) {
-
+		io := make(chan bool)
 		var headers map[string]interface{} = map[string]interface{}{"Content-Type": "application/x-www-form-urlencoded",
 			"XCustomValue": "Test"}
 
