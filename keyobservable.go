@@ -54,10 +54,10 @@ func (ko *Observable) RegisterFunc(key string, f KeyObservableFunc) {
 	ko.register[key][&f] = true
 }
 
-func (ko *Observable) Put(key string, value interface{}, persist bool) {
-	if persist {
-		ko.persistData.Set(key, value)
-	}
+func (ko *Observable) Put(key string, value interface{}) {
+
+	ko.persistData.Set(key, value)
+
 }
 
 func (ko *Observable) Set(key string, value interface{}, persist bool) {
