@@ -16,12 +16,12 @@ var expectMethods []string = []string{"assert", "clear", "count", "countReset", 
 	"dir", "dirxml", "error", "group", "groupCollapsed", "groupEnd", "info", "log", "time", "timeEnd", "timeLog",
 	"trace", "warn"}
 
-//infortunately it's not possible to acces js console , we just verify
+// infortunately it's not possible to acces js console , we just verify
 func TestNew(t *testing.T) {
 
 	if c, err := New(); testingutils.AssertErr(t, err) {
 
-		testingutils.AssertExpect(t, "[object Object]", c.ToString_())
+		testingutils.AssertExpect(t, "[object console]", c.ToString_())
 
 		testingutils.ImplementedExpect(t, c.BaseObject, expectMethods)
 	}
