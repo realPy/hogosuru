@@ -7,7 +7,7 @@ jobs:
         go-version: [1.16.x,1.17.x,1.18.x]
         os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
-     container:
+    container:
       image: kennethreitz/httpbin
       ports:
         - 80
