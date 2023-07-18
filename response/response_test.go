@@ -17,8 +17,8 @@ func TestMain(m *testing.M) {
 		return nil
 	}))
 
-	baseobject.Eval(`resp = fetch("https://httpbin.org/get")
-	fetch('https://httpbin.org/get')
+	baseobject.Eval(`resp = fetch("http://localhost/get")
+	fetch('http://localhost/get')
 	.then(function(response) {
 
 		resp=response
@@ -137,7 +137,7 @@ func TestUrl(t *testing.T) {
 			testingutils.AssertExpect(t, "[object Response]", response.ToString_())
 
 			if url, err := response.Url(); testingutils.AssertErr(t, err) {
-				testingutils.AssertExpect(t, "https://httpbin.org/get", url)
+				testingutils.AssertExpect(t, "http://localhost/get", url)
 			}
 
 		}
