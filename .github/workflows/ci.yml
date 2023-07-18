@@ -9,7 +9,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     services:
       httpbin:
-        images: kennethreitz/httpbin
+        image: kennethreitz/httpbin
         ports:
           - 80:80
     steps:
