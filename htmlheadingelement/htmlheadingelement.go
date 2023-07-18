@@ -20,7 +20,7 @@ var singleton sync.Once
 
 var htmlheadingelementinterface js.Value
 
-//HtmlHeadingElement struct
+// HtmlHeadingElement struct
 type HtmlHeadingElement struct {
 	htmlelement.HtmlElement
 }
