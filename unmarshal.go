@@ -51,12 +51,23 @@ var tagtoelem = map[string]string{
 	"HtmlTableCellElement":    "t", //th or td
 	"HtmlTableElement":        "table",
 	"HtmlTableRowElement":     "tr",
-	"HtmlTableSectionElement": "t", //thead tfoot
+	"HtmlTableSectionElement": "t", //thead tfoot tbody
 	"HtmlTemplateElement":     "template",
 	"HtmlTextAreaElement":     "textarea",
 	"HtmlTimeElement":         "time",
 	"HtmlTitleElement":        "title",
 }
+
+/* Syntax for hogosuru struct tag
+    _ htmlbodyelement.HtmlBodyElement                   `hogosuru:"body:nth-of-type(1)"` attach the first body element
+	_ htmlbuttonelement.HtmlButtonElement               `hogosuru:"button.innerBox"` attach the button for class innerBox
+	_ htmldivelement.HtmlDivElement                     `hogosuru:"#divid"` attach the div with id="divid"
+	_ []htmldivelement.HtmlDivElement                   `hogosuru:"[]"` Get all divs
+	_ []htmldivelement.HtmlDivElement                   `hogosuru:"[]div.toto"` Get all divs with class toto
+    _ []htmlheadingelement.HtmlHeadingElement           `hogosuru:"[]:1"` Get all h1
+	_ []htmlheadingelement.HtmlHeadingElement           `hogosuru:"[]:2"` Get all h2
+	_ []htmltablesectionelement.HtmlTableSectionElement `hogosuru:"[]:head"` Get all thead
+*/
 
 func getTagByType(t string) string {
 	v, _ := tagtoelem[t]
@@ -83,10 +94,14 @@ func Unmarshal(q QuerySelector, s interface{}) error {
 				taghtml := getTagByType(f.Type().Elem().Name())
 
 				if tag != "" {
-					taghtml = tag
-				}
+					stag := strings.Split(tag, ":")
+					if len(stag) > 1 {
+						taghtml = taghtml + stag[1]
+					} else {
+						taghtml = tag
+					}
 
-				//TODO: Separate with : for use h1|h2|h2|h3|h4|h5|h6, td|th, tfoot|theader|tbody
+				}
 
 				nodelist, err := q.QuerySelectorAll(taghtml)
 				if err != nil {
