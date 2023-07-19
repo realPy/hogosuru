@@ -20,7 +20,7 @@ var singleton sync.Once
 
 var htmlbrelementinterface js.Value
 
-//HtmlBrElement struct
+// HtmlBRElement struct
 type HtmlBRElement struct {
 	htmlelement.HtmlElement
 }

@@ -23,7 +23,7 @@ func TestNew(t *testing.T) {
 	//Start promise and wait result
 	t.Run("Get ", func(t *testing.T) {
 		io := make(chan bool)
-		if f, err := New("https://httpbin.org/get"); testingutils.AssertErr(t, err) {
+		if f, err := New("http://localhost/get"); testingutils.AssertErr(t, err) {
 			f.Then(func(r response.Response) *promise.Promise {
 
 				if status, err := r.Status(); testingutils.AssertErr(t, err) {
@@ -53,7 +53,7 @@ func TestNew(t *testing.T) {
 		var fetchOpts map[string]interface{} = map[string]interface{}{"method": "GET", "headers": headers}
 
 		//Start promise and wait result
-		if f, err := New("https://httpbin.org/get", fetchOpts); testingutils.AssertErr(t, err) {
+		if f, err := New("http://localhost/get", fetchOpts); testingutils.AssertErr(t, err) {
 			textpromise, _ := f.Then(func(r response.Response) *promise.Promise {
 				if status, err := r.Status(); testingutils.AssertErr(t, err) {
 					if status != 200 {
@@ -120,7 +120,7 @@ func TestNew(t *testing.T) {
 		var fetchOpts map[string]interface{} = map[string]interface{}{"method": "POST", "headers": headers}
 
 		//Start promise and wait result
-		if f, err := New("https://httpbin.org/post", fetchOpts); testingutils.AssertErr(t, err) {
+		if f, err := New("http://localhost/post", fetchOpts); testingutils.AssertErr(t, err) {
 			textpromise, _ := f.Then(func(r response.Response) *promise.Promise {
 				if status, err := r.Status(); testingutils.AssertErr(t, err) {
 					if status != 200 {
@@ -189,7 +189,7 @@ func TestNew(t *testing.T) {
 		var fetchOpts map[string]interface{} = map[string]interface{}{"method": "POST", "headers": headers, "body": "data=test"}
 
 		//Start promise and wait result
-		if f, err := New("https://httpbin.org/post", fetchOpts); testingutils.AssertErr(t, err) {
+		if f, err := New("http://localhost/post", fetchOpts); testingutils.AssertErr(t, err) {
 			jsonpromise, _ := f.Then(func(r response.Response) *promise.Promise {
 				if status, err := r.Status(); testingutils.AssertErr(t, err) {
 					if status != 200 {
@@ -264,7 +264,7 @@ func TestNewCancelable(t *testing.T) {
 
 		var fetchOpts map[string]interface{} = map[string]interface{}{"method": "POST", "headers": headers, "body": "data=test", "mode": "no-cors"}
 
-		if f, err := NewCancelable("http://httpbin.org/post", fetchOpts); testingutils.AssertErr(t, err) {
+		if f, err := NewCancelable("http://localhost/post", fetchOpts); testingutils.AssertErr(t, err) {
 			f.Then(func(r response.Response) *promise.Promise {
 
 				t.Error("Must not get response")
@@ -298,7 +298,7 @@ func TestNewCancelable(t *testing.T) {
 
 		var fetchOpts map[string]interface{} = map[string]interface{}{"method": "POST", "headers": headers, "body": "data=test", "mode": "no-cors", "signal": s.JSObject()}
 
-		if f, err := NewCancelable("http://httpbin.org/post", fetchOpts); testingutils.AssertErr(t, err) {
+		if f, err := NewCancelable("http://localhost/post", fetchOpts); testingutils.AssertErr(t, err) {
 			f.Then(func(r response.Response) *promise.Promise {
 
 				t.Error("Must not get response")

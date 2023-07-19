@@ -327,15 +327,15 @@ func (e Element) Prepend(elements ...Element) error {
 	return err
 }
 
-func (e Element) QuerySelector(selector string) (node.Node, error) {
+func (e Element) QuerySelector(selector string) (Element, error) {
 
 	var err error
 	var obj js.Value
-	var nod node.Node
+	var nod Element
 
 	if obj, err = e.Call("querySelector", js.ValueOf(selector)); err == nil {
 		if !obj.IsNull() {
-			nod, err = node.NewFromJSObject(obj)
+			nod, err = NewFromJSObject(obj)
 		} else {
 			err = errors.New(ErrElementNotFound.Error() + " " + selector)
 		}

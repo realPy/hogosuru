@@ -46,7 +46,7 @@ func TestGetRequest(t *testing.T) {
 
 	if xhr, err := New(); testingutils.AssertErr(t, err) {
 
-		err := xhr.Open("GET", "https://httpbin.org/get")
+		err := xhr.Open("GET", "http://localhost/get")
 		testingutils.AssertErr(t, err)
 
 		xhr.SetOnload(func(i interface{}) {
@@ -68,7 +68,7 @@ func TestGetRequest(t *testing.T) {
 					url := goValue.(map[string]interface{})["url"]
 
 					if url != nil {
-						testingutils.AssertExpect(t, url, "https://httpbin.org/get")
+						testingutils.AssertExpect(t, url, "http://localhost/get")
 						io <- true
 					} else {
 						t.Error("No url present")
@@ -96,7 +96,7 @@ func TestPostRequest(t *testing.T) {
 
 	if xhr, err := New(); testingutils.AssertErr(t, err) {
 
-		err := xhr.Open("POST", "https://httpbin.org/post")
+		err := xhr.Open("POST", "http://localhost/post")
 		testingutils.AssertErr(t, err)
 
 		xhr.SetOnload(func(i interface{}) {
@@ -153,7 +153,7 @@ func TestSetRequestHeader(t *testing.T) {
 
 	if xhr, err := New(); testingutils.AssertErr(t, err) {
 
-		err := xhr.Open("GET", "https://httpbin.org/get")
+		err := xhr.Open("GET", "http://localhost/get")
 		testingutils.AssertErr(t, err)
 
 		xhr.SetOnload(func(i interface{}) {
@@ -240,7 +240,7 @@ func TestOnAbort(t *testing.T) {
 
 	if xhr, err := New(); testingutils.AssertErr(t, err) {
 		progressevent.GetInterface()
-		err := xhr.Open("GET", "http://httpbin.org/get")
+		err := xhr.Open("GET", "http://localhost/get")
 		testingutils.AssertErr(t, err)
 
 		xhr.SetOnAbort(func(i interface{}) {
