@@ -96,8 +96,8 @@ func Unmarshal(q QuerySelector, s interface{}) error {
 				array := reflect.MakeSlice(f.Type(), 0, ln)
 				for i := 0; i < ln; i++ {
 
-					if objjs, err := nodelist.GetIndex(i); err != nil {
-						if r, err := baseobject.Discover(objjs); err != nil {
+					if objjs, err := nodelist.GetIndex(i); err == nil {
+						if r, err := baseobject.Discover(objjs); err == nil {
 							array = reflect.Append(array, reflect.ValueOf(r))
 						}
 
@@ -115,7 +115,7 @@ func Unmarshal(q QuerySelector, s interface{}) error {
 			if err != nil {
 				return err
 			}
-			if delem, err := elem.Discover(); err != nil {
+			if delem, err := elem.Discover(); err == nil {
 
 				if v.Kind() == reflect.Struct {
 					f.Set(reflect.ValueOf(delem))
