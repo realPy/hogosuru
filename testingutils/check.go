@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/base/baseobject"
 )
 
 func InvokeCheck(t *testing.T, object interface{}, expectDesc map[string]interface{}) {

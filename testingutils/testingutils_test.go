@@ -3,7 +3,7 @@ package testingutils
 import (
 	"testing"
 
-	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/base/baseobject"
 )
 
 func TestMain(m *testing.M) {

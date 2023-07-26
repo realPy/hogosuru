@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru/base/baseobject"
 )
 
 func ImplementedExpect(t *testing.T, obj baseobject.BaseObject, methodsname []string) {
