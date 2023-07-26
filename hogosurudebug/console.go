@@ -7,8 +7,8 @@ import (
 	"sync"
 	"syscall/js"
 
-	"github.com/realPy/hogosuru/baseobject"
-	"github.com/realPy/hogosuru/console"
+	"github.com/realPy/hogosuru/base/baseobject"
+	"github.com/realPy/hogosuru/base/console"
 )
 
 /***********************************************

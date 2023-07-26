@@ -1,292 +1,235 @@
 package storage
 
 import (
-	"syscall/js"
 	"testing"
+	"time"
 
-	"github.com/realPy/hogosuru/baseobject"
+	"github.com/realPy/hogosuru"
+	"github.com/realPy/hogosuru/base/baseobject"
+	"github.com/realPy/hogosuru/base/promise"
+	"github.com/realPy/hogosuru/base/window"
 	"github.com/realPy/hogosuru/testingutils"
 )
 
 func TestMain(m *testing.M) {
 	baseobject.SetSyscall()
+	hogosuru.Init()
+
 	m.Run()
 }
 
-func TestNewStorage(t *testing.T) {
+type People struct {
+	Email   string `indexeddb:"store=people,version=1,keypath=email"`
+	Name    string `indexeddb:"name"`
+	Surname string `indexeddb:"surname"`
+}
 
-	t.Run("session", func(t *testing.T) {
-		if obj, err := baseobject.Get(js.Global(), "window"); testingutils.AssertErr(t, err) {
+func TestPutPeople(t *testing.T) {
 
-			if storageobj, err := baseobject.Get(obj, "sessionStorage"); testingutils.AssertErr(t, err) {
-				if stor, err := NewFromJSObject(storageobj); testingutils.AssertErr(t, err) {
-					testingutils.AssertExpect(t, "[object Storage]", stor.ToString_())
+	var io chan bool = make(chan bool)
+	w, err := window.New()
+	testingutils.AssertExpect(t, nil, err)
+	p, err := Register(w, People{}, "put")
+	testingutils.AssertExpect(t, nil, err)
+	p.Then(func(i interface{}) *promise.Promise {
+		//waiting ready to use
+		people := People{Email: "hello@world.com", Name: "Hello", Surname: "World"}
+
+		people1, _ := Add(people, true)
+
+		people1.Then(func(i interface{}) *promise.Promise {
+			people.Name = "\\o/"
+			put, err := Put(people, true)
+			testingutils.AssertExpect(t, nil, err)
+			put.Then(func(i interface{}) *promise.Promise {
+				peoples := []People{}
+				peopleget, err := GetAll(&peoples)
+				if err != nil {
+					panic(err)
 				}
 
-			}
-		}
+				peopleget.Then(func(i interface{}) *promise.Promise {
+					testingutils.AssertExpect(t, 1, len(peoples))
+					expected := []People{People{Email: "hello@world.com", Name: "\\o/", Surname: "World"}}
+					testingutils.AssertExpect(t, expected, peoples)
 
+					io <- true
+					return nil
+				}, nil)
+
+				return &peopleget
+			}, nil)
+			return &put
+		}, nil)
+
+		return nil
+	}, func(err error) {
+		panic(err)
 	})
 
-	t.Run("local", func(t *testing.T) {
-		if obj, err := baseobject.Get(js.Global(), "window"); testingutils.AssertErr(t, err) {
-
-			if storageobj, err := baseobject.Get(obj, "localStorage"); testingutils.AssertErr(t, err) {
-				if stor, err := NewFromJSObject(storageobj); testingutils.AssertErr(t, err) {
-					testingutils.AssertExpect(t, "[object Storage]", stor.ToString_())
-				}
-
-			}
-		}
-
-	})
+	select {
+	case <-io:
+	case <-time.After(time.Duration(45000) * time.Millisecond):
+		t.Errorf("No message channel receive")
+	}
 
 }
 
-func TestGetItem(t *testing.T) {
+func TestDeletePeople(t *testing.T) {
 
-	t.Run("sessionStorage", func(t *testing.T) {
-		baseobject.Eval("window.sessionStorage.setItem(\"hello\",\"world\")")
+	t.Run("Register and insert 2 people delete 1", func(t *testing.T) {
+		var io chan bool = make(chan bool)
+		w, err := window.New()
+		testingutils.AssertExpect(t, nil, err)
+		p, err := Register(w, People{}, "del1")
+		testingutils.AssertExpect(t, nil, err)
+		p.Then(func(i interface{}) *promise.Promise {
+			//waiting ready to use
+			people1 := People{Email: "hello@world.com", Name: "Hello", Surname: "World"}
+			p1, _ := Add(people1, true)
+			people2 := People{Email: "hello2@world.com", Name: "Hello", Surname: "World"}
+			p2, _ := Add(people2, true)
 
-		if obj, err := baseobject.Get(js.Global(), "window"); testingutils.AssertErr(t, err) {
+			allp, err := promise.All(p1, p2)
 
-			if storageobj, err := baseobject.Get(obj, "sessionStorage"); testingutils.AssertErr(t, err) {
-				if stor, err := NewFromJSObject(storageobj); testingutils.AssertErr(t, err) {
+			if err != nil {
+				panic(err)
+			}
 
-					if str, err := stor.GetItem("hello"); testingutils.AssertErr(t, err) {
-						testingutils.AssertExpect(t, "world", str)
-					}
-					if str, err := stor.GetItem("hello2"); testingutils.AssertErr(t, err) {
+			allp.Then(func(i interface{}) *promise.Promise {
 
-						testingutils.AssertExpect(t, nil, str)
-					}
+				peoples := []People{}
+
+				pdelete, err := Delete(people2, false)
+				if err != nil {
+					panic(err)
 				}
 
-			}
+				pdelete.Then(func(i interface{}) *promise.Promise {
+					pe, err := GetAll(&peoples)
+					if err != nil {
+						panic(err)
+					}
+
+					pe.Then(func(i interface{}) *promise.Promise {
+						testingutils.AssertExpect(t, 1, len(peoples))
+						expected := []People{People{Email: "hello@world.com", Name: "Hello", Surname: "World"}}
+						testingutils.AssertExpect(t, expected, peoples)
+
+						io <- true
+						return nil
+					}, nil)
+					return &pe
+				}, nil)
+
+				return &pdelete
+			}, nil)
+
+			return nil
+		}, func(err error) {
+			panic(err)
+		})
+
+		select {
+		case <-io:
+		case <-time.After(time.Duration(45000) * time.Millisecond):
+			t.Errorf("No message channel receive")
 		}
 
 	})
 
-	t.Run("localStorage", func(t *testing.T) {
-		baseobject.Eval("window.localStorage.setItem(\"hello\",\"world\")")
-		if obj, err := baseobject.Get(js.Global(), "window"); testingutils.AssertErr(t, err) {
+	t.Run("Register and insert 2 people in add2 with same key and rollback on", func(t *testing.T) {
+		var io chan bool = make(chan bool)
+		w, err := window.New()
+		testingutils.AssertExpect(t, nil, err)
+		p, err := Register(w, People{}, "add2")
+		testingutils.AssertExpect(t, nil, err)
+		p.Then(func(i interface{}) *promise.Promise {
+			//waiting ready to use
 
-			if storageobj, err := baseobject.Get(obj, "localStorage"); testingutils.AssertErr(t, err) {
-				if stor, err := NewFromJSObject(storageobj); testingutils.AssertErr(t, err) {
+			p1, _ := Add(People{Email: "hello@world.com", Name: "Hello", Surname: "World"}, true)
 
-					if str, err := stor.GetItem("hello"); testingutils.AssertErr(t, err) {
+			p2, _ := Add(People{Email: "hello@world.com", Name: "Hello", Surname: "World"}, true)
 
-						testingutils.AssertExpect(t, "world", str)
-					}
+			allp, err := promise.All(p1, p2)
 
-					if str, err := stor.GetItem("hello2"); testingutils.AssertErr(t, err) {
-
-						testingutils.AssertExpect(t, nil, str)
-					}
-				}
-
+			if err != nil {
+				panic(err)
 			}
+
+			allp.Then(func(i interface{}) *promise.Promise {
+
+				return nil
+			}, func(err error) {
+				testingutils.AssertExpect(t, "Key already exists in the object store.", err.Error())
+				//transaction is aborted
+				io <- true
+			})
+
+			return nil
+		}, func(err error) {
+			panic(err)
+		})
+
+		select {
+		case <-io:
+		case <-time.After(time.Duration(45000) * time.Millisecond):
+			t.Errorf("No message channel receive")
 		}
 
 	})
 
-}
+	t.Run("Register and insert 2 people in add3 with same key and rollback off", func(t *testing.T) {
+		var io chan bool = make(chan bool)
+		w, err := window.New()
+		testingutils.AssertExpect(t, nil, err)
+		p, err := Register(w, People{}, "add3")
+		testingutils.AssertExpect(t, nil, err)
+		p.Then(func(i interface{}) *promise.Promise {
+			//waiting ready to use
 
-func TestSetItem(t *testing.T) {
+			p1, _ := Add(People{Email: "hello@world.com", Name: "Hello", Surname: "World"}, false)
 
-	t.Run("sessionStorage", func(t *testing.T) {
-		baseobject.Eval("window.sessionStorage.setItem(\"hello\",\"world\")")
+			p2, _ := Add(People{Email: "hello@world.com", Name: "Hello", Surname: "World"}, false)
 
-		if obj, err := baseobject.Get(js.Global(), "window"); testingutils.AssertErr(t, err) {
+			allp, err := promise.All(p1, p2)
 
-			if storageobj, err := baseobject.Get(obj, "sessionStorage"); testingutils.AssertErr(t, err) {
-				if stor, err := NewFromJSObject(storageobj); testingutils.AssertErr(t, err) {
+			if err != nil {
+				panic(err)
+			}
 
-					if err := stor.SetItem("hello", "you"); testingutils.AssertErr(t, err) {
-						if str, err := stor.GetItem("hello"); testingutils.AssertErr(t, err) {
+			allp.Then(func(i interface{}) *promise.Promise {
 
-							testingutils.AssertExpect(t, "you", str)
-						}
-					}
+				return nil
+			}, func(err error) {
+				testingutils.AssertExpect(t, "Key already exists in the object store.", err.Error())
+				//transaction is aborted
+				peoples := []People{}
+				pe, err := GetAll(&peoples)
+				if err != nil {
+					panic(err)
 				}
 
-			}
-		}
-
-	})
-
-	t.Run("localStorage", func(t *testing.T) {
-		baseobject.Eval("window.localStorage.setItem(\"hello\",\"world\")")
-		if obj, err := baseobject.Get(js.Global(), "window"); testingutils.AssertErr(t, err) {
-
-			if storageobj, err := baseobject.Get(obj, "localStorage"); testingutils.AssertErr(t, err) {
-				if stor, err := NewFromJSObject(storageobj); testingutils.AssertErr(t, err) {
-
-					if err := stor.SetItem("hello", "you"); testingutils.AssertErr(t, err) {
-						if str, err := stor.GetItem("hello"); testingutils.AssertErr(t, err) {
-
-							testingutils.AssertExpect(t, "you", str)
-						}
-					}
-				}
-
-			}
-		}
-
-	})
-
-}
-
-func TestRemoveItem(t *testing.T) {
-
-	t.Run("sessionStorage", func(t *testing.T) {
-		baseobject.Eval("window.sessionStorage.setItem(\"hello\",\"world\")")
-
-		if obj, err := baseobject.Get(js.Global(), "window"); testingutils.AssertErr(t, err) {
-
-			if storageobj, err := baseobject.Get(obj, "sessionStorage"); testingutils.AssertErr(t, err) {
-				if stor, err := NewFromJSObject(storageobj); testingutils.AssertErr(t, err) {
-
-					if err := stor.SetItem("objrmv", "yes"); testingutils.AssertErr(t, err) {
-						if err := stor.RemoveItem("objrmv"); testingutils.AssertErr(t, err) {
-							if str, err := stor.GetItem("objrmv"); testingutils.AssertErr(t, err) {
-
-								testingutils.AssertExpect(t, nil, str)
-							}
-
-						}
-					}
-
-				}
-
-			}
-		}
-
-	})
-
-	t.Run("localStorage", func(t *testing.T) {
-		baseobject.Eval("window.sessionStorage.setItem(\"hello\",\"world\")")
-
-		if obj, err := baseobject.Get(js.Global(), "window"); testingutils.AssertErr(t, err) {
-
-			if storageobj, err := baseobject.Get(obj, "localStorage"); testingutils.AssertErr(t, err) {
-				if stor, err := NewFromJSObject(storageobj); testingutils.AssertErr(t, err) {
-
-					if err := stor.SetItem("objrmv", "yes"); testingutils.AssertErr(t, err) {
-						if err := stor.RemoveItem("objrmv"); testingutils.AssertErr(t, err) {
-							if str, err := stor.GetItem("objrmv"); testingutils.AssertErr(t, err) {
-
-								testingutils.AssertExpect(t, nil, str)
-							}
-
-						}
-					}
-
-				}
-
-			}
-		}
-
-	})
-
-}
-
-func TestClear(t *testing.T) {
-
-	t.Run("sessionStorage", func(t *testing.T) {
-
-		if obj, err := baseobject.Get(js.Global(), "window"); testingutils.AssertErr(t, err) {
-
-			if storageobj, err := baseobject.Get(obj, "sessionStorage"); testingutils.AssertErr(t, err) {
-				if stor, err := NewFromJSObject(storageobj); testingutils.AssertErr(t, err) {
-
-					if err := stor.SetItem("objclear", "yes"); testingutils.AssertErr(t, err) {
-						if err := stor.Clear(); testingutils.AssertErr(t, err) {
-							if str, err := stor.GetItem("objclear"); testingutils.AssertErr(t, err) {
-
-								testingutils.AssertExpect(t, nil, str)
-							}
-
-						}
-					}
-
-				}
-
-			}
-		}
-
-	})
-
-	t.Run("localStorage", func(t *testing.T) {
-
-		if obj, err := baseobject.Get(js.Global(), "window"); testingutils.AssertErr(t, err) {
-
-			if storageobj, err := baseobject.Get(obj, "localStorage"); testingutils.AssertErr(t, err) {
-				if stor, err := NewFromJSObject(storageobj); testingutils.AssertErr(t, err) {
-
-					if err := stor.SetItem("objclear", "yes"); testingutils.AssertErr(t, err) {
-						if err := stor.Clear(); testingutils.AssertErr(t, err) {
-							if str, err := stor.GetItem("objclear"); testingutils.AssertErr(t, err) {
-
-								testingutils.AssertExpect(t, nil, str)
-							}
-
-						}
-					}
-
-				}
-
-			}
-		}
-
-	})
-
-}
-
-func TestKey(t *testing.T) {
-
-	t.Run("sessionStorage", func(t *testing.T) {
-
-		if obj, err := baseobject.Get(js.Global(), "window"); testingutils.AssertErr(t, err) {
-
-			if storageobj, err := baseobject.Get(obj, "sessionStorage"); testingutils.AssertErr(t, err) {
-				if stor, err := NewFromJSObject(storageobj); testingutils.AssertErr(t, err) {
-					stor.Clear()
-
-					if err := stor.SetItem("objkey", "yes"); testingutils.AssertErr(t, err) {
-
-						if str, err := stor.Key(0); testingutils.AssertErr(t, err) {
-							testingutils.AssertExpect(t, "objkey", str)
-						}
-
-					}
-
-				}
-
-			}
-		}
-
-	})
-
-	t.Run("localStorage", func(t *testing.T) {
-
-		if obj, err := baseobject.Get(js.Global(), "window"); testingutils.AssertErr(t, err) {
-
-			if storageobj, err := baseobject.Get(obj, "localStorage"); testingutils.AssertErr(t, err) {
-				if stor, err := NewFromJSObject(storageobj); testingutils.AssertErr(t, err) {
-					stor.Clear()
-
-					if err := stor.SetItem("objkey", "yes"); testingutils.AssertErr(t, err) {
-
-						if str, err := stor.Key(0); testingutils.AssertErr(t, err) {
-							testingutils.AssertExpect(t, "objkey", str)
-						}
-
-					}
-
-				}
-
-			}
+				pe.Then(func(i interface{}) *promise.Promise {
+					testingutils.AssertExpect(t, 1, len(peoples))
+					expected := []People{People{Email: "hello@world.com", Name: "Hello", Surname: "World"}}
+					testingutils.AssertExpect(t, expected, peoples)
+
+					io <- true
+					return nil
+				}, nil)
+
+			})
+
+			return nil
+		}, func(err error) {
+			panic(err)
+		})
+
+		select {
+		case <-io:
+		case <-time.After(time.Duration(45000) * time.Millisecond):
+			t.Errorf("No message channel receive")
 		}
 
 	})

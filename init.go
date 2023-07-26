@@ -1,8 +1,8 @@
 package hogosuru
 
 import (
-	"github.com/realPy/hogosuru/baseobject"
-	"github.com/realPy/hogosuru/initinterface"
+	"github.com/realPy/hogosuru/base/baseobject"
+	"github.com/realPy/hogosuru/base/initinterface"
 )
 
 func init() {

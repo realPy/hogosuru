@@ -4,13 +4,13 @@ import (
 	"errors"
 	"syscall/js"
 
-	"github.com/realPy/hogosuru/arraybuffer"
-	"github.com/realPy/hogosuru/baseobject"
-	"github.com/realPy/hogosuru/fetch"
-	"github.com/realPy/hogosuru/jserror"
-	"github.com/realPy/hogosuru/promise"
-	"github.com/realPy/hogosuru/response"
-	"github.com/realPy/hogosuru/webassembly"
+	"github.com/realPy/hogosuru/base/arraybuffer"
+	"github.com/realPy/hogosuru/base/baseobject"
+	"github.com/realPy/hogosuru/base/fetch"
+	"github.com/realPy/hogosuru/base/jserror"
+	"github.com/realPy/hogosuru/base/promise"
+	"github.com/realPy/hogosuru/base/response"
+	"github.com/realPy/hogosuru/base/webassembly"
 )
 
 //LoadWasm dynamic fetch and start a wasm binary
