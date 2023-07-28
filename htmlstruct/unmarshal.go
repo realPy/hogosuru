@@ -127,20 +127,22 @@ func Unmarshal(q QuerySelector, s interface{}) error {
 			}
 
 		} else {
+			if tag != "" {
+				elem, err := q.QuerySelector(tag)
+				if err != nil {
+					return err
+				}
+				if delem, err := elem.Discover(); err == nil {
 
-			elem, err := q.QuerySelector(tag)
-			if err != nil {
-				return err
-			}
-			if delem, err := elem.Discover(); err == nil {
+					if v.Kind() == reflect.Struct {
+						if f.CanSet() {
+							f.Set(reflect.ValueOf(delem))
+						}
 
-				if v.Kind() == reflect.Struct {
-					if f.CanSet() {
-						f.Set(reflect.ValueOf(delem))
 					}
-
 				}
 			}
+
 		}
 	}
 
