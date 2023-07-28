@@ -1,6 +1,7 @@
 package window
 
 import (
+	"errors"
 	"sync"
 	"syscall/js"
 
@@ -23,6 +24,7 @@ func init() {
 var singleton sync.Once
 
 var windowinterface js.Value
+var globalThis *Window
 
 // GetInterface get the JS interface of formdata
 func GetInterface() js.Value {
@@ -39,7 +41,6 @@ func GetInterface() js.Value {
 		history.GetInterface()
 		location.GetInterface()
 		storage.GetInterface()
-
 	})
 
 	return windowinterface
@@ -53,6 +54,22 @@ type WindowFrom interface {
 	Window_() Window
 }
 
+func self() (*Window, error) {
+	if globalThis != nil {
+		return globalThis, nil
+	}
+
+	w, err := baseobject.Self()
+	if err != nil {
+		return nil, nil
+	}
+	win, ok := w.(Window)
+	if !ok {
+		return nil, errors.New("cant allocate self")
+	}
+	globalThis = &win
+	return globalThis, nil
+}
 func (w Window) Window_() Window {
 	return w
 }
@@ -83,6 +100,13 @@ func New() (Window, error) {
 
 	}
 	return w, err
+}
+
+func (w Window) Blur() error {
+	var err error
+	_, err = w.Call("blur")
+
+	return err
 }
 
 func (w Window) Document() (document.Document, error) {

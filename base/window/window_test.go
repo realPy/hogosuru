@@ -4,12 +4,14 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/realPy/hogosuru"
 	"github.com/realPy/hogosuru/base/baseobject"
 	"github.com/realPy/hogosuru/testingutils"
 )
 
 func TestMain(m *testing.M) {
 	baseobject.SetSyscall()
+	hogosuru.Init()
 	m.Run()
 }
 
@@ -96,5 +98,21 @@ func TestNavigator(t *testing.T) {
 		}
 
 	}
+
+}
+
+func TestAtob(t *testing.T) {
+
+	v, err := Atob("SGVsbG93b3JsZA==")
+	testingutils.AssertExpect(t, "Helloworld", v)
+	testingutils.AssertExpect(t, nil, err)
+
+}
+
+func TestBtoa(t *testing.T) {
+
+	v, err := Btoa("Helloworld")
+	testingutils.AssertExpect(t, "SGVsbG93b3JsZA==", v)
+	testingutils.AssertExpect(t, nil, err)
 
 }
