@@ -20,7 +20,7 @@ var singleton sync.Once
 
 var clipboardinterface js.Value
 
-// BroadcastChannel struct
+// Clipboard struct
 type Clipboard struct {
 	eventtarget.EventTarget
 }

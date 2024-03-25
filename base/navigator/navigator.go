@@ -9,6 +9,7 @@ import (
 	"github.com/realPy/hogosuru/base/initinterface"
 	"github.com/realPy/hogosuru/base/permissions"
 	"github.com/realPy/hogosuru/base/serviceworkercontainer"
+	"github.com/realPy/hogosuru/base/usb"
 )
 
 func init() {
@@ -107,6 +108,22 @@ func (n Navigator) Clipboard() (clipboard.Clipboard, error) {
 	}
 
 	return c, err
+}
+
+func (n Navigator) USB() (usb.USB, error) {
+
+	var err error
+	var obj interface{}
+	var u usb.USB
+	var ok bool
+
+	if obj, err = n.GetAttributeGlobal("usb"); err == nil {
+		if u, ok = obj.(usb.USB); !ok {
+			err = usb.ErrNotAUSB
+		}
+	}
+
+	return u, err
 }
 
 func (n Navigator) DeviceMemory() (float64, error) {
