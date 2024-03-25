@@ -16,21 +16,34 @@ func TestMain(m *testing.M) {
 
 func TestNew(t *testing.T) {
 
-	if s, err := New(); testingutils.AssertErr(t, err) {
+	if s, err := NewReadableStream(); testingutils.AssertErr(t, err) {
 
 		testingutils.AssertExpect(t, "[object ReadableStream]", s.ToString_())
+
+	}
+
+	if s, err := NewWritableStream(); testingutils.AssertErr(t, err) {
+
+		testingutils.AssertExpect(t, "[object WritableStream]", s.ToString_())
 
 	}
 }
 
 func TestNewFromJSObject(t *testing.T) {
 
-	baseobject.Eval("r=new ReadableStream()")
+	baseobject.Eval("r=new ReadableStream();w=new WritableStream();")
 
 	if obj, err := baseobject.Get(js.Global(), "r"); testingutils.AssertErr(t, err) {
-		if d, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
+		if d, err := NewReadableStreamFromJSObject(obj); testingutils.AssertErr(t, err) {
 
 			testingutils.AssertExpect(t, "[object ReadableStream]", d.ToString_())
+
+		}
+	}
+	if obj, err := baseobject.Get(js.Global(), "w"); testingutils.AssertErr(t, err) {
+		if d, err := NewWriteableStreamFromJSObject(obj); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "[object WritableStream]", d.ToString_())
 
 		}
 	}
@@ -38,7 +51,16 @@ func TestNewFromJSObject(t *testing.T) {
 }
 
 func TestLocked(t *testing.T) {
-	if s, err := New(); testingutils.AssertErr(t, err) {
+	if s, err := NewReadableStream(); testingutils.AssertErr(t, err) {
+
+		if locked, err := s.Locked(); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, false, locked)
+		}
+
+	}
+
+	if s, err := NewWritableStream(); testingutils.AssertErr(t, err) {
 
 		if locked, err := s.Locked(); testingutils.AssertErr(t, err) {
 
@@ -48,8 +70,8 @@ func TestLocked(t *testing.T) {
 	}
 }
 
-func TestCancel(t *testing.T) {
-	if s, err := New(); testingutils.AssertErr(t, err) {
+func TestCancelReadable(t *testing.T) {
+	if s, err := NewReadableStream(); testingutils.AssertErr(t, err) {
 
 		if pcancel, err := s.Cancel(); testingutils.AssertErr(t, err) {
 
@@ -59,8 +81,30 @@ func TestCancel(t *testing.T) {
 	}
 }
 
+func TestAbortWritable(t *testing.T) {
+	if w, err := NewWritableStream(); testingutils.AssertErr(t, err) {
+
+		if pabort, err := w.Abort("i want"); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "[object Promise]", pabort.ToString_())
+		}
+
+	}
+}
+
+func TestCloseWritable(t *testing.T) {
+	if w, err := NewWritableStream(); testingutils.AssertErr(t, err) {
+
+		if pabort, err := w.Close(); testingutils.AssertErr(t, err) {
+
+			testingutils.AssertExpect(t, "[object Promise]", pabort.ToString_())
+		}
+
+	}
+}
+
 func TestGetReader(t *testing.T) {
-	if s, err := New(); testingutils.AssertErr(t, err) {
+	if s, err := NewReadableStream(); testingutils.AssertErr(t, err) {
 
 		if reader, err := s.GetReader(); testingutils.AssertErr(t, err) {
 
@@ -74,8 +118,8 @@ func TestGetReader(t *testing.T) {
 	}
 }
 
-func TestTee(t *testing.T) {
-	if s, err := New(); testingutils.AssertErr(t, err) {
+func TestTeeReadable(t *testing.T) {
+	if s, err := NewReadableStream(); testingutils.AssertErr(t, err) {
 
 		if a, err := s.Tee(); testingutils.AssertErr(t, err) {
 

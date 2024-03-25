@@ -6,10 +6,13 @@ import (
 
 	"github.com/realPy/hogosuru/base/arraybuffer"
 	"github.com/realPy/hogosuru/base/baseobject"
+	"github.com/realPy/hogosuru/base/blob"
+	"github.com/realPy/hogosuru/base/decompressionstream"
 	"github.com/realPy/hogosuru/base/fetch"
 	"github.com/realPy/hogosuru/base/jserror"
 	"github.com/realPy/hogosuru/base/promise"
 	"github.com/realPy/hogosuru/base/response"
+	"github.com/realPy/hogosuru/base/stream"
 	"github.com/realPy/hogosuru/base/webassembly"
 )
 
@@ -268,4 +271,208 @@ func LoadWasm(urlfetch string) (fetch.Fetch, promise.Promise, error) {
 	}
 
 	return f, p, err
+}
+
+func LoadCompressedWasm(urlfetch string) (promise.Promise, error) {
+
+	w, err := webassembly.New()
+
+	if err != nil {
+		return promise.Promise{}, err
+	}
+	gobjinterface, err := baseobject.Get(js.Global(), "Go")
+
+	if err != nil {
+		return promise.Promise{}, err
+	}
+
+	gobj := gobjinterface.New()
+
+	importobj, err := baseobject.Get(gobj, "importObject")
+	if err != nil {
+		return promise.Promise{}, err
+	}
+
+	return promise.New(func(resolvefunc, errfunc js.Value) (interface{}, error) {
+
+		fetchwasm, err := fetch.New(urlfetch, map[string]interface{}{"method": "GET"})
+		if err != nil {
+			if errjs, err := jserror.New(err); err == nil {
+				errfunc.Invoke(errjs.JSObject())
+			} else {
+				AssertErr(err)
+			}
+		}
+
+		fetchwasm.Then(
+			func(r response.Response) *promise.Promise {
+
+				blobstream, err := r.Blob()
+
+				if err != nil {
+					if errjs, err := jserror.New(err); err == nil {
+						errfunc.Invoke(errjs.JSObject())
+					} else {
+						AssertErr(err)
+					}
+				}
+
+				blobstream.Then(func(i interface{}) *promise.Promise {
+
+					b, ok := i.(blob.Blob)
+					if !ok {
+						err := errors.New("blobstream is not a blob")
+						if errjs, err := jserror.New(err); err == nil {
+							errfunc.Invoke(errjs.JSObject())
+						} else {
+							AssertErr(err)
+						}
+					}
+
+					dec, err := decompressionstream.New("gzip")
+					if err != nil {
+						if errjs, err := jserror.New(err); err == nil {
+							errfunc.Invoke(errjs.JSObject())
+						} else {
+							AssertErr(err)
+						}
+					}
+
+					s, err := b.Stream()
+					if err != nil {
+						if errjs, err := jserror.New(err); err == nil {
+							errfunc.Invoke(errjs.JSObject())
+						} else {
+							AssertErr(err)
+						}
+					}
+
+					readablestream, err := s.PipeThrough(stream.TransfertToTransformStream(dec.BaseObject))
+					if err != nil {
+						if errjs, err := jserror.New(err); err == nil {
+							errfunc.Invoke(errjs.JSObject())
+						} else {
+							AssertErr(err)
+						}
+					}
+
+					r, err := response.New(readablestream)
+					if err != nil {
+						if errjs, err := jserror.New(err); err == nil {
+							errfunc.Invoke(errjs.JSObject())
+						} else {
+							AssertErr(err)
+						}
+					}
+
+					promisebuffer, err := r.ArrayBuffer()
+					if err != nil {
+						if errjs, err := jserror.New(err); err == nil {
+							errfunc.Invoke(errjs.JSObject())
+						} else {
+							AssertErr(err)
+						}
+					}
+
+					promisebuffer.Then(func(i interface{}) *promise.Promise {
+
+						arr, ok := i.(arraybuffer.ArrayBuffer)
+						if !ok {
+							err := errors.New("promisebuffer not get an array")
+							if errjs, err := jserror.New(err); err == nil {
+								errfunc.Invoke(errjs.JSObject())
+							} else {
+								AssertErr(err)
+							}
+						}
+
+						pinstance, err := w.Instantiate(arr, importobj)
+
+						if err != nil {
+							if errjs, err := jserror.New(err); err == nil {
+								errfunc.Invoke(errjs.JSObject())
+							} else {
+								AssertErr(err)
+							}
+						}
+
+						pinstance.Then(func(obj interface{}) *promise.Promise {
+
+							module, ok := obj.(baseobject.ObjectFrom)
+							if !ok {
+								err := errors.New("module is not a baseObject")
+								if errjs, err := jserror.New(err); err == nil {
+									errfunc.Invoke(errjs.JSObject())
+								} else {
+									AssertErr(err)
+								}
+							}
+
+							instance, err := module.BaseObject_().Get("instance")
+							if err != nil {
+								if errjs, err := jserror.New(err); err == nil {
+									errfunc.Invoke(errjs.JSObject())
+								} else {
+									AssertErr(err)
+								}
+							}
+
+							_, err = baseobject.Call(gobj, "run", instance)
+
+							if err != nil {
+								if errjs, err := jserror.New(err); err == nil {
+									errfunc.Invoke(errjs.JSObject())
+								} else {
+									AssertErr(err)
+								}
+
+							}
+
+							resolvefunc.Invoke()
+
+							return nil
+						}, func(err error) {
+
+							if errjs, err := jserror.New(err); err == nil {
+								errfunc.Invoke(errjs.JSObject())
+							} else {
+								AssertErr(err)
+							}
+						})
+
+						return &pinstance
+					}, func(err error) {
+
+						if errjs, err := jserror.New(err); err == nil {
+							errfunc.Invoke(errjs.JSObject())
+						} else {
+							AssertErr(err)
+						}
+					})
+
+					return &promisebuffer
+
+				}, func(err error) {
+
+					if errjs, err := jserror.New(err); err == nil {
+						errfunc.Invoke(errjs.JSObject())
+					} else {
+						AssertErr(err)
+					}
+				})
+
+				return &blobstream
+			},
+
+			func(err error) {
+				if errjs, err := jserror.New(err); err == nil {
+					errfunc.Invoke(errjs.JSObject())
+				} else {
+					AssertErr(err)
+				}
+			})
+
+		return nil, nil
+	})
+
 }

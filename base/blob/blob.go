@@ -188,7 +188,7 @@ func (b Blob) Stream() (stream.ReadableStream, error) {
 	var obj js.Value
 
 	if obj, err = b.Call("stream"); err == nil {
-		return stream.NewFromJSObject(obj)
+		return stream.NewReadableStreamFromJSObject(obj)
 
 	}
 	return readablestream.ReadableStream{}, err

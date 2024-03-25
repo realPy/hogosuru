@@ -60,13 +60,21 @@ func GetInterface() js.Value {
 }
 
 // New Create a response
-func New() (Response, error) {
+func New(opts ...interface{}) (Response, error) {
 	var r Response
 	var obj js.Value
 	var err error
+	var array []interface{}
+
+	for _, opt := range opts {
+		if v, ok := opt.(baseobject.ObjectFrom); ok {
+			array = append(array, v.JSObject())
+		}
+
+	}
 	if ri := GetInterface(); !ri.IsUndefined() {
 
-		if obj, err = baseobject.New(ri); err == nil {
+		if obj, err = baseobject.New(ri, array...); err == nil {
 			r.BaseObject = r.SetObject(obj)
 		}
 
@@ -264,7 +272,7 @@ func (r Response) Body() (stream.ReadableStream, error) {
 	var err error
 	var s stream.ReadableStream
 	if obj, err = r.Get("body"); err == nil {
-		s, err = stream.NewFromJSObject(obj)
+		s, err = stream.NewReadableStreamFromJSObject(obj)
 
 	}
 	return s, err

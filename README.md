@@ -161,6 +161,7 @@ All help is welcome. If you are interested by this project, please contact me
 | Promise | Full | https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise |
 | PushManager | Full | https://developer.mozilla.org/en-US/docs/Web/API/PushManager |
 | ReadableStream | Full | https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream |
+
 | Response | Full | https://developer.mozilla.org/fr/docs/Web/API/Response |
 | ServiceWorker | Full | https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorker|
 | ServiceWorkerContainer | Full | https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerContainer|

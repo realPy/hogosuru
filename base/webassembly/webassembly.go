@@ -84,15 +84,19 @@ func NewFromJSObject(obj js.Value) (WebAssembly, error) {
 	return w, err
 }
 
-func (w WebAssembly) InstantiateStreaming(source promise.Promise, imports js.Value) (promise.Promise, error) {
+func (w WebAssembly) InstantiateStreaming(source interface{}, imports js.Value) (promise.Promise, error) {
 
 	var obj js.Value
 	var err error
 	var p promise.Promise
-	if obj, err = w.Call("instantiateStreaming", source.JSObject(), imports); err == nil {
-		p, err = promise.NewFromJSObject(obj)
 
+	if s, ok := source.(baseobject.ObjectFrom); ok {
+		if obj, err = w.Call("instantiateStreaming", s.JSObject(), imports); err == nil {
+			p, err = promise.NewFromJSObject(obj)
+
+		}
 	}
+
 	return p, err
 }
 

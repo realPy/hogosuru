@@ -14,26 +14,28 @@ import (
 
 func init() {
 
-	initinterface.RegisterInterface(GetInterface)
-	initinterface.RegisterInterface(GetReadStreamInterface)
+	initinterface.RegisterInterface(GetRInterface)
+	initinterface.RegisterInterface(GetWInterface)
+	initinterface.RegisterInterface(GetReadableStreamDefaultReaderInterface)
+	initinterface.RegisterInterface(GetWritableStreamDefaultWriterInterface)
 
 }
 
-var singleton sync.Once
+var singletonr sync.Once
 
 var readablestreaminterface js.Value
 
-// GetInterface get the JS interface ReadableStream
-func GetInterface() js.Value {
+// GetRInterface get the JS interface ReadableStream.
+func GetRInterface() js.Value {
 
-	singleton.Do(func() {
+	singletonr.Do(func() {
 
 		var err error
 		if readablestreaminterface, err = baseobject.Get(js.Global(), "ReadableStream"); err != nil {
 			readablestreaminterface = js.Undefined()
 		}
 		baseobject.Register(readablestreaminterface, func(v js.Value) (interface{}, error) {
-			return NewFromJSObject(v)
+			return NewReadableStreamFromJSObject(v)
 		})
 	})
 
@@ -56,27 +58,27 @@ func (r ReadableStream) Locked() (bool, error) {
 	return r.GetAttributeBool("locked")
 }
 
-// New Create a new ReadableStream
-func New() (ReadableStream, error) {
+// NewReadableStream Create a new ReadableStream
+func NewReadableStream() (ReadableStream, error) {
 	var r ReadableStream
 	var obj js.Value
 	var err error
-	if ri := GetInterface(); !ri.IsUndefined() {
+	if ri := GetRInterface(); !ri.IsUndefined() {
 
 		if obj, err = baseobject.New(ri); err == nil {
 			r.BaseObject = r.SetObject(obj)
 		}
 
 	} else {
-		err = ErrNotImplemented
+		err = ErrNotImplementedReadableStream
 	}
 	return r, err
 }
 
-func NewFromJSObject(obj js.Value) (ReadableStream, error) {
+func NewReadableStreamFromJSObject(obj js.Value) (ReadableStream, error) {
 	var r ReadableStream
 	var err error
-	if rsi := GetInterface(); !rsi.IsUndefined() {
+	if rsi := GetRInterface(); !rsi.IsUndefined() {
 		if obj.IsUndefined() || obj.IsNull() {
 			err = baseobject.ErrUndefinedValue
 		} else {
@@ -89,7 +91,7 @@ func NewFromJSObject(obj js.Value) (ReadableStream, error) {
 			}
 		}
 	} else {
-		err = ErrNotImplemented
+		err = ErrNotImplementedReadableStream
 	}
 
 	return r, err
@@ -142,4 +144,48 @@ func (r ReadableStream) Tee() ([]ReadableStream, error) {
 	}
 	return ret, err
 
+}
+
+func (r ReadableStream) PipeThrough(t TransformStream, options ...map[string]string) (ReadableStream, error) {
+
+	var err error
+	var obj js.Value
+	var arrayJS []interface{}
+	var transformread ReadableStream
+
+	arrayJS = append(arrayJS, t.JSObject())
+
+	if len(options) > 0 {
+		arrayJS = append(arrayJS, js.ValueOf(options[0]))
+	}
+
+	if obj, err = r.Call("pipeThrough", arrayJS...); err == nil {
+
+		transformread, err = NewReadableStreamFromJSObject(obj)
+
+	}
+
+	return transformread, err
+}
+
+func (r ReadableStream) PipeTo(w WritableStream, options ...map[string]string) (promise.Promise, error) {
+
+	var err error
+	var obj js.Value
+	var arrayJS []interface{}
+	var finalpromise promise.Promise
+
+	arrayJS = append(arrayJS, w.JSObject())
+
+	if len(options) > 0 {
+		arrayJS = append(arrayJS, js.ValueOf(options[0]))
+	}
+
+	if obj, err = r.Call("pipeTo", arrayJS...); err == nil {
+
+		finalpromise, err = promise.NewFromJSObject(obj)
+
+	}
+
+	return finalpromise, err
 }

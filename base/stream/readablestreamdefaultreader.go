@@ -15,8 +15,8 @@ var singletonReadableStreamDefault sync.Once
 
 var readablestreamdefaultinterface js.Value
 
-// GetReadStreamInterface
-func GetReadStreamInterface() js.Value {
+// GetReadableStreamDefaultReaderInterface
+func GetReadableStreamDefaultReaderInterface() js.Value {
 
 	singletonReadableStreamDefault.Do(func() {
 
@@ -44,7 +44,7 @@ func (r ReadableStreamDefaultReader) ReadableStreamDefaultReader_() ReadableStre
 func NewReadableStreamDefaultReaderFromJSObject(obj js.Value) (ReadableStreamDefaultReader, error) {
 	var r ReadableStreamDefaultReader
 
-	if rsi := GetReadStreamInterface(); !rsi.IsUndefined() {
+	if rsi := GetReadableStreamDefaultReaderInterface(); !rsi.IsUndefined() {
 		if obj.InstanceOf(rsi) {
 			r.BaseObject = r.SetObject(obj)
 			return r, nil
@@ -126,4 +126,47 @@ func (r ReadableStreamDefaultReader) AsyncRead(buffersize int, dataHandle func([
 
 	})
 
+}
+
+func (r ReadableStreamDefaultReader) Closed() (promise.Promise, error) {
+	var err error
+	var obj js.Value
+	var p promise.Promise
+
+	if obj, err = r.Get("closed"); err == nil {
+		p, err = promise.NewFromJSObject(obj)
+
+	}
+	return p, err
+}
+
+func (r ReadableStreamDefaultReader) Cancel() (promise.Promise, error) {
+	var err error
+	var obj js.Value
+	var p promise.Promise
+
+	if obj, err = r.Call("cancel"); err == nil {
+		p, err = promise.NewFromJSObject(obj)
+
+	}
+	return p, err
+}
+
+func (r ReadableStreamDefaultReader) ReleaseLock() error {
+
+	_, err := r.Call("releaseLock")
+	return err
+}
+
+func (w ReadableStreamDefaultReader) Read() (promise.Promise, error) {
+
+	var err error
+	var obj js.Value
+	var p promise.Promise
+
+	if obj, err = w.Call("read"); err == nil {
+		p, err = promise.NewFromJSObject(obj)
+
+	}
+	return p, err
 }
