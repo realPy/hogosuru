@@ -19,7 +19,7 @@ func TestMain(m *testing.M) {
 
 	methodsAttempt = []map[string]interface{}{
 		{"method": "GetDevices", "type": "constructnamechecking", "resultattempt": "Promise"},
-		{"method": "RequestDevices", "args": []interface{}{map[string]int{"vendorId": 0x11}}, "type": "constructnamechecking", "resultattempt": "Promise"},
+		{"method": "RequestDevices", "args": []interface{}{map[string]interface{}{"vendorId": 0x11}}, "type": "constructnamechecking", "resultattempt": "Promise"},
 	}
 
 	baseobject.Eval(`usbobj=navigator.usb`)

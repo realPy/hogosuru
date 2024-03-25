@@ -79,7 +79,7 @@ func (u USB) GetDevices() (promise.Promise, error) {
 	return p, err
 }
 
-func (u USB) RequestDevices(filter map[string]int) (promise.Promise, error) {
+func (u USB) RequestDevices(filter map[string]interface{}) (promise.Promise, error) {
 	var err error
 	var obj js.Value
 	var p promise.Promise
