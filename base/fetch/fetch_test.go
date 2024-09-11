@@ -270,8 +270,8 @@ func TestNewCancelable(t *testing.T) {
 				t.Error("Must not get response")
 				return nil
 			}, func(e error) {
-				if e.Error() != "The user aborted a request." {
-					t.Error("Error mismatch")
+				if e.Error() != "signal is aborted without reason" {
+					t.Error("Error mismatch:", e.Error())
 				}
 				io <- true
 			})
@@ -304,8 +304,8 @@ func TestNewCancelable(t *testing.T) {
 				t.Error("Must not get response")
 				return nil
 			}, func(e error) {
-				if e.Error() != "The user aborted a request." {
-					t.Error("Error mismatch")
+				if e.Error() != "signal is aborted without reason" {
+					t.Error("Error mismatch:", e.Error())
 				}
 				io <- true
 			})

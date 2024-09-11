@@ -23,7 +23,7 @@ func TestNewFromJSObject(t *testing.T) {
 
 		if it, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
 
-			testingutils.AssertExpect(t, "Object", it.ConstructName_())
+			testingutils.AssertExpect(t, "Iterator", it.ConstructName_())
 		}
 
 	}
