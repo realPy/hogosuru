@@ -37,6 +37,7 @@ func GetTInterface() js.Value {
 func NewTransformStream(
 	start func(controller TransformStreamDefaultController),
 	transform func(chunk interface{}, controller TransformStreamDefaultController),
+	flush func(controller TransformStreamDefaultController),
 ) (TransformStream, error) {
 	var t TransformStream
 	var obj js.Value
@@ -46,7 +47,7 @@ func NewTransformStream(
 		t.start = js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
 			if c, err := baseobject.Discover(args[0]); err == nil {
-				if ctrl, ok := c.(TransformStreamDefaultController); ok {
+				if ctrl, ok := c.(TransformStreamDefaultController); ok && start != nil {
 					start(ctrl)
 				}
 			}
@@ -54,9 +55,10 @@ func NewTransformStream(
 		})
 		t.transform = js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 			if c, err := baseobject.Discover(args[1]); err == nil {
-				if ctrl, ok := c.(TransformStreamDefaultController); ok {
+				if ctrl, ok := c.(TransformStreamDefaultController); ok && transform != nil {
 					chunk, _ := baseobject.Discover(args[0])
 					transform(chunk, ctrl)
+
 				}
 			}
 
@@ -65,8 +67,9 @@ func NewTransformStream(
 
 		t.flush = js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 			if c, err := baseobject.Discover(args[0]); err == nil {
-				if ctrl, ok := c.(TransformStreamDefaultController); ok {
-					ctrl.Terminate()
+				if ctrl, ok := c.(TransformStreamDefaultController); ok && flush != nil {
+					flush(ctrl)
+
 				}
 			}
 			return nil
@@ -108,6 +111,14 @@ func NewTransformStreamFromJSObject(obj js.Value) (TransformStream, error) {
 
 	return t, err
 }
+
+func (t *TransformStream) Release() {
+
+	t.start.Release()
+	t.transform.Release()
+	t.flush.Release()
+}
+
 func TransfertToTransformStream(b baseobject.BaseObject) TransformStream {
 	var t TransformStream
 	t.BaseObject = t.SetObject(b.JSObject())

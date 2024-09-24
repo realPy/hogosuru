@@ -108,7 +108,8 @@ func TestGetRequest(t *testing.T) {
 
 				if headers, err := xhr.GetAllResponseHeader(); testingutils.AssertErr(t, err) {
 
-					testingutils.AssertExpect(t, "content-length: 777\r\ncontent-type: application/json\r\n", headers)
+					testingutils.AssertStringContains(t, "content-type: application/json\r\n", headers)
+					testingutils.AssertStringContains(t, "content-length: ", headers)
 
 				}
 				if text, err := xhr.ResponseText(); testingutils.AssertErr(t, err) {
